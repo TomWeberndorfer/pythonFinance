@@ -8,7 +8,7 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
-from str2 import isVolumeRaising, is52W_High, isVolumeHighEnough
+from str2 import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList
 import threading
 import time
 
@@ -108,14 +108,7 @@ class myThread (threading.Thread):
 
         #print ("Exiting " + self.name)
 
-def split(arr, size):
-    arrs = []
-    while len(arr) > size:
-        pice = arr[:size]
-        arrs.append(pice)
-        arr = arr[size:]
-    arrs.append(arr)
-    return arrs
+
 #####################
 allSymbols = []
 
@@ -123,7 +116,7 @@ allSymbols.extend(Nasdaq100_Symbols)
 #allSymbols.extend(DAX30_Symbols)
 
 # Create new threads
-splits= split(allSymbols, numOfStocksPerThread)
+splits= splitStockList(allSymbols, numOfStocksPerThread)
 #thread1 = myThread(splits, "Thread-1: Nasdaq100_Symbols_1")
 
 i = 0
