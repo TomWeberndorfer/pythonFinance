@@ -9,6 +9,7 @@ from datetime import timedelta
 import sys
 import threading
 import time
+import logging
 
 def isVolumeRaising (stock):
     i = 0
@@ -39,6 +40,8 @@ def is52W_High (stock):
 
 def isVolumeHighEnough(stock):
     minReqVol = 30000
+    logging.debug()
+    logging.debug (str(stock['Volume']))
     curMinVol = stock['Volume'].min()
 
     if (curMinVol > minReqVol):
@@ -66,14 +69,15 @@ def strat_52WHi_HiVolume(stocksToCheck, dataProvider, Ago52W, Ago5D, end):
 
         try:
             # if ((cnt % 5) == 0):
-            #   print(self.name + ":" + str(cnt) + "/" + str(len(stocksToCheck)))
+            #   logging.debug(self.name + ":" + str(cnt) + "/" + str(len(stocksToCheck)))
 
             stock52W = data.DataReader(stockName, dataProvider, Ago52W, end)
             stock5D = data.DataReader(stockName, dataProvider, Ago5D, end)
             df = stock52W
-            #print (stock5D)
+            logging.debug(stockName)
+            logging.debug (stock5D)
 
-            if (isVolumeHighEnough(df)):
+            if (isVolumeHighEnough(stock5D)):
                 volumeRaising = isVolumeRaising(stock5D)
                 if (volumeRaising):
                     stockHas52Hi = is52W_High(df)

@@ -8,7 +8,7 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
-from str2 import isVolumeRaising, is52W_High, isVolumeHighEnough
+from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough
 import threading
 import time
 

@@ -8,9 +8,11 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
-from str2 import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList, strat_52WHi_HiVolume
+from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList, strat_52WHi_HiVolume
 import threading
 import time
+import logging
+
 
 exitFlag = 0
 threads = []
@@ -25,6 +27,10 @@ end = datetime.datetime.now()
 Ago52W = end - datetime.timedelta(weeks=52)
 Ago5D = datetime.datetime.now() - timedelta(days=volumeDayDelta)
 dataProvider = "google"
+dataProvider = "yahoo"
+
+#enhanced stock messages:
+#logging.basicConfig(level=logging.DEBUG)
 ##########################
 
 #sybols to read
@@ -43,17 +49,22 @@ Nasdaq100_Symbols = ["AAPL", "ADBE", "ADI", "ADP", "ADSK", "AKAM", "ALXN",
                          "STX", "SYMC", "TRIP", "TSCO", "TSLA", "TXN", "VIAB", "VIP",
                          "VOD", "VRSK", "VRTX", "WDC", "WFM", "WYNN", "XLNX", "YHOO"]
 
-DAX30_Symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK", "ETR:CON", "ETR:DAI",
-                 "DB1", "ETR:DBK", "ETR:DPB", "ETR:DPW", "ETR:DTE", "ETR:EOA", "ETR:FME", "ETR:HEN3",
-                 "HRX", "ETR:IFX", "ETR:LHA", "ETR:LIN", "ETR:MAN", "ETR:MEO", "ETR:MRK.DE", "ETR:MUV2",
-                 "RWE", "ETR:SAP", "ETR:SIE", "ETR:TKA", "ETR:TUI1", "ETR:VOW"]
+DAX_Symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK", "ETR:CON", "ETR:DAI",
+                 "ETR:DB1", "ETR:DBK", "ETR:DPB", "ETR:DPW", "ETR:DTE", "ETR:EOA", "ETR:FME", "ETR:HEN3",
+                 "ETR:HRX", "ETR:IFX", "ETR:LHA", "ETR:LIN", "ETR:MAN", "ETR:MEO", "ETR:MRK.DE", "ETR:MUV2",
+                 "ETR:RWE", "ETR:SAP", "ETR:SIE", "ETR:TKA", "ETR:TUI1", "ETR:VOW", "ETR:BAYN",
+                 "ETR:FNTN", "ETR:O2D", "ETR:QIA", "ETR:DRI", "ETR:AM3D", "ETR:O1BC", "ETR:GFT", "ETR:NDX1",
+                 "ETR:SBS", "ETR:COK", "ETR:DLG", "ETR:DRW3", "ETR:SMHN", "ETR:WDI", "ETR:BC8", "ETR:MOR",
+                 "ETR:SOW", "ETR:AIXA", "ETR:ADV", "ETR:PFV", "ETR:JEN", "ETR:AFX", "ETR:UTDI", "ETR:NEM", "ETR:SRT3",
+                 "ETR:EVT", "ETR:WAF", "ETR:RIB", "ETR:S92", "ETR:COP"]
 
-DAX30_Symbols = ["ETR:DAI", "ETR:ADS", "ETR:ALV"]
+#DAX_Symbols = ["BAYN"]
+
 
 allSymbols = []
 
-#allSymbols.extend(Nasdaq100_Symbols)
-allSymbols.extend(DAX30_Symbols)
+allSymbols.extend(Nasdaq100_Symbols)
+allSymbols.extend(DAX_Symbols)
 
 
 ##########################################################
@@ -66,7 +77,8 @@ class myThread (threading.Thread):
 
     def run(self):
         print ("Starting " + self.name)
-        stocksToBuy = strat_52WHi_HiVolume (self.stocksToCheck, dataProvider, Ago52W, Ago5D, end)
+        global stocksToBuy
+        stocksToBuy= strat_52WHi_HiVolume (self.stocksToCheck, dataProvider, Ago52W, Ago5D, end)
         #print ("Exiting " + self.name)
 
 
@@ -74,7 +86,6 @@ class myThread (threading.Thread):
 
 # Create new threads
 splits= splitStockList(allSymbols, numOfStocksPerThread)
-#thread1 = myThread(splits, "Thread-1: Nasdaq100_Symbols_1")
 
 i = 0
 thrToExe= []
@@ -97,11 +108,12 @@ for t in threads:
 print()
 print("++++++++++++++++++++")
 print("Aktien kaufen: ")
-if (len(stocksToBuy) == 0):
-    print ("Keine gefunden")
-else:
-    for stockToBuy in stocksToBuy:
-        print(stockToBuy)
+if (stocksToBuy is not None):
+    if(len(stocksToBuy) == 0):
+        print ("Keine gefunden")
+    else:
+        for stockToBuy in stocksToBuy:
+            print(stockToBuy)
         # trace = go.Candlestick(x=df.index,
         #                        open=df.Open,
         #                        high=df.High,

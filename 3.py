@@ -8,14 +8,14 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
-from str2 import isVolumeRaising, is52W_High, isVolumeHighEnough
+from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough
 
 ##########################
 volumeDayDelta = 5
 end = datetime.datetime.now()
 Ago52W = end - datetime.timedelta(weeks=52)
 Ago5D = datetime.datetime.now() - timedelta(days=volumeDayDelta)
-dataProvider = "google"
+dataProvider = "yahoo"
 ##########################
 stocksToBuy = []
 stocksToCheck = []
@@ -36,7 +36,7 @@ Nasdaq100_Symbols = ["AAPL", "ADBE", "ADI", "ADP", "ADSK", "AKAM", "ALXN",
                        "STX", "SYMC", "TRIP", "TSCO", "TSLA", "TXN", "VIAB", "VIP",
                        "VOD", "VRSK", "VRTX", "WDC", "WFM", "WYNN", "XLNX", "YHOO"]
 
-#Nasdaq100_Symbols = ["COST"]
+Nasdaq100_Symbols = ["AAPL"]
 
 stocksToCheck.append(Nasdaq100_Symbols)
 
