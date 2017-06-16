@@ -8,7 +8,7 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
-from str2 import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList
+from str2 import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList, strat_52WHi_HiVolume
 import threading
 import time
 
@@ -43,13 +43,20 @@ Nasdaq100_Symbols = ["AAPL", "ADBE", "ADI", "ADP", "ADSK", "AKAM", "ALXN",
                          "STX", "SYMC", "TRIP", "TSCO", "TSLA", "TXN", "VIAB", "VIP",
                          "VOD", "VRSK", "VRTX", "WDC", "WFM", "WYNN", "XLNX", "YHOO"]
 
-DAX30_Symbols = ["ADS.F", "ALV.F", "BAS.F", "BAY.F", "BMW.F", "CBK.F", "CON.F", "DAI.F",
-                 "DB1.F", "DBK.F", "DPB.F", "DPW.F", "DTE.F", "EOA.F", "FME.F", "HEN3.F",
-                 "HRX.F", "IFX.F", "LHA.F", "LIN.F", "MAN.F", "MEO.F", "MRK.DE", "MUV2.F",
-                 "RWE.F", "SAP.F", "SIE.F", "TKA.F", "TUI1.F", "VOW.F"]
+DAX30_Symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK", "ETR:CON", "ETR:DAI",
+                 "DB1", "ETR:DBK", "ETR:DPB", "ETR:DPW", "ETR:DTE", "ETR:EOA", "ETR:FME", "ETR:HEN3",
+                 "HRX", "ETR:IFX", "ETR:LHA", "ETR:LIN", "ETR:MAN", "ETR:MEO", "ETR:MRK.DE", "ETR:MUV2",
+                 "RWE", "ETR:SAP", "ETR:SIE", "ETR:TKA", "ETR:TUI1", "ETR:VOW"]
 
-DAX30_Symbols = ["DAI"]
+DAX30_Symbols = ["ETR:DAI", "ETR:ADS", "ETR:ALV"]
 
+allSymbols = []
+
+#allSymbols.extend(Nasdaq100_Symbols)
+allSymbols.extend(DAX30_Symbols)
+
+
+##########################################################
 
 class myThread (threading.Thread):
     def __init__(self, stocksToCheck, name):
@@ -59,61 +66,11 @@ class myThread (threading.Thread):
 
     def run(self):
         print ("Starting " + self.name)
-
-        stocksToCheck = self.stocksToCheck
-
-        cnt = 1
-
-        for stockName in stocksToCheck:
-            volumeRaising = False
-            volumeHighEnough = False
-            stockHas52Hi = False
-
-            try:
-                #if ((cnt % 5) == 0):
-                 #   print(self.name + ":" + str(cnt) + "/" + str(len(stocksToCheck)))
-
-                stock52W = data.DataReader(stockName, dataProvider, Ago52W, end)
-                stock5D = data.DataReader(stockName, dataProvider, Ago5D, end)
-                df = stock52W
-                # print (stock5D)
-                # trace = go.Candlestick(x=df.index,
-                #                        open=df.Open,
-                #                        high=df.High,
-                #                        low=df.Low,
-                #                        close=df.Close)
-                # data = [trace]
-                #
-                # plotly.offline.plot(data, filename='simple_candlestick')
-
-
-                if (isVolumeHighEnough(df)):
-                    volumeRaising = isVolumeRaising(stock5D)
-                    if (volumeRaising):
-                        stockHas52Hi = is52W_High(df)
-
-                # print("volume raising: " + str(volumeRaising))
-                # print("is 52W- High: " + str(stockHas52Hi))
-
-                if (volumeHighEnough and stockHas52Hi and volumeRaising):
-                    stocksToBuy.append(stockName)
-
-
-            except:
-                e = sys.exc_info()[0]
-                err.append("Stock: " + str(stockName) + " is faulty: " + str(e))
-
-            cnt = cnt + 1
-
-
+        stocksToBuy = strat_52WHi_HiVolume (self.stocksToCheck, dataProvider, Ago52W, Ago5D, end)
         #print ("Exiting " + self.name)
 
 
 #####################
-allSymbols = []
-
-allSymbols.extend(Nasdaq100_Symbols)
-#allSymbols.extend(DAX30_Symbols)
 
 # Create new threads
 splits= splitStockList(allSymbols, numOfStocksPerThread)
@@ -128,35 +85,31 @@ while i < len(splits):
 
 # Start new Threads
 thrStart= datetime.datetime.now()
-#thread1.start()
 
 for tr in thrToExe:
     tr.start()
     threads.append(tr)
 
-
-# Add threads to thread list
-#threads.append(thread1)
-
-
 # Wait for all threads to complete
 for t in threads:
     t.join()
-print ("Exiting Main Thread")
-print()
-
-print()
-print("######################")
-print("Errors:")
-for er in err:
-    print(er)
 
 print()
 print("++++++++++++++++++++")
 print("Aktien kaufen: ")
-
-for stockToBuy in stocksToBuy:
-    print(stockToBuy)
+if (len(stocksToBuy) == 0):
+    print ("Keine gefunden")
+else:
+    for stockToBuy in stocksToBuy:
+        print(stockToBuy)
+        # trace = go.Candlestick(x=df.index,
+        #                        open=df.Open,
+        #                        high=df.High,
+        #                        low=df.Low,
+        #                        close=df.Close)
+        # data = [trace]
+        #
+        # plotly.offline.plot(data, filename='simple_candlestick')
 
 print()
 print("Runtime mit " + str(numOfStocksPerThread) + " Stocks pro Thread: " + str(datetime.datetime.now() - thrStart))
