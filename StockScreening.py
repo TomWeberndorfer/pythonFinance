@@ -8,7 +8,9 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
-from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList, strat_52WHi_HiVolume, getSymbolFromName, get52W_H_Symbols
+from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList, getSymbolFromName, get52W_H_Symbols_FromExcel, \
+    write_stocks_to_buy_file
+from Strategies import strat_52WHi_HiVolume
 import threading
 import time
 import logging
@@ -33,15 +35,15 @@ dataProvider = "google"
 
 #enhanced stock messages:
 #logging.basicConfig(level=logging.DEBUG)
+
 ##########################
 
 #symbols to read
-
 Nasdaq100_Symbols = ["AAPL", "ADBE", "ADI", "ADP", "ADSK", "AKAM", "ALXN",
                          "AMAT", "AMGN", "AMZN", "ATVI", "AVGO", "BBBY", "BIDU", "BIIB",
                          "BRCM", "CA", "CELG", "CERN", "CHKP", "CHRW", "CHTR", "CMCSA",
                          "COST", "CSCO", "CTRX", "CTSH", "CTXS", "DISCA", "DISCK", "DISH",
-                         "DLTR", "DTV", "EBAY", "EQIX", "ESRX", "EXPD", "EXPE", "FAST",
+                         "DLTR", "EBAY", "EQIX", "ESRX", "EXPD", "EXPE", "FAST",
                          "FB", "FFIV", "FISV", "FOXA", "GILD", "GMCR", "GOOG",
                          "GRMN", "HSIC", "ILMN", "INTC", "INTU", "ISRG", "KLAC", "KRFT",
                          "LBTYA", "LLTC", "LMCA", "LMCK", "LVNTA", "MAR", "MAT", "MDLZ",
@@ -52,8 +54,8 @@ Nasdaq100_Symbols = ["AAPL", "ADBE", "ADI", "ADP", "ADSK", "AKAM", "ALXN",
                          "VOD", "VRSK", "VRTX", "WDC", "WFM", "WYNN", "XLNX", "YHOO", "NOC"]
 
 DAX_Symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK", "ETR:CON", "ETR:DAI",
-                 "ETR:DB1", "ETR:DBK", "ETR:DPB", "ETR:DPW", "ETR:DTE", "ETR:EOA", "ETR:FME", "ETR:HEN3",
-                 "ETR:HRX", "ETR:IFX", "ETR:LHA", "ETR:LIN", "ETR:MAN", "ETR:MEO", "ETR:MRK.DE", "ETR:MUV2",
+                 "ETR:DB1", "ETR:DBK", "ETR:DPB", "ETR:DPW", "ETR:DTE", "ETR:FME", "ETR:HEN3",
+                 "ETR:IFX", "ETR:LHA", "ETR:LIN", "ETR:MAN", "ETR:MEO", "ETR:MRK.DE", "ETR:MUV2",
                  "ETR:RWE", "ETR:SAP", "ETR:SIE", "ETR:TKA", "ETR:TUI1", "ETR:VOW", "ETR:BAYN",
                  "ETR:FNTN", "ETR:O2D", "ETR:QIA", "ETR:DRI", "ETR:AM3D", "ETR:O1BC", "ETR:GFT", "ETR:NDX1",
                  "ETR:SBS", "ETR:COK", "ETR:DLG", "ETR:DRW3", "ETR:SMHN", "ETR:WDI", "ETR:BC8", "ETR:MOR",
@@ -63,15 +65,36 @@ DAX_Symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK",
 
 allSymbols = []
 
-if (False):
-    #DAX_Symbols = ["PCLN"]
-    #Nasdaq100_Symbols = ["CHTR"]
+###############################################################################################
+# enter stock filter options
+option = 1
+
+#alles Dax + nasdqa + excel
+if (option == 0):
+    symbols52W_Hi = get52W_H_Symbols_FromExcel()
+    allSymbols.extend(symbols52W_Hi)
     allSymbols.extend(Nasdaq100_Symbols)
     allSymbols.extend(DAX_Symbols)
-else :
-    symbols52W_Hi= get52W_H_Symbols()
+
+# versuch DAX
+if (option == 1):
+    DAX_Symbols = ["ETR:BC8"]
+    allSymbols.extend(DAX_Symbols)
+
+#versuch NASDAQ
+if (option==2):
+    Nasdaq100_Symbols = ["CHTR"]
+    allSymbols.extend(Nasdaq100_Symbols)
+
+# nur finanzen excel
+if (option == 3):
+    symbols52W_Hi= get52W_H_Symbols_FromExcel()
     allSymbols.extend(symbols52W_Hi)
 
+#nur DAX und NASDAQ
+if (option == 4):
+    allSymbols.extend(Nasdaq100_Symbols)
+    allSymbols.extend(DAX_Symbols)
 
 ##########################################################
 
@@ -127,6 +150,7 @@ if (stocksToBuy is not None):
         # data = [trace]
         #
         # plotly.offline.plot(data, filename='simple_candlestick')
+
 
 print()
 print("Runtime mit " + str(numOfStocksPerThread) + " Stocks pro Thread: " + str(datetime.datetime.now() - thrStart))

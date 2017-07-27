@@ -1,17 +1,8 @@
-import pandas as pd
-from pandas_datareader import data, wb
 # import pandas.io.data as web  # Package and modules for importing data; this code may change depending on pandas version
-import datetime
-import plotly
-import plotly.plotly as py
-import plotly.graph_objs as go
-from datetime import timedelta
-import sys
-import threading
-import time
 import logging
+
 import urllib3
-import re
+
 
 def isVolumeRaising(stock, stockName):
     i = 0
@@ -109,48 +100,6 @@ def splitStockList(arr, size):
     return arrs
 
 
-def strat_52WHi_HiVolume(stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end):
-    stocksToBuy = []
-    cnt = 1
-
-    for stockName in stocksToCheck:
-
-        try:
-
-            volumeRaising = False
-            volumeHighEnough = False
-            stockHas52Hi = False
-            # if ((cnt % 5) == 0):
-            #   logging.debug(self.name + ":" + str(cnt) + "/" + str(len(stocksToCheck)))
-
-            stock52W = data.DataReader(stockName, dataProvider, Ago52W, end)
-            stock5D = data.DataReader(stockName, dataProvider, Ago5D, end)
-            stock10D = data.DataReader(stockName, dataProvider, Ago10D, end)
-
-            df = stock52W
-            logging.debug(stockName)
-            logging.debug(stock5D)
-
-            volumeHighEnough = isVolumeHighEnough(stock5D)
-            if (volumeHighEnough):
-                #TODO volumeRaising = isVolumeRaising(stock5D, stockName)
-                volumeRaising = isVolumeRaising_2(stock5D, stock10D, stockName)
-
-                if (volumeRaising):
-                    stockHas52Hi = is52W_High(df)
-
-            if (volumeHighEnough and stockHas52Hi and volumeRaising):
-                stocksToBuy.append(stockName)
-
-        except Exception as e:
-            # e = sys.exc_info()[0]
-            print("Stock: " + str(stockName) + " is faulty: " + str(e))
-
-        cnt = cnt + 1
-
-    return stocksToBuy
-
-
 def getSymbolFromName(name):
     try:
         origName = name
@@ -181,7 +130,7 @@ def getSymbolFromName(name):
         return " "
 
 
-def get52W_H_Symbols ():
+def get52W_H_Symbols_FromExcel ():
     import xlrd
     f = open('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\stockList.txt', 'w')
     f.write("Name,   Symbol \n")  # python will convert \n to os.linesep
@@ -204,3 +153,17 @@ def get52W_H_Symbols ():
 
     f.close()  # you can omit in most cases as the destructor will call it
     return stocks
+
+def write_stocks_to_buy_file (txt):
+    import datetime
+    now = datetime.datetime.now()
+
+    with open("C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\StocksToBuy.txt", "a") as myfile:
+        #for stockToBuy in stocksToBuy:
+            #myfile.write(str(stockToBuy) + ", " +  now.strftime("%Y-%m-%d %H:%M") + "\n")
+            myfile.write(str(txt) + ", " +  str(now.strftime("%Y-%m-%d %H:%M")) + "\n")
+            myfile.write("")
+
+
+    myfile.close()
+
