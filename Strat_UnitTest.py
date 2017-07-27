@@ -9,7 +9,7 @@ from datetime import timedelta
 import sys
 import threading
 from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList
-from Strategies import strat_52WHi_HiVolume
+from Strategies import strat_scheduler
 import threading
 import time
 import logging

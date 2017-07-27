@@ -10,7 +10,7 @@ import sys
 import threading
 from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList, getSymbolFromName, get52W_H_Symbols_FromExcel, \
     write_stocks_to_buy_file
-from Strategies import strat_52WHi_HiVolume
+from Strategies import strat_scheduler
 import threading
 import time
 import logging
@@ -67,14 +67,13 @@ allSymbols = []
 
 ###############################################################################################
 # enter stock filter options
-option = 1
-
-#alles Dax + nasdqa + excel
-if (option == 0):
-    symbols52W_Hi = get52W_H_Symbols_FromExcel()
-    allSymbols.extend(symbols52W_Hi)
-    allSymbols.extend(Nasdaq100_Symbols)
-    allSymbols.extend(DAX_Symbols)
+# 0 = alles (Dax + nasdaq + excel)
+# 1 = VERSUCH DAX
+# 2 = VERSUCH NASDAQ
+# 3 = nur finanzen excel
+# 4 = NORMAL nur DAX und NASDAQ
+option = 2
+###########################################################
 
 # versuch DAX
 if (option == 1):
@@ -86,12 +85,20 @@ if (option==2):
     Nasdaq100_Symbols = ["CHTR"]
     allSymbols.extend(Nasdaq100_Symbols)
 
+#----------------------------------------------
+#alles Dax + nasdaq + excel
+if (option == 0):
+    symbols52W_Hi = get52W_H_Symbols_FromExcel()
+    allSymbols.extend(symbols52W_Hi)
+    allSymbols.extend(Nasdaq100_Symbols)
+    allSymbols.extend(DAX_Symbols)
+
 # nur finanzen excel
 if (option == 3):
     symbols52W_Hi= get52W_H_Symbols_FromExcel()
     allSymbols.extend(symbols52W_Hi)
 
-#nur DAX und NASDAQ
+#NORMAL: nur DAX und NASDAQ
 if (option == 4):
     allSymbols.extend(Nasdaq100_Symbols)
     allSymbols.extend(DAX_Symbols)
@@ -107,8 +114,7 @@ class myThread (threading.Thread):
     def run(self):
         print ("Starting " + self.name)
         global stocksToBuy
-        stocksToBuy.extend(strat_52WHi_HiVolume (self.stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end))
-        #print ("Exiting " + self.name)
+        stocksToBuy.extend(strat_scheduler (self.stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end))
 
 #####################
 
@@ -134,7 +140,7 @@ for t in threads:
     t.join()
 
 print()
-print("++++++++++++++++++++")
+print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 print("Aktien kaufen: ")
 if (stocksToBuy is not None):
     if(len(stocksToBuy) == 0):
