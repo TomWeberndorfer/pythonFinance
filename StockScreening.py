@@ -8,10 +8,12 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
+
+from MyThread import MyThread
 from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList, getSymbolFromName, get52W_H_Symbols_FromExcel, \
     write_stocks_to_buy_file
 from Strategies import strat_scheduler
-import threading
+
 import time
 import logging
 
@@ -20,6 +22,8 @@ exitFlag = 0
 threads = []
 stocksToBuy = []
 err = []
+
+program_start_time= datetime.datetime.now()
 
 ##########################
 # config
@@ -77,7 +81,7 @@ option = 3
 
 # versuch DAX
 if (option == 1):
-    DAX_Symbols = ["KU2.MU"]
+    DAX_Symbols = ["KU2.MU", "ETR:ADS", "ETR:ALV", "ETR:BAS"]
     allSymbols.extend(DAX_Symbols)
 
 #versuch NASDAQ
@@ -103,41 +107,24 @@ if (option == 4):
     allSymbols.extend(Nasdaq100_Symbols)
     allSymbols.extend(DAX_Symbols)
 
-##########################################################
-
-class myThread (threading.Thread):
-    def __init__(self, stocksToCheck, name):
-        threading.Thread.__init__(self)
-        self.stocksToCheck = stocksToCheck
-        self.name = name
-
-    def run(self):
-        print ("Starting " + self.name)
-        global stocksToBuy
-        stocksToBuy.extend(strat_scheduler (self.stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end))
-
-#####################
-
 # Create new threads
 splits= splitStockList(allSymbols, numOfStocksPerThread)
+stock_screening_threads = MyThread ("stock_screening_threads")
+
+def test (ch, dataProvider, Ago52W, Ago5D, Ago10D, end):
+    print ("Started with: " + str(ch))
+    stocksToBuy.extend(strat_scheduler(ch, dataProvider, Ago52W, Ago5D, Ago10D, end))
 
 i = 0
-thrToExe= []
 while i < len(splits):
     ch = splits[i]
-    thrToExe.append(myThread(ch, "Thread-" + str(i)))
+    #stock_screening_threads.append_thread(threading.Thread(target=f, kwargs={'x': 3, 'y': 42}))
+    stock_screening_threads.append_thread(threading.Thread(target=test, kwargs={'ch': ch, 'dataProvider': dataProvider,
+                                                                                'Ago52W': Ago52W, 'Ago5D': Ago5D, 'Ago10D': Ago10D, 'end':end}))
     i += 1
 
 # Start new Threads
-thrStart= datetime.datetime.now()
-
-for tr in thrToExe:
-    tr.start()
-    threads.append(tr)
-
-# Wait for all threads to complete
-for t in threads:
-    t.join()
+stock_screening_threads.execute_threads()
 
 print()
 print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -157,6 +144,5 @@ if (stocksToBuy is not None):
         #
         # plotly.offline.plot(data, filename='simple_candlestick')
 
-
 print()
-print("Runtime mit " + str(numOfStocksPerThread) + " Stocks pro Thread: " + str(datetime.datetime.now() - thrStart))
+print("Runtime mit " + str(numOfStocksPerThread) + " Stocks pro Thread: " + str(datetime.datetime.now() - program_start_time))

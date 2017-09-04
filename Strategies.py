@@ -37,7 +37,7 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end):
 
         except Exception as e:
             # e = sys.exc_info()[0]
-            print("Data Read exception: " + str(stockName) + " is faulty: " + str(e))
+            print("strat_scheduler: Data Read exception: " + str(stockName) + " is faulty: " + str(e))
             readException = True
 
         if not readException:
@@ -56,7 +56,7 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end):
 
             except Exception as e:
                 # e = sys.exc_info()[0]
-                print("Strategy Exception: " + str(stockName) + " is faulty: " + str(e))
+                print("strat_scheduler: Strategy Exception: " + str(stockName) + " is faulty: " + str(e))
 
                 # if "Unable to read URL" in str(e):
                 # return stocksToBuy # return because google stops transfer

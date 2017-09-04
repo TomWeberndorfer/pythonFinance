@@ -1,11 +1,15 @@
 # import pandas.io.data as web  # Package and modules for importing data; this code may change depending on pandas version
 import logging
 import datetime
+import threading
+
 import plotly
 import plotly.plotly as py
 import plotly.graph_objs as go
 from datetime import timedelta
 import urllib3
+
+stocks = []
 
 
 def isVolumeRaising(stock, stockName):
@@ -22,19 +26,20 @@ def isVolumeRaising(stock, stockName):
         volumeRaising = True
         while i < dataLen - 1:  # len because their are only 3 over the weekend
             vol_1 = stock.iloc[i].Volume
-            #vol_2 = stock.iloc[dataLen - 1].Volume
+            # vol_2 = stock.iloc[dataLen - 1].Volume
             if vol_1 > vol_2:
                 volumeRaising = False
                 break
             else:
                 i += 1
-    else :
+    else:
         volumeRaising = False
 
     if (volumeRaising):
-        print (stockName)
+        print(stockName)
 
     return volumeRaising
+
 
 def isVolumeRaising_2(stock, stock10D, stockName):
     i = 0
@@ -48,7 +53,7 @@ def isVolumeRaising_2(stock, stock10D, stockName):
         else:
             i += 1
 
-    #last vol must be higher than volume avg
+    # last vol must be higher than volume avg
     vol_avg = 0
     data_len10_d = len(stock10D)
     vol_last = stock10D.iloc[data_len10_d - 1].Volume
@@ -61,13 +66,14 @@ def isVolumeRaising_2(stock, stock10D, stockName):
         vol_avg += curr_vol
         i += 1
 
-    vol_avg /= data_len10_d #calc avg
+    vol_avg /= data_len10_d  # calc avg
 
-    #last 3 entries must have a larger volume as avg
+    # last 3 entries must have a larger volume as avg
     if (vol_last > vol_avg and vol_last_min1 > vol_avg and vol_last_min2 > vol_avg):
         return True
 
     return False
+
 
 def is52W_High(stock):
     highest_high = stock['High'].max()
@@ -108,7 +114,7 @@ def getSymbolFromName(name):
     try:
         origName = name
 
-        #TODO regex replaced = re.sub('\W', ' ', name)
+        # TODO regex replaced = re.sub('\W', ' ', name)
 
         name = name.replace(" ", "+")
         name = name.replace(".", "")
@@ -117,59 +123,71 @@ def getSymbolFromName(name):
         if (len(nameSpl) > 2):
             name = nameSpl[0] + "+" + nameSpl[1]
 
-        symbol =""
+        symbol = ""
         http = urllib3.PoolManager()
         # query: http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=Priceline&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
         str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
         str2 = "&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
         r = http.request('GET', str1 + name + str2)
-        #print(r.data)
+        # print(r.data)
         strRes = str(r.data)
-        #print(strRes.rsplit('{"symbol":"')[1].rsplit('"')[0])
+        # print(strRes.rsplit('{"symbol":"')[1].rsplit('"')[0])
         symbol = strRes.rsplit('{"symbol":"')[1].rsplit('"')[0]
         return symbol
 
     except Exception as e:
-        print("ERROR symbol: " + symbol + ", Name: " + str(origName) + " ("+ name + ") is faulty: " + str(e))
+        print("getSymbolFromName: ERROR symbol: " + symbol + ", Name: " + str(
+            origName) + " (" + name + ") is faulty: " + str(e))
         return " "
 
 
-def get52W_H_Symbols_FromExcel ():
+def symbol_thread(name):
+    symbol = getSymbolFromName(name)
+    if (symbol != " "):
+        stocks.append(symbol)
+
+
+def get52W_H_Symbols_FromExcel():
     import xlrd
     f = open('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\stockList.txt', 'w')
     f.write("Name,   Symbol \n")  # python will convert \n to os.linesep
-    stocks = []
+
     sh = xlrd.open_workbook(
         'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\52W-HochAutomatisch_Finanzen.xlsx').sheet_by_index(0)
 
-    thrStart = datetime.datetime.now()
+    from MyThread import MyThread
+    get_symbol_threads = MyThread("get_symbol_threads")
 
     for rownum in range(sh.nrows):
         try:
             if (rownum != 0):
                 name = str(sh.cell(rownum, 0).value)
-                symbol = getSymbolFromName(name)
-                if (symbol != " "):
-                    stocks.append(symbol)
-                    f.write(name + ",  " + symbol + "\n")  # python will convert \n to os.linesep
+                get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name}))
+                #symbol = getSymbolFromName(name)
+                #if (symbol != " "):
+                 #   stocks.append(symbol)
+
                     # print(str(rownum)+ " = " + name + ", " + symbol)
         except Exception as e:
             print("Method exception: get52W_H_Symbols_FromExcel: stock name: " + str(name) + " is faulty: " + str(e))
 
+    get_symbol_threads.execute_threads()
+
+    for symbol in stocks:
+        f.write(name + ",  " + symbol + "\n")  # python will convert \n to os.linesep
+
     f.close()  # you can omit in most cases as the destructor will call it
-    print("Runtime get52W_H_Symbols_FromExcel: " + str(datetime.datetime.now() - thrStart))
     return stocks
 
-def write_stocks_to_buy_file (txt):
+
+def write_stocks_to_buy_file(txt):
     import datetime
     now = datetime.datetime.now()
 
     with open("C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\StocksToBuy.txt", "a") as myfile:
-        #for stockToBuy in stocksToBuy:
-            #myfile.write(str(stockToBuy) + ", " +  now.strftime("%Y-%m-%d %H:%M") + "\n")
-            myfile.write(str(txt) + ", " +  str(now.strftime("%Y-%m-%d %H:%M")) + "\n")
-            myfile.write("")
-
+        # for stockToBuy in stocksToBuy:
+        # myfile.write(str(stockToBuy) + ", " +  now.strftime("%Y-%m-%d %H:%M") + "\n")
+        myfile.write(str(txt) + ", " + str(now.strftime("%Y-%m-%d %H:%M")) + "\n")
+        myfile.write("")
 
     myfile.close()
-
