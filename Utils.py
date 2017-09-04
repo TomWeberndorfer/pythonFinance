@@ -1,6 +1,10 @@
 # import pandas.io.data as web  # Package and modules for importing data; this code may change depending on pandas version
 import logging
-
+import datetime
+import plotly
+import plotly.plotly as py
+import plotly.graph_objs as go
+from datetime import timedelta
 import urllib3
 
 
@@ -138,6 +142,8 @@ def get52W_H_Symbols_FromExcel ():
     sh = xlrd.open_workbook(
         'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\52W-HochAutomatisch_Finanzen.xlsx').sheet_by_index(0)
 
+    thrStart = datetime.datetime.now()
+
     for rownum in range(sh.nrows):
         try:
             if (rownum != 0):
@@ -148,10 +154,10 @@ def get52W_H_Symbols_FromExcel ():
                     f.write(name + ",  " + symbol + "\n")  # python will convert \n to os.linesep
                     # print(str(rownum)+ " = " + name + ", " + symbol)
         except Exception as e:
-            print("name: " + str(name) + " is faulty: " + str(e))
-            f.close()  # you can omit in most cases as the destructor will call it
+            print("Method exception: get52W_H_Symbols_FromExcel: stock name: " + str(name) + " is faulty: " + str(e))
 
     f.close()  # you can omit in most cases as the destructor will call it
+    print("Runtime get52W_H_Symbols_FromExcel: " + str(datetime.datetime.now() - thrStart))
     return stocks
 
 def write_stocks_to_buy_file (txt):

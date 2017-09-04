@@ -72,12 +72,12 @@ allSymbols = []
 # 2 = VERSUCH NASDAQ
 # 3 = nur finanzen excel
 # 4 = NORMAL nur DAX und NASDAQ
-option = 2
+option = 3
 ###########################################################
 
 # versuch DAX
 if (option == 1):
-    DAX_Symbols = ["ETR:BC8"]
+    DAX_Symbols = ["KU2.MU"]
     allSymbols.extend(DAX_Symbols)
 
 #versuch NASDAQ
