@@ -10,7 +10,7 @@ from datetime import timedelta
 import urllib3
 
 stocks = []
-
+names = []
 
 def isVolumeRaising(stock, stockName):
     i = 0
@@ -74,18 +74,29 @@ def isVolumeRaising_2(stock, stock10D, stockName):
 
     return False
 
-
 def is52W_High(stock):
     highest_high = stock['High'].max()
     hiPlus3Percent = highest_high * 1.03
     hiMinus2Percent = highest_high * 0.98
     dataLen = len(stock)
-    curVal = stock.iloc[dataLen - 1].Close
+    curVal = stock.iloc[dataLen - 1].Max #TODO: Close
 
     if curVal > hiMinus2Percent and curVal < hiPlus3Percent:
         return True
     else:
         return False
+
+
+def gapUp(stock, minGapMultiplier):
+    dataLen = len(stock)
+    yesterday_val = stock.iloc[dataLen - 2].Close
+    curVal = stock.iloc[dataLen - 1].Open
+
+    if (curVal > (yesterday_val * minGapMultiplier)):
+        return True
+    else:
+        return False
+
 
 
 def isVolumeHighEnough(stock):
@@ -145,6 +156,7 @@ def symbol_thread(name):
     symbol = getSymbolFromName(name)
     if (symbol != " "):
         stocks.append(symbol)
+        names.append(name)
 
 
 def get52W_H_Symbols_FromExcel():
@@ -173,8 +185,11 @@ def get52W_H_Symbols_FromExcel():
 
     get_symbol_threads.execute_threads()
 
-    for symbol in stocks:
-        f.write(name + ",  " + symbol + "\n")  # python will convert \n to os.linesep
+    cnt = 0
+    while (cnt < len(names)):
+        for symbol in stocks:
+            f.write(names[cnt] + ",  " + symbol + "\n")  # python will convert \n to os.linesep
+            cnt+=1
 
     f.close()  # you can omit in most cases as the destructor will call it
     return stocks

@@ -17,9 +17,6 @@ import time
 import logging
 
 ##########################################################
-#thrToExe = []
-#threads = []
-
 class MyThread:
     def __init__(self, name):
         self.name = name
