@@ -104,7 +104,7 @@ def isLastVolumeHigherThanAvg(data, check_days, vol_avg, signif_fact):
         raise NotImplementedError
     dataLen = len(data)
     vol_last = data.iloc[dataLen - 1].Volume
-    if (vol_last < vol_avg * signif_fact):
+    if (vol_last < (vol_avg * signif_fact)):
         return False
     else:
         return True

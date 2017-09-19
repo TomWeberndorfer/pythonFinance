@@ -23,6 +23,7 @@ exitFlag = 0
 threads = []
 stocksToBuy = []
 err = []
+tabsForPrint = "                       "
 
 program_start_time = datetime.now()
 
@@ -156,12 +157,12 @@ if (stocksToBuy is not None):
 
                 for line in array:
                     if ',  ' + stockToBuy in line:
-                        print (str(line) + ":                       " + url + "             " + url2)
+                        print (str(line) + ":" + tabsForPrint + url + tabsForPrint + url2)
                         found = True
                         break
 
                 if not found:
-                    print(str(stockToBuy) + ":                              " + url + "             " + url2)
+                    print(str(stockToBuy) + ":" + tabsForPrint + url + tabsForPrint + url2)
                     #url_1 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
                     #url = url_1 + stockToBuy
                     #webbrowser.open(url)
