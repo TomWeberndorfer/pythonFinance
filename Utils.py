@@ -12,36 +12,68 @@ import urllib3
 stocks = []
 names = []
 
-def calc_avg_vol(stock, avg_days, dataLen):
+def calc_avg_vol(stock, days_skip_from_end):
+    """
+    Calculates the average volume of stock data except the days to skip from end.
+
+    Args:
+        stock: stock data
+        days_skip_from_end: days to skip from end
+
+    Returns:
+        Average Value
+
+    Raises:
+        NotImplementedError: if parameters are None
+    """
+    if stock is None or days_skip_from_end is None:
+        raise NotImplementedError
+
     #t3: last vol must be higher than volume avg
     vol_avg = 0 #variable for avg
-    i = 2 # 2 because last entry not included
+    dataLen = len(stock) - days_skip_from_end # 2 because last entry not included
     avgCnt = 0
 
     #calc average
-    while i <= avg_days:  # add last entry too
-        curr_vol = stock.iloc[dataLen- i].Volume
+    while avgCnt < dataLen:  # add last entry too
+        curr_vol = stock.iloc[avgCnt].Volume
         vol_avg += curr_vol
-        i += 1
         avgCnt += 1
 
     vol_avg /= avgCnt  # calc avg
     return vol_avg
 
-def isVolumeRaising_withinCheckDays(stock, check_days=5, min_cnt=3, dataLen=300):
-    # TODO falsch geht immer vom letzten aus, sollte aber der letzte höchstwert sein
+def isVolumeRaising_withinCheckDays(stock, check_days, min_cnt):
+    """
+    Checks, if the volume is rising within the check days, with at least minimum value.
+
+    Args:
+        stock: stock data
+        check_days: number of days to check
+        min_cnt: min raising days within check days
+
+    Returns:
+        True, if volume is raising
+
+    Raises:
+        NotImplementedError: if parameters are None
+    """
+    if stock is None or check_days is None or min_cnt is None:
+        raise NotImplementedError
+
+    dataLen = len(stock)
     raise_cnt = 0
     i = check_days
-    new_max = 0
-    while i > 1:
+    saveVal = False
+    while i > 0:
         vol_1 = stock.iloc[dataLen - i].Volume
-        if (vol_1 > new_max):
-            new_max = vol_1
-        vol_2 = stock.iloc[dataLen - i - 1].Volume
+        if not saveVal:
+            vol_2 = stock.iloc[dataLen - i - 1].Volume
         if vol_1 > vol_2:
             raise_cnt += 1
+            saveVal = False
         else:
-            new_max = vol_2
+            saveVal = True
 
         i -= 1
 
@@ -50,32 +82,57 @@ def isVolumeRaising_withinCheckDays(stock, check_days=5, min_cnt=3, dataLen=300)
 
     return True
 
-#############################################
-# avg_days: days to calculate the average
-# check_days: days to the raise and the higher than volume
-# min_cnt: minimum days raising last and higher than avg volume
-def isVolumeRaising_2(stock, avg_days=15, check_days=5, min_cnt=3):
-    i = check_days
-    dataLen = len(stock)
+def isLastVolumeHigherThanAvg(data, check_days, vol_avg, signif_fact):
+    """
+    Calculates the average and checks,
+    if the last volume is higher than avg.
 
-    #data len smaller then avg days limit days
-    if (dataLen < avg_days):
-        avg_days = dataLen
+    Args:
+        data: stock data
+        check_days: number of days to check
+        vol_avg: average volume
+        signif_fact:  is a factor to show that the cur vol is significantly higher
 
-    #t1: minimum raising cnt within check days
-    if not isVolumeRaising_withinCheckDays(stock, check_days, min_cnt, dataLen):
+
+    Returns:
+        True, if last volume higher than avg
+
+    Raises:
+        NotImplementedError: if parameters are None
+    """
+    if data is None or check_days is None or vol_avg is None or signif_fact is None:
+        raise NotImplementedError
+    dataLen = len(data)
+    vol_last = data.iloc[dataLen - 1].Volume
+    if (vol_last < vol_avg * signif_fact):
         return False
+    else:
+        return True
 
-    vol_avg = calc_avg_vol (stock, avg_days, dataLen)
 
-    #t2: last volume higher than avg
-    vol_last = stock.iloc[dataLen - 1].Volume
-    if (vol_last < vol_avg):
-        return False
+def is_a_few_higher_than_avg(stock, check_days, min_cnt, vol_avg):
+    """
+    Calculates the average and checks,
+    if the a few volume values are higher than avg.
 
-    #t3: at least a few volume higher than avg
+    Args:
+        stock: stock data
+        check_days: number of days to check
+        min_cnt: min higher days within check days
+
+    Returns:
+        True, if last volume higher than avg
+
+    Raises:
+        NotImplementedError: if parameters are None
+    """
+    if stock is None or check_days is None or min_cnt is None:
+        raise NotImplementedError
+
+    #from [0] to end, without days to check above avg  ~ [datalen-15]
     cnt = check_days
     higher_than_avg = 0
+    dataLen = len(stock)
 
     while cnt > 1:
 
@@ -85,12 +142,62 @@ def isVolumeRaising_2(stock, avg_days=15, check_days=5, min_cnt=3):
 
         cnt-=1
 
-    if (higher_than_avg > min_cnt):
+    if (higher_than_avg >= min_cnt):
         return True
 
     return False
 
-def is52W_High(stock, hiLimitMinFact=0.98):
+def isVolumeRaising_2(data, check_days, min_cnt):
+    """
+        Uses functions, to check if stock is raising
+
+        Args:
+            data: stock data
+            check_days: number of days to check
+            min_cnt: min higher days within check days
+
+        Returns:
+            True, if raising
+
+        Raises:
+            NotImplementedError: if parameters are None
+    """
+    if data is None or check_days is None or min_cnt is None:
+        raise NotImplementedError
+
+    vol_avg = calc_avg_vol(data, 5)
+
+    #t1: minimum raising cnt within check days
+    if not isVolumeRaising_withinCheckDays(data, check_days, min_cnt):
+        return False
+
+    #t2: last volume higher than avg
+    # 1.2: is significant higher than avg
+    if not isLastVolumeHigherThanAvg (data, check_days, vol_avg, 1.2):
+        return False
+
+    #t3: at least a few volume higher than avg
+    if not is_a_few_higher_than_avg (data, check_days, min_cnt, vol_avg):
+        return False
+
+    return True
+
+def is52W_High(stock, hiLimitMinFact):
+    """
+        Check 52 week High
+
+        Args:
+            stock: stock data
+            hiLimitMinFact: factor current data within 52 w high (ex: currVal > (Max * 0.98))
+
+        Returns:
+            True, if 52 week high
+
+        Raises:
+            NotImplementedError: if parameters are None
+        """
+    if stock is None or hiLimitMinFact is None:
+        raise NotImplementedError
     dataLen = len(stock)
     curVal = stock.iloc[dataLen - 1].High
     highest_high = stock['High'].max()
@@ -107,6 +214,22 @@ def is52W_High(stock, hiLimitMinFact=0.98):
 
 
 def gapUp(stock, minGapMultiplier):
+    """
+        Check Gap Up strategy
+
+        Args:
+            stock: stock data
+            minGapMultiplier: multiplier gap up (percent to multiplier)
+
+        Returns:
+            True, if gap up
+
+        Raises:
+            NotImplementedError: if parameters are None
+        """
+    if stock is None or minGapMultiplier is None:
+        raise NotImplementedError
+
     dataLen = len(stock)
     yesterday_val = stock.iloc[dataLen - 2].Close
     curVal = stock.iloc[dataLen - 1].Open
@@ -129,20 +252,12 @@ def gapUp(stock, minGapMultiplier):
 #         return False
 
 
-def isVolumeHighEnough(stock, avg_days=10):
+def isVolumeHighEnough(stock):
+    if stock is None:
+        raise NotImplementedError
+
     minReqVol = 30000
-    vol_avg = 0
-    dataLen = len(stock)
-    i = 1
-    avgCnt = 0
-
-    while i <= avg_days:  # add last entry too
-        curr_vol = stock.iloc[dataLen - i].Volume
-        vol_avg += curr_vol
-        i += 1
-        avgCnt += 1
-
-    vol_avg /= avgCnt  # calc avg
+    vol_avg = calc_avg_vol(stock, 0)
 
     if (vol_avg > minReqVol):
         return True

@@ -45,8 +45,8 @@ class MyThread:
         for t in self.threads:
             t.join()
 
-        print("Runtime Threads" + str(self.name) + ": " + str(
-            datetime.datetime.now() - thr_start) + ", cnt: " + str(trCntr))
+        print("Runtime Threads " + str(self.name) + ": " + str(
+            datetime.datetime.now() - thr_start) + ", cnt of threads: " + str(trCntr))
 
     def append_thread(self, thread_to_append):
         try:

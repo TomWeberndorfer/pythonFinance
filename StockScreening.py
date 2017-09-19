@@ -82,7 +82,7 @@ option = 0
 
 # versuch DAX
 if (option == 1):
-    DAX_Symbols = ["BSX", "MU", "CNP"]
+    DAX_Symbols = ["ETR:WAF"]
     allSymbols.extend(DAX_Symbols)
 
 # versuch NASDAQ

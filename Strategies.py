@@ -35,10 +35,6 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, end):
             stockName = newStockName
             stock52W = data.DataReader(stockName, dataProvider, Ago52W.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d"))
 
-            #todo for unit tests
-            #stock52W.to_csv('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\out.csv')
-            # stockTest = pd.read_csv('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\out.csv')
-
         except Exception as e:
             # e = sys.exc_info()[0]
             print("strat_scheduler: Data Read exception: " + str(stockName) + " is faulty: " + str(e))
@@ -81,23 +77,23 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, end):
     return stocksToBuy
 
 
-def strat_52WHi_HiVolume(stockName, stock52W):
+def strat_52WHi_HiVolume(stockName, stock52W_data):
 
     volumeRaising = False
     volumeHighEnough = False
     stockHas52Hi = False
 
     logging.debug(stockName)
-    volumeHighEnough = isVolumeHighEnough(stock52W)
+    volumeHighEnough = isVolumeHighEnough(stock52W_data)
     if volumeHighEnough:
-        volumeRaising = isVolumeRaising_2(stock52W, 15)
+        volumeRaising = isVolumeRaising_2(stock52W_data, 5, 3)
 
         if volumeRaising:
-            stockHas52Hi = is52W_High(stock52W)
+            stockHas52Hi = is52W_High(stock52W_data, 0.98)
 
     if volumeHighEnough and stockHas52Hi and volumeRaising:
-        dataLen = len(stock52W)
-        endKurs = stock52W.iloc[dataLen - 1].Close
+        dataLen = len(stock52W_data)
+        endKurs = stock52W_data.iloc[dataLen - 1].Close
         write_stocks_to_buy_file(
             str(stockName) + ", " + str(endKurs) + ", strat_52WHi_HiVolume")  # TODO überall einbauen in jede strat
         return stockName
