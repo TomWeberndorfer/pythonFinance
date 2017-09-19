@@ -1,16 +1,17 @@
 import pandas as pd
 from pandas_datareader import data, wb
 # import pandas.io.data as web  # Package and modules for importing data; this code may change depending on pandas version
-import datetime
+from datetime import datetime, date, time
 import plotly
 import plotly.plotly as py
 import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
+import webbrowser
 
 from MyThread import MyThread
-from Utils import isVolumeRaising, is52W_High, isVolumeHighEnough, splitStockList, getSymbolFromName, \
+from Utils import  is52W_High, isVolumeHighEnough, splitStockList, getSymbolFromName, \
     get52W_H_Symbols_FromExcel, \
     write_stocks_to_buy_file
 from Strategies import strat_scheduler
@@ -23,19 +24,20 @@ threads = []
 stocksToBuy = []
 err = []
 
-program_start_time = datetime.datetime.now()
+program_start_time = datetime.now()
 
 ##########################
 # config
 numOfStocksPerThread = 5
 volumeDayDelta = 5
 volumeAvgDayDelta = 15
-end = datetime.datetime.now()
-Ago52W = end - datetime.timedelta(weeks=52)
-Ago5D = datetime.datetime.now() - timedelta(days=volumeDayDelta)
-Ago10D = datetime.datetime.now() - timedelta(days=volumeAvgDayDelta)
+end = datetime.now()
+Ago52W = (end - timedelta(weeks=52))
+
+#Ago5D = datetime.datetime.now() - timedelta(days=volumeDayDelta)
+#Ago10D = datetime.datetime.now() - timedelta(days=volumeAvgDayDelta)
 dataProvider = "google"
-# dataProvider = "yahoo"
+#dataProvider = "yahoo"
 
 # enhanced stock messages:
 # logging.basicConfig(level=logging.DEBUG)
@@ -75,17 +77,17 @@ allSymbols = []
 # 2 = VERSUCH NASDAQ
 # 3 = nur finanzen excel
 # 4 = NORMAL nur DAX und NASDAQ
-option = 2
+option = 0
 ###########################################################
 
 # versuch DAX
 if (option == 1):
-    DAX_Symbols = ["KU2.MU", "ETR:ADS", "ETR:ALV", "ETR:BAS"]
+    DAX_Symbols = ["BSX", "MU", "CNP"]
     allSymbols.extend(DAX_Symbols)
 
 # versuch NASDAQ
 if (option == 2):
-    Nasdaq100_Symbols = ["ALL"]
+    Nasdaq100_Symbols = ["AAPL"]
     allSymbols.extend(Nasdaq100_Symbols)
 
 # ----------------------------------------------
@@ -111,9 +113,9 @@ splits = splitStockList(allSymbols, numOfStocksPerThread)
 stock_screening_threads = MyThread("stock_screening_threads")
 
 
-def function_for_threading_strat_scheduler(ch, dataProvider, Ago52W, Ago5D, Ago10D, end):
+def function_for_threading_strat_scheduler(ch, dataProvider, Ago52W, end):
     print("Started with: " + str(ch))
-    stocksToBuy.extend(strat_scheduler(ch, dataProvider, Ago52W, Ago5D, Ago10D, end))
+    stocksToBuy.extend(strat_scheduler(ch, dataProvider, Ago52W, end))
 
 
 i = 0
@@ -121,8 +123,7 @@ while i < len(splits):
     ch = splits[i]
     stock_screening_threads.append_thread(
         threading.Thread(target=function_for_threading_strat_scheduler, kwargs={'ch': ch, 'dataProvider': dataProvider,
-                                                                                'Ago52W': Ago52W, 'Ago5D': Ago5D,
-                                                                                'Ago10D': Ago10D, 'end': end}))
+                                                                                'Ago52W': Ago52W, 'end': end}))
     i += 1
 
 # Start new Threads
@@ -131,12 +132,39 @@ stock_screening_threads.execute_threads()
 print()
 print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 print("Aktien kaufen: ")
+print()
 if (stocksToBuy is not None):
     if (len(stocksToBuy) == 0):
         print("Keine gefunden")
     else:
-        for stockToBuy in stocksToBuy:
-            print(stockToBuy)
+        with open("C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\stockList.txt", "r") as ins:
+            array = []
+            for line in ins:
+                array.append(line.replace('\n', ' ').replace('\r', ''))
+
+            for stockToBuy in stocksToBuy:
+                found = False
+                #print(stockToBuy)
+
+                # open a public URL, in this case, the webbrowser docs
+                url_1 = "https://www.google.com/finance?q="
+                url_2 = "&ei=Mby3WbnGGsjtsgHejoPwDA"
+                url = url_1 + stockToBuy + url_2
+
+                url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
+                url2 = url_3 + stockToBuy
+
+                for line in array:
+                    if ',  ' + stockToBuy in line:
+                        print (str(line) + ":                       " + url + "             " + url2)
+                        found = True
+                        break
+
+                if not found:
+                    print(str(stockToBuy) + ":                              " + url + "             " + url2)
+                    #url_1 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
+                    #url = url_1 + stockToBuy
+                    #webbrowser.open(url)
             # trace = go.Candlestick(x=df.index,
             #                        open=df.Open,
             #                        high=df.High,
@@ -148,4 +176,4 @@ if (stocksToBuy is not None):
 
 print()
 print("Runtime mit " + str(numOfStocksPerThread) + " Stocks pro Thread: " + str(
-    datetime.datetime.now() - program_start_time))
+    datetime.now() - program_start_time))

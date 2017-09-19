@@ -12,100 +12,139 @@ import urllib3
 stocks = []
 names = []
 
-def isVolumeRaising(stock, stockName):
-    i = 0
-    volumeRaising = True
-    dataLen = len(stock)
+def calc_avg_vol(stock, avg_days, dataLen):
+    #t3: last vol must be higher than volume avg
+    vol_avg = 0 #variable for avg
+    i = 2 # 2 because last entry not included
+    avgCnt = 0
 
-    vol_1 = stock.iloc[0].Volume
-    vol_x1 = stock.iloc[1].Volume
-    vol_x2 = stock.iloc[2].Volume
-    vol_x3 = stock.iloc[3].Volume
-    vol_2 = stock.iloc[dataLen - 1].Volume
-    if (vol_1 < vol_2):
-        volumeRaising = True
-        while i < dataLen - 1:  # len because their are only 3 over the weekend
-            vol_1 = stock.iloc[i].Volume
-            # vol_2 = stock.iloc[dataLen - 1].Volume
-            if vol_1 > vol_2:
-                volumeRaising = False
-                break
-            else:
-                i += 1
-    else:
-        volumeRaising = False
-
-    if (volumeRaising):
-        print(stockName)
-
-    return volumeRaising
-
-
-def isVolumeRaising_2(stock, stock10D, stockName):
-    i = 0
-    dataLen = len(stock)
-
-    while i < dataLen - 1:  # len because their are only 3 over the weekend
-        vol_1 = stock.iloc[i].Volume
-        vol_2 = stock.iloc[i + 1].Volume
-        if vol_1 > vol_2:
-            return False
-        else:
-            i += 1
-
-    # last vol must be higher than volume avg
-    vol_avg = 0
-    data_len10_d = len(stock10D)
-    vol_last = stock10D.iloc[data_len10_d - 1].Volume
-    vol_last_min1 = stock10D.iloc[data_len10_d - 2].Volume
-    vol_last_min2 = stock10D.iloc[data_len10_d - 3].Volume
-    i = 0
-
-    while i < data_len10_d:  # add last entry too
-        curr_vol = stock10D.iloc[i].Volume
+    #calc average
+    while i <= avg_days:  # add last entry too
+        curr_vol = stock.iloc[dataLen- i].Volume
         vol_avg += curr_vol
         i += 1
+        avgCnt += 1
 
-    vol_avg /= data_len10_d  # calc avg
+    vol_avg /= avgCnt  # calc avg
+    return vol_avg
 
-    # last 3 entries must have a larger volume as avg
-    if (vol_last > vol_avg and vol_last_min1 > vol_avg and vol_last_min2 > vol_avg):
+def isVolumeRaising_withinCheckDays(stock, check_days=5, min_cnt=3, dataLen=300):
+    # TODO falsch geht immer vom letzten aus, sollte aber der letzte höchstwert sein
+    raise_cnt = 0
+    i = check_days
+    new_max = 0
+    while i > 1:
+        vol_1 = stock.iloc[dataLen - i].Volume
+        if (vol_1 > new_max):
+            new_max = vol_1
+        vol_2 = stock.iloc[dataLen - i - 1].Volume
+        if vol_1 > vol_2:
+            raise_cnt += 1
+        else:
+            new_max = vol_2
+
+        i -= 1
+
+    if (raise_cnt < min_cnt):
+        return False
+
+    return True
+
+#############################################
+# avg_days: days to calculate the average
+# check_days: days to the raise and the higher than volume
+# min_cnt: minimum days raising last and higher than avg volume
+def isVolumeRaising_2(stock, avg_days=15, check_days=5, min_cnt=3):
+    i = check_days
+    dataLen = len(stock)
+
+    #data len smaller then avg days limit days
+    if (dataLen < avg_days):
+        avg_days = dataLen
+
+    #t1: minimum raising cnt within check days
+    if not isVolumeRaising_withinCheckDays(stock, check_days, min_cnt, dataLen):
+        return False
+
+    vol_avg = calc_avg_vol (stock, avg_days, dataLen)
+
+    #t2: last volume higher than avg
+    vol_last = stock.iloc[dataLen - 1].Volume
+    if (vol_last < vol_avg):
+        return False
+
+    #t3: at least a few volume higher than avg
+    cnt = check_days
+    higher_than_avg = 0
+
+    while cnt > 1:
+
+        vol = stock.iloc[dataLen - cnt].Volume
+        if (vol > vol_avg):
+            higher_than_avg +=1
+
+        cnt-=1
+
+    if (higher_than_avg > min_cnt):
         return True
 
     return False
 
-def is52W_High(stock):
-    highest_high = stock['High'].max()
-    hiPlus3Percent = highest_high * 1.03
-    hiMinus2Percent = highest_high * 0.98
+def is52W_High(stock, hiLimitMinFact=0.98):
     dataLen = len(stock)
-    curVal = stock.iloc[dataLen - 1].Max #TODO: Close
+    curVal = stock.iloc[dataLen - 1].High
+    highest_high = stock['High'].max()
 
-    if curVal > hiMinus2Percent and curVal < hiPlus3Percent:
+    if curVal == highest_high:
         return True
-    else:
-        return False
+
+    else :
+        hiMinusLimit = highest_high * hiLimitMinFact
+        if curVal > hiMinusLimit:
+            return True
+        else:
+            return False
 
 
 def gapUp(stock, minGapMultiplier):
     dataLen = len(stock)
     yesterday_val = stock.iloc[dataLen - 2].Close
     curVal = stock.iloc[dataLen - 1].Open
-
-    if (curVal > (yesterday_val * minGapMultiplier)):
+    gapUpVal = (yesterday_val * minGapMultiplier)
+    #TODO: überprüfen ob tage hintereinander, achtung wochenende
+    if (curVal > gapUpVal):
         return True
     else:
         return False
 
+# def hammer(stock, hammerLengthInFactor, HeadBiggerThanHandleFactor):
+#     dataLen = len(stock)
+#     yesterday_val = stock.iloc[dataLen - 2].Close
+#     curVal = stock.iloc[dataLen - 1].Open
+#     #gapUpVal = (yesterday_val * minGapMultiplier)
+#     #TODO: überprüfen ob tage hintereinander, achtung wochenende
+#     if (curVal > gapUpVal):
+#         return True
+#     else:
+#         return False
 
 
-def isVolumeHighEnough(stock):
+def isVolumeHighEnough(stock, avg_days=10):
     minReqVol = 30000
+    vol_avg = 0
+    dataLen = len(stock)
+    i = 1
+    avgCnt = 0
 
-    logging.debug("\n" + str(stock['Volume']))
-    curMinVol = stock['Volume'].min()
+    while i <= avg_days:  # add last entry too
+        curr_vol = stock.iloc[dataLen - i].Volume
+        vol_avg += curr_vol
+        i += 1
+        avgCnt += 1
 
-    if (curMinVol > minReqVol):
+    vol_avg /= avgCnt  # calc avg
+
+    if (vol_avg > minReqVol):
         return True
     else:
         return False

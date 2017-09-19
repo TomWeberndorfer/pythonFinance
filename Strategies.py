@@ -1,7 +1,9 @@
 import logging
 from pandas_datareader import data
+import pandas_datareader.data as web
 from Utils import isVolumeHighEnough, isVolumeRaising_2, is52W_High, write_stocks_to_buy_file, gapUp
-
+from datetime import datetime, date, time
+import pandas as pd
 
 ##################################
 # 52 weeks high
@@ -21,7 +23,7 @@ def replaceWrongStockMarket(stockName):
     return stockName
 
 
-def strat_scheduler(stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end):
+def strat_scheduler(stocksToCheck, dataProvider, Ago52W, end):
     stocksToBuy = []
 
     for stockName in stocksToCheck:
@@ -31,23 +33,25 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end):
             # read data
             newStockName = replaceWrongStockMarket(stockName)
             stockName = newStockName
-            stock52W = data.DataReader(stockName, dataProvider, Ago52W, end)
-            stock5D = data.DataReader(stockName, dataProvider, Ago5D, end)
-            stock10D = data.DataReader(stockName, dataProvider, Ago10D, end)
+            stock52W = data.DataReader(stockName, dataProvider, Ago52W.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d"))
+
+            #todo for unit tests
+            #stock52W.to_csv('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\out.csv')
+            # stockTest = pd.read_csv('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\out.csv')
 
         except Exception as e:
             # e = sys.exc_info()[0]
             print("strat_scheduler: Data Read exception: " + str(stockName) + " is faulty: " + str(e))
             readException = True
 
-        if not readException:
+        if not readException and len(stock52W) > 0:
             ##############################################################
             # insert STRATEGIES here
             try:
-                res = strat_52WHi_HiVolume(stockName, stock52W, stock5D, stock10D)
+                res = strat_52WHi_HiVolume(stockName, stock52W)
                 if res != "":
                     stocksToBuy.append(res)
-                    print ("buy: " + res)
+                    #print ("buy strat_52WHi_HiVolume: " + res)
 
                     # TODO canslim / Henkel
 
@@ -55,10 +59,17 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end):
                     # http://www.finanzen.net/chartsignale/index/Alle/liste/jc-1234er-long
                     ############################################################################
 
-                res = strat_GapUp_HiVolume(stockName, stock52W, stock5D, stock10D)
-                if res != "":
-                    stocksToBuy.append(res)
-                    print ("buy: " + res)
+                # else:
+                #     res = strat_GapUp_HiVolume(stockName, stock52W)
+                #     if res != "":
+                #         stocksToBuy.append(res)
+                #         print ("buy strat_GapUp_HiVolume: " + res)
+                    #TODO candlestick hammer
+               # res = strat_candlestick_hammer_HiVol (stockName, stock52W)
+
+                    #TODO negativer hammer in den letzten 10 tagen als zeichen für nicht kaufen
+                    #TODO zusätzliche reihung nach:
+                        # - volumen anstieg stärke
 
             except Exception as e:
                 # e = sys.exc_info()[0]
@@ -70,27 +81,23 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, Ago5D, Ago10D, end):
     return stocksToBuy
 
 
-def strat_52WHi_HiVolume(stockName, stock52W, stock5D, stock10D):
+def strat_52WHi_HiVolume(stockName, stock52W):
 
     volumeRaising = False
     volumeHighEnough = False
     stockHas52Hi = False
 
-    df = stock52W
     logging.debug(stockName)
-    logging.debug(stock5D)
-
-    volumeHighEnough = isVolumeHighEnough(stock5D)
+    volumeHighEnough = isVolumeHighEnough(stock52W)
     if volumeHighEnough:
-        # TODO volumeRaising = isVolumeRaising(stock5D, stockName)
-        volumeRaising = isVolumeRaising_2(stock5D, stock10D, stockName)
+        volumeRaising = isVolumeRaising_2(stock52W, 15)
 
         if volumeRaising:
-            stockHas52Hi = is52W_High(df)
+            stockHas52Hi = is52W_High(stock52W)
 
     if volumeHighEnough and stockHas52Hi and volumeRaising:
-        dataLen = len(stock5D)
-        endKurs = stock5D.iloc[dataLen - 1].Close
+        dataLen = len(stock52W)
+        endKurs = stock52W.iloc[dataLen - 1].Close
         write_stocks_to_buy_file(
             str(stockName) + ", " + str(endKurs) + ", strat_52WHi_HiVolume")  # TODO überall einbauen in jede strat
         return stockName
@@ -98,27 +105,40 @@ def strat_52WHi_HiVolume(stockName, stock52W, stock5D, stock10D):
     # else case
     return ""
 
-def strat_GapUp_HiVolume (stockName, stock52W, stock5D, stock10D):
-    volumeRaising = False
+def strat_GapUp_HiVolume (stockName, stock52W):
     volumeHighEnough = False
 
-    df = stock52W
     logging.debug(stockName)
-    logging.debug(stock5D)
 
-    volumeHighEnough = isVolumeHighEnough(stock5D)
+    volumeHighEnough = isVolumeHighEnough(stock52W)
     if volumeHighEnough:
-        volumeRaising = isVolumeRaising_2(stock5D, stock10D, stockName)
+            isGapUp = gapUp(stock52W, 1.03)
 
-        if volumeRaising:
-            isGapUp = gapUp(df, 1.03)
-
-    if volumeHighEnough and isGapUp and volumeRaising:
-        dataLen = len(stock5D)
-        endKurs = stock5D.iloc[dataLen - 1].Close
+    if volumeHighEnough and isGapUp:
+        dataLen = len(stock52W)
+        endKurs = stock52W.iloc[dataLen - 1].Close
         write_stocks_to_buy_file(
-            str(stockName) + ", " + str(endKurs) + ", strat_52WHi_HiVolume")  # TODO überall einbauen in jede strat
+            str(stockName) + ", " + str(endKurs) + ", strat_GapUp_HiVolume")  # TODO überall einbauen in jede strat
         return stockName
 
     # else case
     return ""
+
+# def strat_candlestick_hammer_HiVol (stockName, stock52W):
+#     volumeHighEnough = False
+#
+#     logging.debug(stockName)
+#
+#     volumeHighEnough = isVolumeHighEnough(stock52W)
+#     if volumeHighEnough:
+#         isHammer = hammer(stock52W, 1.02, 3)
+#
+#     if volumeHighEnough and isHammer:
+#         dataLen = len(stock52W)
+#         endKurs = stock52W.iloc[dataLen - 1].Close
+#         write_stocks_to_buy_file(
+#             str(stockName) + ", " + str(endKurs) + ", strat_GapUp_HiVolume")  # TODO überall einbauen in jede strat
+#         return stockName
+#
+#     # else case
+#     return ""

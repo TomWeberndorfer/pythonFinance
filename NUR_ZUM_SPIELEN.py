@@ -1,5 +1,5 @@
-from Utils import write_stocks_to_buy_file
+import webbrowser
 
-stocksToBuy = ["BC8"]
-
-write_stocks_to_buy_file(stocksToBuy)
+# open a public URL, in this case, the webbrowser docs
+url = "https://www.google.com/finance?q=AAPL&ei=Mby3WbnGGsjtsgHejoPwDA"
+webbrowser.open(url)
