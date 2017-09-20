@@ -8,8 +8,8 @@ import plotly.graph_objs as go
 from datetime import timedelta
 import sys
 import threading
-from Utils import is52W_High, isVolumeHighEnough, splitStockList, getSymbolFromName, \
-    get52W_H_Symbols_FromExcel, \
+from Utils import is52_w_high, is_volume_high_enough, split_stock_list, get_symbol_from_name, \
+    get52_w__h__symbols__from_excel, \
     write_stocks_to_buy_file
 from Strategies import strat_scheduler
 import threading

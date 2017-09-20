@@ -11,8 +11,8 @@ import threading
 import webbrowser
 
 from MyThread import MyThread
-from Utils import  is52W_High, isVolumeHighEnough, splitStockList, getSymbolFromName, \
-    get52W_H_Symbols_FromExcel, \
+from Utils import  is52_w_high, is_volume_high_enough, split_stock_list, get_symbol_from_name, \
+    get52_w__h__symbols__from_excel, \
     write_stocks_to_buy_file
 from Strategies import strat_scheduler
 
@@ -35,6 +35,9 @@ volumeAvgDayDelta = 15
 end = datetime.now()
 Ago52W = (end - timedelta(weeks=52))
 
+url_1 = "https://www.google.com/finance?q="
+url_2 = "&ei=Mby3WbnGGsjtsgHejoPwDA"
+url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
 #Ago5D = datetime.datetime.now() - timedelta(days=volumeDayDelta)
 #Ago10D = datetime.datetime.now() - timedelta(days=volumeAvgDayDelta)
 dataProvider = "google"
@@ -78,7 +81,7 @@ allSymbols = []
 # 2 = VERSUCH NASDAQ
 # 3 = nur finanzen excel
 # 4 = NORMAL nur DAX und NASDAQ
-option = 0
+option = 1
 ###########################################################
 
 # versuch DAX
@@ -94,14 +97,14 @@ if (option == 2):
 # ----------------------------------------------
 # alles Dax + nasdaq + excel
 if (option == 0):
-    symbols52W_Hi = get52W_H_Symbols_FromExcel()
+    symbols52W_Hi = get52_w__h__symbols__from_excel()
     allSymbols.extend(symbols52W_Hi)
     allSymbols.extend(Nasdaq100_Symbols)
     allSymbols.extend(DAX_Symbols)
 
 # nur finanzen excel
 if (option == 3):
-    symbols52W_Hi = get52W_H_Symbols_FromExcel()
+    symbols52W_Hi = get52_w__h__symbols__from_excel()
     allSymbols.extend(symbols52W_Hi)
 
 # NORMAL: nur DAX und NASDAQ
@@ -110,7 +113,7 @@ if (option == 4):
     allSymbols.extend(DAX_Symbols)
 
 # Create new threads
-splits = splitStockList(allSymbols, numOfStocksPerThread)
+splits = split_stock_list(allSymbols, numOfStocksPerThread)
 stock_screening_threads = MyThread("stock_screening_threads")
 
 
@@ -143,16 +146,13 @@ if (stocksToBuy is not None):
             for line in ins:
                 array.append(line.replace('\n', ' ').replace('\r', ''))
 
-            for stockToBuy in stocksToBuy:
+            for sb in stocksToBuy:
+                stockToBuy= sb['stockName']
                 found = False
                 #print(stockToBuy)
 
-                # open a public URL, in this case, the webbrowser docs
-                url_1 = "https://www.google.com/finance?q="
-                url_2 = "&ei=Mby3WbnGGsjtsgHejoPwDA"
+                #open finanzen.net and google finance
                 url = url_1 + stockToBuy + url_2
-
-                url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
                 url2 = url_3 + stockToBuy
 
                 for line in array:

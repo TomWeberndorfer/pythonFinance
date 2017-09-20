@@ -11,6 +11,8 @@ import urllib3
 
 stocks = []
 names = []
+filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
+
 
 def calc_avg_vol(stock, days_skip_from_end):
     """
@@ -29,12 +31,12 @@ def calc_avg_vol(stock, days_skip_from_end):
     if stock is None or days_skip_from_end is None:
         raise NotImplementedError
 
-    #t3: last vol must be higher than volume avg
-    vol_avg = 0 #variable for avg
-    dataLen = len(stock) - days_skip_from_end # 2 because last entry not included
+    # t3: last vol must be higher than volume avg
+    vol_avg = 0  # variable for avg
+    dataLen = len(stock) - days_skip_from_end  # 2 because last entry not included
     avgCnt = 0
 
-    #calc average
+    # calc average
     while avgCnt < dataLen:  # add last entry too
         curr_vol = stock.iloc[avgCnt].Volume
         vol_avg += curr_vol
@@ -43,7 +45,8 @@ def calc_avg_vol(stock, days_skip_from_end):
     vol_avg /= avgCnt  # calc avg
     return vol_avg
 
-def isVolumeRaising_withinCheckDays(stock, check_days, min_cnt):
+
+def is_volume_raising_within_check_days(stock, check_days, min_cnt):
     """
     Checks, if the volume is rising within the check days, with at least minimum value.
 
@@ -82,7 +85,8 @@ def isVolumeRaising_withinCheckDays(stock, check_days, min_cnt):
 
     return True
 
-def isLastVolumeHigherThanAvg(data, check_days, vol_avg, signif_fact):
+
+def is_last_volume_higher_than_avg(data, check_days, vol_avg, signif_fact):
     """
     Calculates the average and checks,
     if the last volume is higher than avg.
@@ -129,7 +133,7 @@ def is_a_few_higher_than_avg(stock, check_days, min_cnt, vol_avg):
     if stock is None or check_days is None or min_cnt is None:
         raise NotImplementedError
 
-    #from [0] to end, without days to check above avg  ~ [datalen-15]
+    # from [0] to end, without days to check above avg  ~ [datalen-15]
     cnt = check_days
     higher_than_avg = 0
     dataLen = len(stock)
@@ -138,16 +142,17 @@ def is_a_few_higher_than_avg(stock, check_days, min_cnt, vol_avg):
 
         vol = stock.iloc[dataLen - cnt].Volume
         if (vol > vol_avg):
-            higher_than_avg +=1
+            higher_than_avg += 1
 
-        cnt-=1
+        cnt -= 1
 
     if (higher_than_avg >= min_cnt):
         return True
 
     return False
 
-def isVolumeRaising_2(data, check_days, min_cnt, min_vol_dev_fact):
+
+def is_volume_raising(data, check_days, min_cnt, min_vol_dev_fact):
     """
         Uses functions, to check if stock is raising
 
@@ -167,26 +172,27 @@ def isVolumeRaising_2(data, check_days, min_cnt, min_vol_dev_fact):
         raise NotImplementedError
 
     if min_vol_dev_fact < 1:
-        raise AttributeError ("parameter min_vol_dev_fact must be higher than 1!")
+        raise AttributeError("parameter min_vol_dev_fact must be higher than 1!")
 
     vol_avg = calc_avg_vol(data, check_days)
 
-    #t1: minimum raising cnt within check days
-    if not isVolumeRaising_withinCheckDays(data, check_days, min_cnt):
+    # t1: minimum raising cnt within check days
+    if not is_volume_raising_within_check_days(data, check_days, min_cnt):
         return False
 
-    #t2: last volume higher than avg
+    # t2: last volume higher than avg
     # 1.2: is significant higher than avg
-    if not isLastVolumeHigherThanAvg (data, check_days, vol_avg, min_vol_dev_fact):
+    if not is_last_volume_higher_than_avg(data, check_days, vol_avg, min_vol_dev_fact):
         return False
 
-    #t3: at least a few volume higher than avg
-    if not is_a_few_higher_than_avg (data, check_days, min_cnt, vol_avg):
+    # t3: at least a few volume higher than avg
+    if not is_a_few_higher_than_avg(data, check_days, min_cnt, vol_avg):
         return False
 
     return True
 
-def is52W_High(stock, within52wHigh_fact):
+
+def is52_w_high(stock, within52wHigh_fact):
     """
         Check 52 week High
 
@@ -213,7 +219,7 @@ def is52W_High(stock, within52wHigh_fact):
     if curVal == highest_high:
         return True
 
-    else :
+    else:
         hiMinusLimit = highest_high * within52wHigh_fact
         if curVal > hiMinusLimit:
             return True
@@ -221,7 +227,7 @@ def is52W_High(stock, within52wHigh_fact):
             return False
 
 
-def gapUp(stock, minGapMultiplier):
+def gap_up(stock, minGapMultiplier):
     """
         Check Gap Up strategy
 
@@ -242,11 +248,12 @@ def gapUp(stock, minGapMultiplier):
     yesterday_val = stock.iloc[dataLen - 2].Close
     curVal = stock.iloc[dataLen - 1].Open
     gapUpVal = (yesterday_val * minGapMultiplier)
-    #TODO: überprüfen ob tage hintereinander, achtung wochenende
+    # TODO: überprüfen ob tage hintereinander, achtung wochenende
     if (curVal > gapUpVal):
         return True
     else:
         return False
+
 
 # def hammer(stock, hammerLengthInFactor, HeadBiggerThanHandleFactor):
 #     dataLen = len(stock)
@@ -260,11 +267,11 @@ def gapUp(stock, minGapMultiplier):
 #         return False
 
 
-def isVolumeHighEnough(stock):
+def is_volume_high_enough(stock):
     if stock is None:
         raise NotImplementedError
 
-    minReqVol = 30000 #min volume for liquid stocks
+    minReqVol = 30000  # min volume for liquid stocks
     vol_avg = calc_avg_vol(stock, 0)
 
     if (vol_avg > minReqVol):
@@ -273,7 +280,7 @@ def isVolumeHighEnough(stock):
         return False
 
 
-def splitStockList(arr, size):
+def split_stock_list(arr, size):
     arrs = []
     while len(arr) > size:
         pice = arr[:size]
@@ -283,7 +290,7 @@ def splitStockList(arr, size):
     return arrs
 
 
-def getSymbolFromName(name):
+def get_symbol_from_name(name):
     try:
         origName = name
 
@@ -309,25 +316,24 @@ def getSymbolFromName(name):
         return symbol
 
     except Exception as e:
-        print("getSymbolFromName: ERROR symbol: " + symbol + ", Name: " + str(
+        print("get_symbol_from_name: ERROR symbol: " + symbol + ", Name: " + str(
             origName) + " (" + name + ") is faulty: " + str(e))
         return " "
 
 
 def symbol_thread(name):
-    symbol = getSymbolFromName(name)
-    if (symbol != " "):
+    symbol = get_symbol_from_name(name)
+    if symbol != " ":
         stocks.append(symbol)
         names.append(name)
 
 
-def get52W_H_Symbols_FromExcel():
+def get52_w__h__symbols__from_excel():
     import xlrd
-    f = open('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\stockList.txt', 'w')
+    f = open(filepath + 'stockList.txt', 'w')
     f.write("Name,   Symbol \n")  # python will convert \n to os.linesep
 
-    sh = xlrd.open_workbook(
-        'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\52W-HochAutomatisch_Finanzen.xlsx').sheet_by_index(0)
+    sh = xlrd.open_workbook(filepath + '52W-HochAutomatisch_Finanzen.xlsx').sheet_by_index(0)
 
     from MyThread import MyThread
     get_symbol_threads = MyThread("get_symbol_threads")
@@ -337,13 +343,13 @@ def get52W_H_Symbols_FromExcel():
             if (rownum != 0):
                 name = str(sh.cell(rownum, 0).value)
                 get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name}))
-                #symbol = getSymbolFromName(name)
-                #if (symbol != " "):
-                 #   stocks.append(symbol)
+                # symbol = get_symbol_from_name(name)
+                # if (symbol != " "):
+                #   stocks.append(symbol)
 
-                    # print(str(rownum)+ " = " + name + ", " + symbol)
+                # print(str(rownum)+ " = " + name + ", " + symbol)
         except Exception as e:
-            print("Method exception: get52W_H_Symbols_FromExcel: stock name: " + str(name) + " is faulty: " + str(e))
+            print("Method exception: get52_w__h__symbols__from_excel: stock name: " + str(name) + " is faulty: " + str(e))
 
     get_symbol_threads.execute_threads()
 
@@ -351,7 +357,7 @@ def get52W_H_Symbols_FromExcel():
     while (cnt < len(names)):
         for symbol in stocks:
             f.write(names[cnt] + ",  " + symbol + "\n")  # python will convert \n to os.linesep
-            cnt+=1
+            cnt += 1
 
     f.close()  # you can omit in most cases as the destructor will call it
     return stocks
@@ -361,7 +367,7 @@ def write_stocks_to_buy_file(txt):
     import datetime
     now = datetime.datetime.now()
 
-    with open("C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\StocksToBuy.txt", "a") as myfile:
+    with open(filepath + "StocksToBuy.txt", "a") as myfile:
         # for stockToBuy in stocksToBuy:
         # myfile.write(str(stockToBuy) + ", " +  now.strftime("%Y-%m-%d %H:%M") + "\n")
         myfile.write(str(txt) + ", " + str(now.strftime("%Y-%m-%d %H:%M")) + "\n")
@@ -369,11 +375,17 @@ def write_stocks_to_buy_file(txt):
 
     myfile.close()
 
-def calculate_stopbuy_and_stoploss (stockdata):
+
+def calculate_stopbuy_and_stoploss(stockdata):
+    """
+    calculates stop buy and stop loss values
+    :param stockdata: 52w stock data
+    :return: stop buy and stop loss: {'sb':sb, 'sl': sl}
+    """
     dataLen = len(stockdata)
+    # TODO maybe values should be calc with max of close (real 52wHigh)
     last_val = stockdata.iloc[dataLen - 1].Close
-    sb = last_val * 1.005 #stopbuy 0,5% higher than last val
-    sl = sb * 0.97 # stoploss 3% lower than stop buy
+    sb = last_val * 1.005  # stopbuy 0,5% higher than last val
+    sl = sb * 0.97  # stoploss 3% lower than stop buy
 
-    return {'sb':sb, 'sl': sl}
-
+    return {'sb': sb, 'sl': sl}
