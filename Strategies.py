@@ -1,16 +1,11 @@
 import logging
 from pandas_datareader import data
 import pandas_datareader.data as web
-from Utils import isVolumeHighEnough, isVolumeRaising_2, is52W_High, write_stocks_to_buy_file, gapUp
+from Utils import isVolumeHighEnough, isVolumeRaising_2, is52W_High, write_stocks_to_buy_file, gapUp, \
+    calculate_stopbuy_and_stoploss
 from datetime import datetime, date, time
 import pandas as pd
 
-##################################
-# 52 weeks high
-# high volume
-# volume raising the last 3 days
-# volume today must be higher then AVG last days
-##################################
 def replaceWrongStockMarket(stockName):
     replacePatternn = [".MU", ".DE", ".SW", ".F", ".EX", ".TI", ".MI"]
 
@@ -44,7 +39,8 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, end):
             ##############################################################
             # insert STRATEGIES here
             try:
-                res = strat_52WHi_HiVolume(stockName, stock52W)
+                #TODO zusätzlicher vergleich zu DAX / NASDAQ vergleich handelsplus (titel trotz schwachem dax stark)
+                res = strat_52WHi_HiVolume(stockName, stock52W, 5, 3, 1.2, 0.98)
                 if res != "":
                     stocksToBuy.append(res)
                     #print ("buy strat_52WHi_HiVolume: " + res)
@@ -67,6 +63,8 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, end):
                     #TODO zusätzliche reihung nach:
                         # - volumen anstieg stärke
 
+                    #TODO http://www.finanzen.at/analysen
+
             except Exception as e:
                 # e = sys.exc_info()[0]
                 print("strat_scheduler: Strategy Exception: " + str(stockName) + " is faulty: " + str(e))
@@ -77,29 +75,50 @@ def strat_scheduler(stocksToCheck, dataProvider, Ago52W, end):
     return stocksToBuy
 
 
-def strat_52WHi_HiVolume(stockName, stock52W_data):
+def strat_52WHi_HiVolume(stockName, stock52W_data, check_days, min_cnt, min_vol_dev_fact, within52wHigh_fact):
+    """
+            Check 52 week High, raising volume, and high enough volume
 
-    volumeRaising = False
-    volumeHighEnough = False
-    stockHas52Hi = False
+            Args:
+                stockName: name of the stock
+                stock52W_data: stock data
+                check_days: number of days to check
+                min_cnt: min higher days within check days
+                hiLimitMinFact: factor current data within 52 w high (ex: currVal > (Max * 0.98))
+
+            Returns:
+                True, if 52 week high
+
+            Raises:
+                NotImplementedError: if parameters are None
+            """
+    if stockName is None or stock52W_data is None or check_days is None or min_cnt is None or min_vol_dev_fact is None or within52wHigh_fact is None:
+        raise NotImplementedError
+
+    if min_vol_dev_fact < 1:
+        raise AttributeError ("parameter min_vol_dev_fact must be higher than 1!")# should above other avg volume
+
+    if within52wHigh_fact > 1:
+        raise AttributeError ("parameter within52wHigh_fact must be lower than 1!")# should above other avg volume
 
     logging.debug(stockName)
-    volumeHighEnough = isVolumeHighEnough(stock52W_data)
-    if volumeHighEnough:
-        volumeRaising = isVolumeRaising_2(stock52W_data, 5, 3)
 
-        if volumeRaising:
-            stockHas52Hi = is52W_High(stock52W_data, 0.98)
+    if not isVolumeHighEnough(stock52W_data):
+        return ""
 
-    if volumeHighEnough and stockHas52Hi and volumeRaising:
-        dataLen = len(stock52W_data)
-        endKurs = stock52W_data.iloc[dataLen - 1].Close
-        write_stocks_to_buy_file(
-            str(stockName) + ", " + str(endKurs) + ", strat_52WHi_HiVolume")  # TODO überall einbauen in jede strat
-        return stockName
+    if not isVolumeRaising_2(stock52W_data, check_days, min_cnt, min_vol_dev_fact):
+        return ""
 
-    # else case
-    return ""
+    if not is52W_High(stock52W_data, within52wHigh_fact):
+        return ""
+
+    result = calculate_stopbuy_and_stoploss (stock52W_data)
+    write_stocks_to_buy_file(
+        str(stockName) + ", " + str(result['sb']) + ", strat_52WHi_HiVolume")  # TODO überall einbauen in jede strat
+
+    #TODO umbauen: gibt true bei kauf, stockname und sb, sl zurück
+    return stockName
+
 
 def strat_GapUp_HiVolume (stockName, stock52W):
     volumeHighEnough = False

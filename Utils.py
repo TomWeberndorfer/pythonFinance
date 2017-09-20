@@ -147,7 +147,7 @@ def is_a_few_higher_than_avg(stock, check_days, min_cnt, vol_avg):
 
     return False
 
-def isVolumeRaising_2(data, check_days, min_cnt):
+def isVolumeRaising_2(data, check_days, min_cnt, min_vol_dev_fact):
     """
         Uses functions, to check if stock is raising
 
@@ -155,6 +155,7 @@ def isVolumeRaising_2(data, check_days, min_cnt):
             data: stock data
             check_days: number of days to check
             min_cnt: min higher days within check days
+            min_vol_dev_fact: factor current data within 52 w high (ex: currVal > (Max * 0.98))
 
         Returns:
             True, if raising
@@ -162,10 +163,13 @@ def isVolumeRaising_2(data, check_days, min_cnt):
         Raises:
             NotImplementedError: if parameters are None
     """
-    if data is None or check_days is None or min_cnt is None:
+    if data is None or check_days is None or min_cnt is None or min_vol_dev_fact is None:
         raise NotImplementedError
 
-    vol_avg = calc_avg_vol(data, 5)
+    if min_vol_dev_fact < 1:
+        raise AttributeError ("parameter min_vol_dev_fact must be higher than 1!")
+
+    vol_avg = calc_avg_vol(data, check_days)
 
     #t1: minimum raising cnt within check days
     if not isVolumeRaising_withinCheckDays(data, check_days, min_cnt):
@@ -173,7 +177,7 @@ def isVolumeRaising_2(data, check_days, min_cnt):
 
     #t2: last volume higher than avg
     # 1.2: is significant higher than avg
-    if not isLastVolumeHigherThanAvg (data, check_days, vol_avg, 1.2):
+    if not isLastVolumeHigherThanAvg (data, check_days, vol_avg, min_vol_dev_fact):
         return False
 
     #t3: at least a few volume higher than avg
@@ -182,13 +186,13 @@ def isVolumeRaising_2(data, check_days, min_cnt):
 
     return True
 
-def is52W_High(stock, hiLimitMinFact):
+def is52W_High(stock, within52wHigh_fact):
     """
         Check 52 week High
 
         Args:
             stock: stock data
-            hiLimitMinFact: factor current data within 52 w high (ex: currVal > (Max * 0.98))
+            within52wHigh_fact: factor current data within 52 w high (ex: currVal > (Max * 0.98))
 
         Returns:
             True, if 52 week high
@@ -196,8 +200,12 @@ def is52W_High(stock, hiLimitMinFact):
         Raises:
             NotImplementedError: if parameters are None
         """
-    if stock is None or hiLimitMinFact is None:
+    if stock is None or within52wHigh_fact is None:
         raise NotImplementedError
+
+    if within52wHigh_fact > 1:
+        raise AttributeError("parameter within52wHigh_fact must be lower than 1!")  # should above other avg volume
+
     dataLen = len(stock)
     curVal = stock.iloc[dataLen - 1].High
     highest_high = stock['High'].max()
@@ -206,7 +214,7 @@ def is52W_High(stock, hiLimitMinFact):
         return True
 
     else :
-        hiMinusLimit = highest_high * hiLimitMinFact
+        hiMinusLimit = highest_high * within52wHigh_fact
         if curVal > hiMinusLimit:
             return True
         else:
@@ -256,7 +264,7 @@ def isVolumeHighEnough(stock):
     if stock is None:
         raise NotImplementedError
 
-    minReqVol = 30000
+    minReqVol = 30000 #min volume for liquid stocks
     vol_avg = calc_avg_vol(stock, 0)
 
     if (vol_avg > minReqVol):
@@ -360,3 +368,12 @@ def write_stocks_to_buy_file(txt):
         myfile.write("")
 
     myfile.close()
+
+def calculate_stopbuy_and_stoploss (stockdata):
+    dataLen = len(stockdata)
+    last_val = stockdata.iloc[dataLen - 1].Close
+    sb = last_val * 1.005 #stopbuy 0,5% higher than last val
+    sl = sb * 0.97 # stoploss 3% lower than stop buy
+
+    return {'sb':sb, 'sl': sl}
+

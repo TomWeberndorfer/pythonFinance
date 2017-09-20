@@ -10,7 +10,7 @@ import sys
 import threading
 from Utils import  is52W_High, isVolumeHighEnough, splitStockList, isVolumeRaising_2, isVolumeRaising_withinCheckDays, \
     calc_avg_vol, isLastVolumeHigherThanAvg, is_a_few_higher_than_avg
-from Strategies import strat_scheduler
+from Strategies import strat_scheduler, strat_52WHi_HiVolume
 import threading
 import time
 import logging
@@ -27,10 +27,6 @@ stocksToBuy = []
 err = []
 
 filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
-    # todo for unit tests
-    # stock52W.to_csv('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\out.csv')
-#stockTest = pd.read_csv('C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\out.csv')
-
 
 class MyTest(unittest.TestCase):
 
@@ -133,22 +129,49 @@ class MyTest(unittest.TestCase):
         # True
         file = filepath + 'test_isVolumeRaising_2_True.csv'
         data = pd.read_csv(file)
-        self.assertEqual(isVolumeRaising_2(data, 5, 3), True)
+        self.assertEqual(isVolumeRaising_2(data, 5, 3, 1.2), True)
 
         #False t1: volume not raising
         file = filepath + 'test_isVolumeRaising_2_False_T1.csv'
         data = pd.read_csv(file)
-        self.assertEqual(isVolumeRaising_2(data, 5, 3), False)
+        self.assertEqual(isVolumeRaising_2(data, 5, 3, 1.2), False)
 
         # False t2: last vol not higher than avg
         file = filepath + 'test_isVolumeRaising_2_False_T2.csv'
         data = pd.read_csv(file)
-        self.assertEqual(isVolumeRaising_2(data, 5, 3), False)
+        self.assertEqual(isVolumeRaising_2(data, 5, 3, 1.2), False)
 
         # False t3: at least NOT a few volume higher than avg
         file = filepath + 'test_isVolumeRaising_2_False_T3.csv'
         data = pd.read_csv(file)
-        self.assertEqual(isVolumeRaising_2(data, 5, 3), False)
+        self.assertEqual(isVolumeRaising_2(data, 5, 3, 1.2), False)
+
+    def test_strat_52WHi_HiVolume(self):
+        file = filepath + 'test_strat_52WHi_HiVolume_1.csv'
+        data = pd.read_csv(file)
+        self.assertEqual(strat_52WHi_HiVolume("TestName1", data, 5, 3, 1.2, 0.98), "TestName1")
+
+        # volume higher, but stock value under 52w high within 98%
+        file = filepath + 'test_strat_52WHi_HiVolume_Below52WHigh.csv'
+        data = pd.read_csv(file)
+        self.assertEqual(strat_52WHi_HiVolume("TestName1", data, 5, 3, 1.2, 0.98), "TestName1")
+
+        #test_strat_52WHi_HiVolume_Below52WHigh
+        file = filepath + 'test_strat_52WHi_HiVolume_ErrorParameters.csv'
+        data = pd.read_csv(file)
+        self.assertEqual(strat_52WHi_HiVolume("TestName1", data, 5, 3, 1.2, 0.98), "TestName1")
+
+        file = filepath + 'test_strat_52WHi_HiVolume_VolumeNotAbove.csv'
+        data = pd.read_csv(file)
+        self.assertEqual(strat_52WHi_HiVolume("TestName1", data, 5, 3, 1.2, 0.98), "")
+
+        file = filepath + 'test_strat_52WHi_HiVolume_Not52WHigh.csv'
+        data = pd.read_csv(file)
+        self.assertEqual(strat_52WHi_HiVolume("TestName1", data, 5, 3, 1.2, 0.98), "")
+
+        with self.assertRaises(AttributeError):
+            strat_52WHi_HiVolume("TestName1", data, 5, 3, 0.98, 0.98)
+            strat_52WHi_HiVolume("TestName1", data, 5, 3, 1.2, 1.2)
 
 
 
