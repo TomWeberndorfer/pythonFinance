@@ -2,7 +2,7 @@ import logging
 from pandas_datareader import data
 import pandas_datareader.data as web
 from Utils import is_volume_high_enough, is_volume_raising, is52_w_high, write_stocks_to_buy_file, gap_up, \
-    calculate_stopbuy_and_stoploss
+    calculate_stopbuy_and_stoploss, get_current_function_name
 from datetime import datetime, date, time
 import pandas as pd
 
@@ -116,11 +116,9 @@ def strat_52_w_hi_hi_volume(stock_name, stock52_w_data, check_days, min_cnt, min
         return {'buy': False}
 
     result = calculate_stopbuy_and_stoploss(stock52_w_data)
-    # TODO remove write_stocks_to_buy_file from here, to other location
-    write_stocks_to_buy_file(
-        str(stock_name) + ", " + str(result['sb']) + ", strat_52_w_hi_hi_volume")
 
-    return {'buy': True, 'stock_name': stock_name, 'sb': result['sb'], 'sl': result['sl']}
+    return {'buy': True, 'stock_name': stock_name, 'sb': result['sb'], 'sl': result['sl'],
+            'strategy_name': get_current_function_name()}
 
 
 def strat_gap_up__hi_volume(stockName, stock52W):
@@ -134,9 +132,8 @@ def strat_gap_up__hi_volume(stockName, stock52W):
 
     if volumeHighEnough and isGapUp:
         dataLen = len(stock52W)
-        endKurs = stock52W.iloc[dataLen - 1].Close
-        write_stocks_to_buy_file(
-            str(stockName) + ", " + str(endKurs) + ", strat_gap_up__hi_volume")  # TODO überall einbauen in jede strat
+
+        #TODO change to new format {...}
         return stockName
 
     # else case

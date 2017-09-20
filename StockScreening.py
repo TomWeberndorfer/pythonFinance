@@ -13,35 +13,27 @@ import webbrowser
 from MyThread import MyThread
 from Utils import  is52_w_high, is_volume_high_enough, split_stock_list, get_symbol_from_name, \
     get52_w__h__symbols__from_excel, \
-    write_stocks_to_buy_file
+    write_stocks_to_buy_file, print_stocks_to_buy
 from Strategies import strat_scheduler
 
 import time
 import logging
 
-exitFlag = 0
 threads = []
-stocksToBuy = []
+stocks_to_buy = []
 err = []
-tabsForPrint = "                       "
-
 program_start_time = datetime.now()
 
 ##########################
 # config
-numOfStocksPerThread = 5
-volumeDayDelta = 5
-volumeAvgDayDelta = 15
+num_of_stocks_per_thread = 5
+volume_day_delta = 5
+volume_avg_day_delta = 15
 end = datetime.now()
-Ago52W = (end - timedelta(weeks=52))
+ago52_w = (end - timedelta(weeks=52))
 
-url_1 = "https://www.google.com/finance?q="
-url_2 = "&ei=Mby3WbnGGsjtsgHejoPwDA"
-url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
-#Ago5D = datetime.datetime.now() - timedelta(days=volumeDayDelta)
-#Ago10D = datetime.datetime.now() - timedelta(days=volumeAvgDayDelta)
-dataProvider = "google"
-#dataProvider = "yahoo"
+data_provider = "google"
+filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
 
 # enhanced stock messages:
 # logging.basicConfig(level=logging.DEBUG)
@@ -49,21 +41,21 @@ dataProvider = "google"
 ##########################
 
 # symbols to read
-Nasdaq100_Symbols = ["AAPL", "ADBE", "ADI", "ADP", "ADSK", "AKAM", "ALXN",
+nasdaq100__symbols = ["AAPL", "ADBE", "ADI", "ADP", "ADSK", "AKAM", "ALXN",
                      "AMAT", "AMGN", "AMZN", "ATVI", "AVGO", "BBBY", "BIDU", "BIIB",
                      "BRCM", "CA", "CELG", "CERN", "CHKP", "CHRW", "CHTR", "CMCSA",
                      "COST", "CSCO", "CTRX", "CTSH", "CTXS", "DISCA", "DISCK", "DISH",
                      "DLTR", "EBAY", "EQIX", "ESRX", "EXPD", "EXPE", "FAST",
                      "FB", "FFIV", "FISV", "FOXA", "GILD", "GMCR", "GOOG",
                      "GRMN", "HSIC", "ILMN", "INTC", "INTU", "ISRG", "KLAC", "KRFT",
-                     "LBTYA", "LLTC", "LMCA", "LMCK", "LVNTA", "MAR", "MAT", "MDLZ",
-                     "MNST", "MSFT", "MU", "MXIM", "MYL", "NFLX", "NTAP", "NVDA",
-                     "NXPI", "ORLY", "PAYX", "PCAR", "PCLN", "QCOM", "QVCA", "REGN",
-                     "ROST", "SBAC", "SBUX", "SIAL", "SIRI", "SNDK", "SPLS", "SRCL",
-                     "STX", "SYMC", "TRIP", "TSCO", "TSLA", "TXN", "VIAB", "VIP",
-                     "VOD", "VRSK", "VRTX", "WDC", "WFM", "WYNN", "XLNX", "YHOO", "NOC"]
+                      "LBTYA", "LLTC", "LMCA", "LMCK", "LVNTA", "MAR", "MAT", "MDLZ",
+                      "MNST", "MSFT", "MU", "MXIM", "MYL", "NFLX", "NTAP", "NVDA",
+                      "NXPI", "ORLY", "PAYX", "PCAR", "PCLN", "QCOM", "QVCA", "REGN",
+                      "ROST", "SBAC", "SBUX", "SIAL", "SIRI", "SNDK", "SPLS", "SRCL",
+                      "STX", "SYMC", "TRIP", "TSCO", "TSLA", "TXN", "VIAB", "VIP",
+                      "VOD", "VRSK", "VRTX", "WDC", "WFM", "WYNN", "XLNX", "YHOO", "NOC"]
 
-DAX_Symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK", "ETR:CON", "ETR:DAI",
+dax_symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK", "ETR:CON", "ETR:DAI",
                "ETR:DB1", "ETR:DBK", "ETR:DPB", "ETR:DPW", "ETR:DTE", "ETR:FME", "ETR:HEN3",
                "ETR:IFX", "ETR:LHA", "ETR:LIN", "ETR:MAN", "ETR:MEO", "ETR:MRK.DE", "ETR:MUV2",
                "ETR:RWE", "ETR:SAP", "ETR:SIE", "ETR:TKA", "ETR:TUI1", "ETR:VOW", "ETR:BAYN",
@@ -72,7 +64,7 @@ DAX_Symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK",
                "ETR:SOW", "ETR:AIXA", "ETR:ADV", "ETR:PFV", "ETR:JEN", "ETR:AFX", "ETR:UTDI", "ETR:NEM", "ETR:SRT3",
                "ETR:EVT", "ETR:WAF", "ETR:RIB", "ETR:S92", "ETR:COP", "ETR:TTR1", "ETR:SZG", "ETR:VT9"]
 
-allSymbols = []
+all_symbols = []
 
 ###############################################################################################
 # enter stock filter options
@@ -81,100 +73,57 @@ allSymbols = []
 # 2 = VERSUCH NASDAQ
 # 3 = nur finanzen excel
 # 4 = NORMAL nur DAX und NASDAQ
-option = 1
+option = 4
 ###########################################################
 
 # versuch DAX
-if (option == 1):
-    DAX_Symbols = ["ETR:WAF"]
-    allSymbols.extend(DAX_Symbols)
+if option == 1:
+    dax_symbols = ["ETR:WAF"]
+    all_symbols.extend(dax_symbols)
 
 # versuch NASDAQ
-if (option == 2):
-    Nasdaq100_Symbols = ["AAPL"]
-    allSymbols.extend(Nasdaq100_Symbols)
+if option == 2:
+    nasdaq100__symbols = ["AAPL"]
+    all_symbols.extend(nasdaq100__symbols)
 
 # ----------------------------------------------
 # alles Dax + nasdaq + excel
-if (option == 0):
+if option == 0:
     symbols52W_Hi = get52_w__h__symbols__from_excel()
-    allSymbols.extend(symbols52W_Hi)
-    allSymbols.extend(Nasdaq100_Symbols)
-    allSymbols.extend(DAX_Symbols)
+    all_symbols.extend(symbols52W_Hi)
+    all_symbols.extend(nasdaq100__symbols)
+    all_symbols.extend(dax_symbols)
 
 # nur finanzen excel
-if (option == 3):
+if option == 3:
     symbols52W_Hi = get52_w__h__symbols__from_excel()
-    allSymbols.extend(symbols52W_Hi)
+    all_symbols.extend(symbols52W_Hi)
 
 # NORMAL: nur DAX und NASDAQ
-if (option == 4):
-    allSymbols.extend(Nasdaq100_Symbols)
-    allSymbols.extend(DAX_Symbols)
+if option == 4:
+    all_symbols.extend(nasdaq100__symbols)
+    all_symbols.extend(dax_symbols)
 
 # Create new threads
-splits = split_stock_list(allSymbols, numOfStocksPerThread)
+splits = split_stock_list(all_symbols, num_of_stocks_per_thread)
 stock_screening_threads = MyThread("stock_screening_threads")
 
 
-def function_for_threading_strat_scheduler(ch, dataProvider, Ago52W, end):
+def function_for_threading_strat_scheduler(ch, provider, ago52_w_time, end_l):
     print("Started with: " + str(ch))
-    stocksToBuy.extend(strat_scheduler(ch, dataProvider, Ago52W, end))
+    stocks_to_buy.extend(strat_scheduler(ch, provider, ago52_w_time, end_l))
 
 
 i = 0
 while i < len(splits):
     ch = splits[i]
     stock_screening_threads.append_thread(
-        threading.Thread(target=function_for_threading_strat_scheduler, kwargs={'ch': ch, 'dataProvider': dataProvider,
-                                                                                'Ago52W': Ago52W, 'end': end}))
+        threading.Thread(target=function_for_threading_strat_scheduler, kwargs={'ch': ch, 'provider': data_provider,
+                                                                                'ago52_w_time': ago52_w, 'end_l': end}))
     i += 1
 
-# Start new Threads
+# Start new Threads to schedule all stocks
 stock_screening_threads.execute_threads()
 
-print()
-print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-print("Aktien kaufen: ")
-print()
-if (stocksToBuy is not None):
-    if (len(stocksToBuy) == 0):
-        print("Keine gefunden")
-    else:
-        with open("C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\stockList.txt", "r") as ins:
-            array = []
-            for line in ins:
-                array.append(line.replace('\n', ' ').replace('\r', ''))
-
-            for sb in stocksToBuy:
-                stockToBuy= sb['stockName']
-                found = False
-                #print(stockToBuy)
-
-                #open finanzen.net and google finance
-                url = url_1 + stockToBuy + url_2
-                url2 = url_3 + stockToBuy
-
-                for line in array:
-                    if ',  ' + stockToBuy in line:
-                        print (str(line) + ":" + tabsForPrint + url + tabsForPrint + url2)
-                        found = True
-                        break
-
-                if not found:
-                    print(str(stockToBuy) + ":" + tabsForPrint + url + tabsForPrint + url2)
-                    #url_1 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
-                    #url = url_1 + stockToBuy
-                    #webbrowser.open(url)
-            # trace = go.Candlestick(x=df.index,
-            #                        open=df.Open,
-            #                        high=df.High,
-            #                        low=df.Low,
-            #                        close=df.Close)
-            # data = [trace]
-            #
-            # plotly.offline.plot(data, filename='simple_candlestick')
-
-print()
-print("Runtime mit " + str(numOfStocksPerThread) + " Stocks pro Thread: " + str(
-    datetime.now() - program_start_time))
+#print the results
+print_stocks_to_buy (stocks_to_buy, num_of_stocks_per_thread, program_start_time, datetime.now())

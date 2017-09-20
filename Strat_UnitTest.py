@@ -145,27 +145,30 @@ class MyTest(unittest.TestCase):
 
         res = strat_52_w_hi_hi_volume("TestName1", data, 5, 3, 1.2, 0.98)
         num_of_return_params = len(res)
-        self.assertEqual(num_of_return_params, 4)
+        self.assertEqual(num_of_return_params, 5)
         self.assertEqual(res['buy'], True)
         self.assertEqual(res['stock_name'], "TestName1")
+        self.assertEqual(res['strategy_name'], "strat_52_w_hi_hi_volume")
 
         # volume higher, but stock value under 52w high within 98%
         file = filepath + 'test_strat_52WHi_HiVolume_Below52WHigh.csv'
         data = pd.read_csv(file)
         res = strat_52_w_hi_hi_volume("TestName1", data, 5, 3, 1.2, 0.98)
         num_of_return_params = len(res)
-        self.assertEqual(num_of_return_params, 4)
+        self.assertEqual(num_of_return_params, 5)
         self.assertEqual(res['buy'], True)
         self.assertEqual(res['stock_name'], "TestName1")
+        self.assertEqual(res['strategy_name'], "strat_52_w_hi_hi_volume")
 
         #test_strat_52WHi_HiVolume_Below52WHigh
         file = filepath + 'test_strat_52WHi_HiVolume_ErrorParameters.csv'
         data = pd.read_csv(file)
         res = strat_52_w_hi_hi_volume("TestName1", data, 5, 3, 1.2, 0.98)
         num_of_return_params = len(res)
-        self.assertEqual(num_of_return_params, 4)
+        self.assertEqual(num_of_return_params, 5)
         self.assertEqual(res['buy'], True)
         self.assertEqual(res['stock_name'], "TestName1")
+        self.assertEqual(res['strategy_name'], "strat_52_w_hi_hi_volume")
 
         file = filepath + 'test_strat_52WHi_HiVolume_VolumeNotAbove.csv'
         data = pd.read_csv(file)
@@ -190,8 +193,13 @@ class MyTest(unittest.TestCase):
         file = filepath + 'test_calculate_stopbuy_and_stoploss_Ok.csv'
         data = pd.read_csv(file)
         res = calculate_stopbuy_and_stoploss(data)
-        self.assertEqual(np.math.isclose(res['sb'], 23.6175, abs_tol=0.001), True) #=23,5*1.005
-        self.assertEqual(np.math.isclose(res['sl'], 22.9089, abs_tol=0.001), True)  # =23,5*1.005*0.97
+        # previous calculation with latest value should now be false
+        self.assertEqual(np.math.isclose(res['sb'], 23.6175, abs_tol=0.001), False) #=23,5*1.005
+        self.assertEqual(np.math.isclose(res['sl'], 22.9089, abs_tol=0.001), False)  # =23,5*1.005*0.97
+
+        # real calculation with real 52 w high value
+        self.assertEqual(np.math.isclose(res['sb'], 30.15, abs_tol=0.001), True)  # =30*1.005
+        self.assertEqual(np.math.isclose(res['sl'], 29.2455, abs_tol=0.001), True)  # =30*1.005*0.97
 
         #TODO using coverage: http://pymbook.readthedocs.io/en/latest/testing.html
         #https://blog.jetbrains.com/pycharm/2015/06/feature-spotlight-python-code-coverage-with-pycharm/

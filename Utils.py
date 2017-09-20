@@ -2,6 +2,7 @@
 import logging
 import datetime
 import threading
+import sys
 
 import plotly
 import plotly.plotly as py
@@ -17,17 +18,11 @@ filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
 def calc_avg_vol(stock, days_skip_from_end):
     """
     Calculates the average volume of stock data except the days to skip from end.
-
-    Args:
-        stock: stock data
-        days_skip_from_end: days to skip from end
-
-    Returns:
-        Average Value
-
-    Raises:
-        NotImplementedError: if parameters are None
+    :param stock: stock data
+    :param days_skip_from_end:  days to skip from end
+    :return: Average Value
     """
+
     if stock is None or days_skip_from_end is None:
         raise NotImplementedError
 
@@ -86,7 +81,7 @@ def is_volume_raising_within_check_days(stock, check_days, min_cnt):
     return True
 
 
-def is_last_volume_higher_than_avg(data, check_days, vol_avg, signif_fact):
+def is_last_volume_higher_than_avg(data, check_days, vol_avg, significance_factor):
     """
     Calculates the average and checks,
     if the last volume is higher than avg.
@@ -95,7 +90,7 @@ def is_last_volume_higher_than_avg(data, check_days, vol_avg, signif_fact):
         data: stock data
         check_days: number of days to check
         vol_avg: average volume
-        signif_fact:  is a factor to show that the cur vol is significantly higher
+        significance_factor:  is a factor to show that the cur vol is significantly higher
 
 
     Returns:
@@ -104,17 +99,17 @@ def is_last_volume_higher_than_avg(data, check_days, vol_avg, signif_fact):
     Raises:
         NotImplementedError: if parameters are None
     """
-    if data is None or check_days is None or vol_avg is None or signif_fact is None:
+    if data is None or check_days is None or vol_avg is None or significance_factor is None:
         raise NotImplementedError
     dataLen = len(data)
     vol_last = data.iloc[dataLen - 1].Volume
-    if (vol_last < (vol_avg * signif_fact)):
+    if (vol_last < (vol_avg * significance_factor)):
         return False
     else:
         return True
 
 
-def is_a_few_higher_than_avg(stock, check_days, min_cnt, vol_avg):
+def is_a_few_higher_than_avg(stock, check_days, min_cnt, volume_average):
     """
     Calculates the average and checks,
     if the a few volume values are higher than avg.
@@ -123,12 +118,14 @@ def is_a_few_higher_than_avg(stock, check_days, min_cnt, vol_avg):
         stock: stock data
         check_days: number of days to check
         min_cnt: min higher days within check days
+        volume_average: average volume
 
     Returns:
         True, if last volume higher than avg
 
     Raises:
         NotImplementedError: if parameters are None
+
     """
     if stock is None or check_days is None or min_cnt is None:
         raise NotImplementedError
@@ -141,7 +138,7 @@ def is_a_few_higher_than_avg(stock, check_days, min_cnt, vol_avg):
     while cnt > 1:
 
         vol = stock.iloc[dataLen - cnt].Volume
-        if (vol > vol_avg):
+        if (vol > volume_average):
             higher_than_avg += 1
 
         cnt -= 1
@@ -192,13 +189,13 @@ def is_volume_raising(data, check_days, min_cnt, min_vol_dev_fact):
     return True
 
 
-def is52_w_high(stock, within52wHigh_fact):
+def is52_w_high(stock, within52w_high_fact):
     """
         Check 52 week High
 
         Args:
             stock: stock data
-            within52wHigh_fact: factor current data within 52 w high (ex: currVal > (Max * 0.98))
+            within52w_high_fact: factor current data within 52 w high (ex: currVal > (Max * 0.98))
 
         Returns:
             True, if 52 week high
@@ -206,11 +203,11 @@ def is52_w_high(stock, within52wHigh_fact):
         Raises:
             NotImplementedError: if parameters are None
         """
-    if stock is None or within52wHigh_fact is None:
+    if stock is None or within52w_high_fact is None:
         raise NotImplementedError
 
-    if within52wHigh_fact > 1:
-        raise AttributeError("parameter within52wHigh_fact must be lower than 1!")  # should above other avg volume
+    if within52w_high_fact > 1:
+        raise AttributeError("parameter within52w_high_fact must be lower than 1!")  # should above other avg volume
 
     dataLen = len(stock)
     curVal = stock.iloc[dataLen - 1].High
@@ -220,20 +217,20 @@ def is52_w_high(stock, within52wHigh_fact):
         return True
 
     else:
-        hiMinusLimit = highest_high * within52wHigh_fact
+        hiMinusLimit = highest_high * within52w_high_fact
         if curVal > hiMinusLimit:
             return True
         else:
             return False
 
 
-def gap_up(stock, minGapMultiplier):
+def gap_up(stock, min_gap_multiplier):
     """
         Check Gap Up strategy
 
         Args:
             stock: stock data
-            minGapMultiplier: multiplier gap up (percent to multiplier)
+            min_gap_multiplier: multiplier gap up (percent to multiplier)
 
         Returns:
             True, if gap up
@@ -241,13 +238,13 @@ def gap_up(stock, minGapMultiplier):
         Raises:
             NotImplementedError: if parameters are None
         """
-    if stock is None or minGapMultiplier is None:
+    if stock is None or min_gap_multiplier is None:
         raise NotImplementedError
 
     dataLen = len(stock)
     yesterday_val = stock.iloc[dataLen - 2].Close
     curVal = stock.iloc[dataLen - 1].Open
-    gapUpVal = (yesterday_val * minGapMultiplier)
+    gapUpVal = (yesterday_val * min_gap_multiplier)
     # TODO: überprüfen ob tage hintereinander, achtung wochenende
     if (curVal > gapUpVal):
         return True
@@ -340,16 +337,17 @@ def get52_w__h__symbols__from_excel():
 
     for rownum in range(sh.nrows):
         try:
-            if (rownum != 0):
+            if rownum != 0:
                 name = str(sh.cell(rownum, 0).value)
-                get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name}))
-                # symbol = get_symbol_from_name(name)
-                # if (symbol != " "):
-                #   stocks.append(symbol)
+                date_from_file =  str(sh.cell(rownum, 1).value)
 
-                # print(str(rownum)+ " = " + name + ", " + symbol)
+                # values from today contain a time (=Uhr) and not a date
+                if "Uhr" in date_from_file:
+                    get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name}))
+
         except Exception as e:
-            print("Method exception: get52_w__h__symbols__from_excel: stock name: " + str(name) + " is faulty: " + str(e))
+            print("Method exception in: " + get_current_function_name()
+                  + ": stock name: " + str(name) + " is faulty: " + str(e))
 
     get_symbol_threads.execute_threads()
 
@@ -364,28 +362,99 @@ def get52_w__h__symbols__from_excel():
 
 
 def write_stocks_to_buy_file(txt):
+    #TODO add, sl, sb ...
     import datetime
     now = datetime.datetime.now()
 
     with open(filepath + "StocksToBuy.txt", "a") as myfile:
-        # for stockToBuy in stocksToBuy:
-        # myfile.write(str(stockToBuy) + ", " +  now.strftime("%Y-%m-%d %H:%M") + "\n")
         myfile.write(str(txt) + ", " + str(now.strftime("%Y-%m-%d %H:%M")) + "\n")
         myfile.write("")
 
     myfile.close()
 
 
-def calculate_stopbuy_and_stoploss(stockdata):
+def calculate_stopbuy_and_stoploss(stock_data):
     """
     calculates stop buy and stop loss values
-    :param stockdata: 52w stock data
+    :param stock_data: 52w stock data
     :return: stop buy and stop loss: {'sb':sb, 'sl': sl}
     """
-    dataLen = len(stockdata)
-    # TODO maybe values should be calc with max of close (real 52wHigh)
-    last_val = stockdata.iloc[dataLen - 1].Close
-    sb = last_val * 1.005  # stopbuy 0,5% higher than last val
-    sl = sb * 0.97  # stoploss 3% lower than stop buy
+    # values should be calc with max (real 52wHigh)
+    highest_high = stock_data['High'].max()
+    sb = highest_high * 1.005  # stop buy 0,5% higher than last val
+    sl = sb * 0.97  # stop loss 3% lower than stop buy
 
     return {'sb': sb, 'sl': sl}
+
+
+def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, program_end_time):
+    url_1 = "https://www.google.com/finance?q="
+    url_2 = "&ei=Mby3WbnGGsjtsgHejoPwDA"
+    url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
+    tabs_for_print = "                       "
+
+    print()
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print("Buy this stocks: ")
+    print()
+    if stocks_to_buy is not None:
+        if len(stocks_to_buy) == 0:
+            print("No stocks found")
+        else:
+            with open(filepath + "stockList.txt", "r") as ins:
+                array = []
+                for line in ins:
+                    array.append(line.replace('\n', ' ').replace('\r', ''))
+
+                for stb in stocks_to_buy:
+                    stock_to_buy = stb['stock_name']
+                    sb = stb['sb']
+                    sl = stb ['sl']
+                    found = False
+                    strategy_name = stb['strategy_name']
+
+                    # open finanzen.net and google finance
+                    url = url_1 + stock_to_buy + url_2
+                    url2 = url_3 + stock_to_buy
+
+                    for line in array:
+                        if ',  ' + stock_to_buy in line:
+                            to_print = (str(line) + ": SB: " + str(sb) + ', SL: ' + str(sl) + ", strat: " + strategy_name + tabs_for_print + url + tabs_for_print + url2)
+                            found = True
+                            print(to_print)
+                            write_stocks_to_buy_file(to_print)
+                            break
+
+                    if not found:
+                        to_print = str(stock_to_buy) + ": SB: " + str(sb) + ', SL: ' + str(sl) + ", strat: " + strategy_name + tabs_for_print + url + tabs_for_print + url2
+                        print(to_print)
+                        write_stocks_to_buy_file(to_print)
+                        # url_1 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
+                        # url = url_1 + stock_to_buy
+                        # webbrowser.open(url)
+                        # trace = go.Candlestick(x=df.index,
+                        #                        open=df.Open,
+                        #                        high=df.High,
+                        #                        low=df.Low,
+                        #                        close=df.Close)
+                        # data = [trace]
+                        #
+                        # plotly.offline.plot(data, filename='simple_candlestick')
+
+                    # write to file for backtesting and tracking
+
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print()
+    print("INFO: runtime with " + str(num_of_stocks_per_thread) + " stocks per thread: " + str(
+        program_end_time - program_start_time))
+
+
+def get_current_function_name ():
+    """
+    Returns the calling function name
+    :return: calling func name
+    """
+    current_func_name = lambda n=0: sys._getframe(n + 1).f_code.co_name
+    cf =  current_func_name()   # name of this class itself
+    cf1 = current_func_name(1)  # name of calling class
+    return cf1
