@@ -1,9 +1,13 @@
 import logging
+import traceback
+
 from pandas_datareader import data
 import pandas_datareader.data as web
+
 from Utils import is_volume_high_enough, is_volume_raising, is52_w_high, write_stocks_to_buy_file, gap_up, \
-    calculate_stopbuy_and_stoploss, get_current_function_name
+    calculate_stopbuy_and_stoploss, get_current_function_name, read_data_from_google
 from datetime import datetime, date, time
+import sys
 import pandas as pd
 
 
@@ -19,11 +23,10 @@ def replace_wrong_stock_market(stockName):
     return stockName
 
 
-def strat_scheduler(stock_names_to_check, data_provider, ago52_w, end):
+def strat_scheduler(stock_names_to_check, ago52_w, end):
     """
     function to schedule all strategien and return the stocks to buy
     :param stock_names_to_check: list with stock names to check
-    :param data_provider: data provider to read stock data
     :param ago52_w: date and time 52weeks ago
     :param end: end date for read (today)
     :return: stocks to buy with {'buy', 'stock_name', 'sb', 'sl'}
@@ -36,11 +39,10 @@ def strat_scheduler(stock_names_to_check, data_provider, ago52_w, end):
 
         try:
             # read data
-            new_stock_name = replace_wrong_stock_market(stock_name)
-            stock_name = new_stock_name
-            stock52_w = data.DataReader(stock_name, data_provider, ago52_w.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d"))
+            stock52_w = read_data_from_google(stock_name, ago52_w, end)
 
         except Exception as e:
+            #traceback.print_exc()
             print("strat_scheduler: Data Read exception: " + str(stock_name) + " is faulty: " + str(e))
             read_exception = True
 
@@ -76,7 +78,8 @@ def strat_scheduler(stock_names_to_check, data_provider, ago52_w, end):
 
             except Exception as e:
                 # e = sys.exc_info()[0]
-                print("strat_scheduler: Strategy Exception: " + str(stock_name) + " is faulty: " + str(e))
+                sys.stderr.write("strat_scheduler: Strategy Exception: " + str(stock_name) + " is faulty: " + str(e) + "\n")
+                traceback.print_exc()
 
                 # if "Unable to read URL" in str(e):
                 # return stocks_to_buy # return because google stops transfer
@@ -121,39 +124,47 @@ def strat_52_w_hi_hi_volume(stock_name, stock52_w_data, check_days, min_cnt, min
             'strategy_name': get_current_function_name()}
 
 
-def strat_gap_up__hi_volume(stockName, stock52W):
-    volumeHighEnough = False
+def strat_gap_up__hi_volume(stock_name, stock52_w_data, min_gap_factor):
+    """
 
-    logging.debug(stockName)
+    :param stock_name:
+    :param stock52_w_data:
+    :param min_gap_factor:
+    :return:
+    """
+    #TODO comm & test
+    if stock_name is None or stock52_w_data is None:
+        raise NotImplementedError
 
-    volumeHighEnough = is_volume_high_enough(stock52W)
-    if volumeHighEnough:
-        isGapUp = gap_up(stock52W, 1.03)
+    logging.debug(stock_name)
 
-    if volumeHighEnough and isGapUp:
-        dataLen = len(stock52W)
+    if not is_volume_high_enough(stock52_w_data):
+        return {'buy': False}
 
-        #TODO change to new format {...}
-        return stockName
+    if not gap_up(stock52_w_data, min_gap_factor):
+        return {'buy': False}
 
-    # else case
-    return ""
+    result = calculate_stopbuy_and_stoploss(stock52_w_data)
 
-    # def strat_candlestick_hammer_HiVol (stockName, stock52W):
+    return {'buy': True, 'stock_name': stock_name, 'sb': result['sb'], 'sl': result['sl'],
+            'strategy_name': get_current_function_name()}
+
+
+    # def strat_candlestick_hammer_HiVol (stock_name, stock52_w_data):
     #     volumeHighEnough = False
     #
-    #     logging.debug(stockName)
+    #     logging.debug(stock_name)
     #
-    #     volumeHighEnough = is_volume_high_enough(stock52W)
+    #     volumeHighEnough = is_volume_high_enough(stock52_w_data)
     #     if volumeHighEnough:
-    #         isHammer = hammer(stock52W, 1.02, 3)
+    #         isHammer = hammer(stock52_w_data, 1.02, 3)
     #
     #     if volumeHighEnough and isHammer:
-    #         dataLen = len(stock52W)
-    #         endKurs = stock52W.iloc[dataLen - 1].Close
+    #         dataLen = len(stock52_w_data)
+    #         endKurs = stock52_w_data.iloc[dataLen - 1].Close
     #         write_stocks_to_buy_file(
-    #             str(stockName) + ", " + str(endKurs) + ", strat_gap_up__hi_volume")
-    #         return stockName
+    #             str(stock_name) + ", " + str(endKurs) + ", strat_gap_up__hi_volume")
+    #         return stock_name
     #
     #     # else case
     #     return ""

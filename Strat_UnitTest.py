@@ -9,7 +9,8 @@ from datetime import timedelta
 import sys
 import threading
 from Utils import  is52_w_high, is_volume_high_enough, split_stock_list, is_volume_raising, is_volume_raising_within_check_days, \
-    calc_avg_vol, is_last_volume_higher_than_avg, is_a_few_higher_than_avg, calculate_stopbuy_and_stoploss
+    calc_avg_vol, is_last_volume_higher_than_avg, is_a_few_higher_than_avg, calculate_stopbuy_and_stoploss, \
+    get_symbol_from_name_from_yahoo, read_current_day_from_yahoo
 from Strategies import strat_scheduler, strat_52_w_hi_hi_volume
 import threading
 import time
@@ -205,6 +206,25 @@ class MyTest(unittest.TestCase):
         #https://blog.jetbrains.com/pycharm/2015/06/feature-spotlight-python-code-coverage-with-pycharm/
         # https://www.jetbrains.com/help/pycharm/configuring-code-coverage-measurement.html
         # https://www.jetbrains.com/help/pycharm/viewing-code-coverage-results.html
+
+    def test_get_symbol_from_name(self):
+        self.assertEqual(get_symbol_from_name_from_yahoo("Alliance Data Systems Corporation"), "ADS")
+        self.assertEqual(get_symbol_from_name_from_yahoo("ADS"), "ADS")
+        self.assertEqual(get_symbol_from_name_from_yahoo("SÜSS MicroTec"), "SMHN")
+
+    def test_read_current_day_from_yahoo(self):
+
+        names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
+
+        for name in names:
+            data = read_current_day_from_yahoo(name)
+            self.assertEqual(len(data), 1)
+
+        with self.assertRaises(Exception):
+            read_current_day_from_yahoo("APPL.DE")
+
+
+
 
 
 

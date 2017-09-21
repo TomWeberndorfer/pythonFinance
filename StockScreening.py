@@ -11,7 +11,7 @@ import threading
 import webbrowser
 
 from MyThread import MyThread
-from Utils import  is52_w_high, is_volume_high_enough, split_stock_list, get_symbol_from_name, \
+from Utils import  is52_w_high, is_volume_high_enough, split_stock_list, get_symbol_from_name_from_yahoo, \
     get52_w__h__symbols__from_excel, \
     write_stocks_to_buy_file, print_stocks_to_buy
 from Strategies import strat_scheduler
@@ -43,21 +43,21 @@ filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
 # symbols to read
 nasdaq100__symbols = ["AAPL", "ADBE", "ADI", "ADP", "ADSK", "AKAM", "ALXN",
                      "AMAT", "AMGN", "AMZN", "ATVI", "AVGO", "BBBY", "BIDU", "BIIB",
-                     "BRCM", "CA", "CELG", "CERN", "CHKP", "CHRW", "CHTR", "CMCSA",
-                     "COST", "CSCO", "CTRX", "CTSH", "CTXS", "DISCA", "DISCK", "DISH",
+                     "CA", "CELG", "CERN", "CHKP", "CHRW", "CHTR", "CMCSA",
+                     "COST", "CSCO", "CTSH", "CTXS", "DISCA", "DISCK", "DISH",
                      "DLTR", "EBAY", "EQIX", "ESRX", "EXPD", "EXPE", "FAST",
-                     "FB", "FFIV", "FISV", "FOXA", "GILD", "GMCR", "GOOG",
-                     "GRMN", "HSIC", "ILMN", "INTC", "INTU", "ISRG", "KLAC", "KRFT",
-                      "LBTYA", "LLTC", "LMCA", "LMCK", "LVNTA", "MAR", "MAT", "MDLZ",
+                     "FB", "FFIV", "FISV", "FOXA", "GILD", "GOOG",
+                     "GRMN", "HSIC", "ILMN", "INTC", "INTU", "ISRG", "KLAC",
+                      "LBTYA", "LLTC", "LMCK", "LVNTA", "MAR", "MAT", "MDLZ",
                       "MNST", "MSFT", "MU", "MXIM", "MYL", "NFLX", "NTAP", "NVDA",
                       "NXPI", "ORLY", "PAYX", "PCAR", "PCLN", "QCOM", "QVCA", "REGN",
-                      "ROST", "SBAC", "SBUX", "SIAL", "SIRI", "SNDK", "SPLS", "SRCL",
+                      "ROST", "SBAC", "SBUX", "SIRI", "SPLS", "SRCL",
                       "STX", "SYMC", "TRIP", "TSCO", "TSLA", "TXN", "VIAB", "VIP",
                       "VOD", "VRSK", "VRTX", "WDC", "WFM", "WYNN", "XLNX", "YHOO", "NOC"]
 
-dax_symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BAY", "ETR:BMW", "ETR:CBK", "ETR:CON", "ETR:DAI",
-               "ETR:DB1", "ETR:DBK", "ETR:DPB", "ETR:DPW", "ETR:DTE", "ETR:FME", "ETR:HEN3",
-               "ETR:IFX", "ETR:LHA", "ETR:LIN", "ETR:MAN", "ETR:MEO", "ETR:MRK.DE", "ETR:MUV2",
+dax_symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BMW", "ETR:CBK", "ETR:CON", "ETR:DAI",
+               "ETR:DB1", "ETR:DBK", "FRA:DPW", "ETR:DPW", "ETR:DTE", "ETR:FME", "ETR:HEN3",
+               "ETR:IFX", "ETR:LHA", "ETR:LIN", "ETR:MAN", "ETR:MRK", "ETR:MUV2",
                "ETR:RWE", "ETR:SAP", "ETR:SIE", "ETR:TKA", "ETR:TUI1", "ETR:VOW", "ETR:BAYN",
                "ETR:FNTN", "ETR:O2D", "ETR:QIA", "ETR:DRI", "ETR:AM3D", "ETR:O1BC", "ETR:GFT", "ETR:NDX1",
                "ETR:SBS", "ETR:COK", "ETR:DLG", "ETR:DRW3", "ETR:SMHN", "ETR:WDI", "ETR:BC8", "ETR:MOR",
@@ -73,17 +73,17 @@ all_symbols = []
 # 2 = VERSUCH NASDAQ
 # 3 = nur finanzen excel
 # 4 = NORMAL nur DAX und NASDAQ
-option = 4
+option = 0
 ###########################################################
 
 # versuch DAX
 if option == 1:
-    dax_symbols = ["ETR:WAF"]
+    dax_symbols = ['DPW.SW', 'CON.HM', 'HPBK.DE', 'EDL.F', 'HON']
     all_symbols.extend(dax_symbols)
 
 # versuch NASDAQ
 if option == 2:
-    nasdaq100__symbols = ["AAPL"]
+    #nasdaq100__symbols = ["AAPL"]
     all_symbols.extend(nasdaq100__symbols)
 
 # ----------------------------------------------
@@ -111,7 +111,7 @@ stock_screening_threads = MyThread("stock_screening_threads")
 
 def function_for_threading_strat_scheduler(ch, provider, ago52_w_time, end_l):
     print("Started with: " + str(ch))
-    stocks_to_buy.extend(strat_scheduler(ch, provider, ago52_w_time, end_l))
+    stocks_to_buy.extend(strat_scheduler(ch, ago52_w_time, end_l))
 
 
 i = 0
