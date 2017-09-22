@@ -34,7 +34,7 @@ def read_data_from_google_with_client(stock_name, interval="86400", period="1M")
     return df
 
 
-def read_data_from_google_with_pandas(stock_name, start_date, end_date):
+def read_data_from_google_with_pandas(stock_name, start_date, end_date, read_yahoo_today=False):
     """
     read data from google server
     :param stock_name: stock name
@@ -55,16 +55,16 @@ def read_data_from_google_with_pandas(stock_name, start_date, end_date):
         stock52_w = data.DataReader("ETR:" + stock_name, "google", start_date.strftime("%Y-%m-%d"),
                                     end_date.strftime("%Y-%m-%d"))
 
-    #TODO data of today contains less volume because not finished
-    # if len(stock52_w) > 0:
-    #     try:
-    #         stock52_w = stock52_w.append(read_current_day_from_yahoo(stock_name))
-    #     except Exception as e:
-    #         sys.stderr.write("Can not get stock data of stock " + stock_name + " from yahoo\n")
+        # TODO data of today contains less volume because not finished
+        if read_yahoo_today:
+            if len(stock52_w) > 0:
+                try:
+                    stock52_w = stock52_w.append(read_current_day_from_yahoo(stock_name))
+                except Exception as e:
+                    sys.stderr.write("Can not get stock data of stock " + stock_name + " from yahoo\n")
 
-    # else:
-    if len(stock52_w) == 0:
-        sys.stderr.write("Stock: " + stock_name + " does not exist on!\n")
+        if len(stock52_w) == 0:
+            sys.stderr.write("Stock: " + stock_name + " does not exist on!\n")
 
     return stock52_w
 
@@ -101,7 +101,7 @@ def read_current_day_from_yahoo(stock_name):
     stock_name = optimize_name_for_yahoo(stock_name)
     cols = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
     lst = []
-    stock_markets_to_try = ["", ".DE"]
+    stock_markets_to_try = ["", ".DE", ".VI"]
     for stock_market in stock_markets_to_try:
 
         try:
@@ -201,7 +201,6 @@ def optimize_name_for_yahoo(name):
     if name is None:
         raise NotImplementedError
 
-    # TODO regex replaced = re.sub('\W', ' ', name)
     name = name.lower()
     name = name.replace(" ", "+")
     name = name.replace(".", "")

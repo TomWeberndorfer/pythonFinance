@@ -229,34 +229,27 @@ def gap_up(stock, min_gap_multiplier):
     if stock is None or min_gap_multiplier is None:
         raise NotImplementedError
 
-    dataLen = len(stock)
-    yesterday_val = stock.iloc[dataLen - 2].Close
-    curVal = stock.iloc[dataLen - 1].Open
-    gapUpVal = (yesterday_val * min_gap_multiplier)
+    data_len = len(stock)
+    yesterday_val = stock.iloc[data_len - 2].Close
+    cur_val = stock.iloc[data_len - 1].Open
+    gap_up_val = (yesterday_val * min_gap_multiplier)
     # TODO: überprüfen ob tage hintereinander, achtung wochenende
-    if curVal > gapUpVal:
+    if cur_val > gap_up_val:
         return True
     else:
         return False
 
 
-# def hammer(stock, hammerLengthInFactor, HeadBiggerThanHandleFactor):
-#     dataLen = len(stock)
-#     yesterday_val = stock.iloc[dataLen - 2].Close
-#     curVal = stock.iloc[dataLen - 1].Open
-#     #gapUpVal = (yesterday_val * minGapMultiplier)
-#     #TODO: überprüfen ob tage hintereinander, achtung wochenende
-#     if curVal > gapUpVal:
-#         return True
-#     else:
-#         return False
+def hammer (stock, hammer_length_in_factor, head_bigger_than_handle_factor):
+    if stock is None or hammer_length_in_factor is None or head_bigger_than_handle_factor is None:
+        raise NotImplementedError
 
 
 def is_volume_high_enough(stock):
     if stock is None:
         raise NotImplementedError
 
-    minReqVol = 30000  # min volume for liquid stocks
+    minReqVol = 15000  # min volume for liquid stocks
     vol_avg = calc_avg_vol(stock, 0)
 
     if vol_avg > minReqVol:

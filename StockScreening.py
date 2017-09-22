@@ -54,7 +54,8 @@ dax_symbols = ["ETR:ADS", "ETR:ALV", "ETR:BAS", "ETR:BMW", "ETR:CBK", "ETR:CON",
                "ETR:FNTN", "ETR:O2D", "ETR:QIA", "ETR:DRI", "ETR:AM3D", "ETR:O1BC", "ETR:GFT", "ETR:NDX1",
                "ETR:SBS", "ETR:COK", "ETR:DLG", "ETR:DRW3", "ETR:SMHN", "ETR:WDI", "ETR:BC8", "ETR:MOR",
                "ETR:SOW", "ETR:AIXA", "ETR:ADV", "ETR:PFV", "ETR:JEN", "ETR:AFX", "ETR:UTDI", "ETR:NEM", "ETR:SRT3",
-               "ETR:EVT", "ETR:WAF", "ETR:RIB", "ETR:S92", "ETR:COP", "ETR:TTR1", "ETR:SZG", "ETR:VT9"]
+               "ETR:EVT", "ETR:WAF", "ETR:RIB", "ETR:S92", "ETR:COP", "ETR:TTR1", "ETR:SZG", "ETR:VT9",
+               "VIE:SEM"] #TODO vienna
 
 all_symbols = []
 
@@ -67,13 +68,16 @@ all_symbols = []
 # 4 = NORMAL nur DAX und NASDAQ
 option = 1
 
-#  #params for strat_52_w_hi_hi_volume
+# params for strat_52_w_hi_hi_volume
 params.append({'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98})
+
+# params for strat_gap_up__hi_volume
+params.append({'min_gap_factor': 1.03})
 ###########################################################
 
 # versuch DAX
 if option == 1:
-    dax_symbols = ["ETR:AIXA"]
+    dax_symbols = ["ETR:WAF"]
     all_symbols.extend(dax_symbols)
 
 # versuch NASDAQ
