@@ -1,24 +1,14 @@
-import pandas as pd
-from pandas_datareader import data, wb
-#import pandas.io.data as web  # Package and modules for importing data; this code may change depending on pandas version
-import datetime
-import plotly
-import plotly.plotly as py
-import plotly.graph_objs as go
+from datetime import datetime
 from datetime import timedelta
-import sys
-import threading
-from Utils import  is52_w_high, is_volume_high_enough, split_stock_list, is_volume_raising, is_volume_raising_within_check_days, \
-    calc_avg_vol, is_last_volume_higher_than_avg, is_a_few_higher_than_avg, calculate_stopbuy_and_stoploss, \
-    get_symbol_from_name_from_yahoo, read_current_day_from_yahoo
-from Strategies import strat_scheduler, strat_52_w_hi_hi_volume
-import threading
-import time
-import logging
-import pandas
 import numpy as np
 import pandas as pd
 import unittest
+
+from DataRead_Google_Yahoo import get_symbol_from_name_from_yahoo, read_current_day_from_yahoo, read_data_from_google_with_pandas, \
+    read_data_from_google_with_client
+from Strategies import strat_52_w_hi_hi_volume
+from Utils import is_volume_high_enough, is52_w_high, is_volume_raising_within_check_days, calc_avg_vol, \
+    is_last_volume_higher_than_avg, is_a_few_higher_than_avg, is_volume_raising, calculate_stopbuy_and_stoploss
 
 filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
 
@@ -222,6 +212,21 @@ class MyTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             read_current_day_from_yahoo("APPL.DE")
+
+    def test_read_data_from_google(self):
+        end = datetime.now()
+        ago52_w = (end - timedelta(weeks=52))
+        ago2_w = (end - timedelta(weeks=2))
+        res = read_data_from_google_with_pandas("ADBE", ago52_w, end) # 2017-09-21
+        res = read_data_from_google_with_pandas("ADBE", ago52_w, end)  # 2017-09-210
+        # TODO liefert immer 1 jahr
+
+    def test_read_data_from_google_with_client(self):
+        names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
+
+        for name in names:
+            res = read_data_from_google_with_client(name)
+            print()
 
 
 

@@ -1,24 +1,5 @@
-# import pandas.io.data as web  # Package and modules for importing data; this code may change depending on pandas version
-import logging
-import datetime
-import threading
 import sys
-import traceback
-
-import plotly
-import plotly.plotly as py
-import plotly.graph_objs as go
-from datetime import timedelta
-import urllib3
-from pandas import DataFrame
-from pandas_datareader import data, wb
-from yahoo_finance import Share
-
-stocks = []
-names = []
-filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
-str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
-str2 = "&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
+import datetime
 
 
 def calc_avg_vol(stock, days_skip_from_end):
@@ -65,23 +46,23 @@ def is_volume_raising_within_check_days(stock, check_days, min_cnt):
     if stock is None or check_days is None or min_cnt is None:
         raise NotImplementedError
 
-    dataLen = len(stock)
+    data_len = len(stock)
     raise_cnt = 0
     i = check_days
-    saveVal = False
+    save_val = False
     while i > 0:
-        vol_1 = stock.iloc[dataLen - i].Volume
-        if not saveVal:
-            vol_2 = stock.iloc[dataLen - i - 1].Volume
+        vol_1 = stock.iloc[data_len - i].Volume
+        if not save_val:
+            vol_2 = stock.iloc[data_len - i - 1].Volume
         if vol_1 > vol_2:
             raise_cnt += 1
-            saveVal = False
+            save_val = False
         else:
-            saveVal = True
+            save_val = True
 
         i -= 1
 
-    if (raise_cnt < min_cnt):
+    if raise_cnt < min_cnt:
         return False
 
     return True
@@ -107,9 +88,10 @@ def is_last_volume_higher_than_avg(data, check_days, vol_avg, significance_facto
     """
     if data is None or check_days is None or vol_avg is None or significance_factor is None:
         raise NotImplementedError
-    dataLen = len(data)
-    vol_last = data.iloc[dataLen - 1].Volume
-    if (vol_last < (vol_avg * significance_factor)):
+    data_len = len(data)
+    vol_last = data.iloc[data_len - 1].Volume
+    min_calc_vol = vol_avg * significance_factor
+    if vol_last < min_calc_vol:
         return False
     else:
         return True
@@ -139,17 +121,17 @@ def is_a_few_higher_than_avg(stock, check_days, min_cnt, volume_average):
     # from [0] to end, without days to check above avg  ~ [datalen-15]
     cnt = check_days
     higher_than_avg = 0
-    dataLen = len(stock)
+    data_len = len(stock)
 
     while cnt > 1:
 
-        vol = stock.iloc[dataLen - cnt].Volume
-        if (vol > volume_average):
+        vol = stock.iloc[data_len - cnt].Volume
+        if vol > volume_average:
             higher_than_avg += 1
 
         cnt -= 1
 
-    if (higher_than_avg >= min_cnt):
+    if higher_than_avg >= min_cnt:
         return True
 
     return False
@@ -215,16 +197,16 @@ def is52_w_high(stock, within52w_high_fact):
     if within52w_high_fact > 1:
         raise AttributeError("parameter within52w_high_fact must be lower than 1!")  # should above other avg volume
 
-    dataLen = len(stock)
-    curVal = stock.iloc[dataLen - 1].High
+    data_len = len(stock)
+    cur_val = stock.iloc[data_len - 1].High
     highest_high = stock['High'].max()
 
-    if curVal == highest_high:
+    if cur_val == highest_high:
         return True
 
     else:
-        hiMinusLimit = highest_high * within52w_high_fact
-        if curVal > hiMinusLimit:
+        hi_minus_limit = highest_high * within52w_high_fact
+        if cur_val > hi_minus_limit:
             return True
         else:
             return False
@@ -252,7 +234,7 @@ def gap_up(stock, min_gap_multiplier):
     curVal = stock.iloc[dataLen - 1].Open
     gapUpVal = (yesterday_val * min_gap_multiplier)
     # TODO: überprüfen ob tage hintereinander, achtung wochenende
-    if (curVal > gapUpVal):
+    if curVal > gapUpVal:
         return True
     else:
         return False
@@ -264,7 +246,7 @@ def gap_up(stock, min_gap_multiplier):
 #     curVal = stock.iloc[dataLen - 1].Open
 #     #gapUpVal = (yesterday_val * minGapMultiplier)
 #     #TODO: überprüfen ob tage hintereinander, achtung wochenende
-#     if (curVal > gapUpVal):
+#     if curVal > gapUpVal:
 #         return True
 #     else:
 #         return False
@@ -277,7 +259,7 @@ def is_volume_high_enough(stock):
     minReqVol = 30000  # min volume for liquid stocks
     vol_avg = calc_avg_vol(stock, 0)
 
-    if (vol_avg > minReqVol):
+    if vol_avg > minReqVol:
         return True
     else:
         return False
@@ -293,100 +275,9 @@ def split_stock_list(arr, size):
     return arrs
 
 
-def optimize_name_for_yahoo(name):
-    # TODO regex replaced = re.sub('\W', ' ', name)
-    name = name.lower()
-    name = name.replace(" ", "+")
-    name = name.replace(".", "")
-    name = name.replace("ü", "ue")
-    name = name.replace("ö", "oe")
-    name = name.replace("ä", "ae")
-    name = name.replace("etr:", "")
-    name = name.replace("fra:", "")
-    name = name.split("inc")[0]
-    name = name.replace("^", "")
-    nameSpl = name.split("+")
-    if (len(nameSpl) > 2):
-        name = nameSpl[0] + "+" + nameSpl[1]
-    return name
-
-
-def get_symbol_from_name_from_yahoo(name):
-    try:
-
-        name = optimize_name_for_yahoo(name)
-        http = urllib3.PoolManager()
-        # query: http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=Priceline&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
-
-        try:
-            r = http.request('GET', str1 + name + str2)  # build url
-        except Exception as e:
-            return " "
-
-        str_res = str(r.data)
-        if len(str_res) > 0:
-            symbol = str_res.rsplit('{"symbol":"')[1].rsplit('"')[0]
-            symbol = symbol.rsplit('.')[0] # cut the stock exchange market from yahoo
-            return symbol
-        else:
-            return " "  # no symbol found
-
-    except Exception as e:
-        return " "  # no symbol found
-
-
-def symbol_thread(name):
-    symbol = get_symbol_from_name_from_yahoo(name)
-    if symbol != " ":
-        stocks.append(symbol)
-        names.append(name)
-
-
-def get52_w__h__symbols__from_excel():
-    import xlrd
-    f = open(filepath + 'stockList.txt', 'w')
-    f.write("Name,   Symbol \n")  # python will convert \n to os.linesep
-
-    sh = xlrd.open_workbook(filepath + '52W-HochAutomatisch_Finanzen.xlsx').sheet_by_index(0)
-
-    from MyThread import MyThread
-    get_symbol_threads = MyThread("get_symbol_threads")
-
-    for rownum in range(sh.nrows):
-        try:
-            if rownum != 0:
-                name = str(sh.cell(rownum, 0).value)
-                date_from_file = str(sh.cell(rownum, 1).value)
-
-                # values from today contain a time (=Uhr) and not a date
-                # TODO
-                if "Uhr" in date_from_file:  # but google data is from yesterday
-                    get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name}))
-
-        except Exception as e:
-            sys.stderr.write("Method exception in: " + get_current_function_name()
-                             + ": stock name: " + str(name) + " is faulty: " + str(e) + "\n")
-            traceback.print_exc()
-
-    get_symbol_threads.execute_threads()
-
-    cnt = 0
-    while (cnt < len(names)):
-        for symbol in stocks:
-            f.write(names[cnt] + ",  " + symbol + "\n")  # python will convert \n to os.linesep
-            cnt += 1
-
-    f.close()  # you can omit in most cases as the destructor will call it
-    return stocks
-
-
-def write_stocks_to_buy_file(txt):
-    # TODO add, sl, sb ...
-    import datetime
-    now = datetime.datetime.now()
-
-    with open(filepath + "StocksToBuy.txt", "a") as myfile:
-        myfile.write(str(txt) + ", " + str(now.strftime("%Y-%m-%d %H:%M")) + "\n")
+def append_to_file(txt, file_with_path):
+    with open(file_with_path, "a") as myfile:
+        myfile.write(str(txt) + "\n")
         myfile.write("")
 
     myfile.close()
@@ -406,7 +297,7 @@ def calculate_stopbuy_and_stoploss(stock_data):
     return {'sb': sb, 'sl': sl}
 
 
-def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, program_end_time):
+def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, program_end_time, filepath):
     url_1 = "https://www.google.com/finance?q="
     url_2 = "&ei=Mby3WbnGGsjtsgHejoPwDA"
     url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
@@ -432,25 +323,27 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
                     sl = stb['sl']
                     found = False
                     strategy_name = stb['strategy_name']
+                    params = stb['params']
 
                     # open finanzen.net and google finance
                     url = url_1 + stock_to_buy + url_2
                     url2 = url_3 + stock_to_buy
+                    now = datetime.datetime.now()
 
                     for line in array:
                         if ',  ' + stock_to_buy in line:
-                            to_print = (str(line) + ": SB: " + str(sb) + ', SL: ' + str(
-                                sl) + ", strat: " + strategy_name + tabs_for_print + url + tabs_for_print + url2)
+                            to_print = str(now.strftime("%Y-%m-%d %H:%M")) + ": " + (str(line) + ": SB: " + str(sb) + ', SL: ' + str(
+                                sl) + ", strat: " + str(strategy_name) + ", params: " + str(params) + tabs_for_print + url + tabs_for_print + url2)
                             found = True
                             print(to_print)
-                            write_stocks_to_buy_file(to_print)
+                            append_to_file(to_print, filepath + "StocksToBuy.txt")
                             break
 
                     if not found:
                         to_print = str(stock_to_buy) + ": SB: " + str(sb) + ', SL: ' + str(
-                            sl) + ", strat: " + strategy_name + tabs_for_print + url + tabs_for_print + url2
+                            sl) + ", strat: " + str(strategy_name) + ", params: " + str(params) + tabs_for_print + url + tabs_for_print + url2
                         print(to_print)
-                        write_stocks_to_buy_file(to_print)
+                        append_to_file(to_print, filepath + "StocksToBuy.txt")
                         # url_1 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
                         # url = url_1 + stock_to_buy
                         # webbrowser.open(url)
@@ -480,80 +373,3 @@ def get_current_function_name():
     cf = current_func_name()  # name of this class itself
     cf1 = current_func_name(1)  # name of calling class
     return cf1
-
-
-def read_data_from_google(stock_name, start_time, end_time):
-    """
-    read data from google server
-    :param stock_name: stock name
-    :param start_time: start date and time
-    :param end_time: end date and time
-    :return: stock data
-    """
-
-    try:
-        stock52_w = data.DataReader(stock_name, "google", start_time.strftime("%Y-%m-%d"),
-                                    end_time.strftime("%Y-%m-%d"))
-
-    except:
-        # Try with another stock market ETR
-        stock52_w = data.DataReader("ETR:" + stock_name, "google", start_time.strftime("%Y-%m-%d"),
-                                    end_time.strftime("%Y-%m-%d"))
-
-    if len(stock52_w) > 0:
-        try:
-            stock52_w = stock52_w.append(read_current_day_from_yahoo(stock_name))
-        except Exception as e:
-            sys.stderr.write("Can not get stock data of stock " + stock_name + " from yahoo\n")
-
-    else:
-        sys.stderr.write("Stock: " + stock_name + " does not exist on!\n")
-
-    return stock52_w
-
-
-def read_current_day_from_yahoo(stock_name):
-    #  TODO google does not provide data from today, workarround: add yahoo data manually:
-    #  maybe try this: https://pypi.python.org/pypi/googlefinance.client
-    stock_name = optimize_name_for_yahoo(stock_name)
-    cols = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
-    lst = []
-    stock_markets_to_try = ["", ".DE"]
-    for stock_market in stock_markets_to_try:
-
-        try:
-            yahoo = Share(stock_name + stock_market)
-            currDate = (yahoo.get_trade_datetime())[0:10]
-            break
-
-        except:
-            # nothing to do
-            no = []
-
-
-    lst.append([currDate, float(yahoo.get_price()), float(yahoo.get_days_high()), float(yahoo.get_days_low()),
-                float(yahoo.get_price()),
-                float(yahoo.get_volume())])
-    df1 = DataFrame(lst, columns=cols)
-    df1.index.name = 'Date'
-    # df1.set_index([str(currDate)])
-    df1 = df1.set_index(['Date'])
-    return df1
-
-
-    # stock52_w.loc[len(stock52_w)]=[yahoo.get_price(),yahoo.get_days_high(),yahoo.get_days_low(),yahoo.get_price(),yahoo.get_volume()]
-    # stock52_w.iloc[len(stock52_w) - 1].name = datetime.utcnow()
-    # print("name: " + str(stock52_w.index.name))
-
-    return []
-
-
-def read_data_from_yahoo():
-    #  see also:
-    #  https: // github.com / lukaszbanasiak / yahoo - finance
-    #  https://pypi.python.org/pypi/yahoo-finance
-
-    yahoo = Share('APPL')
-    print(yahoo.get_avg_daily_volume())
-    print(yahoo.get_open())
-    # print (yahoo.get_historical('2014-04-25', '2014-04-29'))

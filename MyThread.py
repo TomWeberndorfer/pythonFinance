@@ -1,22 +1,6 @@
 import traceback
-
-import pandas as pd
-from pandas_datareader import data, wb
-# import pandas.io.data as web  # Package and modules for importing data; this code may change depending on pandas version
 import datetime
-import plotly
-import plotly.plotly as py
-import plotly.graph_objs as go
-from datetime import timedelta
 import sys
-import threading
-from Utils import is52_w_high, is_volume_high_enough, split_stock_list, get_symbol_from_name_from_yahoo, \
-    get52_w__h__symbols__from_excel, \
-    write_stocks_to_buy_file
-from Strategies import strat_scheduler
-import threading
-import time
-import logging
 
 ##########################################################
 class MyThread:

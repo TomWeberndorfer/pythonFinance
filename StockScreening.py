@@ -1,28 +1,17 @@
-import pandas as pd
-from pandas_datareader import data, wb
-# import pandas.io.data as web  # Package and modules for importing data; this code may change depending on pandas version
-from datetime import datetime, date, time
-import plotly
-import plotly.plotly as py
-import plotly.graph_objs as go
+from datetime import datetime
 from datetime import timedelta
-import sys
 import threading
-import webbrowser
 
 from MyThread import MyThread
-from Utils import  is52_w_high, is_volume_high_enough, split_stock_list, get_symbol_from_name_from_yahoo, \
-    get52_w__h__symbols__from_excel, \
-    write_stocks_to_buy_file, print_stocks_to_buy
+from Utils import  split_stock_list, print_stocks_to_buy
+from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel
 from Strategies import strat_scheduler
-
-import time
-import logging
 
 threads = []
 stocks_to_buy = []
 err = []
 program_start_time = datetime.now()
+params = []
 
 ##########################
 # config
@@ -73,30 +62,33 @@ all_symbols = []
 # 2 = VERSUCH NASDAQ
 # 3 = nur finanzen excel
 # 4 = NORMAL nur DAX und NASDAQ
-option = 0
+option = 4
+
+#  #params for strat_52_w_hi_hi_volume
+params.append({'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.1, 'within52w_high_fact': 0.98})
 ###########################################################
 
 # versuch DAX
 if option == 1:
-    dax_symbols = ['DPW.SW', 'CON.HM', 'HPBK.DE', 'EDL.F', 'HON']
+    dax_symbols = ["ETR:SMHN"]
     all_symbols.extend(dax_symbols)
 
 # versuch NASDAQ
 if option == 2:
-    #nasdaq100__symbols = ["AAPL"]
+    nasdaq100__symbols = ["PSX"]
     all_symbols.extend(nasdaq100__symbols)
 
 # ----------------------------------------------
 # alles Dax + nasdaq + excel
 if option == 0:
-    symbols52W_Hi = get52_w__h__symbols__from_excel()
+    symbols52W_Hi = get52_w__h__symbols__from_excel(filepath)
     all_symbols.extend(symbols52W_Hi)
     all_symbols.extend(nasdaq100__symbols)
     all_symbols.extend(dax_symbols)
 
 # nur finanzen excel
 if option == 3:
-    symbols52W_Hi = get52_w__h__symbols__from_excel()
+    symbols52W_Hi = get52_w__h__symbols__from_excel(filepath)
     all_symbols.extend(symbols52W_Hi)
 
 # NORMAL: nur DAX und NASDAQ
@@ -109,21 +101,21 @@ splits = split_stock_list(all_symbols, num_of_stocks_per_thread)
 stock_screening_threads = MyThread("stock_screening_threads")
 
 
-def function_for_threading_strat_scheduler(ch, provider, ago52_w_time, end_l):
+def function_for_threading_strat_scheduler(ch, ago52_w_time, end_l):
     print("Started with: " + str(ch))
-    stocks_to_buy.extend(strat_scheduler(ch, ago52_w_time, end_l))
+
+    stocks_to_buy.extend(strat_scheduler(ch, ago52_w_time, end_l, params))
 
 
 i = 0
 while i < len(splits):
     ch = splits[i]
     stock_screening_threads.append_thread(
-        threading.Thread(target=function_for_threading_strat_scheduler, kwargs={'ch': ch, 'provider': data_provider,
-                                                                                'ago52_w_time': ago52_w, 'end_l': end}))
+        threading.Thread(target=function_for_threading_strat_scheduler, kwargs={'ch': ch, 'ago52_w_time': ago52_w, 'end_l': end}))
     i += 1
 
 # Start new Threads to schedule all stocks
 stock_screening_threads.execute_threads()
 
 #print the results
-print_stocks_to_buy (stocks_to_buy, num_of_stocks_per_thread, program_start_time, datetime.now())
+print_stocks_to_buy (stocks_to_buy, num_of_stocks_per_thread, program_start_time, datetime.now(), filepath)

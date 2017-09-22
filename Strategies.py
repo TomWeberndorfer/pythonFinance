@@ -4,28 +4,28 @@ import traceback
 from pandas_datareader import data
 import pandas_datareader.data as web
 
-from Utils import is_volume_high_enough, is_volume_raising, is52_w_high, write_stocks_to_buy_file, gap_up, \
-    calculate_stopbuy_and_stoploss, get_current_function_name, read_data_from_google
-from datetime import datetime, date, time
+from Utils import is_volume_high_enough, is_volume_raising, is52_w_high, gap_up, \
+    calculate_stopbuy_and_stoploss, get_current_function_name
+from DataRead_Google_Yahoo import read_data_from_google_with_pandas
 import sys
-import pandas as pd
 
 
-def replace_wrong_stock_market(stockName):
+def replace_wrong_stock_market(stock_name):
     replace_pattern = [".MU", ".DE", ".SW", ".F", ".EX", ".TI", ".MI"]
 
     for pattern in replace_pattern:
-        if pattern in stockName:
-            stockName = stockName.replace(pattern, "")
-            stockName = "ETR:" + stockName
+        if pattern in stock_name:
+            stock_name = stock_name.replace(pattern, "")
+            stock_name = "ETR:" + stock_name
             break
 
-    return stockName
+    return stock_name
 
 
-def strat_scheduler(stock_names_to_check, ago52_w, end):
+def strat_scheduler(stock_names_to_check, ago52_w, end, params):
     """
-    function to schedule all strategien and return the stocks to buy
+    function to schedule all strategies and return the stocks to buy
+    :param params: parameter for strategy within structure: {'strat_52_w_hi_hi_volume': {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.1, 'within52w_high_fact': 0.98}}
     :param stock_names_to_check: list with stock names to check
     :param ago52_w: date and time 52weeks ago
     :param end: end date for read (today)
@@ -39,10 +39,10 @@ def strat_scheduler(stock_names_to_check, ago52_w, end):
 
         try:
             # read data
-            stock52_w = read_data_from_google(stock_name, ago52_w, end)
+            stock52_w = read_data_from_google_with_pandas(stock_name, ago52_w, end)
 
         except Exception as e:
-            #traceback.print_exc()
+            # traceback.print_exc()
             print("strat_scheduler: Data Read exception: " + str(stock_name) + " is faulty: " + str(e))
             read_exception = True
 
@@ -51,9 +51,15 @@ def strat_scheduler(stock_names_to_check, ago52_w, end):
             # insert STRATEGIES here
             try:
                 # TODO zusätzlicher vergleich zu DAX / NASDAQ vergleich handelsplus (titel trotz schwachem dax stark)
-                res = strat_52_w_hi_hi_volume(stock_name, stock52_w, 5, 3, 1.2, 0.98)
-                if res['buy'] == True and len(res) == 4:
-                    stocks_to_buy.append({'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl']})
+                str_52w_p = params[0]
+                check_days = str_52w_p['check_days']
+                min_cnt = str_52w_p['min_cnt']
+                min_vol_dev_fact = str_52w_p['min_vol_dev_fact']
+                within52w_high_fact = str_52w_p['within52w_high_fact']
+                res = strat_52_w_hi_hi_volume(stock_name, stock52_w, check_days, min_cnt, min_vol_dev_fact, within52w_high_fact)
+                if res['buy']:
+                    stocks_to_buy.append(
+                        {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'], 'strategy_name': res['strategy_name'], 'params': params[0]})
                     # print ("buy strat_52_w_hi_hi_volume: " + res)
 
                     # TODO canslim / Henkel
@@ -78,7 +84,8 @@ def strat_scheduler(stock_names_to_check, ago52_w, end):
 
             except Exception as e:
                 # e = sys.exc_info()[0]
-                sys.stderr.write("strat_scheduler: Strategy Exception: " + str(stock_name) + " is faulty: " + str(e) + "\n")
+                sys.stderr.write(
+                    "strat_scheduler: Strategy Exception: " + str(stock_name) + " is faulty: " + str(e) + "\n")
                 traceback.print_exc()
 
                 # if "Unable to read URL" in str(e):
@@ -132,7 +139,7 @@ def strat_gap_up__hi_volume(stock_name, stock52_w_data, min_gap_factor):
     :param min_gap_factor:
     :return:
     """
-    #TODO comm & test
+    # TODO comm & test
     if stock_name is None or stock52_w_data is None:
         raise NotImplementedError
 
@@ -162,7 +169,7 @@ def strat_gap_up__hi_volume(stock_name, stock52_w_data, min_gap_factor):
     #     if volumeHighEnough and isHammer:
     #         dataLen = len(stock52_w_data)
     #         endKurs = stock52_w_data.iloc[dataLen - 1].Close
-    #         write_stocks_to_buy_file(
+    #         append_to_file(
     #             str(stock_name) + ", " + str(endKurs) + ", strat_gap_up__hi_volume")
     #         return stock_name
     #
