@@ -23,6 +23,9 @@ ago52_w = (end - timedelta(weeks=52))
 
 data_provider = "google"
 filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
+stock_list_name = "stockList.txt"
+stocks_to_buy_name = "StocksToBuy.CSV"
+excel_file_name = '52W-HochAutomatisch_Finanzen.xlsx'
 
 # enhanced stock messages:
 # logging.basicConfig(level=logging.DEBUG)
@@ -62,15 +65,15 @@ all_symbols = []
 # 2 = VERSUCH NASDAQ
 # 3 = nur finanzen excel
 # 4 = NORMAL nur DAX und NASDAQ
-option = 4
+option = 1
 
 #  #params for strat_52_w_hi_hi_volume
-params.append({'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.1, 'within52w_high_fact': 0.98})
+params.append({'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98})
 ###########################################################
 
 # versuch DAX
 if option == 1:
-    dax_symbols = ["ETR:SMHN"]
+    dax_symbols = ["ETR:AIXA"]
     all_symbols.extend(dax_symbols)
 
 # versuch NASDAQ
@@ -81,14 +84,14 @@ if option == 2:
 # ----------------------------------------------
 # alles Dax + nasdaq + excel
 if option == 0:
-    symbols52W_Hi = get52_w__h__symbols__from_excel(filepath)
+    symbols52W_Hi = get52_w__h__symbols__from_excel(filepath + stock_list_name, filepath + excel_file_name)
     all_symbols.extend(symbols52W_Hi)
     all_symbols.extend(nasdaq100__symbols)
     all_symbols.extend(dax_symbols)
 
 # nur finanzen excel
 if option == 3:
-    symbols52W_Hi = get52_w__h__symbols__from_excel(filepath)
+    symbols52W_Hi = get52_w__h__symbols__from_excel(filepath + stock_list_name, filepath + excel_file_name)
     all_symbols.extend(symbols52W_Hi)
 
 # NORMAL: nur DAX und NASDAQ
@@ -118,4 +121,4 @@ while i < len(splits):
 stock_screening_threads.execute_threads()
 
 #print the results
-print_stocks_to_buy (stocks_to_buy, num_of_stocks_per_thread, program_start_time, datetime.now(), filepath)
+print_stocks_to_buy (stocks_to_buy, num_of_stocks_per_thread, program_start_time, datetime.now(), filepath + stock_list_name, filepath + stocks_to_buy_name)

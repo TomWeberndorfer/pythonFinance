@@ -202,31 +202,31 @@ class MyTest(unittest.TestCase):
         self.assertEqual(get_symbol_from_name_from_yahoo("ADS"), "ADS")
         self.assertEqual(get_symbol_from_name_from_yahoo("SÜSS MicroTec"), "SMHN")
 
-    def test_read_current_day_from_yahoo(self):
+    # def test_read_current_day_from_yahoo(self):
+    #
+    #     names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
+    #
+    #     for name in names:
+    #         data = read_current_day_from_yahoo(name)
+    #         self.assertEqual(len(data), 1)
+    #
+    #     with self.assertRaises(Exception):
+    #         read_current_day_from_yahoo("APPL.DE")
 
-        names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
-
-        for name in names:
-            data = read_current_day_from_yahoo(name)
-            self.assertEqual(len(data), 1)
-
-        with self.assertRaises(Exception):
-            read_current_day_from_yahoo("APPL.DE")
-
-    def test_read_data_from_google(self):
-        end = datetime.now()
-        ago52_w = (end - timedelta(weeks=52))
-        ago2_w = (end - timedelta(weeks=2))
-        res = read_data_from_google_with_pandas("ADBE", ago52_w, end) # 2017-09-21
-        res = read_data_from_google_with_pandas("ADBE", ago52_w, end)  # 2017-09-210
-        # TODO liefert immer 1 jahr
-
-    def test_read_data_from_google_with_client(self):
-        names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
-
-        for name in names:
-            res = read_data_from_google_with_client(name)
-            print()
+    # def test_read_data_from_google(self):
+    #     end = datetime.now()
+    #     ago52_w = (end - timedelta(weeks=52))
+    #     ago2_w = (end - timedelta(weeks=2))
+    #     res = read_data_from_google_with_pandas("ADBE", ago52_w, end) # 2017-09-21
+    #     res = read_data_from_google_with_pandas("ADBE", ago52_w, end)  # 2017-09-210
+    #     # TODO liefert immer 1 jahr
+    #
+    # def test_read_data_from_google_with_client(self):
+    #     names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
+    #
+    #     for name in names:
+    #         res = read_data_from_google_with_client(name)
+    #         print()
 
 
 

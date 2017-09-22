@@ -7,6 +7,7 @@ from pandas import DataFrame
 from pandas_datareader import data
 from yahoo_finance import Share
 import googlefinance.client as google_client
+import xlrd
 
 from Utils import get_current_function_name
 
@@ -18,6 +19,10 @@ names = []
 
 
 def read_data_from_google_with_client(stock_name, interval="86400", period="1M"):
+
+    if stock_name is None:
+        raise NotImplementedError
+
     param = {
         'q': stock_name,  # Stock symbol (ex: "AAPL")
         'i': interval,  # Interval size in seconds ("86400" = 1 day intervals)
@@ -29,23 +34,26 @@ def read_data_from_google_with_client(stock_name, interval="86400", period="1M")
     return df
 
 
-def read_data_from_google_with_pandas(stock_name, start_time, end_time):
+def read_data_from_google_with_pandas(stock_name, start_date, end_date):
     """
     read data from google server
     :param stock_name: stock name
-    :param start_time: start date and time
-    :param end_time: end date and time
+    :param start_date: start date and time
+    :param end_date: end date and time
     :return: stock data
     """
 
+    if stock_name is None or start_date is None or end_date is None:
+        raise NotImplementedError
+
     try:
-        stock52_w = data.DataReader(stock_name, "google", start_time.strftime("%Y-%m-%d"),
-                                    end_time.strftime("%Y-%m-%d"))
+        stock52_w = data.DataReader(stock_name, "google", start_date.strftime("%Y-%m-%d"),
+                                    end_date.strftime("%Y-%m-%d"))
 
     except:
         # Try with another stock market ETR
-        stock52_w = data.DataReader("ETR:" + stock_name, "google", start_time.strftime("%Y-%m-%d"),
-                                    end_time.strftime("%Y-%m-%d"))
+        stock52_w = data.DataReader("ETR:" + stock_name, "google", start_date.strftime("%Y-%m-%d"),
+                                    end_date.strftime("%Y-%m-%d"))
 
     #TODO data of today contains less volume because not finished
     # if len(stock52_w) > 0:
@@ -62,6 +70,10 @@ def read_data_from_google_with_pandas(stock_name, start_time, end_time):
 
 
 def read_data_from_yahoo(stock_name, start_date, end_date):
+
+    if stock_name is None or start_date is None or end_date is None:
+        raise NotImplementedError
+
     #  see also:
     #  https: // github.com / lukaszbanasiak / yahoo - finance
     #  https://pypi.python.org/pypi/yahoo-finance
@@ -81,6 +93,9 @@ def read_data_from_yahoo(stock_name, start_date, end_date):
 
 
 def read_current_day_from_yahoo(stock_name):
+    if stock_name is None:
+        raise NotImplementedError
+
     #  TODO google does not provide data from today, workarround: add yahoo data manually:
     #  maybe try this: https://pypi.python.org/pypi/googlefinance.client
     stock_name = optimize_name_for_yahoo(stock_name)
@@ -116,6 +131,9 @@ def read_current_day_from_yahoo(stock_name):
 
 
 def get_symbol_from_name_from_yahoo(name):
+    if name is None:
+        raise NotImplementedError
+
     try:
 
         name = optimize_name_for_yahoo(name)
@@ -139,12 +157,14 @@ def get_symbol_from_name_from_yahoo(name):
         return " "  # no symbol found
 
 
-def get52_w__h__symbols__from_excel(filepath):
-    import xlrd
-    f = open(filepath + 'stockList.txt', 'w')
+def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
+    if file_stock_list is None or file_excel is None:
+        raise NotImplementedError
+
+    f = open(file_stock_list, 'w')
     f.write("Name,   Symbol \n")  # python will convert \n to os.linesep
 
-    sh = xlrd.open_workbook(filepath + '52W-HochAutomatisch_Finanzen.xlsx').sheet_by_index(0)
+    sh = xlrd.open_workbook(file_excel).sheet_by_index(0)
 
     from MyThread import MyThread
     get_symbol_threads = MyThread("get_symbol_threads")
@@ -178,6 +198,9 @@ def get52_w__h__symbols__from_excel(filepath):
 
 
 def optimize_name_for_yahoo(name):
+    if name is None:
+        raise NotImplementedError
+
     # TODO regex replaced = re.sub('\W', ' ', name)
     name = name.lower()
     name = name.replace(" ", "+")
@@ -196,6 +219,9 @@ def optimize_name_for_yahoo(name):
 
 
 def symbol_thread(name):
+    if name is None:
+        raise NotImplementedError
+
     symbol = get_symbol_from_name_from_yahoo(name)
     if symbol != " ":
         stocks.append(symbol)

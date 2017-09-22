@@ -266,6 +266,10 @@ def is_volume_high_enough(stock):
 
 
 def split_stock_list(arr, size):
+
+    if arr is None or size is None:
+        raise NotImplementedError
+
     arrs = []
     while len(arr) > size:
         pice = arr[:size]
@@ -276,6 +280,10 @@ def split_stock_list(arr, size):
 
 
 def append_to_file(txt, file_with_path):
+
+    if txt is None or file_with_path is None:
+        raise NotImplementedError
+
     with open(file_with_path, "a") as myfile:
         myfile.write(str(txt) + "\n")
         myfile.write("")
@@ -289,6 +297,10 @@ def calculate_stopbuy_and_stoploss(stock_data):
     :param stock_data: 52w stock data
     :return: stop buy and stop loss: {'sb':sb, 'sl': sl}
     """
+
+    if stock_data is None:
+        raise NotImplementedError
+
     # values should be calc with max (real 52wHigh)
     highest_high = stock_data['High'].max()
     sb = highest_high * 1.005  # stop buy 0,5% higher than last val
@@ -297,7 +309,11 @@ def calculate_stopbuy_and_stoploss(stock_data):
     return {'sb': sb, 'sl': sl}
 
 
-def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, program_end_time, filepath):
+def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, program_end_time, file_name_and_path_stock_list, file_name_and_path_stocks_to_buy):
+
+    if stocks_to_buy is None or num_of_stocks_per_thread is None or program_start_time is None or program_end_time is None or file_name_and_path_stock_list is None or file_name_and_path_stocks_to_buy is None:
+        raise NotImplementedError
+
     url_1 = "https://www.google.com/finance?q="
     url_2 = "&ei=Mby3WbnGGsjtsgHejoPwDA"
     url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
@@ -312,7 +328,7 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
         if len(stocks_to_buy) == 0:
             print("No stocks found")
         else:
-            with open(filepath + "stockList.txt", "r") as ins:
+            with open(file_name_and_path_stock_list, "r") as ins:
                 array = []
                 for line in ins:
                     array.append(line.replace('\n', ' ').replace('\r', ''))
@@ -329,21 +345,24 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
                     url = url_1 + stock_to_buy + url_2
                     url2 = url_3 + stock_to_buy
                     now = datetime.datetime.now()
+                    to_print_cmd = ""
 
                     for line in array:
                         if ',  ' + stock_to_buy in line:
-                            to_print = str(now.strftime("%Y-%m-%d %H:%M")) + ": " + (str(line) + ": SB: " + str(sb) + ', SL: ' + str(
-                                sl) + ", strat: " + str(strategy_name) + ", params: " + str(params) + tabs_for_print + url + tabs_for_print + url2)
+                            to_print_cmd = str(line)
                             found = True
-                            print(to_print)
-                            append_to_file(to_print, filepath + "StocksToBuy.txt")
                             break
 
                     if not found:
-                        to_print = str(stock_to_buy) + ": SB: " + str(sb) + ', SL: ' + str(
-                            sl) + ", strat: " + str(strategy_name) + ", params: " + str(params) + tabs_for_print + url + tabs_for_print + url2
-                        print(to_print)
-                        append_to_file(to_print, filepath + "StocksToBuy.txt")
+                        to_print_cmd = str(stock_to_buy)
+
+                    to_print_file = to_print_cmd
+                    to_print_cmd +=  "; SB: " + str(sb) + '; SL: ' + str(sl) + "; strat: " + str(strategy_name) + tabs_for_print + url + tabs_for_print + url2
+                    print(to_print_cmd)
+                    # replace . with , for excel csv
+                    to_print_file += ";" + str(sb).replace('.', ',') + ';' + str(sl).replace('.', ',') + ";" + str(strategy_name) + ";" + str(params) + ";" + url + ";" + url2
+                    append_to_file(str(now.strftime("%Y-%m-%d %H:%M")) + "; " + to_print_file, file_name_and_path_stocks_to_buy)
+
                         # url_1 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
                         # url = url_1 + stock_to_buy
                         # webbrowser.open(url)
