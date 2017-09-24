@@ -1,11 +1,13 @@
+import threading
+import traceback
 from datetime import datetime
 from datetime import timedelta
-import threading
+import sys
 
+from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel, read_data_from_google_with_pandas
 from MyThread import MyThread
-from Utils import  split_stock_list, print_stocks_to_buy
-from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel
 from Strategies import strat_scheduler
+from Utils import  split_stock_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume
 
 threads = []
 stocks_to_buy = []
@@ -73,6 +75,9 @@ params.append({'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52
 
 # params for strat_gap_up__hi_volume
 params.append({'min_gap_factor': 1.03})
+
+#strat_candlestick_hammer_hi_vol
+params.append({'hammer_length_in_factor': 1.01, 'handle_bigger_than_head_factor': 2})
 ###########################################################
 
 # versuch DAX
@@ -113,6 +118,23 @@ def function_for_threading_strat_scheduler(ch, ago52_w_time, end_l):
 
     stocks_to_buy.extend(strat_scheduler(ch, ago52_w_time, end_l, params))
 
+def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, start_date, end_date):
+    """
+    plots alist with stock names
+    :param stocks_to_buy:
+    :param start_date:
+    :param end_date:
+    :return:
+    """
+    for stock in stocks_to_buy:
+        try :
+            stock_name = stock['stock_name']
+            stock_data = read_data_from_google_with_pandas(stock_name, start_date, end_date)
+            plot_stock_as_candlechart_with_volume(stock_name, stock_data)
+
+        except Exception as e:
+            sys.stderr.write("EXCEPTION execute_threads: " + str(e) + "\n")
+            traceback.print_exc()
 
 i = 0
 while i < len(splits):
@@ -124,5 +146,6 @@ while i < len(splits):
 # Start new Threads to schedule all stocks
 stock_screening_threads.execute_threads()
 
-#print the results
+#print the results and plot it
 print_stocks_to_buy (stocks_to_buy, num_of_stocks_per_thread, program_start_time, datetime.now(), filepath + stock_list_name, filepath + stocks_to_buy_name)
+plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, ago52_w, end)

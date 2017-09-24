@@ -7,8 +7,9 @@ from pandas_datareader import data
 import pandas_datareader.data as web
 
 
-from Utils import is_volume_high_enough, is_volume_raising, is52_w_high, append_to_file, gap_up, \
+from Utils import signal_is_volume_high_enough, signal_is52_w_high, append_to_file, signal_gap_up, \
     calculate_stopbuy_and_stoploss, get_current_function_name, read_data_from_yahoo
+from Signals import signal_is_volume_raising, signal_is52_w_high, signal_gap_up, signal_is_volume_high_enough
 from DataRead_Google_Yahoo import read_data_from_google_with_pandas, read_data_from_yahoo
 from datetime import datetime, date, time
 import pandas as pd

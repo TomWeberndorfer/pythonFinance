@@ -1,25 +1,10 @@
-import logging
+import sys
 import traceback
 
-from pandas_datareader import data
-import pandas_datareader.data as web
-
-from Utils import is_volume_high_enough, is_volume_raising, is52_w_high, gap_up, \
-    calculate_stopbuy_and_stoploss, get_current_function_name, hammer, append_to_file
-from DataRead_Google_Yahoo import read_data_from_google_with_pandas, read_current_day_from_yahoo
-import sys
-
-
-def replace_wrong_stock_market(stock_name):
-    replace_pattern = [".MU", ".DE", ".SW", ".F", ".EX", ".TI", ".MI"]
-
-    for pattern in replace_pattern:
-        if pattern in stock_name:
-            stock_name = stock_name.replace(pattern, "")
-            stock_name = "ETR:" + stock_name
-            break
-
-    return stock_name
+from DataRead_Google_Yahoo import read_data_from_google_with_pandas
+from Signals import signal_is_volume_raising, signal_is52_w_high, signal_gap_up, signal_hammer, \
+    signal_is_volume_high_enough
+from Utils import calculate_stopbuy_and_stoploss, get_current_function_name
 
 
 def strat_scheduler(stock_names_to_check, ago52_w, end, params):
@@ -60,10 +45,9 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
                 if res['buy']:
                     stocks_to_buy.append(
                         {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'], 'strategy_name': res['strategy_name'], 'params': params[0]})
-                    # print ("buy strat_52_w_hi_hi_volume: " + res)
 
                     # TODO canslim / Henkel
-
+                    # TODO text auswertung http://www.learndatasci.com/python-finance-part-3-moving-average-trading-strategy/
                     # TODO auswertung von chartsignalen mittels finanzen.at
                     # http://www.finanzen.net/chartsignale/index/Alle/liste/jc-1234er-long
                     ############################################################################
@@ -73,21 +57,29 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
                     min_gap_factor = str_gap_up_p['min_gap_factor']
                     # add data from today for gap up
                     #TODO must check if late and google adds itself
-                    #stock52_w = stock52_w.append(read_current_day_from_yahoo(stock_name))
                     res = strat_gap_up__hi_volume(stock_name, stock52_w, min_gap_factor)
                     if res['buy']:
                          stocks_to_buy.append(
                              {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
                               'strategy_name': res['strategy_name'], 'params': params[1]})
-                #         print ("buy strat_gap_up__hi_volume: " + res)
-                    # TODO candlestick hammer
-                    # res = strat_candlestick_hammer_hi_vol (stock_name, stock52_w)
 
-                    # TODO negativer hammer in den letzten 10 tagen als zeichen für nicht kaufen
+                    else :
+                        str_52w_p = params[2]
+                        hammer_length_in_factor = str_52w_p['hammer_length_in_factor']
+                        handle_bigger_than_head_factor = str_52w_p['handle_bigger_than_head_factor']
+                        res = strat_candlestick_hammer_hi_vol(stock_name, stock52_w, hammer_length_in_factor, handle_bigger_than_head_factor)
+                        if res['buy']:
+                            stocks_to_buy.append(
+                                {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
+                                 'strategy_name': res['strategy_name'], 'params': params[1]})
+                    # TODO candlestick signal_hammer
+
+                    # TODO negativer signal_hammer in den letzten 10 tagen als zeichen für nicht kaufen
                     # TODO zusätzliche reihung nach:
                     # - volumen anstieg stärke
 
                     # TODO http://www.finanzen.at/analysen
+                    # TODO ansehen: https://www.youtube.com/watch?v=IuhLfRJTHmY
 
             except Exception as e:
                 # e = sys.exc_info()[0]
@@ -123,13 +115,13 @@ def strat_52_w_hi_hi_volume(stock_name, stock52_w_data, check_days, min_cnt, min
     if within52w_high_fact > 1:
         raise AttributeError("parameter within52w_high_fact must be lower than 1!")  # should above other avg volume
 
-    if not is_volume_high_enough(stock52_w_data):
+    if not signal_is_volume_high_enough(stock52_w_data):
         return {'buy': False}
 
-    if not is_volume_raising(stock52_w_data, check_days, min_cnt, min_vol_dev_fact):
+    if not signal_is_volume_raising(stock52_w_data, check_days, min_cnt, min_vol_dev_fact):
         return {'buy': False}
 
-    if not is52_w_high(stock52_w_data, within52w_high_fact):
+    if not signal_is52_w_high(stock52_w_data, within52w_high_fact):
         return {'buy': False}
 
     result = calculate_stopbuy_and_stoploss(stock52_w_data)
@@ -151,10 +143,10 @@ def strat_gap_up__hi_volume(stock_name, stock_data, min_gap_factor):
     if stock_name is None or stock_data is None or min_gap_factor is None:
         raise NotImplementedError
 
-    if not is_volume_high_enough(stock_data):
+    if not signal_is_volume_high_enough(stock_data):
         return {'buy': False}
 
-    if not gap_up(stock_data, min_gap_factor):
+    if not signal_gap_up(stock_data, min_gap_factor):
         return {'buy': False}
 
     result = calculate_stopbuy_and_stoploss(stock_data)
@@ -163,14 +155,14 @@ def strat_gap_up__hi_volume(stock_name, stock_data, min_gap_factor):
             'strategy_name': get_current_function_name()}
 
 
-def strat_candlestick_hammer_hi_vol (stock_name, stock_data):
-    if stock_name is None or stock_data is None:
+def strat_candlestick_hammer_hi_vol (stock_name, stock_data, hammer_length_in_factor, handle_bigger_than_head_factor):
+    if stock_name is None or stock_data is None or hammer_length_in_factor is None or handle_bigger_than_head_factor is None:
         raise NotImplementedError
 
-    if not is_volume_high_enough(stock_data):
+    if not signal_is_volume_high_enough(stock_data):
         return {'buy': False}
 
-    if not hammer(stock_data, 1.02, 3):
+    if not signal_hammer(stock_data, hammer_length_in_factor, handle_bigger_than_head_factor):
         return {'buy': False}
 
     result = calculate_stopbuy_and_stoploss(stock_data)

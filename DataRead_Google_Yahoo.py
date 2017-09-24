@@ -37,6 +37,7 @@ def read_data_from_google_with_client(stock_name, interval="86400", period="1M")
 def read_data_from_google_with_pandas(stock_name, start_date, end_date, read_yahoo_today=False):
     """
     read data from google server
+    :param read_yahoo_today:
     :param stock_name: stock name
     :param start_date: start date and time
     :param end_date: end date and time
