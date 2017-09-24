@@ -1,10 +1,13 @@
 import datetime
+import pickle
 import sys
+import os
 
+import bs4 as bs
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy
-
+import requests
 from matplotlib import style
 from matplotlib.finance import candlestick_ohlc
 
@@ -38,6 +41,12 @@ def calc_avg_vol(stock_data, days_skip_from_end):
 
 
 def split_stock_list(arr, size):
+    """
+    TODO description
+    :param arr:
+    :param size:
+    :return:
+    """
     if arr is None or size is None:
         raise NotImplementedError
 
@@ -168,6 +177,9 @@ def get_current_function_name():
 
 
 def replace_wrong_stock_market(stock_name):
+    if stock_name is None:
+        raise NotImplementedError
+
     replace_pattern = [".MU", ".DE", ".SW", ".F", ".EX", ".TI", ".MI"]
 
     for pattern in replace_pattern:
@@ -241,4 +253,29 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     plt.show()
 
 
+def read_and_save_sp500_tickers(tickers_file):
+    """
+    read the sp500 tickers and saves it to given file
+    :param tickers_file: file to save the sp500 tickers
+    :return: nothing
+    """
+    resp = requests.get('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+    soup = bs.BeautifulSoup(resp.text, 'lxml')
+    table = soup.find('table', {'class': 'wikitable sortable'})
+    tickers = []
+    for row in table.findAll('tr')[1:]:
+        ticker = row.findAll('td')[0].text
+        tickers.append(ticker)
 
+    with open(tickers_file, "wb") as f:
+        pickle.dump(tickers, f)
+
+
+def read_sp500_tickers(tickers_file):
+    if not os.path.exists(tickers_file):
+        read_and_save_sp500_tickers(tickers_file)
+
+    with open(tickers_file, "rb") as f:
+        tickers = pickle.load(f)
+
+    return tickers
