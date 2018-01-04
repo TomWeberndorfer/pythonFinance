@@ -10,14 +10,14 @@ import numpy
 import requests
 #from matplotlib import style
 import plotly.graph_objs as go
-from matplotlib.finance import candlestick_ohlc
+#from matplotlib.finance import candlestick_ohlc
 import plotly.plotly as py
 import plotly.graph_objs as go
 
 import pandas as pd
 
 import matplotlib.pyplot as plt
-from matplotlib.finance import candlestick_ohlc
+#from matplotlib.finance import candlestick_ohlc
 import matplotlib.dates as mdates
 #style.use('ggplot')
 

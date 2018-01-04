@@ -1,10 +1,10 @@
 import sys
 import traceback
 
-from DataRead_Google_Yahoo import read_data_from_google_with_pandas
+from DataRead_Google_Yahoo import read_data_from_google_with_pandas, get_ticker_data_with_webreader
 from Signals import signal_is_volume_raising, signal_is52_w_high, signal_gap_up, signal_hammer, \
     signal_is_volume_high_enough
-from Trial.s_and_p_list_from_wiki import get_data_from_google_with_webreader
+from Trial.s_and_p_list_from_wiki import get_data_from_google_with_webreader, get_ticker_data_with_webreader
 from Utils import calculate_stopbuy_and_stoploss, get_current_function_name
 
 #TODO as parameter
@@ -30,7 +30,8 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
             # read data
             #TODO
             #stock52_w = read_data_from_google_with_pandas(stock_name, ago52_w, end)
-            stock52_w = get_data_from_google_with_webreader (stock_name,  filepath + 'stock_dfs', False, False)
+            #stock52_w = get_data_from_google_with_webreader (stock_name,  filepath + 'stock_dfs', False, False)
+            stock52_w = get_ticker_data_with_webreader(stock_name, filepath + 'stock_dfs', 'yahoo', False, False)
 
         except Exception as e:
             # traceback.print_exc()
@@ -51,7 +52,7 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
                 res = strat_52_w_hi_hi_volume(stock_name, stock52_w, check_days, min_cnt, min_vol_dev_fact, within52w_high_fact)
                 if res['buy']:
                     stocks_to_buy.append(
-                        {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'], 'strategy_name': res['strategy_name'], 'params': params[0]})
+                        {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'], 'strategy_name': res['strategy_name'], 'params': params[0], 'data': stock52_w})
 
                     # TODO canslim / Henkel
                     # TODO text auswertung http://www.learndatasci.com/python-finance-part-3-moving-average-trading-strategy/

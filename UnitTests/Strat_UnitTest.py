@@ -85,13 +85,13 @@ class MyTest(unittest.TestCase):
         file = filepath + 'test_t2_isLastVolumeHigherThanAvg_belowAvg4k_last3k8.csv'
         data = pd.read_csv(file)
         vol_avg = calc_avg_vol(data, 5)
-        self.assertEqual(signal_is_last_volume_higher_than_avg(data, 5, vol_avg, 1.2), False)
+        self.assertEqual(signal_is_last_volume_higher_than_avg(data, vol_avg, 1.2), False)
 
         #t2: above avg 4k2
         file = filepath + 'test_t2_isLastVolumeHigherThanAvg_belowAvg4k_last5k2.csv'
         data = pd.read_csv(file)
         vol_avg = calc_avg_vol(data, 5)
-        self.assertEqual(signal_is_last_volume_higher_than_avg(data, 5, vol_avg, 1.2), True)
+        self.assertEqual(signal_is_last_volume_higher_than_avg(data, vol_avg, 1.2), True)
 
     def test_t3_is_a_few_higher_than_avg(self):
 

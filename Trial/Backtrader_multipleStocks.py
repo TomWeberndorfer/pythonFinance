@@ -23,7 +23,6 @@ from pandas import DataFrame
 
 from Signals import signal_is_volume_raising_within_check_days
 from Strategies import strat_52_w_hi_hi_volume
-from Trial.PlotScheme import PlotScheme
 from Utils import convert_backtrader_to_dataframe, calc_avg_vol
 
 program_start_time = datetime.now()
@@ -179,9 +178,25 @@ if __name__ == '__main__':
 
     for file in onlyfiles:
         dn = 'C:/Users/Tom/OneDrive/Dokumente/Thomas/Aktien/datas/' + file
-        data = bt.feeds.YahooFinanceCSVData(
+
+        #TODO test für eigenen data reader
+        #data = bt.feeds.YahooFinanceCSVData(
+        #    dataname=dn,
+        #    reverse=False)
+
+        data = bt.feeds.GenericCSVData(
             dataname=dn,
-            reverse=False)
+            nullvalue=0.0,
+            dtformat=('%Y-%m-%d'),
+            datetime=0,
+            open=1,
+            high=2,
+            low=3,
+            close=4,
+            volume=5,
+            openinterest=-1
+        )
+
         cerebro.adddata(data)
 
     # Set our desired cash start

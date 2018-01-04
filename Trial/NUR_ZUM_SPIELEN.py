@@ -1,7 +1,6 @@
-from os import listdir
-from os.path import isfile, join
+from Trial.s_and_p_list_from_wiki import get_data_from_google_with_webreader
 
-mypath = 'C:/Users/Tom/OneDrive/Dokumente/Thomas/Aktien/datas/'
-onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
 
-onlyfiles
+stock52_w = get_data_from_google_with_webreader ('AAPL',  filepath + 'stock_dfs', False, False)
+stock52_w

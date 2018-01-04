@@ -1,15 +1,21 @@
+import datetime as dt
+import os
 import sys
 import threading
 import traceback
 
+import pandas as pd
 import urllib3
 from pandas import DataFrame
-from pandas_datareader import data
+from pandas_datareader import data, data
 from yahoo_finance import Share
 import googlefinance.client as google_client
 import xlrd
+import pandas as pd
+import pandas_datareader.data as web
 
-from Utils import get_current_function_name
+from Trial.s_and_p_list_from_wiki import filepath
+from Utils import get_current_function_name, append_to_file
 
 str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
 str2 = "&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
@@ -202,15 +208,18 @@ def optimize_name_for_yahoo(name):
     if name is None:
         raise NotImplementedError
 
-    name = name.lower()
+    name = name.upper()
     name = name.replace(" ", "+")
     name = name.replace(".", "")
-    name = name.replace("ü", "ue")
-    name = name.replace("ö", "oe")
-    name = name.replace("ä", "ae")
-    name = name.replace("etr:", "")
-    name = name.replace("fra:", "")
-    name = name.split("inc")[0]
+    name = name.replace("Ü", "UE")
+    name = name.replace("Ö", "OE")
+    name = name.replace("Ä", "AE")
+
+    if "ETR:" in name:
+        name = name.replace("ETR:", "")
+        name += ".DE"
+    name = name.replace("FRA:", "")
+    name = name.split("INC")[0]
     name = name.replace("^", "")
     nameSpl = name.split("+")
     if len(nameSpl) > 2:
@@ -226,3 +235,39 @@ def symbol_thread(name):
     if symbol != " ":
         stocks.append(symbol)
         names.append(name)
+
+
+def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reload_sp500=False, reload_stockdata=False):
+    # if reload_sp500:
+    #     read_and_save_sp500_tickers(tickers_file)
+    # else:
+    #     with open(tickers_file, "rb") as f:
+    #         tickers = pickle.load(f)
+
+    # if not os.path.exists(stock_dfs_file):
+    #     os.makedirs(stock_dfs_file)
+
+    df = []
+    ticker = optimize_name_for_yahoo(ticker)
+
+    try:
+        # TODO does not reload new data
+        if not os.path.exists(stock_dfs_file + '/{}.csv'.format(ticker)) or reload_stockdata:
+            end = dt.datetime.now()
+            start = (end - dt.timedelta(weeks=52))
+            df = web.DataReader(ticker, source, start, end)
+            if len(df) > 0:
+                df.to_csv(stock_dfs_file + '/{}.csv'.format(ticker))
+            else:
+                print('FAILED: Reading {}'.format(ticker))
+                raise Exception
+        else:
+            # print('Already have {}'.format(ticker))
+            df = pd.read_csv(stock_dfs_file + '/{}.csv'.format(ticker))
+
+    except Exception as e:
+        sys.stderr.write("EXCEPTION in " + get_current_function_name() + " , " + str(e) + "\n")
+        # traceback.print_exc()
+        append_to_file(str(ticker), filepath + "failedReads.txt")
+
+    return df

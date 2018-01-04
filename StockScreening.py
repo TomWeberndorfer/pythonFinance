@@ -29,7 +29,9 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, start_date, end
     for stock in stocks_to_buy:
         try:
             stock_name = stock['stock_name']
-            stock_data = read_data_from_google_with_pandas(stock_name, start_date, end_date)
+            #TODO weg
+            #stock_data = read_data_from_google_with_pandas(stock_name, start_date, end_date)
+            stock_data = stock['data']
             plot_stock_as_candlechart_with_volume(stock_name, stock_data)
 
         except Exception as e:
@@ -99,7 +101,7 @@ try :
     # 3 = finanzen excel
     # 4 = DAX, NASDAQ , S&P500
     # 5 = S&P500
-    option = 5
+    option = 2
 
     # params for strat_52_w_hi_hi_volume
     params.append({'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98})
@@ -113,12 +115,12 @@ try :
 
     # DAX
     if option == 1:
-        dax_symbols = ["ETR:WAF"]
+        #dax_symbols = ["AAPL", "ADBE", "ETR:ADS"]
         all_symbols.extend(dax_symbols)
 
     # NASDAQ
     if option == 2:
-        nasdaq100__symbols = ["INTC"]
+        nasdaq100__symbols = ["ALB"]
         all_symbols.extend(nasdaq100__symbols)
 
     # ----------------------------------------------
