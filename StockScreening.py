@@ -8,14 +8,14 @@ from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel, read_data_fro
 from MyThread import MyThread
 from Strategies import strat_scheduler
 from Utils import split_stock_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, \
-    read_and_save_sp500_tickers, read_sp500_tickers
+    read_and_save_sp500_tickers, read_sp500_tickers, append_to_file
 
 
 # TODO maybe move to better place
-def function_for_threading_strat_scheduler(ch, ago52_w_time, end_l):
-    print("Started with: " + str(ch))
+def function_for_threading_strat_scheduler(stock_names_to_check, ago52_w_time, end_l):
+    print("Started with: " + str(stock_names_to_check))
 
-    stocks_to_buy.extend(strat_scheduler(ch, ago52_w_time, end_l, params))
+    stocks_to_buy.extend(strat_scheduler(stock_names_to_check, ago52_w_time, end_l, params))
 
 
 def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, start_date, end_date):
@@ -45,7 +45,7 @@ try :
 
     ##########################
     # config
-    num_of_stocks_per_thread = 5
+    num_of_stocks_per_thread = 20
     volume_day_delta = 5
     volume_avg_day_delta = 15
     end = datetime.now()
@@ -99,10 +99,10 @@ try :
     # 3 = finanzen excel
     # 4 = DAX, NASDAQ , S&P500
     # 5 = S&P500
-    option = 0
+    option = 5
 
     # params for strat_52_w_hi_hi_volume
-    params.append({'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98})
+    params.append({'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98})
 
     # params for strat_gap_up__hi_volume
     params.append({'min_gap_factor': 1.03})
@@ -118,7 +118,7 @@ try :
 
     # NASDAQ
     if option == 2:
-        nasdaq100__symbols = ["PSX"]
+        nasdaq100__symbols = ["INTC"]
         all_symbols.extend(nasdaq100__symbols)
 
     # ----------------------------------------------
@@ -152,13 +152,14 @@ try :
 
     i = 0
     while i < len(splits):
-        ch = splits[i]
+        stock_names_to_check = splits[i]
         stock_screening_threads.append_thread(
             threading.Thread(target=function_for_threading_strat_scheduler,
-                             kwargs={'ch': ch, 'ago52_w_time': ago52_w, 'end_l': end}))
+                             kwargs={'stock_names_to_check': stock_names_to_check, 'ago52_w_time': ago52_w, 'end_l': end}))
         i += 1
 
     # Start new Threads to schedule all stocks
+    append_to_file("Start screening with " + str(len(all_symbols)) + " symbols and num_of_stocks_per_thread = " + str(num_of_stocks_per_thread), filepath + "Runtime.txt")
     stock_screening_threads.execute_threads()
 
     # print the results and plot it

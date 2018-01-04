@@ -1,0 +1,312 @@
+conda install python=3.5
+conda install -c Quantopian zipline
+conda create -n py34 python=3.4 anaconda
+activate py34
+conda install -n py34 -c hargup/label/pypi googlefinance
+
+not conda: 
+pip install yahoo_finance 
+pip install googlefinance.client
+
+TODO see:
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+https://stackoverflow.com/questions/33709391/using-multiple-python-engines-32bit-64bit-and-2-7-3-5
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+https://conda.io/docs/user-guide/tasks/manage-python.html#installing-a-different-version-of-python
+http://www.zipline.io/install.html
+
+
+azuzre:
+https://e5.onthehub.com/WebStore/Account/OrderDetails.aspx?o=b1c14b8e-f7a1-e711-80f6-000d3af41938&ws=3ebdd572-a88b-e011-969d-0030487d8897&vsro=8
+https://portal.azure.com/#blade/Microsoft_Azure_Marketplace/GalleryFeaturedMenuItemBlade/selectedMenuItemId/home/searchQuery/pyth
+https://docs.microsoft.com/en-us/azure/app-service/app-service-web-get-started-python
+
+installation:
+backports-1.0- 100% |###############################| Time: 0:00:00 745.34 kB/s
+backports_abc- 100% |###############################| Time: 0:00:00   4.52 MB/s
+beautifulsoup4 100% |###############################| Time: 0:00:00   4.47 MB/s
+bitarray-0.8.1 100% |###############################| Time: 0:00:00 509.10 kB/s
+boto-2.45.0-py 100% |###############################| Time: 0:00:00   4.27 MB/s
+chardet-2.3.0- 100% |###############################| Time: 0:00:00 746.92 kB/s
+click-6.7-py34 100% |###############################| Time: 0:00:00   4.56 MB/s
+cloudpickle-0. 100% |###############################| Time: 0:00:00   7.12 MB/s
+colorama-0.3.7 100% |###############################| Time: 0:00:00  11.71 MB/s
+comtypes-1.1.2 100% |###############################| Time: 0:00:00 639.16 kB/s
+console_shortc 100% |###############################| Time: 0:00:00 395.67 kB/s
+contextlib2-0. 100% |###############################| Time: 0:00:00  13.47 MB/s
+curl-7.52.1-vc 100% |###############################| Time: 0:00:00 712.53 kB/s
+cython-0.25.2- 100% |###############################| Time: 0:00:01   1.80 MB/s
+decorator-4.0. 100% |###############################| Time: 0:00:00   8.95 MB/s
+dill-0.2.5-py3 100% |###############################| Time: 0:00:00 634.46 kB/s
+docutils-0.13. 100% |###############################| Time: 0:00:00   1.30 MB/s
+entrypoints-0. 100% |###############################| Time: 0:00:00   3.26 MB/s
+et_xmlfile-1.0 100% |###############################| Time: 0:00:00  15.86 MB/s
+fastcache-1.0. 100% |###############################| Time: 0:00:00   8.30 MB/s
+greenlet-0.4.1 100% |###############################| Time: 0:00:00  14.22 MB/s
+hdf5-1.8.15.1- 100% |###############################| Time: 0:00:00   4.31 MB/s
+heapdict-1.0.0 100% |###############################| Time: 0:00:00   5.28 MB/s
+idna-2.2-py34_ 100% |###############################| Time: 0:00:00   3.99 MB/s
+imagesize-0.7. 100% |###############################| Time: 0:00:00   3.30 MB/s
+ipython_genuti 100% |###############################| Time: 0:00:00   6.63 MB/s
+itsdangerous-0 100% |###############################| Time: 0:00:00   8.22 MB/s
+jdcal-1.3-py34 100% |###############################| Time: 0:00:00   6.82 MB/s
+jedi-0.9.0-py3 100% |###############################| Time: 0:00:00   4.65 MB/s
+jsonschema-2.5 100% |###############################| Time: 0:00:00   5.13 MB/s
+lazy-object-pr 100% |###############################| Time: 0:00:00   4.48 MB/s
+libpng-1.6.27- 100% |###############################| Time: 0:00:00   4.43 MB/s
+libtiff-4.0.6- 100% |###############################| Time: 0:00:00   4.45 MB/s
+llvmlite-0.15. 100% |###############################| Time: 0:00:02   3.03 MB/s
+locket-0.2.0-p 100% |###############################| Time: 0:00:00   6.17 MB/s
+lxml-3.7.2-py3 100% |###############################| Time: 0:00:00   1.83 MB/s
+markupsafe-0.2 100% |###############################| Time: 0:00:00   8.54 MB/s
+mistune-0.7.3- 100% |###############################| Time: 0:00:00   4.94 MB/s
+mkl-service-1. 100% |###############################| Time: 0:00:00   4.52 MB/s
+mpmath-0.19-py 100% |###############################| Time: 0:00:00   4.40 MB/s
+multipledispat 100% |###############################| Time: 0:00:00   9.20 MB/s
+nose-1.3.7-py3 100% |###############################| Time: 0:00:00   4.60 MB/s
+numpy-1.11.3-p 100% |###############################| Time: 0:00:00   4.32 MB/s
+path.py-10.0-p 100% |###############################| Time: 0:00:00   6.33 MB/s
+pep8-1.7.0-py3 100% |###############################| Time: 0:00:00 557.87 kB/s
+ply-3.9-py34_0 100% |###############################| Time: 0:00:00   4.81 MB/s
+psutil-5.0.1-p 100% |###############################| Time: 0:00:00   4.89 MB/s
+py-1.4.32-py34 100% |###############################| Time: 0:00:00 576.53 kB/s
+pyasn1-0.1.9-p 100% |###############################| Time: 0:00:00   5.82 MB/s
+pycosat-0.6.1- 100% |###############################| Time: 0:00:00 621.57 kB/s
+pycparser-2.17 100% |###############################| Time: 0:00:00 471.95 kB/s
+pycrypto-2.6.1 100% |###############################| Time: 0:00:00 749.98 kB/s
+pyflakes-1.5.0 100% |###############################| Time: 0:00:00   4.71 MB/s
+pygments-2.1.3 100% |###############################| Time: 0:00:00   4.34 MB/s
+pyparsing-2.1. 100% |###############################| Time: 0:00:00   5.71 MB/s
+pytz-2016.10-p 100% |###############################| Time: 0:00:00   4.19 MB/s
+pywin32-220-py 100% |###############################| Time: 0:00:03   4.12 MB/s
+pyyaml-3.12-py 100% |###############################| Time: 0:00:00 467.04 kB/s
+pyzmq-16.0.2-p 100% |###############################| Time: 0:00:00 804.46 kB/s
+qtpy-1.2.1-py3 100% |###############################| Time: 0:00:00   7.38 MB/s
+requests-2.12. 100% |###############################| Time: 0:00:00   4.42 MB/s
+rope-0.9.4-py3 100% |###############################| Time: 0:00:00 530.64 kB/s
+ruamel_yaml-0. 100% |###############################| Time: 0:00:00   4.66 MB/s
+scandir-1.4-py 100% |###############################| Time: 0:00:00   8.39 MB/s
+setuptools-27. 100% |###############################| Time: 0:00:00   4.40 MB/s
+simplegeneric- 100% |###############################| Time: 0:00:00   6.73 MB/s
+sip-4.18-py34_ 100% |###############################| Time: 0:00:00   4.50 MB/s
+six-1.10.0-py3 100% |###############################| Time: 0:00:00  10.99 MB/s
+snowballstemme 100% |###############################| Time: 0:00:00   5.54 MB/s
+sqlalchemy-1.1 100% |###############################| Time: 0:00:01   1.48 MB/s
+toolz-0.8.2-py 100% |###############################| Time: 0:00:00   5.35 MB/s
+unicodecsv-0.1 100% |###############################| Time: 0:00:00  10.52 MB/s
+wcwidth-0.1.7- 100% |###############################| Time: 0:00:00  10.86 MB/s
+werkzeug-0.11. 100% |###############################| Time: 0:00:00   4.45 MB/s
+wheel-0.29.0-p 100% |###############################| Time: 0:00:00   5.02 MB/s
+win_unicode_co 100% |###############################| Time: 0:00:00   9.38 MB/s
+wrapt-1.10.8-p 100% |###############################| Time: 0:00:00   4.80 MB/s
+xlrd-1.0.0-py3 100% |###############################| Time: 0:00:00 545.92 kB/s
+xlsxwriter-0.9 100% |###############################| Time: 0:00:00   4.70 MB/s
+xlwt-1.2.0-py3 100% |###############################| Time: 0:00:00 681.62 kB/s
+argcomplete-1. 100% |###############################| Time: 0:00:00 369.84 kB/s
+astroid-1.4.9- 100% |###############################| Time: 0:00:00 691.45 kB/s
+astropy-1.3-np 100% |###############################| Time: 0:00:01   4.31 MB/s
+babel-2.3.4-py 100% |###############################| Time: 0:00:01   4.30 MB/s
+bottleneck-1.2 100% |###############################| Time: 0:00:00 437.59 kB/s
+cffi-1.9.1-py3 100% |###############################| Time: 0:00:00 508.85 kB/s
+chest-0.2.3-py 100% |###############################| Time: 0:00:00   9.79 MB/s
+clyent-1.2.2-p 100% |###############################| Time: 0:00:00  15.37 MB/s
+configobj-5.0. 100% |###############################| Time: 0:00:00 379.86 kB/s
+cycler-0.10.0- 100% |###############################| Time: 0:00:00 818.88 kB/s
+cytoolz-0.8.2- 100% |###############################| Time: 0:00:00 991.43 kB/s
+freetype-2.5.5 100% |###############################| Time: 0:00:00   1.94 MB/s
+get_terminal_s 100% |###############################| Time: 0:00:00   4.50 MB/s
+gevent-1.2.1-p 100% |###############################| Time: 0:00:00   1.04 MB/s
+h5py-2.6.0-np1 100% |###############################| Time: 0:00:00   3.23 MB/s
+isort-4.2.5-py 100% |###############################| Time: 0:00:00   4.25 MB/s
+jinja2-2.9.4-p 100% |###############################| Time: 0:00:00   3.70 MB/s
+networkx-1.11- 100% |###############################| Time: 0:00:00   3.60 MB/s
+nltk-3.2.2-py3 100% |###############################| Time: 0:00:01   1.55 MB/s
+numba-0.30.1-n 100% |###############################| Time: 0:00:01   1.87 MB/s
+numexpr-2.6.1- 100% |###############################| Time: 0:00:00   5.94 MB/s
+openpyxl-2.4.1 100% |###############################| Time: 0:00:00 823.22 kB/s
+partd-0.3.7-py 100% |###############################| Time: 0:00:00   7.62 MB/s
+pathlib2-2.2.0 100% |###############################| Time: 0:00:00   7.58 MB/s
+patsy-0.4.1-py 100% |###############################| Time: 0:00:00   1.31 MB/s
+pickleshare-0. 100% |###############################| Time: 0:00:00   6.23 MB/s
+pip-9.0.1-py34 100% |###############################| Time: 0:00:00   4.24 MB/s
+prompt_toolkit 100% |###############################| Time: 0:00:00   4.52 MB/s
+pycurl-7.43.0- 100% |###############################| Time: 0:00:00   5.89 MB/s
+pytest-3.0.5-p 100% |###############################| Time: 0:00:00 654.88 kB/s
+python-dateuti 100% |###############################| Time: 0:00:00 699.83 kB/s
+qt-5.6.2-vc10_ 100% |###############################| Time: 0:00:14   4.00 MB/s
+qtawesome-0.4. 100% |###############################| Time: 0:00:01 147.02 kB/s
+scipy-0.18.1-n 100% |###############################| Time: 0:00:03   3.84 MB/s
+singledispatch 100% |###############################| Time: 0:00:00  12.92 MB/s
+sympy-1.0-py34 100% |###############################| Time: 0:00:01   4.29 MB/s
+tornado-4.4.2- 100% |###############################| Time: 0:00:00   4.34 MB/s
+traitlets-4.3. 100% |###############################| Time: 0:00:00 513.14 kB/s
+xlwings-0.10.2 100% |###############################| Time: 0:00:00   4.32 MB/s
+anaconda-clien 100% |###############################| Time: 0:00:00   4.73 MB/s
+bokeh-0.12.4-p 100% |###############################| Time: 0:00:01   2.57 MB/s
+cryptography-1 100% |###############################| Time: 0:00:00   2.83 MB/s
+datashape-0.5. 100% |###############################| Time: 0:00:00   5.24 MB/s
+flask-0.12-py3 100% |###############################| Time: 0:00:00   5.15 MB/s
+ipython-5.1.0- 100% |###############################| Time: 0:00:03 272.48 kB/s
+jupyter_core-4 100% |###############################| Time: 0:00:00 442.27 kB/s
+pandas-0.19.2- 100% |###############################| Time: 0:00:01   4.20 MB/s
+pillow-4.0.0-p 100% |###############################| Time: 0:00:01 826.93 kB/s
+pylint-1.6.4-p 100% |###############################| Time: 0:00:00   4.00 MB/s
+pyqt-5.6.0-py3 100% |###############################| Time: 0:00:01   4.27 MB/s
+pytables-3.2.2 100% |###############################| Time: 0:00:00   4.03 MB/s
+scikit-learn-0 100% |###############################| Time: 0:00:01   4.23 MB/s
+sockjs-tornado 100% |###############################| Time: 0:00:00   5.05 MB/s
+sphinx-1.5.1-p 100% |###############################| Time: 0:00:00   1.53 MB/s
+anaconda-proje 100% |###############################| Time: 0:00:00 506.77 kB/s
+dask-0.13.0-py 100% |###############################| Time: 0:00:00   4.36 MB/s
+flask-cors-3.0 100% |###############################| Time: 0:00:00   8.92 MB/s
+jupyter_client 100% |###############################| Time: 0:00:00 612.23 kB/s
+matplotlib-2.0 100% |###############################| Time: 0:00:02   4.21 MB/s
+nbformat-4.2.0 100% |###############################| Time: 0:00:00   5.31 MB/s
+numpydoc-0.6.0 100% |###############################| Time: 0:00:00   5.82 MB/s
+odo-0.5.0-py34 100% |###############################| Time: 0:00:00 643.00 kB/s
+pyopenssl-16.2 100% |###############################| Time: 0:00:00   5.67 MB/s
+statsmodels-0. 100% |###############################| Time: 0:00:01   4.27 MB/s
+anaconda-navig 100% |###############################| Time: 0:00:01   4.20 MB/s
+blaze-0.10.1-p 100% |###############################| Time: 0:00:00   4.30 MB/s
+ipykernel-4.5. 100% |###############################| Time: 0:00:00   4.92 MB/s
+nbconvert-4.2. 100% |###############################| Time: 0:00:00   4.68 MB/s
+scikit-image-0 100% |###############################| Time: 0:00:04   4.28 MB/s
+seaborn-0.7.1- 100% |###############################| Time: 0:00:00 515.42 kB/s
+jupyter_consol 100% |###############################| Time: 0:00:00   5.80 MB/s
+notebook-4.3.1 100% |###############################| Time: 0:00:01   4.03 MB/s
+qtconsole-4.2. 100% |###############################| Time: 0:00:00 642.59 kB/s
+spyder-3.1.2-p 100% |###############################| Time: 0:00:01   2.52 MB/s
+widgetsnbexten 100% |###############################| Time: 0:00:00   4.07 MB/s
+ipywidgets-5.2 100% |###############################| Time: 0:00:00   5.53 MB/s
+jupyter-1.0.0- 100% |###############################| Time: 0:00:00   5.34 MB/s
+anaconda-4.3.1 100% |###############################| Time: 0:00:00  16.70 MB/s
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+#
+# To activate this environment, use:
+# > activate py34
+#
+# To deactivate an active environment, use:
+# > deactivate
+#
+# * for power-users using bash, you must source
+#
+
+
+(C:\Users\Tom\Anaconda3) C:\Users\Tom>activate py34
+
+(py34) C:\Users\Tom>(myenv) $
+"$" kann syntaktisch an dieser Stelle nicht verarbeitet werden.
+
+(py34) C:\Users\Tom>(myenv)
+Der Befehl "myenv" ist entweder falsch geschrieben oder
+konnte nicht gefunden werden.
+
+(py34) C:\Users\Tom>conda info --envs
+# conda environments:
+#
+py34                  *  C:\Users\Tom\Anaconda3\envs\py34
+root                     C:\Users\Tom\Anaconda3
+
+
+(py34) C:\Users\Tom>python --version
+Python 3.4.5 :: Anaconda 4.3.1 (64-bit)
+
+(py34) C:\Users\Tom>conda install -c Quantopian zipline
+Fetching package metadata .............
+Solving package specifications: .
+
+Package plan for installation in environment C:\Users\Tom\Anaconda3\envs\py34:
+
+The following NEW packages will be INSTALLED:
+
+    alembic:            0.7.7-py34_0       Quantopian
+    bcolz:              0.12.1-np110py34_0 Quantopian
+    cachetools:         1.1.6-py34_0       Quantopian
+    cyordereddict:      0.2.2-py34_0       Quantopian
+    empyrical:          0.2.2-py34_0       Quantopian
+    intervaltree:       2.1.0-py34_0       Quantopian
+    logbook:            0.12.5-py34_0      Quantopian
+    mako:               1.0.6-py34_0
+    pandas-datareader:  0.2.1-py34_0
+    requests-file:      1.4.1-py34_0
+    sortedcontainers:   1.4.4-py34_0       Quantopian
+    vs2015_runtime:     14.0.25420-0
+    zipline:            1.0.2-np110py34_0  Quantopian
+
+The following packages will be UPDATED:
+
+    anaconda:           4.3.1-np111py34_0             --> custom-py34_0
+    llvmlite:           0.15.0-py34_0                 --> 0.20.0-py34_0
+    numba:              0.30.1-np111py34_0            --> 0.35.0-np110py34_0
+    scikit-image:       0.12.3-np111py34_1            --> 0.12.3-np110py34_1
+    statsmodels:        0.6.1-np111py34_1             --> 0.6.1-np110py34_1
+
+The following packages will be DOWNGRADED:
+
+    anaconda-navigator: 1.5.0-py34_0                  --> 1.2.3-py34_0
+    astropy:            1.3-np111py34_0               --> 1.1.2-np110py34_0
+    bottleneck:         1.2.0-np111py34_0             --> 1.0.0-np110py34_1
+    dask:               0.13.0-py34_0                 --> 0.11.0-py34_0
+    h5py:               2.6.0-np111py34_2             --> 2.6.0-np110py34_0
+    matplotlib:         2.0.0-np111py34_0             --> 1.5.1-np110py34_0
+    numexpr:            2.6.1-np111py34_2             --> 2.4.6-np110py34_0
+    numpy:              1.11.3-py34_0                 --> 1.10.1-py34_0
+    pandas:             0.19.2-np111py34_1            --> 0.17.1-np110py34_0
+    pyqt:               5.6.0-py34_2                  --> 4.10.4-py34_1
+    pytables:           3.2.2-np111py34_4             --> 3.2.2-np110py34_1
+    qtconsole:          4.2.1-py34_2                  --> 4.2.1-py34_0
+    scikit-learn:       0.18.1-np111py34_1            --> 0.17-np110py34_1
+    scipy:              0.18.1-np111py34_1            --> 0.16.0-np110py34_0
+
+Proceed ([y]/n)? y
+
+vs2015_runtime 100% |###############################| Time: 0:00:01   1.89 MB/s
+anaconda-custo 100% |###############################| Time: 0:00:00   4.59 MB/s
+cachetools-1.1 100% |###############################| Time: 0:00:00 112.18 kB/s
+cyordereddict- 100% |###############################| Time: 0:00:00 175.91 kB/s
+llvmlite-0.20. 100% |###############################| Time: 0:00:02   4.01 MB/s
+logbook-0.12.5 100% |###############################| Time: 0:00:00 181.72 kB/s
+numpy-1.10.1-p 100% |###############################| Time: 0:00:06   3.73 MB/s
+pyqt-4.10.4-py 100% |###############################| Time: 0:00:08   3.99 MB/s
+sortedcontaine 100% |###############################| Time: 0:00:00 143.52 kB/s
+astropy-1.1.2- 100% |###############################| Time: 0:00:02   2.88 MB/s
+bcolz-0.12.1-n 100% |###############################| Time: 0:00:01 335.99 kB/s
+bottleneck-1.0 100% |###############################| Time: 0:00:00 596.58 kB/s
+h5py-2.6.0-np1 100% |###############################| Time: 0:00:00   1.03 MB/s
+intervaltree-2 100% |###############################| Time: 0:00:00 140.68 kB/s
+mako-1.0.6-py3 100% |###############################| Time: 0:00:00 656.48 kB/s
+numba-0.35.0-n 100% |###############################| Time: 0:00:01   1.81 MB/s
+numexpr-2.4.6- 100% |###############################| Time: 0:00:00  18.37 MB/s
+requests-file- 100% |###############################| Time: 0:00:00   3.04 MB/s
+scipy-0.16.0-n 100% |###############################| Time: 0:00:25   3.41 MB/s
+alembic-0.7.7- 100% |###############################| Time: 0:00:02  82.06 kB/s
+matplotlib-1.5 100% |###############################| Time: 0:00:01   3.88 MB/s
+pandas-0.17.1- 100% |###############################| Time: 0:00:03   1.65 MB/s
+pytables-3.2.2 100% |###############################| Time: 0:00:01   1.39 MB/s
+scikit-learn-0 100% |###############################| Time: 0:00:01   2.08 MB/s
+anaconda-navig 100% |###############################| Time: 0:00:01   1.88 MB/s
+dask-0.11.0-py 100% |###############################| Time: 0:00:01 501.76 kB/s
+empyrical-0.2. 100% |###############################| Time: 0:00:00 119.64 kB/s
+pandas-datarea 100% |###############################| Time: 0:00:00   5.39 MB/s
+scikit-image-0 100% |###############################| Time: 0:00:04   3.69 MB/s
+statsmodels-0. 100% |###############################| Time: 0:00:01   4.24 MB/s
+zipline-1.0.2- 100% |###############################| Time: 0:00:01 749.45 kB/s
+qtconsole-4.2. 100% |###############################| Time: 0:00:00   4.47 MB/s
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+INFO menuinst_win32:__init__(182): Menu: name: 'Anaconda${PY_VER} ${PLATFORM}', prefix: 'C:\Users\Tom\Anaconda3\envs\py34', env_name: 'py34', mode: 'None', used_mode: 'user'
+
+(py34) C:\Users\Tom>python --version
+Python 3.4.5 :: Anaconda custom (64-bit)
+
+(py34) C:\Users\Tom>

@@ -1,3 +1,6 @@
+import sys
+import traceback
+
 from talib.func import ATR
 from Utils import calc_avg_vol
 
@@ -15,23 +18,34 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
 
     Raises:
         NotImplementedError: if parameters are None
+
     """
     if stock is None or check_days is None or min_cnt is None:
         raise NotImplementedError
 
     data_len = len(stock)
+
+    if data_len < 5: #must have enough data
+        return False #TODO
+        #TOD raise IndexError
+
     raise_cnt = 0
     i = check_days
     save_val = False
     while i > 0:
-        vol_1 = stock.iloc[data_len - i].Volume
-        if not save_val:
-            vol_2 = stock.iloc[data_len - i - 1].Volume
-        if vol_1 > vol_2:
-            raise_cnt += 1
-            save_val = False
-        else:
-            save_val = True
+        try:
+            vol_1 = stock.iloc[data_len - i].Volume
+            if not save_val:
+                vol_2 = stock.iloc[data_len - i - 1].Volume
+            if vol_1 > vol_2:
+                raise_cnt += 1
+                save_val = False
+            else:
+                save_val = True
+
+        except Exception as e:
+            sys.stderr.write("EXCEPTION execute_threads: " + str(e) + "\n")
+            traceback.print_exc()
 
         i -= 1
 
@@ -41,14 +55,13 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
     return True
 
 
-def signal_is_last_volume_higher_than_avg(data, check_days, vol_avg, significance_factor):
+def signal_is_last_volume_higher_than_avg(data, vol_avg, significance_factor):
     """
     Calculates the average and checks,
     if the last volume is higher than avg.
 
     Args:
         data: stock data
-        check_days: number of days to check
         vol_avg: average volume
         significance_factor:  is a factor to show that the cur vol is significantly higher
 
@@ -59,9 +72,14 @@ def signal_is_last_volume_higher_than_avg(data, check_days, vol_avg, significanc
     Raises:
         NotImplementedError: if parameters are None
     """
-    if data is None or check_days is None or vol_avg is None or significance_factor is None:
+    if data is None or vol_avg is None or significance_factor is None:
         raise NotImplementedError
     data_len = len(data)
+
+    if data_len < 5: #must have enough data
+        return False  # TODO
+        raise IndexError
+
     vol_last = data.iloc[data_len - 1].Volume
     min_calc_vol = vol_avg * significance_factor
     if vol_last < min_calc_vol:
@@ -88,13 +106,17 @@ def signal_is_a_few_higher_than_avg(stock, check_days, min_cnt, volume_average):
         NotImplementedError: if parameters are None
 
     """
-    if stock is None or check_days is None or min_cnt is None:
+    if stock is None or check_days is None or min_cnt is None or volume_average is None:
         raise NotImplementedError
 
     # from [0] to end, without days to check above avg  ~ [datalen-15]
     cnt = check_days
     higher_than_avg = 0
     data_len = len(stock)
+
+    if data_len < 5: #must have enough data
+        return False  # TODO
+        raise IndexError
 
     while cnt > 1:
 
@@ -140,7 +162,7 @@ def signal_is_volume_raising(data, check_days, min_cnt, min_vol_dev_fact):
 
     # t2: last volume higher than avg
     # 1.2: is significant higher than avg
-    if not signal_is_last_volume_higher_than_avg(data, check_days, vol_avg, min_vol_dev_fact):
+    if not signal_is_last_volume_higher_than_avg(data, vol_avg, min_vol_dev_fact):
         return False
 
     # t3: at least a few volume higher than avg
@@ -171,6 +193,11 @@ def signal_is52_w_high(stock, within52w_high_fact):
         raise AttributeError("parameter within52w_high_fact must be lower than 1!")  # should above other avg volume
 
     data_len = len(stock)
+
+    if data_len < 5: #must have enough data
+        return False  # TODO
+        raise IndexError
+
     cur_val = stock.iloc[data_len - 1].High
     highest_high = stock['High'].max()
 

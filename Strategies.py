@@ -4,7 +4,11 @@ import traceback
 from DataRead_Google_Yahoo import read_data_from_google_with_pandas
 from Signals import signal_is_volume_raising, signal_is52_w_high, signal_gap_up, signal_hammer, \
     signal_is_volume_high_enough
+from Trial.s_and_p_list_from_wiki import get_data_from_google_with_webreader
 from Utils import calculate_stopbuy_and_stoploss, get_current_function_name
+
+#TODO as parameter
+filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
 
 
 def strat_scheduler(stock_names_to_check, ago52_w, end, params):
@@ -24,7 +28,9 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
 
         try:
             # read data
-            stock52_w = read_data_from_google_with_pandas(stock_name, ago52_w, end)
+            #TODO
+            #stock52_w = read_data_from_google_with_pandas(stock_name, ago52_w, end)
+            stock52_w = get_data_from_google_with_webreader (stock_name,  filepath + 'stock_dfs', False, False)
 
         except Exception as e:
             # traceback.print_exc()
@@ -32,6 +38,7 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
             read_exception = True
 
         if not read_exception and len(stock52_w) > 0:
+            #print(" try with " + str(stock_name))
             ##############################################################
             # insert STRATEGIES here
             try:
@@ -52,26 +59,26 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
                     # http://www.finanzen.net/chartsignale/index/Alle/liste/jc-1234er-long
                     ############################################################################
 
-                else:
-                    str_gap_up_p = params[1]
-                    min_gap_factor = str_gap_up_p['min_gap_factor']
-                    # add data from today for gap up
-                    #TODO must check if late and google adds itself
-                    res = strat_gap_up__hi_volume(stock_name, stock52_w, min_gap_factor)
-                    if res['buy']:
-                         stocks_to_buy.append(
-                             {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
-                              'strategy_name': res['strategy_name'], 'params': params[1]})
+                # else:
+                #     str_gap_up_p = params[1]
+                #     min_gap_factor = str_gap_up_p['min_gap_factor']
+                #     # add data from today for gap up
+                #     #TODO must check if late and google adds itself
+                #     res = strat_gap_up__hi_volume(stock_name, stock52_w, min_gap_factor)
+                #     if res['buy']:
+                #          stocks_to_buy.append(
+                #              {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
+                #               'strategy_name': res['strategy_name'], 'params': params[1]})
 
-                    else :
-                        str_52w_p = params[2]
-                        hammer_length_in_factor = str_52w_p['hammer_length_in_factor']
-                        handle_bigger_than_head_factor = str_52w_p['handle_bigger_than_head_factor']
-                        res = strat_candlestick_hammer_hi_vol(stock_name, stock52_w, hammer_length_in_factor, handle_bigger_than_head_factor)
-                        if res['buy']:
-                            stocks_to_buy.append(
-                                {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
-                                 'strategy_name': res['strategy_name'], 'params': params[1]})
+                    # else :
+                    #     str_52w_p = params[2]
+                    #     hammer_length_in_factor = str_52w_p['hammer_length_in_factor']
+                    #     handle_bigger_than_head_factor = str_52w_p['handle_bigger_than_head_factor']
+                    #     res = strat_candlestick_hammer_hi_vol(stock_name, stock52_w, hammer_length_in_factor, handle_bigger_than_head_factor)
+                    #     if res['buy']:
+                    #         stocks_to_buy.append(
+                    #             {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
+                    #              'strategy_name': res['strategy_name'], 'params': params[1]})
                     # TODO candlestick signal_hammer
 
                     # TODO negativer signal_hammer in den letzten 10 tagen als zeichen für nicht kaufen
@@ -89,7 +96,7 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
 
                 # if "Unable to read URL" in str(e):
                 # return stocks_to_buy # return because google stops transfer
-
+    print("Finished with [" + str(stock_names_to_check) + "]")
     return stocks_to_buy
 
 

@@ -15,7 +15,7 @@ import sys
 import threading
 import webbrowser
 from yahoo_finance import Share
-import ystockquote
+
 from pprint import pprint
 
 #from googlefinance.client import get_price_data, get_prices_data, get_prices_time_data

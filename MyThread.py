@@ -3,6 +3,10 @@ import datetime
 import sys
 
 ##########################################################
+from Utils import append_to_file
+
+filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
+
 class MyThread:
     def __init__(self, name):
         self.name = name
@@ -25,11 +29,14 @@ class MyThread:
                 traceback.print_exc()
 
         # Wait for all threads to complete
+        #TODO performance tests
         for t in self.threads:
             t.join()
 
-        print("Runtime Threads " + str(self.name) + ": " + str(
-            datetime.datetime.now() - thr_start) + ", cnt of threads: " + str(len(self.threads)))
+        txt = "Runtime Threads " + str(self.name) + ": " + str(
+            datetime.datetime.now() - thr_start) + ", cnt of threads: " + str(len(self.threads))
+        print(txt)
+        append_to_file(txt, filepath + "Runtime.txt")
 
     def append_thread(self, thread_to_append):
         try:

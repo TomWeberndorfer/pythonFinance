@@ -8,10 +8,18 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy
 import requests
-from matplotlib import style
+#from matplotlib import style
+import plotly.graph_objs as go
 from matplotlib.finance import candlestick_ohlc
+import plotly.plotly as py
+import plotly.graph_objs as go
 
-style.use('ggplot')
+import pandas as pd
+
+import matplotlib.pyplot as plt
+from matplotlib.finance import candlestick_ohlc
+import matplotlib.dates as mdates
+#style.use('ggplot')
 
 
 def calc_avg_vol(stock_data, days_skip_from_end):
@@ -28,6 +36,10 @@ def calc_avg_vol(stock_data, days_skip_from_end):
     # t3: last vol must be higher than volume avg
     vol_avg = 0  # variable for avg
     dataLen = len(stock_data) - days_skip_from_end  # 2 because last entry not included
+
+    if dataLen <= 0:
+        return 0
+
     avgCnt = 0
 
     # calc average
@@ -35,6 +47,9 @@ def calc_avg_vol(stock_data, days_skip_from_end):
         curr_vol = stock_data.iloc[avgCnt].Volume
         vol_avg += curr_vol
         avgCnt += 1
+
+    if avgCnt == 0:
+        return 0
 
     vol_avg /= avgCnt  # calc avg
     return vol_avg
@@ -235,22 +250,16 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     :param stock_data: data to print, from google or yahoo
     :return: nothing
     """
+    #plotly.tools.set_credentials_file(username='webc', api_key='bWWpIIZ51DsGeqBXNb15')
 
-    df_ohlc = stock_data['Close'].resample('10D').ohlc()
-    df_volume = stock_data['Volume'].resample('10D').sum()
-
-    df_ohlc.reset_index(inplace=True)
-    df_ohlc['Date'] = df_ohlc['Date'].map(mdates.date2num)
-
-    ax1 = plt.subplot2grid((6, 1), (0, 0), rowspan=5, colspan=1)
-    ax2 = plt.subplot2grid((6, 1), (5, 0), rowspan=1, colspan=1, sharex=ax1)
-    ax1.xaxis_date()
-
-    candlestick_ohlc(ax1, df_ohlc.values, width=5, colorup='g')
-    ax2.fill_between(df_volume.index.map(mdates.date2num), df_volume.values, 0)
-
-    plt.title(stock_name)
-    plt.show()
+    trace = go.Candlestick(x=stock_data.index,
+                            open=stock_data.Open,
+                            high=stock_data.High,
+                            low=stock_data.Low,
+                            close=stock_data.Close)
+    data = [trace]
+    py.plot(data, filename='simple_candlestick')
+    return
 
 
 def read_and_save_sp500_tickers(tickers_file):
@@ -279,3 +288,25 @@ def read_sp500_tickers(tickers_file):
         tickers = pickle.load(f)
 
     return tickers
+
+def convert_backtrader_to_dataframe (data):
+    cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+    #Open, High, Low, Close, Volume, OpenInterest
+    lst = []
+
+    i = - len(data.open) + 1
+    while i <= 0:
+        try:
+
+            lst.append([float(data.open[i]), float(data.high[i]), float(data.low[i]),
+                        float(data.close[i]), float(data.volume[i])])
+
+        except:
+            # nothing to do
+            no = []
+            break
+        i += 1
+
+    df1 = pd.DataFrame(lst, columns=cols)
+
+    return df1
