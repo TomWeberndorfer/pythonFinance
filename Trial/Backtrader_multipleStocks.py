@@ -1,9 +1,14 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import datetime  # For datetime objects
+#import datetime  # For datetime objects
 import os.path  # To manage paths
 import sys  # To find out the script name (in argv[0])
+from datetime import datetime
+from datetime import timedelta
+
+from os import listdir
+from os.path import isfile, join
 
 # Import the backtrader platform
 import backtrader as bt
@@ -13,7 +18,6 @@ import backtrader as bt
 #
 ####################################
 
-
 # Create a Stratey
 from pandas import DataFrame
 
@@ -22,6 +26,7 @@ from Strategies import strat_52_w_hi_hi_volume
 from Trial.PlotScheme import PlotScheme
 from Utils import convert_backtrader_to_dataframe, calc_avg_vol
 
+program_start_time = datetime.now()
 
 class TestStrategy(bt.Strategy):
     params = (
@@ -116,9 +121,8 @@ class TestStrategy(bt.Strategy):
 
         res = strat_52_w_hi_hi_volume (self.params.stockname, df1, 5,3, 1.2, 0.98)
 
-        # Check if an order is pending ... if yes, we cannot send a 2nd one
-        if self.order:
-            return
+        #if self.order:
+            #return
 
 
         # Check if we are in the market
@@ -166,34 +170,19 @@ if __name__ == '__main__':
     # Create a cerebro entity
     cerebro = bt.Cerebro()
 
+    #modpath = os.path.dirname(os.path.abspath(sys.argv[0]))
+    #datapath = os.path.join(modpath, '../../datas/GOOG.csv')
+    #datapath2 = os.path.join(modpath, '../../datas/KMX.csv')
 
-    modpath = os.path.dirname(os.path.abspath(sys.argv[0]))
-    datapath = os.path.join(modpath, '../../datas/GOOG.csv')
-    datapath2 = os.path.join(modpath, '../../datas/KMX.csv')
+    mypath = 'C:/Users/Tom/OneDrive/Dokumente/Thomas/Aktien/datas/'
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
-    data = bt.feeds.YahooFinanceCSVData(
-        dataname=datapath,
-        # Do not pass values before this date
-        #fromdate=datetime.datetime(2016, 1, 2),
-        # Do not pass values before this date
-        #todate=datetime.datetime(2018, 1, 2),
-        # Do not pass values after this date
-        reverse=False)
-
-    # Add the Data Feed to Cerebro
-    cerebro.adddata(data)
-
-    data = bt.feeds.YahooFinanceCSVData(
-        dataname=datapath2,
-        # Do not pass values before this date
-        # fromdate=datetime.datetime(2016, 1, 2),
-        # Do not pass values before this date
-        # todate=datetime.datetime(2018, 1, 2),
-        # Do not pass values after this date
-        reverse=False)
-
-    # Add the Data Feed to Cerebro
-    cerebro.adddata(data)
+    for file in onlyfiles:
+        dn = 'C:/Users/Tom/OneDrive/Dokumente/Thomas/Aktien/datas/' + file
+        data = bt.feeds.YahooFinanceCSVData(
+            dataname=dn,
+            reverse=False)
+        cerebro.adddata(data)
 
     # Set our desired cash start
     cerebro.broker.setcash(50000.0)
@@ -214,5 +203,9 @@ if __name__ == '__main__':
     # Print out the final result
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
+    print("INFO: runtime " + str(
+        datetime.now() - program_start_time))
+
     # Plot the result
-    #cerebro.plot(style='candlestick', barup='green', bardown='red')
+    cerebro.plot(style='candlestick', barup='green', bardown='red')
+
