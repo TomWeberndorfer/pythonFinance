@@ -6,6 +6,9 @@ from datetime import datetime
 from datetime import timedelta
 
 
+#http://softwaretester.info/python-profiling-with-pycharm-community-edition/
+#https://github.com/ymichael/cprofilev
+#http://stsievert.com/blog/2016/07/01/numpy-gpu/
 
 from Strategies import strat_52_w_hi_hi_volume
 

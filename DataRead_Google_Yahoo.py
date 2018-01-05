@@ -4,7 +4,6 @@ import sys
 import threading
 import traceback
 
-import pandas as pd
 import urllib3
 from pandas import DataFrame
 from pandas_datareader import data, data
@@ -14,7 +13,7 @@ import xlrd
 import pandas as pd
 import pandas_datareader.data as web
 
-from Utils import get_current_function_name, append_to_file
+from Utils import get_current_function_name
 
 str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
 str2 = "&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"

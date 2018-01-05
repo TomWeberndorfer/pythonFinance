@@ -4,22 +4,11 @@ import sys
 import os
 
 import bs4 as bs
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import numpy
 import requests
-#from matplotlib import style
-import plotly.graph_objs as go
-#from matplotlib.finance import candlestick_ohlc
 import plotly.plotly as py
 import plotly.graph_objs as go
-
 import pandas as pd
-
-import matplotlib.pyplot as plt
-#from matplotlib.finance import candlestick_ohlc
-import matplotlib.dates as mdates
-#style.use('ggplot')
 
 
 def calc_avg_vol(stock_data):
@@ -29,12 +18,11 @@ def calc_avg_vol(stock_data):
     :return: Average Value
     """
 
-    if stock_data is None :
+    if stock_data is None:
         raise NotImplementedError
 
     vol_avg = stock_data["Volume"].mean()
     return vol_avg
-
 
 
 def split_stock_list(arr, size):
@@ -232,48 +220,66 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     :param stock_data: data to print, from google or yahoo
     :return: nothing
     """
-    #plotly.tools.set_credentials_file(username='webc', api_key='bWWpIIZ51DsGeqBXNb15')
+    # py.plotly.tools.set_credentials_file(username='webc', api_key='bWWpIIZ51DsGeqBXNb15')
 
     trace = go.Candlestick(x=stock_data.index,
-                            open=stock_data.Open,
-                            high=stock_data.High,
-                            low=stock_data.Low,
-                            close=stock_data.Close)
+                           open=stock_data.Open,
+                           high=stock_data.High,
+                           low=stock_data.Low,
+                           close=stock_data.Close)
     data = [trace]
-    py.plot(data, filename='simple_candlestick')
+    py.plot(data, filename=stock_name)
     return
 
 
-def read_and_save_sp500_tickers(tickers_file):
+def read_tickers_from_wikipedia(websource_address, table_class, ticker_name_col):
     """
     read the sp500 tickers and saves it to given file
-    :param tickers_file: file to save the sp500 tickers
+    :param ticker_name_col: 0 for sp500, 2 for cdax
+    :param table_class: like 'wikitable sortable' or 'wikitable sortable zebra'
+    :param websource_address: like wikepedia: 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
     :return: nothing
     """
-    resp = requests.get('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+    resp = requests.get(websource_address)
     soup = bs.BeautifulSoup(resp.text, 'lxml')
-    table = soup.find('table', {'class': 'wikitable sortable'})
+    table = soup.find('table', {'class': table_class})
     tickers = []
     for row in table.findAll('tr')[1:]:
-        ticker = row.findAll('td')[0].text
+        ticker = row.findAll('td')[ticker_name_col].text
         tickers.append(ticker)
 
-    with open(tickers_file, "wb") as f:
-        pickle.dump(tickers, f)
+    return tickers
 
 
-def read_sp500_tickers(tickers_file):
-    if not os.path.exists(tickers_file):
-        read_and_save_sp500_tickers(tickers_file)
+def read_tickers(tickers_file, reload_file=False):
+    """
+       read the sp500 and CDAX tickers and saves it to given file
+        :param reload_file: reload the tickers
+        :param tickers_file: file to save the tickers
+       :return: tickers
+    """
+    #TODO:
+    #https://de.wikipedia.org/wiki/Liste_von_Aktienindizes
+    # https://de.wikipedia.org/wiki/EURO_STOXX_50#Zusammensetzung
+
+    if not os.path.exists(tickers_file) or reload_file:
+        tickers = read_tickers_from_wikipedia('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
+                                              'wikitable sortable', 0)
+
+        tickers += read_tickers_from_wikipedia('https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
+                                               'wikitable sortable zebra', 2)
+
+        with open(tickers_file, "wb") as f:
+            pickle.dump(tickers, f)
 
     with open(tickers_file, "rb") as f:
         tickers = pickle.load(f)
 
     return tickers
 
-def convert_backtrader_to_dataframe (data):
+
+def convert_backtrader_to_dataframe(data):
     cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-    #Open, High, Low, Close, Volume, OpenInterest
     lst = []
 
     i = - len(data.open) + 1

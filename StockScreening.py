@@ -4,11 +4,11 @@ from datetime import datetime
 from datetime import timedelta
 import sys
 
-from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel, read_data_from_google_with_pandas
+from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel
 from MyThread import MyThread
 from Strategies import strat_scheduler
-from Utils import split_stock_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, \
-    read_and_save_sp500_tickers, read_sp500_tickers, append_to_file
+from Utils import split_stock_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, append_to_file, \
+    read_tickers
 
 
 # TODO maybe move to better place
@@ -101,7 +101,7 @@ try :
     # 3 = finanzen excel
     # 4 = DAX, NASDAQ , S&P500
     # 5 = S&P500
-    option = 2
+    option = 5
 
     # params for strat_52_w_hi_hi_volume
     params.append({'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98})
@@ -115,12 +115,12 @@ try :
 
     # DAX
     if option == 1:
-        #dax_symbols = ["AAPL", "ADBE", "ETR:ADS"]
+        dax_symbols = ["ADBE", "ALB"]
         all_symbols.extend(dax_symbols)
 
     # NASDAQ
     if option == 2:
-        nasdaq100__symbols = ["ALB"]
+        nasdaq100__symbols = ["RJF"]
         all_symbols.extend(nasdaq100__symbols)
 
     # ----------------------------------------------
@@ -144,9 +144,9 @@ try :
         all_symbols.extend(dax_symbols)
         option = 5  # avoid code duplication, instead of switch
 
-    # S&P500
+    # S&P500 and CDAX
     if option == 5:
-        all_symbols.extend(read_sp500_tickers(tickers_file))
+        all_symbols.extend(read_tickers(tickers_file))
 
     # Create new threads
     splits = split_stock_list(all_symbols, num_of_stocks_per_thread)
@@ -167,7 +167,7 @@ try :
     # print the results and plot it
     print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, datetime.now(),
                         filepath + stock_list_name, filepath + stocks_to_buy_name)
-    plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, ago52_w, end)
+    #plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, ago52_w, end)
 
 except Exception as e:
     traceback.print_exc()
