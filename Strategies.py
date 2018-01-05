@@ -4,7 +4,6 @@ import traceback
 from DataRead_Google_Yahoo import read_data_from_google_with_pandas, get_ticker_data_with_webreader
 from Signals import signal_is_volume_raising, signal_is52_w_high, signal_gap_up, signal_hammer, \
     signal_is_volume_high_enough
-from Trial.s_and_p_list_from_wiki import get_data_from_google_with_webreader, get_ticker_data_with_webreader
 from Utils import calculate_stopbuy_and_stoploss, get_current_function_name
 
 #TODO as parameter

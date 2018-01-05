@@ -154,7 +154,7 @@ def signal_is_volume_raising(data, check_days, min_cnt, min_vol_dev_fact):
     if min_vol_dev_fact < 1:
         raise AttributeError("parameter min_vol_dev_fact must be higher than 1!")
 
-    vol_avg = calc_avg_vol(data, check_days)
+    vol_avg = calc_avg_vol(data)
 
     # t1: minimum raising cnt within check days
     if not signal_is_volume_raising_within_check_days(data, check_days, min_cnt):
@@ -290,7 +290,7 @@ def signal_is_volume_high_enough(stock, min_req_vol=15000):
     if stock is None:
         raise NotImplementedError
 
-    vol_avg = calc_avg_vol(stock, 0)
+    vol_avg = calc_avg_vol(stock)
 
     if vol_avg > min_req_vol:
         return True

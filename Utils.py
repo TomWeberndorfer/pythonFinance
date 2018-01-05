@@ -22,37 +22,19 @@ import matplotlib.dates as mdates
 #style.use('ggplot')
 
 
-def calc_avg_vol(stock_data, days_skip_from_end):
+def calc_avg_vol(stock_data):
     """
     Calculates the average volume of stock data except the days to skip from end.
     :param stock_data: stock data
-    :param days_skip_from_end:  days to skip from end
     :return: Average Value
     """
 
-    if stock_data is None or days_skip_from_end is None:
+    if stock_data is None :
         raise NotImplementedError
 
-    # t3: last vol must be higher than volume avg
-    vol_avg = 0  # variable for avg
-    dataLen = len(stock_data) - days_skip_from_end  # 2 because last entry not included
-
-    if dataLen <= 0:
-        return 0
-
-    avgCnt = 0
-
-    # calc average
-    while avgCnt < dataLen:  # add last entry too
-        curr_vol = stock_data.iloc[avgCnt].Volume
-        vol_avg += curr_vol
-        avgCnt += 1
-
-    if avgCnt == 0:
-        return 0
-
-    vol_avg /= avgCnt  # calc avg
+    vol_avg = stock_data["Volume"].mean()
     return vol_avg
+
 
 
 def split_stock_list(arr, size):

@@ -14,7 +14,6 @@ import xlrd
 import pandas as pd
 import pandas_datareader.data as web
 
-from Trial.s_and_p_list_from_wiki import filepath
 from Utils import get_current_function_name, append_to_file
 
 str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
@@ -250,24 +249,32 @@ def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reloa
     df = []
     ticker = optimize_name_for_yahoo(ticker)
 
-    try:
-        # TODO does not reload new data
-        if not os.path.exists(stock_dfs_file + '/{}.csv'.format(ticker)) or reload_stockdata:
-            end = dt.datetime.now()
-            start = (end - dt.timedelta(weeks=52))
-            df = web.DataReader(ticker, source, start, end)
-            if len(df) > 0:
-                df.to_csv(stock_dfs_file + '/{}.csv'.format(ticker))
-            else:
-                print('FAILED: Reading {}'.format(ticker))
-                raise Exception
-        else:
-            # print('Already have {}'.format(ticker))
-            df = pd.read_csv(stock_dfs_file + '/{}.csv'.format(ticker))
+    retry = 3
 
-    except Exception as e:
-        sys.stderr.write("EXCEPTION in " + get_current_function_name() + " , " + str(e) + "\n")
-        # traceback.print_exc()
-        append_to_file(str(ticker), filepath + "failedReads.txt")
+    while retry > 0:
+        try:
+            # TODO does not reload new data
+            if not os.path.exists(stock_dfs_file + '/{}.csv'.format(ticker)) or reload_stockdata:
+                end = dt.datetime.now()
+                start = (end - dt.timedelta(weeks=52))
+                df = web.DataReader(ticker, source, start, end)
+                if len(df) > 0:
+                    df.to_csv(stock_dfs_file + '/{}.csv'.format(ticker))
+                else:
+                    print('FAILED: Reading {}'.format(ticker))
+                    raise Exception
+            else:
+                # print('Already have {}'.format(ticker))
+                df = pd.read_csv(stock_dfs_file + '/{}.csv'.format(ticker))
+
+            break
+
+        except Exception as e:
+            sys.stderr.write("EXCEPTION reading " + get_current_function_name() + ": " + str(ticker) + ", retry: " + str(retry) + ", " + str(e) + "\n")
+            # traceback.print_exc()
+            #append_to_file(str(ticker), filepath + "failedReads.txt")
+            if retry <= 0:
+                break
+            retry -= 1
 
     return df
