@@ -106,7 +106,9 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
                     params = stb['params']
 
                     # open finanzen.net and google finance
-                    url = url_1 + stock_to_buy + url_2
+                    #url = url_1 + stock_to_buy + url_2 #google
+                    url = 'https://finance.yahoo.com/quote/' + stock_to_buy + '/chart?p=' + stock_to_buy
+                    #https: // finance.yahoo.com / quote / RSG / chart?p = RSG
                     url2 = url_3 + stock_to_buy
                     now = datetime.datetime.now()
                     to_print_cmd = ""

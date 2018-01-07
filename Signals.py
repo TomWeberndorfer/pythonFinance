@@ -20,6 +20,17 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
         NotImplementedError: if parameters are None
 
     """
+
+    #TODO prüfen für datensatz: RSG
+    # 2017 - 12 - 22, 66.550003, 67.080002, 66.540001, 66.930000, 66.930000, 1244200
+    # 2017 - 12 - 26, 66.050003, 67.050003, 66.000000, 66.769997, 66.769997, 842400
+    # 2017 - 12 - 27, 66.709999, 67.019997, 66.559998, 66.930000, 66.930000, 798600
+    # 2017 - 12 - 28, 67.000000, 67.470001, 66.680000, 67.410004, 67.410004, 1234500
+    # 2017 - 12 - 29, 67.330002, 68.000000, 67.260002, 67.610001, 67.610001, 1260900
+    # 2018 - 01 - 02, 67.570000, 67.570000, 66.360001, 66.580002, 66.580002, 1555200
+    # 2018 - 01 - 03, 66.599998, 66.910004, 66.389999, 66.900002, 66.900002, 1426200
+    # 2018 - 01 - 04, 67.879997, 69.120003, 67.750000, 68.440002, 68.440002, 1926400
+
     if stock is None or check_days is None or min_cnt is None:
         raise NotImplementedError
 
@@ -34,10 +45,10 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
     save_val = False
     while i > 0:
         try:
-            vol_1 = stock.iloc[data_len - i].Volume
+            vol_cur = stock.iloc[data_len - i].Volume
             if not save_val:
-                vol_2 = stock.iloc[data_len - i - 1].Volume
-            if vol_1 > vol_2:
+                vol_last = stock.iloc[data_len - i - 1].Volume
+            if vol_cur > vol_last:
                 raise_cnt += 1
                 save_val = False
             else:
@@ -118,7 +129,7 @@ def signal_is_a_few_higher_than_avg(stock, check_days, min_cnt, volume_average):
         return False  # TODO
         raise IndexError
 
-    while cnt > 1:
+    while cnt > 0:
 
         vol = stock.iloc[data_len - cnt].Volume
         if vol > volume_average:

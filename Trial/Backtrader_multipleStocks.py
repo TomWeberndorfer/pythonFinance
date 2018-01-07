@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-#import datetime  # For datetime objects
+# import datetime  # For datetime objects
 import os.path  # To manage paths
 import sys  # To find out the script name (in argv[0])
 from datetime import datetime
@@ -27,10 +27,11 @@ from Utils import convert_backtrader_to_dataframe, calc_avg_vol
 
 program_start_time = datetime.now()
 
+
 class TestStrategy(bt.Strategy):
     params = (
         ('skipdays', 14),  # skips days to calculate 52week high
-        #('skipdays', 250),  #skips days to calculate 52week high
+        # ('skipdays', 250),  #skips days to calculate 52week high
         ('stockname', "GOOG")
     )
 
@@ -43,8 +44,8 @@ class TestStrategy(bt.Strategy):
         # Keep a reference to the "close" line in the data[0] dataseries
         self.dataclose = self.datas[0].close
         self.datavol = self.datas[0].volume
-        self.datahi = self.datas[0].high # TODO: high
-        self.datalo = self.datas[0].low # TODO: .low
+        self.datahi = self.datas[0].high  # TODO: high
+        self.datalo = self.datas[0].low  # TODO: .low
         self.buy_price = 0
 
         # To keep track of pending orders and buy price/commission
@@ -53,10 +54,10 @@ class TestStrategy(bt.Strategy):
         self.buycomm = None
 
         # Add a MovingAverageSimple indicator
-        #self.sma = bt.indicators.SimpleMovingAverage(
-            #self.datas[0], period=self.params.maperiod)
+        # self.sma = bt.indicators.SimpleMovingAverage(
+        # self.datas[0], period=self.params.maperiod)
 
-        self.highest_high = 0 # max (self.datahi)
+        self.highest_high = 0  # max (self.datahi)
         self.buyCnt = 0
         self.buyNotAnymore = False
 
@@ -70,7 +71,6 @@ class TestStrategy(bt.Strategy):
         # rsi = bt.indicators.RSI(self.datas[0])
         # bt.indicators.SmoothedMovingAverage(rsi, period=10)
         # bt.indicators.ATR(self.datas[0], plot=False)
-
 
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
@@ -112,16 +112,16 @@ class TestStrategy(bt.Strategy):
 
     def next(self):
 
-        #TODO des gscheid machen, nur skip damit man nicht bei der ersten bar anfängt
-        #if self.params.skipdays > len(self.dataclose):
-            #return
+        # TODO des gscheid machen, nur skip damit man nicht bei der ersten bar anfängt
+        # if self.params.skipdays > len(self.dataclose):
+        # return
 
         df1 = convert_backtrader_to_dataframe(self.datas[0])
 
-        res = strat_52_w_hi_hi_volume (self.params.stockname, df1, 5,3, 1.2, 0.98)
+        res = strat_52_w_hi_hi_volume(self.params.stockname, df1, 5, 3, 1.2, 0.98)
 
-        #if self.order:
-            #return
+        # if self.order:
+        # return
 
 
         # Check if we are in the market
@@ -129,49 +129,68 @@ class TestStrategy(bt.Strategy):
 
             if res['buy']:
                 # if raise_cnt < 3:
-                        self.buy_price = self.dataclose[0]
-                        self.log('BUY CREATE, %.2f' % self.dataclose[0])
-                        # Keep track of the created order to avoid a 2nd order
-                        #self.order = self.buy()
-                        self.buyCnt = round((cerebro.broker.cash / self.dataclose[0]/10))  # TODO
-                        #self.buyCnt = round((cerebro.broker.cash / self.dataclose[0]))-10  # TODO
-                        self.buy(size = self.buyCnt)
-                        #elf.order_target_percent(target = 0.5)
+                self.buy_price = self.dataclose[0]
+                self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                # Keep track of the created order to avoid a 2nd order
+                # self.order = self.buy()
+                self.buyCnt = round((cerebro.broker.cash / self.dataclose[0] / 10))  # TODO
+                # self.buyCnt = round((cerebro.broker.cash / self.dataclose[0]))-10  # TODO
+                self.buy(size=self.buyCnt)
+                # elf.order_target_percent(target = 0.5)
 
-        #--------------------------------------------------
-            # Not yet ... we MIGHT BUY if ...
-            # if self.dataclose[0] > self.sma[0]:
-            #
-            #     # BUY, BUY, BUY!!! (with all possible default parameters)
-            #     self.log('BUY CREATE, %.2f' % self.dataclose[0])
-            #
-            #     # Keep track of the created order to avoid a 2nd order
-            #     self.order = self.buy()
-        #------------------------------------------------------------
+                # --------------------------------------------------
+                # Not yet ... we MIGHT BUY if ...
+                # if self.dataclose[0] > self.sma[0]:
+                #
+                #     # BUY, BUY, BUY!!! (with all possible default parameters)
+                #     self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                #
+                #     # Keep track of the created order to avoid a 2nd order
+                #     self.order = self.buy()
+        # ------------------------------------------------------------
         else:
 
             cur_val = self.datalo[0]
             if cur_val > self.buy_price:
                 self.buy_price = cur_val
 
-            if (cur_val < self.buy_price *0.96):
+            if (cur_val < self.buy_price * 0.96):
                 # SELL, SELL, SELL!!! (with all possible default parameters)
                 self.log('SELL CREATE, %.2f' % self.dataclose[0])
 
                 # Keep track of the created order to avoid a 2nd order
-                self.order = self.sell(size = self.buyCnt)
-                #self.order_target_percent(target=-0.5)
+                self.order = self.sell(size=self.buyCnt)
+                # self.order_target_percent(target=-0.5)
 
 
+def get_data_feed(file_path):
+    infile = open(file_path, 'r')
+    first_line = infile.readline().strip()
+    infile.close()
+
+    header = first_line.split(",")
+
+    try:
+        o_idx = header.index("Open")
+        h_idx = header.index("High")
+        l_idx = header.index("Low")
+        c_idx = header.index("Close")
+        v_idx = header.index("Volume")
+
+        return o_idx, h_idx, l_idx, c_idx, v_idx
+
+    except Exception as e:
+        sys.stderr.write("Can not get data feed index\n:" + e)
+        return
 
 
 if __name__ == '__main__':
     # Create a cerebro entity
     cerebro = bt.Cerebro()
 
-    #modpath = os.path.dirname(os.path.abspath(sys.argv[0]))
-    #datapath = os.path.join(modpath, '../../datas/GOOG.csv')
-    #datapath2 = os.path.join(modpath, '../../datas/KMX.csv')
+    # modpath = os.path.dirname(os.path.abspath(sys.argv[0]))
+    # datapath = os.path.join(modpath, '../../datas/GOOG.csv')
+    # datapath2 = os.path.join(modpath, '../../datas/KMX.csv')
 
     mypath = 'C:/Users/Tom/OneDrive/Dokumente/Thomas/Aktien/datas/'
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
@@ -179,21 +198,36 @@ if __name__ == '__main__':
     for file in onlyfiles:
         dn = 'C:/Users/Tom/OneDrive/Dokumente/Thomas/Aktien/datas/' + file
 
-        #TODO test für eigenen data reader
-        #data = bt.feeds.YahooFinanceCSVData(
+        o_idx, h_idx, l_idx, c_idx, v_idx = get_data_feed(dn)
+
+        # TODO test für eigenen data reader
+        # data = bt.feeds.YahooFinanceCSVData(
         #    dataname=dn,
         #    reverse=False)
+
+        # data = bt.feeds.GenericCSVData(
+        #     dataname=dn,
+        #     nullvalue=0.0,
+        #     dtformat=('%Y-%m-%d'),
+        #     datetime=0,
+        #     open=1,
+        #     high=2,
+        #     low=3,
+        #     close=4,
+        #     volume=5,
+        #     openinterest=-1
+        # )
 
         data = bt.feeds.GenericCSVData(
             dataname=dn,
             nullvalue=0.0,
             dtformat=('%Y-%m-%d'),
             datetime=0,
-            open=1,
-            high=2,
-            low=3,
-            close=4,
-            volume=5,
+            open=o_idx,
+            high=h_idx,
+            low=l_idx,
+            close=c_idx,
+            volume=v_idx,
             openinterest=-1
         )
 
@@ -203,7 +237,7 @@ if __name__ == '__main__':
     cerebro.broker.setcash(50000.0)
 
     # Add a FixedSize sizer according to the stake
-    #cerebro.addsizer(bt.sizers.FixedSize, stake=10)
+    # cerebro.addsizer(bt.sizers.FixedSize, stake=10)
 
     # Set the commission
     cerebro.broker.setcommission(commission=0.001)
@@ -223,4 +257,3 @@ if __name__ == '__main__':
 
     # Plot the result
     cerebro.plot(style='candlestick', barup='green', bardown='red')
-
