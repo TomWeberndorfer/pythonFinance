@@ -83,7 +83,7 @@ class DataModel:
         self.selected_index = Observable("")
 
     def set_available_stock_indices(self, available_stock_indices):
-        self.available_stock_indices = available_stock_indices
+        self.available_stock_indices.set(available_stock_indices)
 
     def set_selected_index(self, selected_index):
-        self.selected_index = selected_index
+        self.selected_index.set(selected_index)

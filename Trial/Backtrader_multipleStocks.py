@@ -233,6 +233,8 @@ if __name__ == '__main__':
 
         cerebro.adddata(data)
 
+        #TODO: spread
+
     # Set our desired cash start
     cerebro.broker.setcash(50000.0)
 

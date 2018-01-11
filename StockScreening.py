@@ -110,7 +110,7 @@ def run_stock_screening():
         # 3 = finanzen excel
         # 4 = DAX, NASDAQ , S&P500
         # 5 = S&P500
-        option = 1
+        option = 5
 
         # params for strat_52_w_hi_hi_volume
         params.append({'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98})

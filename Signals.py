@@ -210,7 +210,7 @@ def signal_is52_w_high(stock, within52w_high_fact):
         raise IndexError
 
     cur_val = stock.iloc[data_len - 1].High
-    highest_high = stock['Close'].max() #TODO originally 'High', re-think
+    highest_high = stock['High'].max() #TODO  'Close', re-think
 
     if cur_val == highest_high:
         return True
