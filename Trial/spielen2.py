@@ -53,3 +53,5 @@ low_value = np.array([stock_data.Low])
 true_range = talib.ATR(high_value, low_value, close_value, timeperiod=14)
 
 print(true_range)
+
+#test
