@@ -13,7 +13,13 @@ feed_entries = feed.entries
 for entry in feed.entries:
 
     article_published_at = entry.published  # Unicode string
-    if article_published_at < datetime.today().date(): TODO
+    from dateutil import parser
+
+    #dt = parser.parse("Aug 28 1999 12:00AM")
+    dt = parser.parse(article_published_at)
+    #Thu, 22 Feb 2018 21:27:28 +0000:
+    TODO
+    if dt < datetime.today().time():
         article_title = entry.title
         article_link = entry.link
         description = entry.description
