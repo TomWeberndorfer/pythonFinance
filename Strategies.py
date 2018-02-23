@@ -7,7 +7,7 @@ from Signals import signal_is_volume_raising, signal_is52_w_high, signal_gap_up,
 from Utils import calculate_stopbuy_and_stoploss, get_current_function_name
 
 #TODO as parameter
-filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
+filepath = 'C:\\temp\\'
 
 
 def strat_scheduler(stock_names_to_check, ago52_w, end, params):

@@ -62,7 +62,7 @@ def run_stock_screening():
         ago52_w = (end - timedelta(weeks=52))
 
         data_provider = "google"  # TODO
-        filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
+        filepath = 'C:\\temp\\'
         stock_list_name = "stockList.txt"
         stocks_to_buy_name = "StocksToBuy.CSV"
         excel_file_name = '52W-HochAutomatisch_Finanzen.xlsx'

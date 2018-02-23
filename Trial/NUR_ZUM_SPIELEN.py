@@ -18,7 +18,7 @@ import pandas as pd
 
 from Utils import read_tickers
 
-filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
+filepath = 'C:\\temp\\'
 stock_list_name = "stockList.txt"
 stocks_to_buy_name = "StocksToBuy.CSV"
 excel_file_name = '52W-HochAutomatisch_Finanzen.xlsx'

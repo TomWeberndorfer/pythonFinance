@@ -5,7 +5,7 @@ import sys
 ##########################################################
 from Utils import append_to_file
 
-filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\'
+filepath = 'C:\\temp\\'
 
 class MyThread:
     def __init__(self, name):
