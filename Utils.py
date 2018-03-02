@@ -2,6 +2,7 @@ import datetime
 import pickle
 import sys
 import os
+import traceback
 
 import bs4 as bs
 import numpy
@@ -9,7 +10,8 @@ import requests
 import plotly.plotly as py
 import plotly.graph_objs as go
 import pandas as pd
-
+import os
+import platform
 
 def calc_avg_vol(stock_data):
     """
@@ -106,9 +108,9 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
                     params = stb['params']
 
                     # open finanzen.net and google finance
-                    #url = url_1 + stock_to_buy + url_2 #google
+                    # url = url_1 + stock_to_buy + url_2 #google
                     url = 'https://finance.yahoo.com/quote/' + stock_to_buy + '/chart?p=' + stock_to_buy
-                    #https: // finance.yahoo.com / quote / RSG / chart?p = RSG
+                    # https: // finance.yahoo.com / quote / RSG / chart?p = RSG
                     url2 = url_3 + stock_to_buy
                     now = datetime.datetime.now()
                     to_print_cmd = ""
@@ -234,7 +236,7 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     return
 
 
-def read_tickers_from_wikipedia(websource_address, table_class, ticker_name_col):
+def read_table_column_from_wikipedia(websource_address, table_class, ticker_name_col):
     """
     read the sp500 tickers and saves it to given file
     :param ticker_name_col: 0 for sp500, 2 for cdax
@@ -253,31 +255,75 @@ def read_tickers_from_wikipedia(websource_address, table_class, ticker_name_col)
     return tickers
 
 
-def read_tickers(tickers_file, reload_file=False):
+def creation_date(path_to_file):
+    """
+    Try to get the date that a file was created, falling back to when it was
+    last modified if that isn't possible.
+    See http://stackoverflow.com/a/39501288/1709587 for explanation.
+    """
+    if platform.system() == 'Windows':
+        return os.path.getctime(path_to_file)
+    else:
+        stat = os.stat(path_to_file)
+        try:
+            return stat.st_birthtime
+        except AttributeError:
+            # We're probably on Linux. No easy way to get creation dates here,
+            # so we'll settle for when its content was last modified.
+            return stat.st_mtime
+
+
+def read_tickers(tickers_file, names_file, reload_file=False):
     """
        read the sp500 and CDAX tickers and saves it to given file
+        :param names_file:
         :param reload_file: reload the tickers
         :param tickers_file: file to save the tickers
        :return: tickers
     """
-    #TODO:
-    #https://de.wikipedia.org/wiki/Liste_von_Aktienindizes
+    # TODO:
+    # https://de.wikipedia.org/wiki/Liste_von_Aktienindizes
     # https://de.wikipedia.org/wiki/EURO_STOXX_50#Zusammensetzung
+    tickers = []
+    all_names = []
+    names_with_symbols = []
+    stock_tickers_names = {'tickers': [], 'names': []}
 
-    if not os.path.exists(tickers_file) or reload_file:
-        tickers = read_tickers_from_wikipedia('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
+    if not os.path.exists(tickers_file) or not os.path.exists(names_file) or reload_file:
+        # column 0 contains ticker symbols, column 1 contains security (=name)
+        tickers = read_table_column_from_wikipedia('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
                                               'wikitable sortable', 0)
+        names_with_symbols = read_table_column_from_wikipedia('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
+                                                   'wikitable sortable', 1)
 
-        tickers += read_tickers_from_wikipedia('https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
+        stock_tickers_names['tickers'] += tickers
+        stock_tickers_names['names'] += names_with_symbols
+
+        #no tickers symbols available,  column 2 contains security (=name)
+        all_names += read_table_column_from_wikipedia('https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
                                                'wikitable sortable zebra', 2)
 
+        from DataRead_Google_Yahoo import get_symbols_from_names
+        tickers, names_with_symbols = get_symbols_from_names (all_names)
+
+        stock_tickers_names['tickers'] += tickers
+        stock_tickers_names['names'] += names_with_symbols
+
         with open(tickers_file, "wb") as f:
-            pickle.dump(tickers, f)
+            pickle.dump(stock_tickers_names['tickers'], f)
 
-    with open(tickers_file, "rb") as f:
-        tickers = pickle.load(f)
+        with open(names_file, "wb") as f:
+            pickle.dump(stock_tickers_names['names'], f)
 
-    return tickers
+    else:
+        with open(tickers_file, "rb") as f:
+            stock_tickers_names['tickers'] += pickle.load(f)
+
+        with open(names_file, "rb") as f:
+            stock_tickers_names['names'] += pickle.load(f)
+
+    return stock_tickers_names
+
 
 
 def convert_backtrader_to_dataframe(data):

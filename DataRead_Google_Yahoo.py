@@ -23,7 +23,6 @@ names = []
 
 
 def read_data_from_google_with_client(stock_name, interval="86400", period="1M"):
-
     if stock_name is None:
         raise NotImplementedError
 
@@ -75,24 +74,23 @@ def read_data_from_google_with_pandas(stock_name, start_date, end_date, read_yah
 
 
 def read_data_from_yahoo(stock_name, start_date, end_date):
-
     if stock_name is None or start_date is None or end_date is None:
         raise NotImplementedError
 
-    #  see also:
+    # see also:
     #  https: // github.com / lukaszbanasiak / yahoo - finance
     #  https://pypi.python.org/pypi/yahoo-finance
 
-    #yahoo = Share('APPL')
-    #print(yahoo.get_avg_daily_volume())
-    #print(yahoo.get_open())
+    # yahoo = Share('APPL')
+    # print(yahoo.get_avg_daily_volume())
+    # print(yahoo.get_open())
     # print (yahoo.get_historical('2014-04-25', '2014-04-29'))
 
 
     from pandas_datareader import data as pdr
     import fix_yahoo_finance as yf
     yf.pdr_override()  # <== that's all it takes :-)
-    data = pdr.get_data_yahoo(stock_name, start= start_date, end= end_date)
+    data = pdr.get_data_yahoo(stock_name, start=start_date, end=end_date)
 
     return data
 
@@ -101,7 +99,7 @@ def read_current_day_from_yahoo(stock_name):
     if stock_name is None:
         raise NotImplementedError
 
-    #  TODO google does not provide data from today, workarround: add yahoo data manually:
+    # TODO google does not provide data from today, workarround: add yahoo data manually:
     #  maybe try this: https://pypi.python.org/pypi/googlefinance.client
     stock_name = optimize_name_for_yahoo(stock_name)
     cols = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
@@ -121,7 +119,6 @@ def read_current_day_from_yahoo(stock_name):
             # nothing to do
             no = []
 
-
     df1 = DataFrame(lst, columns=cols)
     df1.index.name = 'Date'
     # df1.set_index([str(currDate)])
@@ -136,6 +133,10 @@ def read_current_day_from_yahoo(stock_name):
 
 
 def get_symbol_from_name_from_yahoo(name):
+    """
+
+    name: name to convert
+    """
     if name is None:
         raise NotImplementedError
 
@@ -153,12 +154,16 @@ def get_symbol_from_name_from_yahoo(name):
         str_res = str(r.data)
         if len(str_res) > 0:
             symbol = str_res.rsplit('{"symbol":"')[1].rsplit('"')[0]
-            symbol = symbol.rsplit('.')[0]  # cut the stock exchange market from yahoo
+            if "." in symbol:
+                symbol = symbol.rsplit('.')[0]  # cut the stock exchange market from yahoo
             return symbol
         else:
+            sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
             return " "  # no symbol found
 
+
     except Exception as e:
+        sys.stderr.write("Exception: no symbol found for " + name + ", str_res: " + str_res + str(e) + "\n")
         return " "  # no symbol found
 
 
@@ -202,6 +207,33 @@ def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
     return stocks
 
 
+def get_symbols_from_names(symbol_names):
+    """
+    TODO
+    :param names:
+    :return:
+    """
+
+    if symbol_names is None:
+        raise NotImplementedError
+
+    from MyThread import MyThread
+    get_symbol_threads = MyThread("get_symbol_threads")
+
+    for name in symbol_names:
+        try:
+            get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name}))
+
+        except Exception as e:
+            sys.stderr.write("Method exception in: " + get_current_function_name()
+                             + ": stock name: " + str(name) + " is faulty: " + str(e) + "\n")
+            traceback.print_exc()
+
+    get_symbol_threads.execute_threads()
+
+    return stocks, names
+
+
 def optimize_name_for_yahoo(name):
     if name is None:
         raise NotImplementedError
@@ -209,6 +241,7 @@ def optimize_name_for_yahoo(name):
     name = name.upper()
     name = name.replace(" ", "+")
     name = name.replace(".", "")
+    name = name.replace("\n", "")
     name = name.replace("Ü", "UE")
     name = name.replace("Ö", "OE")
     name = name.replace("Ä", "AE")
@@ -269,9 +302,11 @@ def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reloa
             break
 
         except Exception as e:
-            sys.stderr.write("EXCEPTION reading " + get_current_function_name() + ": " + str(ticker) + ", retry: " + str(retry) + ", " + str(e) + "\n")
+            sys.stderr.write(
+                "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker) + ", retry: " + str(
+                    retry) + ", " + str(e) + "\n")
             # traceback.print_exc()
-            #append_to_file(str(ticker), filepath + "failedReads.txt")
+            # append_to_file(str(ticker), filepath + "failedReads.txt")
             if retry <= 0:
                 break
             retry -= 1

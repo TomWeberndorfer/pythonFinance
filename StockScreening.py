@@ -4,7 +4,7 @@ from datetime import datetime
 from datetime import timedelta
 import sys
 
-from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel
+from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel, get_symbol_from_name_from_yahoo
 from MyThread import MyThread
 from Strategies import strat_scheduler
 from Utils import split_stock_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, append_to_file, \
@@ -66,8 +66,10 @@ def run_stock_screening():
         stock_list_name = "stockList.txt"
         stocks_to_buy_name = "StocksToBuy.CSV"
         excel_file_name = '52W-HochAutomatisch_Finanzen.xlsx'
-        tickers_file_name = "sp500tickers.pickle"
+        tickers_file_name = "stock_tickers.pickle"
+        stocknames_file_name = "stock_names.pickle"
         tickers_file = filepath + tickers_file_name
+        stocknames_file = filepath + stocknames_file_name
 
         # enhanced stock messages:
         # logging.basicConfig(level=logging.DEBUG)
@@ -101,6 +103,7 @@ def run_stock_screening():
                        "VIE:SEM"]  # TODO vienna
 
         all_symbols = []
+        all_names = []
 
         ###############################################################################################
         # enter stock filter options
@@ -124,7 +127,8 @@ def run_stock_screening():
 
         # DAX
         if option == 1:
-            dax_symbols = ["RSG"]
+            symbol = get_symbol_from_name_from_yahoo ("Evotec AG")
+            dax_symbols = [symbol]
             all_symbols.extend(dax_symbols)
 
         # NASDAQ
@@ -155,7 +159,11 @@ def run_stock_screening():
 
         # S&P500 and CDAX
         if option == 5:
-            all_symbols.extend(read_tickers(tickers_file))
+            res = read_tickers(tickers_file, stocknames_file)
+            all_symbols.extend(res['tickers'])
+            all_names.extend(res['names'])
+
+            #TODO wenn modified: creation_date
 
         # Create new threads
         splits = split_stock_list(all_symbols, num_of_stocks_per_thread)

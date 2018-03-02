@@ -24,23 +24,9 @@ stocks_to_buy_name = "StocksToBuy.CSV"
 excel_file_name = '52W-HochAutomatisch_Finanzen.xlsx'
 tickers_file_name = "tickers.pickle"
 tickers_file = filepath + tickers_file_name
-def read_and_save_sp500_tickers(tickers_file):
-    """
-    read the sp500 tickers and saves it to given file
-    :param tickers_file: file to save the sp500 tickers
-    :return: nothing
-    """
-    resp = requests.get('https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien')
-    soup = bs.BeautifulSoup(resp.text, 'lxml')
-    table = soup.find('table', {'class': 'wikitable sortable zebra'})
-    tickers = []
-    for row in table.findAll('tr')[1:]:
-        ticker = row.findAll('td')[2].text
-        tickers.append(ticker)
 
-    with open(tickers_file, "wb") as f:
-        pickle.dump(tickers, f)
+from DataRead_Google_Yahoo import get_symbols_from_names
 
-#read_and_save_sp500_tickers(tickers_file)
-
-read_tickers(tickers_file, True)
+all_names = []
+all_names.append("4SC+AG")
+tickers, names_with_symbols = get_symbols_from_names(all_names)
