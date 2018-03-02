@@ -27,22 +27,22 @@ def calc_avg_vol(stock_data):
     return vol_avg
 
 
-def split_stock_list(arr, size):
+def split_list(list_to_split, size):
     """
     TODO description
-    :param arr:
+    :param list_to_split:
     :param size:
     :return:
     """
-    if arr is None or size is None:
+    if list_to_split is None or size is None:
         raise NotImplementedError
 
     arrs = []
-    while len(arr) > size:
-        pice = arr[:size]
+    while len(list_to_split) > size:
+        pice = list_to_split[:size]
         arrs.append(pice)
-        arr = arr[size:]
-    arrs.append(arr)
+        list_to_split = list_to_split[size:]
+    arrs.append(list_to_split)
     return arrs
 
 
@@ -250,6 +250,8 @@ def read_table_column_from_wikipedia(websource_address, table_class, ticker_name
     tickers = []
     for row in table.findAll('tr')[1:]:
         ticker = row.findAll('td')[ticker_name_col].text
+        ticker = ticker.replace("\n", "")
+        ticker = ticker.replace("\n", "")
         tickers.append(ticker)
 
     return tickers
@@ -287,7 +289,7 @@ def read_tickers(tickers_file, names_file, reload_file=False):
     tickers = []
     all_names = []
     names_with_symbols = []
-    stock_tickers_names = {'tickers': [], 'names': []}
+    stock_tickers_names = {'tickers': [], 'names': [], 'stock_exchange': []}
 
     if not os.path.exists(tickers_file) or not os.path.exists(names_file) or reload_file:
         # column 0 contains ticker symbols, column 1 contains security (=name)
@@ -298,22 +300,29 @@ def read_tickers(tickers_file, names_file, reload_file=False):
 
         stock_tickers_names['tickers'] += tickers
         stock_tickers_names['names'] += names_with_symbols
+        from itertools import repeat
+        stock_tickers_names['stock_exchange'] += list(repeat("en", len(names_with_symbols)))
 
         #no tickers symbols available,  column 2 contains security (=name)
         all_names += read_table_column_from_wikipedia('https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
                                                'wikitable sortable zebra', 2)
 
-        from DataRead_Google_Yahoo import get_symbols_from_names
-        tickers, names_with_symbols = get_symbols_from_names (all_names)
+        from DataRead_Google_Yahoo import __get_symbols_from_names
+        all_exchanges = []
+        all_exchanges += list(repeat("de", len(all_names)))
+        tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
 
         stock_tickers_names['tickers'] += tickers
         stock_tickers_names['names'] += names_with_symbols
+        stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
 
         with open(tickers_file, "wb") as f:
             pickle.dump(stock_tickers_names['tickers'], f)
 
         with open(names_file, "wb") as f:
             pickle.dump(stock_tickers_names['names'], f)
+
+        #TODO stock exchange speichern
 
     else:
         with open(tickers_file, "rb") as f:
@@ -323,8 +332,6 @@ def read_tickers(tickers_file, names_file, reload_file=False):
             stock_tickers_names['names'] += pickle.load(f)
 
     return stock_tickers_names
-
-
 
 def convert_backtrader_to_dataframe(data):
     cols = ['Open', 'High', 'Low', 'Close', 'Volume']

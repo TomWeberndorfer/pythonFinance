@@ -4,10 +4,10 @@ from datetime import datetime
 from datetime import timedelta
 import sys
 
-from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel, get_symbol_from_name_from_yahoo
+from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel, __get_symbol_from_name_from_yahoo
 from MyThread import MyThread
 from Strategies import strat_scheduler
-from Utils import split_stock_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, append_to_file, \
+from Utils import split_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, append_to_file, \
     read_tickers
 
 threads = []
@@ -127,7 +127,7 @@ def run_stock_screening():
 
         # DAX
         if option == 1:
-            symbol = get_symbol_from_name_from_yahoo ("Evotec AG")
+            symbol = __get_symbol_from_name_from_yahoo ("Aixtron", "de")
             dax_symbols = [symbol]
             all_symbols.extend(dax_symbols)
 
@@ -166,7 +166,7 @@ def run_stock_screening():
             #TODO wenn modified: creation_date
 
         # Create new threads
-        splits = split_stock_list(all_symbols, num_of_stocks_per_thread)
+        splits = split_list(all_symbols, num_of_stocks_per_thread)
         stock_screening_threads = MyThread("stock_screening_threads")
 
         i = 0

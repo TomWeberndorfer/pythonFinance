@@ -9,7 +9,7 @@
 from textblob.classifiers import NaiveBayesClassifier
 from textblob import TextBlob
 
-from DataRead_Google_Yahoo import get_symbol_from_name_from_yahoo
+from DataRead_Google_Yahoo import __get_symbol_from_name_from_yahoo
 from Utils import read_tickers, read_table_column_from_wikipedia
 
 train = [
@@ -21,6 +21,7 @@ train = [
     ('Business Expand', 'pos'),
     ('hebt', 'pos'),
     ('kaufen', 'pos'),
+    ('buy', 'pos'),
 
     #('', 'pos'),
     #('', 'neg')
@@ -34,27 +35,52 @@ train = [
 
 cl = NaiveBayesClassifier(train)
 
-news = "27.02. 16:43 dpa-AFX: ANALYSE-FLASH: DZ Bank hebt Ziel für Airbus auf 116 Euro - 'Kaufen'"
-news = "Align Technology"
+#news = "27.02. 16:43 dpa-AFX: ANALYSE-FLASH: DZ Bank hebt Ziel für Airbus auf 116 Euro - 'Kaufen'"
+#news = "27.02. 16:08 dpa-AFX: ANALYSE-FLASH: DZ Bank hebt MTU Aero Engines auf 'Kaufen' - Fairer Wert 166 Euro"
+news = "27.02. 09:51 dpa-AFX: ANALYSE-FLASH: Liberum belässt Aixtron auf 'Buy' - 'Ausblick vorsichtig'"
+
+# news = "Align Technology"
 wiki = TextBlob (news)
-print ("noun: " + str(wiki.noun_phrases))
-print ("sentiment: " + str(wiki.sentiment))
-
-print(cl.classify(news))
-
-prob_dist = cl.prob_classify(news)
-print (round(prob_dist.prob("pos"), 2))
+#print ("noun: " + str(wiki.noun_phrases))
+# print ("sentiment: " + str(wiki.sentiment))
+#
+# print(cl.classify(news))
+#
+# prob_dist = cl.prob_classify(news)
+# print (round(prob_dist.prob("pos"), 2))
 
 #TODO: vergleich von analystenerwartung und echt (von einnews)
 
-name = get_symbol_from_name_from_yahoo("Airbus")
-print (name)
-#
 filepath = 'C:\\temp\\'
-tickers_file_name = "sp500tickers.pickle"
+tickers_file_name = "stock_tickers.pickle"
+stocknames_file_name = "stock_names.pickle"
 tickers_file = filepath + tickers_file_name
+stocknames_file = filepath + stocknames_file_name
+all_symbols = []
+all_names = []
 
-#all_symbols= read_tickers(tickers_file)
-all_symbols = read_table_column_from_wikipedia('https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
-                                               'wikitable sortable zebra', 2)
-print (all_symbols)
+symbol = __get_symbol_from_name_from_yahoo("IFA Hotel & Touristik AG", "de")
+symbol = __get_symbol_from_name_from_yahoo ("BMW AG", "de")
+
+res = read_tickers(tickers_file, stocknames_file)
+all_symbols.extend(res['tickers'])
+all_names.extend(res['names'])
+
+#result = [i for i in all_names if "mtu" in i.lower()]
+
+for noun in wiki.noun_phrases:
+    result = [i for i in all_names if i.lower().startswith(noun)]
+
+    if result:
+        name_to_find = str(result [0])
+
+        if name_to_find in all_names:
+            idx= all_names.index(name_to_find)
+            print("idx: " + str(idx))
+            print ("ticker: " + str(all_symbols[idx]))
+            print(cl.classify(news))
+            prob_dist = cl.prob_classify(news)
+            print (round(prob_dist.prob("pos"), 2))
+            break
+
+print ("end")

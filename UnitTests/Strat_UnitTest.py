@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from DataRead_Google_Yahoo import get_symbol_from_name_from_yahoo
+from DataRead_Google_Yahoo import __get_symbol_from_name_from_yahoo
 from Signals import signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, \
     signal_is_a_few_higher_than_avg, signal_is_volume_raising, signal_is52_w_high, signal_is_volume_high_enough
 from Strategies import strat_52_w_hi_hi_volume
@@ -197,9 +197,9 @@ class MyTest(unittest.TestCase):
         # https://www.jetbrains.com/help/pycharm/viewing-code-coverage-results.html
 
     def test_get_symbol_from_name(self):
-        self.assertEqual(get_symbol_from_name_from_yahoo("Alliance Data Systems Corporation"), "ADS")
-        self.assertEqual(get_symbol_from_name_from_yahoo("ADS"), "ADS")
-        self.assertEqual(get_symbol_from_name_from_yahoo("SÜSS MicroTec"), "SMHN")
+        self.assertEqual(__get_symbol_from_name_from_yahoo("Alliance Data Systems Corporation"), "ADS")
+        self.assertEqual(__get_symbol_from_name_from_yahoo("ADS"), "ADS")
+        self.assertEqual(__get_symbol_from_name_from_yahoo("SÜSS MicroTec"), "SMHN")
 
     # def test_read_current_day_from_yahoo(self):
     #

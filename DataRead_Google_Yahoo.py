@@ -13,10 +13,11 @@ import xlrd
 import pandas as pd
 import pandas_datareader.data as web
 
-from Utils import get_current_function_name
+from Utils import get_current_function_name, split_list
 
 str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
-str2 = "&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
+str2 = "&region=1&lang="
+str3 = "&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
 
 stocks = []
 names = []
@@ -132,27 +133,30 @@ def read_current_day_from_yahoo(stock_name):
     return []
 
 
-def get_symbol_from_name_from_yahoo(name):
+def __get_symbol_from_name_from_yahoo(name, stock_exchange):
     """
-
+    TODO
     name: name to convert
     """
-    if name is None:
+    if name is None or stock_exchange is None:
         raise NotImplementedError
 
     try:
 
+        #name_orig = name
         name = optimize_name_for_yahoo(name)
         http = urllib3.PoolManager()
         # query: http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=Priceline&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
 
         try:
-            r = http.request('GET', str1 + name + str2)  # build url
+            #ex: 'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=BMW+AG&region=1&lang=de&callback=YAHOO.Finance.SymbolSuggest.ssCallback'
+            req = str1 + name + str2 + stock_exchange + str3
+            r = http.request('GET', req)  # build url
         except Exception as e:
             return " "
 
         str_res = str(r.data)
-        if len(str_res) > 0:
+        if len(str_res) > 0 and "symbol" in str_res:
             symbol = str_res.rsplit('{"symbol":"')[1].rsplit('"')[0]
             if "." in symbol:
                 symbol = symbol.rsplit('.')[0]  # cut the stock exchange market from yahoo
@@ -160,7 +164,6 @@ def get_symbol_from_name_from_yahoo(name):
         else:
             sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
             return " "  # no symbol found
-
 
     except Exception as e:
         sys.stderr.write("Exception: no symbol found for " + name + ", str_res: " + str_res + str(e) + "\n")
@@ -207,10 +210,12 @@ def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
     return stocks
 
 
-def get_symbols_from_names(symbol_names):
+def __get_symbols_from_names(symbol_names, stock_exchanges, num_of_stocks_per_thread=20):
     """
     TODO
-    :param names:
+    :param stock_exchanges:
+    :param num_of_stocks_per_thread:
+    :param symbol_names:
     :return:
     """
 
@@ -219,14 +224,16 @@ def get_symbols_from_names(symbol_names):
 
     from MyThread import MyThread
     get_symbol_threads = MyThread("get_symbol_threads")
+    splits = split_list(symbol_names, num_of_stocks_per_thread)
 
-    for name in symbol_names:
+    for split_names in splits:
         try:
-            get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name}))
+            get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'st_names': split_names,
+                                                                                            'stock_exchanges': stock_exchanges}))
 
         except Exception as e:
             sys.stderr.write("Method exception in: " + get_current_function_name()
-                             + ": stock name: " + str(name) + " is faulty: " + str(e) + "\n")
+                             + ": stock name: " + str(split_names) + " is faulty: " + str(e) + "\n")
             traceback.print_exc()
 
     get_symbol_threads.execute_threads()
@@ -258,14 +265,21 @@ def optimize_name_for_yahoo(name):
     return name
 
 
-def symbol_thread(name):
-    if name is None:
+def symbol_thread(st_names, stock_exchanges):
+    if st_names is None or stock_exchanges is None:
         raise NotImplementedError
 
-    symbol = get_symbol_from_name_from_yahoo(name)
-    if symbol != " ":
-        stocks.append(symbol)
-        names.append(name)
+    i = 0
+    while i < len(st_names):
+        try:
+            symbol = __get_symbol_from_name_from_yahoo(st_names[i], stock_exchanges[i])
+            if symbol != " ":
+                stocks.append(symbol)
+                st_names.append(st_names[i])
+        except Exception as e:
+            sys.stderr.write(
+                "EXCEPTION " + get_current_function_name() + ": " + str(st_names[i]) + ", "+ (str(e)) + "\n")
+        i += 1
 
 
 def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reload_sp500=False, reload_stockdata=False):
