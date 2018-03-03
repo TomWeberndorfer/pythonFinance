@@ -141,34 +141,42 @@ def __get_symbol_from_name_from_yahoo(name, stock_exchange):
     if name is None or stock_exchange is None:
         raise NotImplementedError
 
-    try:
+    names_to_get = []
+    names_to_get.append(optimize_name_for_yahoo(name))
+    names_to_get.append(optimize_name_for_yahoo(name, False))
+    names_to_get.append(optimize_name_for_yahoo(name, False, True))
 
-        #name_orig = name
-        name = optimize_name_for_yahoo(name)
-        http = urllib3.PoolManager()
-        # query: http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=Priceline&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
+    for name in names_to_get:
 
         try:
-            #ex: 'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=BMW+AG&region=1&lang=de&callback=YAHOO.Finance.SymbolSuggest.ssCallback'
-            req = str1 + name + str2 + stock_exchange + str3
-            r = http.request('GET', req)  # build url
+
+            http = urllib3.PoolManager()
+            # query: http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=Priceline&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
+
+            try:
+                #ex: 'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=BMW+AG&region=1&lang=de&callback=YAHOO.Finance.SymbolSuggest.ssCallback'
+                req = str1 + name + str2 + stock_exchange + str3
+                r = http.request('GET', req)  # build url
+            except Exception as e:
+                #TODO return " "
+                sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
+
+            str_res = str(r.data)
+            if len(str_res) > 0 and "symbol" in str_res:
+                symbol = str_res.rsplit('{"symbol":"')[1].rsplit('"')[0]
+                if "." in symbol:
+                    symbol = symbol.rsplit('.')[0]  # cut the stock exchange market from yahoo
+                return symbol
+            #else:
+             #   sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
+                #return " "  # no symbol found
+
         except Exception as e:
-            return " "
+            sys.stderr.write("Exception: no symbol found for " + name + ", str_res: " + str_res + str(e) + "\n")
+            #return " "  # no symbol found
 
-        str_res = str(r.data)
-        if len(str_res) > 0 and "symbol" in str_res:
-            symbol = str_res.rsplit('{"symbol":"')[1].rsplit('"')[0]
-            if "." in symbol:
-                symbol = symbol.rsplit('.')[0]  # cut the stock exchange market from yahoo
-            return symbol
-        else:
-            sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
-            return " "  # no symbol found
-
-    except Exception as e:
-        sys.stderr.write("Exception: no symbol found for " + name + ", str_res: " + str_res + str(e) + "\n")
-        return " "  # no symbol found
-
+    sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
+    return " "
 
 def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
     if file_stock_list is None or file_excel is None:
@@ -241,12 +249,13 @@ def __get_symbols_from_names(symbol_names, stock_exchanges, num_of_stocks_per_th
     return stocks, names
 
 
-def optimize_name_for_yahoo(name):
+def optimize_name_for_yahoo(name, replace_whitespace=True, return_first_part=False):
     if name is None:
         raise NotImplementedError
 
     name = name.upper()
-    name = name.replace(" ", "+")
+    if replace_whitespace:
+        name = name.replace(" ", "+")
     name = name.replace(".", "")
     name = name.replace("\n", "")
     name = name.replace("Ü", "UE")
@@ -259,9 +268,16 @@ def optimize_name_for_yahoo(name):
     name = name.replace("FRA:", "")
     name = name.split("INC")[0]
     name = name.replace("^", "")
-    nameSpl = name.split("+")
-    if len(nameSpl) > 2:
-        name = nameSpl[0] + "+" + nameSpl[1]
+    if replace_whitespace:
+        name_spl = name.split("+")
+    else:
+        name_spl = name.split(" ")
+
+    if len(name_spl) > 2:
+        name = name_spl[0] + "+" + name_spl[1]
+
+    if return_first_part:
+        name = name_spl[0]
     return name
 
 

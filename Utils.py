@@ -307,14 +307,15 @@ def read_tickers(tickers_file, names_file, reload_file=False):
         all_names += read_table_column_from_wikipedia('https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
                                                'wikitable sortable zebra', 2)
 
-        from DataRead_Google_Yahoo import __get_symbols_from_names
-        all_exchanges = []
-        all_exchanges += list(repeat("de", len(all_names)))
-        tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
-
-        stock_tickers_names['tickers'] += tickers
-        stock_tickers_names['names'] += names_with_symbols
-        stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
+        #TODO temp disabled: wartung
+        # from DataRead_Google_Yahoo import __get_symbols_from_names
+        # all_exchanges = []
+        # all_exchanges += list(repeat("de", len(all_names)))
+        # tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
+        #
+        # stock_tickers_names['tickers'] += tickers
+        # stock_tickers_names['names'] += names_with_symbols
+        # stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
 
         with open(tickers_file, "wb") as f:
             pickle.dump(stock_tickers_names['tickers'], f)

@@ -25,8 +25,7 @@ excel_file_name = '52W-HochAutomatisch_Finanzen.xlsx'
 tickers_file_name = "tickers.pickle"
 tickers_file = filepath + tickers_file_name
 
-from DataRead_Google_Yahoo import __get_symbols_from_names
-
-all_names = []
-all_names.append("4SC+AG")
-tickers, names_with_symbols = __get_symbols_from_names(all_names)
+data = pd.read_csv(filepath + "Sample_news.txt")
+data_len = len(data)
+close_value = data.News
+print (data)
