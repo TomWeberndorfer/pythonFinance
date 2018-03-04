@@ -9,6 +9,7 @@ lastId = 'dbcf96498dd19009faf82ba69a0ddbcc' #TODO temp solution
 
 url = "http://finance.yahoo.com/rss/headline?s=msft"
 url = "https://www.boersen-zeitung.de/xml_base/rss.php?dpasubm=unt"
+url = "https://blog.onemarkets.de/feed/"
 
 feed = feedparser.parse(url)
 #feed = feedparser.parse("http://finance.yahoo.com/q/h?s=msft")

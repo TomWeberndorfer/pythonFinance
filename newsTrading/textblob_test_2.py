@@ -26,9 +26,10 @@ all_symbols = []
 all_names = []
 
 
-def analyse_news(news_to_analyze):
+def analyse_news(news_to_analyze, threshold=0.7):
     """
        TODO
+       :param threshold:
        :param news_to_analyze:
        :param languages:
        :return:
@@ -63,8 +64,9 @@ def analyse_news(news_to_analyze):
                             #    all_symbols[idx]) + ", pos: " + str(round(prob_dist.prob("pos"), 2)) + " ,neg: " + str(
                             #    round(prob_dist.prob("neg"), 2)) + ", orig_news: " + str(news_to_analyze) + ", translated news: "+ str(wiki))
 
-                            return {'name': name_to_find, 'ticker': all_symbols[idx], 'prob_dist': prob_dist,
-                                    'orig_news': str(news_to_analyze), 'translated_news:': str(wiki)}
+                            if (round(prob_dist.prob("pos"), 2) > threshold) or (round(prob_dist.prob("neg"), 2) > threshold):
+                                return {'name': name_to_find, 'ticker': all_symbols[idx], 'prob_dist': prob_dist,
+                                        'orig_news': str(news_to_analyze), 'translated_news:': str(wiki)}
 
                             # return prob_dist #TODO des is blödsinn
                             # else:
@@ -87,6 +89,7 @@ train = [
     ('hebt', 'pos'),
     ('kaufen', 'pos'),
     ('buy', 'pos'),
+    ('lifts', 'pos'),
 
     # ('', 'pos'),
     # ('', 'neg')
@@ -113,7 +116,7 @@ all_names.extend(res['names'])
 
 results = []
 for news in news_list:
-    r = analyse_news(news)
+    r = analyse_news(news, 0.7)
     results.append(r)
 
 print("\n-------------------------\n")
@@ -121,4 +124,6 @@ for res in results:
     if res != " ":
         print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
             round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
-print("end")
+
+txt = "\n\nRuntime : " + str(datetime.datetime.now() - thr_start)
+print(txt)
