@@ -2,8 +2,7 @@ import os
 import pickle
 import re
 import pandas as pd
-
-
+import os.path
 
 
 def replace_in_file(file, pattern, subst):
@@ -38,15 +37,22 @@ def get_hash_from_file(file, url):
     :return: returns the hash id
     """
 
-    data = pd.read_csv(file)
-    test = data.set_index('url').T.to_dict('list')
-    last_id = str(test[url][0])
-    return last_id
+    if check_file_exists_or_create(file):
+        data = pd.read_csv(file)
+        test = data.set_index('url').T.to_dict('list')
+        last_id = str(test[url][0])
+        return last_id
+    else:
+        append_to_file("url,hash", file)
+        append_to_file(url + "," + str(0), file)
+        return str(0)
 
 
 def append_to_file(txt, file_with_path):
     if txt is None or file_with_path is None:
         raise NotImplementedError
+
+    check_file_exists_or_create(file_with_path) #no need to check, creates anyway
 
     with open(file_with_path, "a") as myfile:
         myfile.write(str(txt) + "\n")
@@ -116,3 +122,18 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
             stock_tickers_names['names'] += pickle.load(f)
 
     return stock_tickers_names
+
+
+def check_file_exists_or_create(file):
+    """
+    Checks if the file exists and create it otherwise if not.
+    :param file: filepath + name
+    :return: true if it exists
+    """
+    if os.path.exists(file):
+        return True
+    else:
+        print("\nFile " + file + " did not exist! Was created for you!\n\n")
+        with open(file, 'w'):
+            pass
+        return False

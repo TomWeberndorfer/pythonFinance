@@ -8,13 +8,14 @@
 # https://nlp.stanford.edu/pubs/stock-event.html
 from textblob.classifiers import NaiveBayesClassifier
 from textblob import TextBlob
-import traceback
 import datetime
-import sys
-import pandas as pd
+
 
 class TextBlobAnalyseNews:
     def __init__(self, names, tickers, threshold=0.7):
+        if names is None or tickers is None:
+            raise NotImplementedError
+
         self.classifier = self.train_classifier()
         self.threshold = threshold
         self.names = names
@@ -30,6 +31,9 @@ class TextBlobAnalyseNews:
            :return: {'name': name_to_find, 'ticker': all_symbols[idx], 'prob_dist': prob_dist,
                      orig_news': str(news_to_analyze), 'translated_news:': str(wiki)}
            """
+
+        if news_to_analyze is None:
+            raise NotImplementedError
 
         wiki = TextBlob(news_to_analyze)
         languages = ["de", "en"]  # TODO
@@ -123,10 +127,12 @@ stocknames_file = filepath + stocknames_file_name
 
 thr_start = datetime.datetime.now()
 all_news = []
-#TODO data = pd.read_csv(filepath + "Sample_news.txt")
-#all_news.extend(data.News)
+# TODO data = pd.read_csv(filepath + "Sample_news.txt")
+# all_news.extend(data.News)
 
-res_news = read_news_from_traderfox()
+hash_file = "C:\\temp\\news_hashes.txt"
+
+res_news = read_news_from_traderfox(hash_file)
 if res_news != "":
     all_news = res_news
     res = read_tickers_from_file(tickers_file, stocknames_file)
