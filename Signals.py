@@ -2,7 +2,7 @@ import sys
 import traceback
 
 from talib.func import ATR
-from Utils import calc_avg_vol
+from Utils.Utils import calc_avg_vol
 
 def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
     """

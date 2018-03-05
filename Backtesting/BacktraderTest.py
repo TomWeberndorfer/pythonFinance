@@ -19,7 +19,7 @@ from pandas import DataFrame
 
 from Signals import signal_is_volume_raising_within_check_days
 from Strategies import strat_52_w_hi_hi_volume
-from Utils import convert_backtrader_to_dataframe, calc_avg_vol
+from Utils.Utils import convert_backtrader_to_dataframe, calc_avg_vol
 
 
 class TestStrategy(bt.Strategy):

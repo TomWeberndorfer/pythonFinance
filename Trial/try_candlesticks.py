@@ -7,7 +7,7 @@ style.use('ggplot')
 
 from DataRead_Google_Yahoo import read_data_from_google_with_pandas
 
-from Utils import plot_stock_as_candlechart_with_volume
+from Utils.Utils import plot_stock_as_candlechart_with_volume
 
 end = datetime.now()
 ago52_w = (end - timedelta(weeks=52))

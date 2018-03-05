@@ -7,7 +7,7 @@ from DataRead_Google_Yahoo import __get_symbol_from_name_from_yahoo
 from Signals import signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, \
     signal_is_a_few_higher_than_avg, signal_is_volume_raising, signal_is52_w_high, signal_is_volume_high_enough
 from Strategies import strat_52_w_hi_hi_volume
-from Utils import calc_avg_vol, calculate_stopbuy_and_stoploss
+from Utils.Utils import calc_avg_vol, calculate_stopbuy_and_stoploss
 
 filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
 
@@ -197,9 +197,11 @@ class MyTest(unittest.TestCase):
         # https://www.jetbrains.com/help/pycharm/viewing-code-coverage-results.html
 
     def test_get_symbol_from_name(self):
-        self.assertEqual(__get_symbol_from_name_from_yahoo("Alliance Data Systems Corporation"), "ADS")
-        self.assertEqual(__get_symbol_from_name_from_yahoo("ADS"), "ADS")
-        self.assertEqual(__get_symbol_from_name_from_yahoo("SÜSS MicroTec"), "SMHN")
+        #TODO
+        raise NotImplementedError("gibts es nicht mehr, bzw private ")
+        #self.assertEqual(__get_symbol_from_name_from_yahoo("Alliance Data Systems Corporation"), "ADS")
+        #self.assertEqual(__get_symbol_from_name_from_yahoo("ADS"), "ADS")
+        #self.assertEqual(__get_symbol_from_name_from_yahoo("SÜSS MicroTec"), "SMHN")
 
     # def test_read_current_day_from_yahoo(self):
     #

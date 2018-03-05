@@ -5,7 +5,7 @@ from datetime import datetime
 from datetime import timedelta
 
 from DataRead_Google_Yahoo import read_data_from_google_with_pandas
-from Utils import calc_true_range, calc_mean_true_range
+from Utils.Utils import calc_true_range, calc_mean_true_range
 
 filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
 file = filepath + 'atr.csv'

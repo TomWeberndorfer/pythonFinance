@@ -7,7 +7,7 @@ import sys
 from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel, __get_symbol_from_name_from_yahoo
 from MyThread import MyThread
 from Strategies import strat_scheduler
-from Utils import split_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, append_to_file, \
+from Utils.Utils import split_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, append_to_file, \
     read_tickers
 
 threads = []

@@ -15,7 +15,7 @@ import sys
 import pandas as pd
 
 from DataRead_Google_Yahoo import __get_symbol_from_name_from_yahoo
-from Utils import read_tickers, read_table_column_from_wikipedia
+from Utils.Utils import read_tickers, read_table_column_from_wikipedia
 
 filepath = 'C:\\temp\\'
 tickers_file_name = "stock_tickers.pickle"

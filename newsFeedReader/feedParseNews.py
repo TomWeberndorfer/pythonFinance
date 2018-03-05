@@ -1,21 +1,23 @@
 #http://feeds.reuters.com/reuters/companyNews
 
 import feedparser
-from datetime import datetime, date
-import hashlib
 
-lastId = 'dbcf96498dd19009faf82ba69a0ddbcc' #TODO temp solution
+from Utils.file_utils import replace_in_file
+from Utils.news_utils import generate_hash
+
+lastId = 0 #TODO temp solution
 #TODO alternativ mit etag nud modified wann des geht
 
 url = "http://finance.yahoo.com/rss/headline?s=msft"
 url = "https://www.boersen-zeitung.de/xml_base/rss.php?dpasubm=unt"
 url = "https://blog.onemarkets.de/feed/"
+url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"
 
 feed = feedparser.parse(url)
 #feed = feedparser.parse("http://finance.yahoo.com/q/h?s=msft")
 #feed = feedparser.parse("http://feeds.reuters.com/reuters/companyNews")
 
-id = hashlib.md5(url.encode('utf-8') + str(feed.entries).encode('utf-8')).hexdigest()
+id = generate_hash(url, feed.entries)
 
 # 304 means no changes
 if lastId == id:
@@ -23,6 +25,7 @@ if lastId == id:
 
 else:
 
+    print ("ID: " + str(id))
     feed_title = feed['feed']['title']
     feed_entries = feed.entries
 

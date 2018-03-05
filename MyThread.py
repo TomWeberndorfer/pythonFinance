@@ -3,7 +3,7 @@ import datetime
 import sys
 
 ##########################################################
-from Utils import append_to_file
+from Utils.Utils import append_to_file
 
 filepath = 'C:\\temp\\'
 

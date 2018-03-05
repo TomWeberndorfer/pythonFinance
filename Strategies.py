@@ -4,7 +4,7 @@ import traceback
 from DataRead_Google_Yahoo import get_ticker_data_with_webreader
 from Signals import signal_is_volume_raising, signal_is52_w_high, signal_gap_up, signal_hammer, \
     signal_is_volume_high_enough
-from Utils import calculate_stopbuy_and_stoploss, get_current_function_name
+from Utils.Utils import calculate_stopbuy_and_stoploss, get_current_function_name
 
 #TODO as parameter
 filepath = 'C:\\temp\\'
