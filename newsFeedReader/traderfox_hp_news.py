@@ -1,8 +1,10 @@
 import bs4 as bs
+import datetime
 import requests
 
 from Utils.file_utils import replace_in_file, get_hash_from_file, append_to_file
 from Utils.news_utils import generate_hash
+from datetime import datetime
 
 
 def read_news_from_traderfox(hash_file):
@@ -11,7 +13,9 @@ def read_news_from_traderfox(hash_file):
     :param hash_file filepath+name  for hash id
     :return: news as list
     """
-    url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
+    # TODO
+    # url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
+    url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-5/"
 
     last_id = get_hash_from_file(hash_file, url)
     # http://www.pythonforbeginners.com/python-on-the-web/beautifulsoup-4-python/
@@ -31,11 +35,19 @@ def read_news_from_traderfox(hash_file):
         all_news = []
         replace_in_file(hash_file, last_id, hash_id)
         for elm in all_articles:
-            date_time = (str(elm.footer.get_text(strip=True)))  # date and Time
-            article_text = (str(elm.h2.get_text(strip=True)))  # h2 --> article head line
-            news_text = date_time + ", " + article_text
-            append_to_file(news_text, "C:\\temp\\Traderfox_News.csv") #TODO only for first data example collection
-            all_news.append(news_text)
+            date_time = (str(elm.footer.span.get_text()))  # date and Time
+            date_time = date_time.split(" ")[0]
+            datetime_object = datetime.strptime(date_time, "%d.%m.%Y").strftime("%Y-%m-%d")
+            now = datetime.now().strftime("%Y-%m-%d")
+
+            is_news_from_today = datetime_object == now
+            if is_news_from_today:
+                article_text = (str(elm.h2.get_text(strip=True)))  # h2 --> article head line
+                news_text = date_time.replace(',', '.') + ", " + article_text.replace(',', '.')
+                append_to_file(news_text, "C:\\temp\\Traderfox_News.csv") #TODO only for first data example collection
+                all_news.append(news_text)
 
         return all_news
 
+#hash_file = "C:\\temp\\news_hashes.txt"
+#news = read_news_from_traderfox(hash_file)

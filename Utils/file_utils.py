@@ -40,8 +40,15 @@ def get_hash_from_file(file, url):
     if check_file_exists_or_create(file):
         data = pd.read_csv(file)
         test = data.set_index('url').T.to_dict('list')
-        last_id = str(test[url][0])
+
+        last_id = str(0)
+        try:
+            last_id = str(test[url][0])
+        except Exception:
+            append_to_file(url + "," + str(0), file)
+
         return last_id
+
     else:
         append_to_file("url,hash", file)
         append_to_file(url + "," + str(0), file)
@@ -52,7 +59,7 @@ def append_to_file(txt, file_with_path):
     if txt is None or file_with_path is None:
         raise NotImplementedError
 
-    check_file_exists_or_create(file_with_path) #no need to check, creates anyway
+    check_file_exists_or_create(file_with_path)  # no need to check, creates anyway
 
     with open(file_with_path, "a") as myfile:
         myfile.write(str(txt) + "\n")

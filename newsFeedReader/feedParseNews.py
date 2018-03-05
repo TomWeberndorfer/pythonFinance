@@ -11,7 +11,6 @@ lastId = 0 #TODO temp solution
 url = "http://finance.yahoo.com/rss/headline?s=msft"
 url = "https://www.boersen-zeitung.de/xml_base/rss.php?dpasubm=unt"
 url = "https://blog.onemarkets.de/feed/"
-url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"
 
 feed = feedparser.parse(url)
 #feed = feedparser.parse("http://finance.yahoo.com/q/h?s=msft")
@@ -46,5 +45,6 @@ else:
         article_published_at_parsed = entry.published_parsed # Time object
         #article_author = entry.author
         #print ("{} [{}], Published at {}".format(article_title, article_link, article_published_at))
-        print (article_published_at + ": " + article_title + ": " + description + ": " + article_link)
+        print(article_published_at + ": " + article_title)
+        #print (article_published_at + ": " + article_title + ": " + description + ": " + article_link)
         #print ("Published by {}".format(article_author))
