@@ -35,37 +35,43 @@ class NewsReaderTests(unittest.TestCase):
         analysis = TextBlobAnalyseNews(res['names'], res['tickers'])
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf"
-        r1 = analysis.analyse_single_news(news)
-        t1 = round(r1['prob_dist'].prob("neg"), 2)
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("neg"), 2)
         self.assertEqual(t1, 0.77)
 
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Apple auf 118 Euro"
-        r1 = analysis.analyse_single_news(news)
-        t1 = round(r1['prob_dist'].prob("neg"), 2)
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("neg"), 2)
         self.assertEqual(t1, 0.77)
 
         news = "05.03.2018, ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125 Euro"
-        r1 = analysis.analyse_single_news(news)
-        t1 = round(r1['prob_dist'].prob("pos"), 2)
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("pos"), 2)
         self.assertEqual(t1, 0.77)
 
         # CDAX companies
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf"
-        r1 = analysis.analyse_single_news(news)
-        t1 = round(r1['prob_dist'].prob("neg"), 2)
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("neg"), 2)
         self.assertEqual(t1, 0.77)
+        self.assertEqual(result['name'], "ADIDAS AG NA O.N.")
+        self.assertEqual(result['ticker'], "ADS")
 
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118 Euro"
         # TODO: statt für nimmt er beiersdorf --> english umwandeln funzt da a ned
-        r1 = analysis.analyse_single_news(news)
-        t1 = round(r1['prob_dist'].prob("neg"), 2)
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("neg"), 2)
         self.assertEqual(t1, 0.77)
+        self.assertEqual(result['name'], "BEIERSDORF AG O.N.")
+        self.assertEqual(result['ticker'], "BEI")
 
         news = "05.03.2018, ANALYSE-FLASH: NordLB hebt Rheinmetall auf 'Kaufen' - Ziel 125 Euro"
-        r1 = analysis.analyse_single_news(news)
-        t1 = round(r1['prob_dist'].prob("pos"), 2)
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("pos"), 2)
         self.assertEqual(t1, 0.77)
+        result = analysis.lookup_stock_abr_in_all_names("Rheinmetall")
+        self.assertEqual(result, "RHEINMETALL AG")
 
         txt = "\n\nRuntime : " + str(datetime.datetime.now() - thr_start)
         print(txt)
