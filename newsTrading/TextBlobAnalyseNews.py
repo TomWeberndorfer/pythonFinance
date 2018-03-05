@@ -36,45 +36,17 @@ class TextBlobAnalyseNews:
         if news_to_analyze is None:
             raise NotImplementedError
 
-        wiki = TextBlob(news_to_analyze)
-        languages = ["de", "en"]  # TODO
+        result = self.identify_stock_in_news(news_to_analyze)
+        if result != " ":
+            prob_dist = self.classifier.prob_classify(news_to_analyze)
+            # print("name: " + name_to_find + ", idx: " + str(idx) + ", ticker: " + str(
+            #    all_symbols[idx]) + ", pos: " + str(round(prob_dist.prob("pos"), 2)) + " ,neg: " + str(
+            #    round(prob_dist.prob("neg"), 2)) + ", orig_news: " + str(news_to_analyze) + ", translated news: "+ str(wiki))
 
-        for lang in languages:
-            if lang not in wiki.detect_language():
-                wiki = (wiki.translate(from_lang=wiki.detect_language(), to='en'))
-
-            tags = wiki.tags
-
-            # TODO if "ANALYSE-FLASH" in tag:
-            for tag in tags:
-                # VB means verb --> the noun next to the verb is the stock name
-                # ex: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro
-                if "VB" in tag[1]:  # ex: <class 'tuple'>: ('lifts', 'VBZ')
-                    tag_idx = tags.index(tag)
-                    if len(tags) > tag_idx + 1 + 1:  # TODO beschreiben
-                        stock_to_check = tags[tag_idx + 1][0]
-                        result = [i for i in self.names if i.lower().startswith(stock_to_check.lower())]
-
-                        if result:
-                            name_to_find = str(result[0])
-
-                            if name_to_find in self.names:
-                                idx = self.names.index(name_to_find)
-                                prob_dist = self.classifier.prob_classify(news_to_analyze)
-                                # print("name: " + name_to_find + ", idx: " + str(idx) + ", ticker: " + str(
-                                #    all_symbols[idx]) + ", pos: " + str(round(prob_dist.prob("pos"), 2)) + " ,neg: " + str(
-                                #    round(prob_dist.prob("neg"), 2)) + ", orig_news: " + str(news_to_analyze) + ", translated news: "+ str(wiki))
-
-                                if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
-                                            round(prob_dist.prob("neg"), 2) > self.threshold):
-                                    return {'name': name_to_find, 'ticker': self.tickers[idx], 'prob_dist': prob_dist,
-                                            'orig_news': str(news_to_analyze), 'translated_news:': str(wiki)}
-
-                                    # return prob_dist #TODO des is blödsinn
-                                    # else:
-                                    # any other news- ex: "02.03.18, Airbus erwägt Lager-​Aufstockung wegen Brexit"
-                                    # TODO
-                                    # print ("ERROR other tags are not implemented: " + str(tag))
+            if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
+                        round(prob_dist.prob("neg"), 2) > self.threshold):
+                return {'name': result['name'], 'ticker': result['ticker'], 'prob_dist': prob_dist,
+                        'orig_news': str(news_to_analyze)}
 
         print("ERR: nothing found for news: " + str(news_to_analyze))
         return " "
@@ -116,11 +88,12 @@ class TextBlobAnalyseNews:
         print(txt)
         return cl
 
-    def identify_stock(self, news_to_analyze):
+    def identify_stock_in_news(self, news_to_analyze):
         """
-        TODO: einbauen oben
-        :param news_to_analyze:
-        :return:
+        Identifies a stock name within a news and returns the name and ticker
+        :param news_to_analyze: news text itself
+        :return: {'name': name_to_find, 'ticker': self.tickers[idx]}
+                  or " " if no name found
         """
 
         if news_to_analyze is None:
@@ -142,15 +115,21 @@ class TextBlobAnalyseNews:
                     tag_idx = tags.index(tag)
                     if len(tags) > tag_idx + 1 + 1:  # TODO beschreiben
                         stock_to_check = tags[tag_idx + 1][0]
-                        result = [i for i in self.names if i.lower().startswith(stock_to_check.lower())]
 
-                        if result:
-                            name_to_find = str(result[0])
-
-                            if name_to_find in self.names:
+                        name_to_find = self.lookup_stock_abr_in_all_names (stock_to_check)
+                        if name_to_find != " ":
                                 idx = self.names.index(name_to_find)
-
                                 return {'name': name_to_find, 'ticker': self.tickers[idx]}
 
         print("ERR: nothing found for news: " + str(news_to_analyze))
+        return " "
+
+    def lookup_stock_abr_in_all_names (self, stock_abr):
+        result = [i for i in self.names if i.lower().startswith(stock_abr.lower())]
+
+        if result:
+            name_to_find = str(result[0])
+            if name_to_find in self.names: #TODO: check if this if is necessary
+                return name_to_find
+
         return " "
