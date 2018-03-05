@@ -3,7 +3,7 @@ import pickle
 import re
 import pandas as pd
 
-from Utils.common_utils import read_table_column_from_wikipedia
+
 
 
 def replace_in_file(file, pattern, subst):
@@ -63,6 +63,7 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
         :param tickers_file: file to save the tickers
        :return: tickers
     """
+    from Utils.common_utils import read_table_column_from_wikipedia
     # TODO:
     # https://de.wikipedia.org/wiki/Liste_von_Aktienindizes
     # https://de.wikipedia.org/wiki/EURO_STOXX_50#Zusammensetzung

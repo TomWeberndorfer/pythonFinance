@@ -5,7 +5,8 @@ import sys
 ##########################################################
 from Utils.file_utils import append_to_file
 
-filepath = 'C:\\temp\\'
+filepath = 'C:\\temp\\' #TODO
+
 
 class MyThread:
     def __init__(self, name):
@@ -29,7 +30,7 @@ class MyThread:
                 traceback.print_exc()
 
         # Wait for all threads to complete
-        #TODO performance tests
+        # TODO performance tests
         for t in self.threads:
             t.join()
 
@@ -45,5 +46,3 @@ class MyThread:
         except Exception as e:
             sys.stderr.write("EXCEPTION append_thread: " + str(e) + "\n")
             traceback.print_exc()
-
-
