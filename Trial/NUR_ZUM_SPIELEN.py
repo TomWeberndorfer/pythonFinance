@@ -19,7 +19,7 @@ import soup as soup
 from bs4 import BeautifulSoup
 import urllib
 
-from Utils.Utils import read_tickers
+from Utils.file_utils import read_tickers_from_file
 
 filepath = 'C:\\temp\\'
 stock_list_name = "stockList.txt"

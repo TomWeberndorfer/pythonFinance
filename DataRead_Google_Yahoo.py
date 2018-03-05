@@ -13,7 +13,7 @@ import xlrd
 import pandas as pd
 import pandas_datareader.data as web
 
-from Utils.Utils import get_current_function_name, split_list
+from Utils.common_utils import get_current_function_name, split_list
 
 str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
 str2 = "&region=1&lang="

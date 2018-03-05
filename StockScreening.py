@@ -7,8 +7,8 @@ import sys
 from DataRead_Google_Yahoo import get52_w__h__symbols__from_excel, __get_symbol_from_name_from_yahoo
 from MyThread import MyThread
 from Strategies import strat_scheduler
-from Utils.Utils import split_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, append_to_file, \
-    read_tickers
+from Utils.common_utils import split_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume, read_tickers_from_file
+from Utils.file_utils import append_to_file, read_tickers_from_file
 
 threads = []
 stocks_to_buy = []
@@ -159,7 +159,7 @@ def run_stock_screening():
 
         # S&P500 and CDAX
         if option == 5:
-            res = read_tickers(tickers_file, stocknames_file)
+            res = read_tickers_from_file(tickers_file, stocknames_file)
             all_symbols.extend(res['tickers'])
             all_names.extend(res['names'])
 

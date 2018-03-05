@@ -7,7 +7,7 @@ from DataRead_Google_Yahoo import __get_symbol_from_name_from_yahoo
 from Signals import signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, \
     signal_is_a_few_higher_than_avg, signal_is_volume_raising, signal_is52_w_high, signal_is_volume_high_enough
 from Strategies import strat_52_w_hi_hi_volume
-from Utils.Utils import calc_avg_vol, calculate_stopbuy_and_stoploss
+from Utils.common_utils import calc_avg_vol, calculate_stopbuy_and_stoploss
 
 filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
 

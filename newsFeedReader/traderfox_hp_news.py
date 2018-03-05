@@ -2,8 +2,8 @@ import bs4 as bs
 import requests
 
 
-from Utils.Utils import append_to_file
-from Utils.file_utils import replace_in_file, get_hash_from_file
+from Utils.common_utils import append_to_file
+from Utils.file_utils import replace_in_file, get_hash_from_file, append_to_file
 from Utils.news_utils import generate_hash
 
 url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
