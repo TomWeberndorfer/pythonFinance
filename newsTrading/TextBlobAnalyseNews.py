@@ -17,7 +17,7 @@ class TextBlobAnalyseNews:
         if names is None or tickers is None:
             raise NotImplementedError
 
-        self.classifier = self.train_classifier()
+        self.classifier = self.__train_classifier()
         self.threshold = threshold
         self.names = names
         self.tickers = tickers
@@ -79,7 +79,7 @@ class TextBlobAnalyseNews:
         print("ERR: nothing found for news: " + str(news_to_analyze))
         return " "
 
-    def train_classifier(self):
+    def __train_classifier(self):
         """
         Trains the classifier due to given data
         :return: classifier
@@ -115,3 +115,42 @@ class TextBlobAnalyseNews:
         txt = "\n\nRuntime to train classifier: " + str(datetime.datetime.now() - train_start)
         print(txt)
         return cl
+
+    def identify_stock(self, news_to_analyze):
+        """
+        TODO: einbauen oben
+        :param news_to_analyze:
+        :return:
+        """
+
+        if news_to_analyze is None:
+            raise NotImplementedError
+
+        wiki = TextBlob(news_to_analyze)
+        languages = ["de", "en"]  # TODO
+
+        for lang in languages:
+            if lang not in wiki.detect_language():
+                wiki = (wiki.translate(from_lang=wiki.detect_language(), to='en'))
+
+            tags = wiki.tags
+            # TODO if "ANALYSE-FLASH" in tag:
+            for tag in tags:
+                # VB means verb --> the noun next to the verb is the stock name
+                # ex: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro
+                if "VB" in tag[1]:  # ex: <class 'tuple'>: ('lifts', 'VBZ')
+                    tag_idx = tags.index(tag)
+                    if len(tags) > tag_idx + 1 + 1:  # TODO beschreiben
+                        stock_to_check = tags[tag_idx + 1][0]
+                        result = [i for i in self.names if i.lower().startswith(stock_to_check.lower())]
+
+                        if result:
+                            name_to_find = str(result[0])
+
+                            if name_to_find in self.names:
+                                idx = self.names.index(name_to_find)
+
+                                return {'name': name_to_find, 'ticker': self.tickers[idx]}
+
+        print("ERR: nothing found for news: " + str(news_to_analyze))
+        return " "

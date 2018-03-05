@@ -178,6 +178,51 @@ def __get_symbol_from_name_from_yahoo(name, stock_exchange):
     sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
     return " "
 
+def __get_symbol_from_name_from_topforeignstocks(name):
+    """
+    TODO
+    name: name to convert
+    """
+    if name is None:
+        raise NotImplementedError
+
+    names_to_get = []
+    names_to_get.append(optimize_name_for_yahoo(name))
+    names_to_get.append(optimize_name_for_yahoo(name, False))
+    names_to_get.append(optimize_name_for_yahoo(name, False, True))
+
+    for name in names_to_get:
+
+        try:
+
+            http = urllib3.PoolManager()
+            # query: http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=Priceline&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
+
+            try:
+                #ex: 'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=BMW+AG&region=1&lang=de&callback=YAHOO.Finance.SymbolSuggest.ssCallback'
+                req = str1 + name + str2 + + str3
+                r = http.request('GET', req)  # build url
+            except Exception as e:
+                #TODO return " "
+                sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
+
+            str_res = str(r.data)
+            if len(str_res) > 0 and "symbol" in str_res:
+                symbol = str_res.rsplit('{"symbol":"')[1].rsplit('"')[0]
+                if "." in symbol:
+                    symbol = symbol.rsplit('.')[0]  # cut the stock exchange market from yahoo
+                return symbol
+            #else:
+             #   sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
+                #return " "  # no symbol found
+
+        except Exception as e:
+            sys.stderr.write("Exception: no symbol found for " + name + ", str_res: " + str_res + str(e) + "\n")
+            #return " "  # no symbol found
+
+    sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
+    return " "
+
 def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
     if file_stock_list is None or file_excel is None:
         raise NotImplementedError
@@ -292,6 +337,7 @@ def symbol_thread(st_names, stock_exchanges):
             if symbol != " ":
                 stocks.append(symbol)
                 st_names.append(st_names[i])
+
         except Exception as e:
             sys.stderr.write(
                 "EXCEPTION " + get_current_function_name() + ": " + str(st_names[i]) + ", "+ (str(e)) + "\n")
