@@ -26,7 +26,7 @@ res = read_tickers_from_file(tickers_file, stocknames_file, True)
 results = []
 analysis = TextBlobAnalyseNews(res['names'], res['tickers'])
 
-for news in all_news:
+for news in all_news: #TODO: res_news
     r = analysis.analyse_single_news(news)
     results.append(r)
 

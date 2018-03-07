@@ -5,8 +5,6 @@ import pandas as pd
 import os.path
 
 
-
-
 def replace_in_file(file, pattern, subst):
     """
     Replaces a pattern in a file with another substitute.
@@ -103,7 +101,7 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
         # ########## CDAX +++++++++++++
 
         from Utils.common_utils import read_table_column_from_webpage
-        #names_with_symbols = read_table_column_from_webpage('http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
+        # names_with_symbols = read_table_column_from_webpage('http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
         #    'table', 'class', 'tablepress tablepress-id-1563 dataTable no-footer',  1)
 
         tickers = read_table_column_from_webpage(
@@ -119,7 +117,7 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
         from itertools import repeat
         stock_tickers_names['stock_exchange'] += list(repeat("en", len(names_with_symbols)))
 
-        #TODO: b) General Standard is not included of page:
+        # TODO: b) General Standard is not included of page:
         # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/
 
         # TODO temp disabled: wartung
@@ -129,13 +127,13 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
         #    'https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
         #   'wikitable sortable zebra', 2)
 
-        #from DataRead_Google_Yahoo import __get_symbols_from_names
-        #all_exchanges = []
-        #all_exchanges += list(repeat("de", len(all_names)))
-        #tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
-        #stock_tickers_names['tickers'] += tickers
-        #stock_tickers_names['names'] += names_with_symbols
-        #stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
+        # from DataRead_Google_Yahoo import __get_symbols_from_names
+        # all_exchanges = []
+        # all_exchanges += list(repeat("de", len(all_names)))
+        # tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
+        # stock_tickers_names['tickers'] += tickers
+        # stock_tickers_names['names'] += names_with_symbols
+        # stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
 
         with open(tickers_file, "wb") as f:
             pickle.dump(stock_tickers_names['tickers'], f)
@@ -155,9 +153,10 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
     return stock_tickers_names
 
 
-def check_file_exists_or_create(file):
+def check_file_exists_or_create(file, txt=""):
     """
     Checks if the file exists and create it otherwise if not.
+    :param txt: text to append in file, if empty
     :param file: filepath + name
     :return: true if it exists
     """
@@ -165,6 +164,11 @@ def check_file_exists_or_create(file):
         return True
     else:
         print("\nFile " + file + " did not exist! Was created for you!\n\n")
-        with open(file, 'w'):
-            pass
+
+        with open(file, "a") as myfile:
+            if txt != "":
+                myfile.write(str(txt) + "\n")
+                myfile.write("")
+
+        myfile.close()
         return False

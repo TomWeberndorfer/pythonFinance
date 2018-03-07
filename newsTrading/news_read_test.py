@@ -24,7 +24,7 @@ hash_file = "C:\\temp\\news_hashes.txt"
 
 res_news = read_news_from_traderfox(hash_file)
 
-if res_news != "":
+if res_news != "" and len(res_news) > 1: #TODO länge checken
     all_news = res_news
     res = read_tickers_from_file(tickers_file, stocknames_file)
     results = []

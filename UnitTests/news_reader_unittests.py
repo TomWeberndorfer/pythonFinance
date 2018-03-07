@@ -1,8 +1,9 @@
 import unittest
 import datetime
 from Utils.file_utils import replace_in_file, get_hash_from_file, read_tickers_from_file
-from newsFeedReader.traderfox_hp_news import read_news_from_traderfox
+from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.TextBlobAnalyseNews import TextBlobAnalyseNews
+from datetime import datetime
 
 test_filepath = 'C:\\temp\\test_data\\'
 test_url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"
@@ -123,3 +124,21 @@ class NewsReaderTests(unittest.TestCase):
         self.assertEqual(result, "ADIDAS AG NA O.N.")
 
         #TODO fails einbauen, damit man sieht das ned alles geht
+
+    def test_date_check(self):
+
+        last_date_time_str = "07.03.2018 um 03:11"
+        date_time = "07.03.2018 um 23:11"
+
+        test_file = "C:\\temp\\test_data\\last_date_time.csv"
+        with open(test_file, "w") as myfile:
+            myfile.write("last_check_date" + "\n")
+            myfile.write(last_date_time_str + "\n")
+
+        datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
+        res = is_date_actual(datetime_object, test_file)
+        self.assertEqual(res, True)
+
+        #2. try with same date time --> not new --> false
+        res = is_date_actual(datetime_object, test_file)
+        self.assertEqual(res, False)
