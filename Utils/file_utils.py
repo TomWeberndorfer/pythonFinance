@@ -1,8 +1,11 @@
+from datetime import datetime
 import os
-import pickle
+
+import _pickle as pickle
 import re
 import pandas as pd
 import os.path
+from Utils.common_utils import read_table_column_from_wikipedia
 
 
 def replace_in_file(file, pattern, subst):
@@ -76,17 +79,15 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
         :param tickers_file: file to save the tickers
        :return: tickers
     """
-    from Utils.common_utils import read_table_column_from_wikipedia
+
     # TODO:
     # https://de.wikipedia.org/wiki/Liste_von_Aktienindizes
     # https://de.wikipedia.org/wiki/EURO_STOXX_50#Zusammensetzung
-    tickers = []
-    all_names = []
-    names_with_symbols = []
     stock_tickers_names = {'tickers': [], 'names': [], 'stock_exchange': []}
 
     if not os.path.exists(tickers_file) or not os.path.exists(names_file) or reload_file:
         # column 0 contains ticker symbols, column 1 contains security (=name)
+
         tickers = read_table_column_from_wikipedia('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
                                                    'wikitable sortable', 0)
         names_with_symbols = read_table_column_from_wikipedia(

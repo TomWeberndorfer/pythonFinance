@@ -10,9 +10,6 @@ import plotly.graph_objs as go
 import plotly.plotly as py
 import requests
 
-from Utils.file_utils import append_to_file
-
-
 def calc_avg_vol(stock_data):
     """
     Calculates the average volume of stock data except the days to skip from end.
@@ -120,8 +117,8 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
                     # replace . with , for excel csv
                     to_print_file += ";" + str(sb).replace('.', ',') + ';' + str(sl).replace('.', ',') + ";" + str(
                         strategy_name) + ";" + str(params) + ";" + url + ";" + url2
-                    append_to_file(str(now.strftime("%Y-%m-%d %H:%M")) + "; " + to_print_file,
-                                   file_name_and_path_stocks_to_buy)
+                    #TODO append_to_file(str(now.strftime("%Y-%m-%d %H:%M")) + "; " + to_print_file,
+                    #               file_name_and_path_stocks_to_buy)
 
                     # url_1 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
                     # url = url_1 + stock_to_buy

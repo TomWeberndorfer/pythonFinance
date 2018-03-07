@@ -16,7 +16,7 @@ tickers_file = filepath + tickers_file_name
 stocknames_file = filepath + stocknames_file_name
 ##########################
 
-thr_start = datetime.datetime.now()
+
 all_news = []
 #data = pd.read_csv(filepath + "Sample_news.txt")
 #res_news = data.News
@@ -26,7 +26,13 @@ res_news = read_news_from_traderfox(hash_file)
 
 if res_news != "" and len(res_news) > 1: #TODO länge checken
     all_news = res_news
+
+    thr_start = datetime.datetime.now()
     res = read_tickers_from_file(tickers_file, stocknames_file)
+
+    txt = "\n\nRuntime : " + str(datetime.datetime.now() - thr_start)
+    print(txt)
+
     results = []
     analysis = TextBlobAnalyseNews(res['names'], res['tickers'])
 
@@ -40,5 +46,3 @@ if res_news != "" and len(res_news) > 1: #TODO länge checken
             print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
                 round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
 
-    txt = "\n\nRuntime : " + str(datetime.datetime.now() - thr_start)
-    print(txt)

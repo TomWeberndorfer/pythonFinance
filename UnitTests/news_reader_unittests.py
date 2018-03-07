@@ -1,5 +1,4 @@
 import unittest
-import datetime
 from Utils.file_utils import replace_in_file, get_hash_from_file, read_tickers_from_file
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.TextBlobAnalyseNews import TextBlobAnalyseNews
@@ -22,6 +21,20 @@ class NewsReaderTests(unittest.TestCase):
         # should not read again
         news = read_news_from_traderfox(test_file)
         self.assertEqual(0, len(news))  # no news should be read
+
+    def test_read_from_traderfox_performance(self):
+        test_file = test_filepath + "news_hashes.txt"
+
+        # write new hash to reload
+        last_id = get_hash_from_file(test_file, test_url)
+        replace_in_file(test_file, last_id, "123")  # replace --> read
+
+        thr_start = datetime.now()
+        news = read_news_from_traderfox(test_file)
+
+        txt = "\n\nRuntime test_read_from_traderfox_performance: " + str(datetime.now() - thr_start)
+        print(txt)
+        self.assertGreater(len(news), 0)
 
     def test_analyse(self):
         filepath = 'C:\\temp\\'
@@ -142,3 +155,15 @@ class NewsReaderTests(unittest.TestCase):
         #2. try with same date time --> not new --> false
         res = is_date_actual(datetime_object, test_file)
         self.assertEqual(res, False)
+
+    def test_read_tickers_from_file(self):
+
+        filepath = 'C:\\temp\\'
+        tickers_file_name = "stock_tickers.pickle"
+        stocknames_file_name = "stock_names.pickle"
+        tickers_file = filepath + tickers_file_name
+        stocknames_file = filepath + stocknames_file_name
+
+        res = read_tickers_from_file(tickers_file, stocknames_file)
+
+        self.assertEqual(len(res['tickers']), 505)
