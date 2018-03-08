@@ -39,9 +39,6 @@ class TextBlobAnalyseNews:
         result = self.identify_stock_in_news(news_to_analyze)
         if result != " ":
             prob_dist = self.classifier.prob_classify(news_to_analyze)
-            # print("name: " + name_to_find + ", idx: " + str(idx) + ", ticker: " + str(
-            #    all_symbols[idx]) + ", pos: " + str(round(prob_dist.prob("pos"), 2)) + " ,neg: " + str(
-            #    round(prob_dist.prob("neg"), 2)) + ", orig_news: " + str(news_to_analyze) + ", translated news: "+ str(wiki))
 
             if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
                         round(prob_dist.prob("neg"), 2) > self.threshold):
@@ -116,20 +113,20 @@ class TextBlobAnalyseNews:
                     if len(tags) > tag_idx + 1 + 1:  # TODO beschreiben
                         stock_to_check = tags[tag_idx + 1][0]
 
-                        name_to_find = self.lookup_stock_abr_in_all_names (stock_to_check)
+                        name_to_find = self.lookup_stock_abr_in_all_names(stock_to_check)
                         if name_to_find != " ":
-                                idx = self.names.index(name_to_find)
-                                return {'name': name_to_find, 'ticker': self.tickers[idx]}
+                            idx = self.names.index(name_to_find)
+                            return {'name': name_to_find, 'ticker': self.tickers[idx]}
 
         print("ERR: nothing found for news: " + str(news_to_analyze))
         return " "
 
-    def lookup_stock_abr_in_all_names (self, stock_abr):
+    def lookup_stock_abr_in_all_names(self, stock_abr):
         result = [i for i in self.names if i.lower().startswith(stock_abr.lower())]
 
         if result:
             name_to_find = str(result[0])
-            if name_to_find in self.names: #TODO: check if this if is necessary
+            if name_to_find in self.names:  # TODO: check if this if is necessary
                 return name_to_find
 
         return " "

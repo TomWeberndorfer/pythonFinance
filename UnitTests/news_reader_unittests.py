@@ -22,12 +22,19 @@ class NewsReaderTests(unittest.TestCase):
         news = read_news_from_traderfox(test_file)
         self.assertEqual(0, len(news))  # no news should be read
 
-    def test_read_from_traderfox_performance(self):
-        test_file = test_filepath + "news_hashes.txt"
 
+    def test_read_from_traderfox_performance(self):
+        #TODO hash temp disabled, if performance good enough without hash
+        test_file = test_filepath + "news_hashes.txt"
         # write new hash to reload
         last_id = get_hash_from_file(test_file, test_url)
         replace_in_file(test_file, last_id, "123")  # replace --> read
+
+        test_file = "C:\\temp\\last_date_time.csv"
+
+        with open(test_file, "w") as myfile:
+            myfile.write("last_check_date" + "\n")
+            myfile.write("08.03.2018 um 02:17" + "\n")
 
         thr_start = datetime.now()
         news = read_news_from_traderfox(test_file)

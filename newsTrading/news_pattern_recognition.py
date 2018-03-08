@@ -16,6 +16,9 @@ tickers_file = filepath + tickers_file_name
 stocknames_file = filepath + stocknames_file_name
 ##########################
 
+
+#++++++++++ FOR SAMPLE NEWS
+
 thr_start = datetime.datetime.now()
 all_news = []
 data = pd.read_csv(filepath + "Sample_news.txt")

@@ -18,8 +18,6 @@ stocknames_file = filepath + stocknames_file_name
 
 
 all_news = []
-#data = pd.read_csv(filepath + "Sample_news.txt")
-#res_news = data.News
 hash_file = "C:\\temp\\news_hashes.txt"
 
 res_news = read_news_from_traderfox(hash_file)
