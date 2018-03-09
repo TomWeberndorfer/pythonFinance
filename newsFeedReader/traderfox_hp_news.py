@@ -70,13 +70,15 @@ def is_date_actual(date_to_check, last_date_file="", last_date="", date_time_for
             last_date_str = str(data.last_check_date[0])
             last_date = datetime.strptime(last_date_str, date_time_format)
         else:
-            return False
+            return False, ""
 
-    is_news_from_today = last_date < date_to_check
+    is_news_current= last_date < date_to_check
 
-    with open(last_date_file, "w") as myfile:
-        myfile.write("last_check_date" + "\n")
-        datetime_object_str = datetime.strftime(date_to_check, date_time_format)
-        myfile.write(str(datetime_object_str) + "\n")
+    if is_news_current:
+        with open(last_date_file, "w") as myfile:
+            myfile.write("last_check_date" + "\n")
+            datetime_object_str = datetime.strftime(date_to_check, date_time_format)
+            myfile.write(str(datetime_object_str) + "\n")
+            return is_news_current, date_to_check
 
-    return is_news_from_today, date_to_check
+    return is_news_current, last_date

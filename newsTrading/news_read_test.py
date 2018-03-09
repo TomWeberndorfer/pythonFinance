@@ -40,8 +40,6 @@ all_news = read_news_from_traderfox(hash_file)
 
 if all_news != "" and len(all_news) > 1:
     res = read_tickers_from_file(tickers_file, stocknames_file)
-
-    results = []
     analysis = TextBlobAnalyseNews(res['names'], res['tickers'])
 
     news_screening_threads = MyThread("news_screening_threads")
@@ -58,6 +56,10 @@ if all_news != "" and len(all_news) > 1:
     news_screening_threads.execute_threads()
 
     print("\n-------------------------\n")
+
+if len(stocks_to_buy) == 0:
+    print("No news")
+else:
     for res in stocks_to_buy:
         if res != " ":
             print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
