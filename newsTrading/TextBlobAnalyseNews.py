@@ -45,7 +45,6 @@ class TextBlobAnalyseNews:
                 return {'name': result['name'], 'ticker': result['ticker'], 'prob_dist': prob_dist,
                         'orig_news': str(news_to_analyze)}
 
-        print("ERR: nothing found for news: " + str(news_to_analyze))
         return " "
 
     def __train_classifier(self):
@@ -118,7 +117,7 @@ class TextBlobAnalyseNews:
                             idx = self.names.index(name_to_find)
                             return {'name': name_to_find, 'ticker': self.tickers[idx]}
 
-        print("ERR: nothing found for news: " + str(news_to_analyze))
+        print("ERR: no STOCK found for news: " + str(news_to_analyze))
         return " "
 
     def lookup_stock_abr_in_all_names(self, stock_abr):
