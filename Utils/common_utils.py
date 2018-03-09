@@ -141,6 +141,14 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
         program_end_time - program_start_time))
 
 
+def print_news_analysis_results(stocks_to_buy):
+    print("\n-------------------------\n")
+    for res in stocks_to_buy:
+        if res != " ":
+            print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
+                round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
+
+
 def get_current_function_name():
     """
     Returns the calling function name

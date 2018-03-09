@@ -6,21 +6,42 @@
 # corpus:
 # https://nlp.stanford.edu/pubs/lrec2014-stock.pdf
 # https://nlp.stanford.edu/pubs/stock-event.html
+import threading
+
 from textblob.classifiers import NaiveBayesClassifier
 from textblob import TextBlob
 import datetime
 import pandas as pd
 
+from MyThread import MyThread
+from Utils.common_utils import split_list
+from Utils.file_utils import read_tickers_from_file
+
+filepath = 'C:\\temp\\'
+tickers_file_name = "stock_tickers.pickle"
+stocknames_file_name = "stock_names.pickle"
+tickers_file = filepath + tickers_file_name
+stocknames_file = filepath + stocknames_file_name
+stocks_to_buy = []
+hash_file = "C:\\temp\\news_hashes.txt"
+num_of_news_per_thread = 5
+
+
+##########################
 
 class TextBlobAnalyseNews:
-    def __init__(self, names, tickers, threshold=0.7):
-        if names is None or tickers is None:
-            raise NotImplementedError
-
+    def __init__(self, names=None, tickers=None, threshold=0.7):
         self.classifier = self.__train_classifier()
         self.threshold = threshold
-        self.names = names
-        self.tickers = tickers
+
+        if names is None or tickers is None:
+            res = read_tickers_from_file(tickers_file, stocknames_file)
+            self.names = res['names']
+            self.tickers = res['tickers']
+        else:
+            self.names = names
+            self.tickers = tickers
+
 
     def analyse_single_news(self, news_to_analyze):
         """
@@ -80,8 +101,7 @@ class TextBlobAnalyseNews:
 
         train_start = datetime.datetime.now()
         cl = NaiveBayesClassifier(train)
-        txt = "\n\nRuntime to train classifier: " + str(datetime.datetime.now() - train_start)
-        print(txt)
+        print("\nRuntime to train classifier: " + str(datetime.datetime.now() - train_start))
         return cl
 
     def identify_stock_in_news(self, news_to_analyze):
@@ -129,3 +149,36 @@ class TextBlobAnalyseNews:
                 return name_to_find
 
         return " "
+
+    def __function_for_threading_news_analysis(self, news_to_check):
+        print("Started with: " + str(news_to_check))
+
+        for news in news_to_check:
+            res_analysis = self.analyse_single_news(news)
+
+            if res_analysis != " ":
+                stocks_to_buy.append(res_analysis)
+
+    def analyse_all_news(self, all_news):
+
+        if all_news != "" and len(all_news) > 1:
+            news_screening_threads = MyThread("news_screening_threads")
+            splits = split_list(all_news, num_of_news_per_thread)
+
+            for curr_news in splits:
+                news_screening_threads.append_thread(
+                    threading.Thread(target=self.__function_for_threading_news_analysis,
+                                     kwargs={'news_to_check': curr_news}))
+
+            news_screening_threads.execute_threads()
+
+        # TODO weg
+        # if len(stocks_to_buy) == 0:
+        #     print("No news")
+        # else:
+        #     for res in stocks_to_buy:
+        #         if res != " ":
+        #             print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
+        #                 round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
+
+        return stocks_to_buy

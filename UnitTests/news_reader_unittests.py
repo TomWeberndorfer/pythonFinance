@@ -3,6 +3,7 @@ from Utils.file_utils import replace_in_file, get_hash_from_file, read_tickers_f
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.TextBlobAnalyseNews import TextBlobAnalyseNews
 from datetime import datetime
+import pandas as pd
 
 test_filepath = 'C:\\temp\\test_data\\'
 test_url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"
@@ -10,11 +11,17 @@ test_url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/
 
 class NewsReaderTests(unittest.TestCase):
     def test_read_from_traderfox(self):
-        test_file = test_filepath + "news_hashes.txt"
+        # TODO hash temp disabled, if performance good enough without hash
+        #test_file = test_filepath + "news_hashes.txt"
+        test_file = "C:\\temp\\last_date_time.csv"
+
+        with open(test_file, "w") as myfile:
+            myfile.write("last_check_date" + "\n")
+            myfile.write("08.03.2018 um 02:17" + "\n")
 
         # write new hash to reload
-        last_id = get_hash_from_file(test_file, test_url)
-        replace_in_file(test_file, last_id, "123")  # replace --> read
+        #last_id = get_hash_from_file(test_file, test_url)
+        #replace_in_file(test_file, last_id, "123")  # replace --> read
         news = read_news_from_traderfox(test_file)
         self.assertGreater(len(news), 0)
 
@@ -25,10 +32,10 @@ class NewsReaderTests(unittest.TestCase):
 
     def test_read_from_traderfox_performance(self):
         #TODO hash temp disabled, if performance good enough without hash
-        test_file = test_filepath + "news_hashes.txt"
+        #test_file = test_filepath + "news_hashes.txt"
         # write new hash to reload
-        last_id = get_hash_from_file(test_file, test_url)
-        replace_in_file(test_file, last_id, "123")  # replace --> read
+        #last_id = get_hash_from_file(test_file, test_url)
+        #replace_in_file(test_file, last_id, "123")  # replace --> read
 
         test_file = "C:\\temp\\last_date_time.csv"
 
@@ -43,7 +50,7 @@ class NewsReaderTests(unittest.TestCase):
         print(txt)
         self.assertGreater(len(news), 0)
 
-    def test_analyse(self):
+    def analyse_single_news(self):
         filepath = 'C:\\temp\\'
         tickers_file_name = "stock_tickers.pickle"
         stocknames_file_name = "stock_names.pickle"
@@ -52,7 +59,7 @@ class NewsReaderTests(unittest.TestCase):
         res = read_tickers_from_file(tickers_file, stocknames_file)
         ##########################
 
-        thr_start = datetime.datetime.now()
+        thr_start = datetime.now()
         analysis = TextBlobAnalyseNews(res['names'], res['tickers'])
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf"
@@ -156,12 +163,12 @@ class NewsReaderTests(unittest.TestCase):
             myfile.write(last_date_time_str + "\n")
 
         datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
-        res = is_date_actual(datetime_object, test_file)
-        self.assertEqual(res, True)
+        is_actual, date_time = is_date_actual(datetime_object, test_file)
+        self.assertEqual(is_actual, True)
 
         #2. try with same date time --> not new --> false
-        res = is_date_actual(datetime_object, test_file)
-        self.assertEqual(res, False)
+        is_actual, date_time = is_date_actual(datetime_object, test_file)
+        self.assertEqual(is_actual, False)
 
     def test_read_tickers_from_file(self):
 
@@ -173,4 +180,16 @@ class NewsReaderTests(unittest.TestCase):
 
         res = read_tickers_from_file(tickers_file, stocknames_file)
 
-        self.assertEqual(len(res['tickers']), 505)
+        #TODO self.assertEqual(len(res['tickers']), 505)
+        self.assertEqual(len(res['tickers']), 818)
+
+    def test_analyse_all_news(self):
+        filepath = 'C:\\temp\\'
+
+        data = pd.read_csv(filepath + "Sample_news.txt")
+        all_news = data.News.tolist()
+
+        text_analysis = TextBlobAnalyseNews()
+        results = text_analysis.analyse_all_news(all_news)
+
+        self.assertEqual(len(results), 11)
