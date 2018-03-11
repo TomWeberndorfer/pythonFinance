@@ -2,6 +2,7 @@ import datetime
 import os
 import platform
 import sys
+import smtplib
 
 import bs4 as bs
 import numpy
@@ -142,18 +143,62 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
 
 
 def print_news_analysis_results(stocks_to_buy):
-    print("\n-------------------------\n")
-    for res in stocks_to_buy:
-        if res != " ":
-            print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
-                round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
+    if stocks_to_buy is not None and len(stocks_to_buy) > 0:
+        print("\n-------------------------\n")
+        for res in stocks_to_buy:
+            if res != " ":
+                print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
+                    round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
+    else:
+        print("News analysis: no news")
+
+
+def format_news_analysis_results(stocks_to_buy):
+    """
+    TODO
+    :param stocks_to_buy:
+    :return:
+    """
+    if stocks_to_buy is not None and len(stocks_to_buy) > 0:
+        str_print = ""
+
+        if stocks_to_buy is not None and len(stocks_to_buy) > 0:
+            str_print += "\nNews analysis results: \n"
+            buy_str = ""
+            sell_str = ""
+
+            for res in stocks_to_buy:
+                if res != " " and len(res) > 0:
+                    pos_class = round(res['prob_dist'].prob("pos"), 2)
+                    neg_class = round(res['prob_dist'].prob("neg"), 2)
+                    tmp_str = ""
+                    tmp_str += (res['name'] + ", ticker: " + res['ticker'] +
+                                ", pos: " + str(pos_class) +
+                                " ,neg: " + str(neg_class) +
+                                ", orig News: " + res["orig_news"]) + "\n\n"
+                    if pos_class > neg_class:
+                        buy_str += tmp_str
+                    else:
+                        sell_str += tmp_str
+
+            if len(buy_str) > 0:
+                str_print += "Stocks to BUY: \n"
+                str_print += buy_str
+
+            if len(sell_str) > 0:
+                str_print += "\nStocks to SELL: \n"
+                str_print += sell_str
+
+        return str_print
 
 
 def get_current_function_name():
     """
     Returns the calling function name
+    :return:
     :return: calling func name
     """
+
     current_func_name = lambda n=0: sys._getframe(n + 1).f_code.co_name
     cf = current_func_name()  # name of this class itself
     cf1 = current_func_name(1)  # name of calling class
@@ -292,6 +337,11 @@ def creation_date(path_to_file):
 
 
 def convert_backtrader_to_dataframe(data):
+    """
+    TODO
+    :param data:
+    :return:
+    """
     cols = ['Open', 'High', 'Low', 'Close', 'Volume']
     lst = []
 
@@ -313,6 +363,51 @@ def convert_backtrader_to_dataframe(data):
     return df1
 
 
-def send_email_notification():
-    # TODO
-    raise NotImplementedError
+def send_email(from_addr, to_addr_list, cc_addr_list, subject, message, login, password,
+               smtpserver='smtp.gmail.com:587'):
+    """
+    TODO
+    :param from_addr:
+    :param to_addr_list:
+    :param cc_addr_list:
+    :param subject:
+    :param message:
+    :param login:
+    :param password:
+    :param smtpserver:
+    :return:
+    """
+    header = 'From: %s\n' % from_addr
+    header += 'To: %s\n' % ','.join(to_addr_list)
+    header += 'Cc: %s\n' % ','.join(cc_addr_list)
+    header += 'Subject: %s\n\n' % subject
+    # message = u''.join((header, message)).encode('utf-8')
+    message = (header + message).encode('latin-1', 'ignore')
+
+    server = smtplib.SMTP(smtpserver)
+    server.starttls()
+    server.login(login, password)
+    problems = server.sendmail(from_addr, to_addr_list, message)
+    server.quit()
+    return problems
+
+
+def send_stock_email(message_text, subject_text):
+    """
+    TODO
+    :param message_text:
+    :param subject_text:
+    :return:
+    """
+
+    if message_text is not None and len(message_text) > 0:
+        return send_email(from_addr='python.trading.framework@gmail.com',
+                          to_addr_list=['weberndorfer.thomas@gmail.com'],
+                          cc_addr_list=[],
+                          subject=subject_text,
+                          message=message_text,
+                          login='python.trading.framework',
+                          password='8n6Qw8YoJe8m')
+
+    else:
+        return []

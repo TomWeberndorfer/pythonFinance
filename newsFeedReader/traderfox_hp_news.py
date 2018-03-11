@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 
 
-def read_news_from_traderfox(hash_file):
+def read_news_from_traderfox(hash_file=None):
     """
     Read the news from traderfox homepage with html parsing to "articles"
     :param hash_file filepath+name  for hash id
@@ -36,7 +36,7 @@ def read_news_from_traderfox(hash_file):
     # ex: #news = "27.02. 10:41 dpa-AFX: ANALYSE-FLASH: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro"
     all_news = []
     last_date = ""
-    # replace_in_file(hash_file, last_id, hash_id)
+    # replace_in_file(hash_file, last id)
     for elm in all_articles:
         date_time = (str(elm.footer.span.get_text()))  # date and Time
         date_time = date_time.rsplit(' Uhr')[0]
