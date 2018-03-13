@@ -1,6 +1,9 @@
 from unittest import TestCase
+import pandas as pd
+from datetime import datetime
 
-from Utils.common_utils import send_email
+from Utils.common_utils import send_email, is_date_today
+from Utils.file_utils import check_file_exists_or_create
 
 
 class TestUtils(TestCase):
@@ -18,3 +21,12 @@ class TestUtils(TestCase):
                   password='8n6Qw8YoJe8m')
 
         self.assertEqual(len(result), 0)
+
+    def test_is_date_today(self):
+        date_time = "07.03.2018 um 23:11"
+        datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
+        self.assertEqual(is_date_today(datetime_object), False)
+
+        date_time = "12.03.2018 um 23:11"
+        datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
+        self.assertEqual(is_date_today(datetime_object), True)

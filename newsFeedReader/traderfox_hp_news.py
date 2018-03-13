@@ -82,3 +82,5 @@ def is_date_actual(date_to_check, last_date_file="", last_date="", date_time_for
             return is_news_current, date_to_check
 
     return is_news_current, last_date
+
+

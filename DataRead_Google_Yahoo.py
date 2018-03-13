@@ -344,20 +344,11 @@ def symbol_thread(st_names, stock_exchanges):
         i += 1
 
 
-def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reload_sp500=False, reload_stockdata=False):
-    # if reload_sp500:
-    #     read_and_save_sp500_tickers(tickers_file)
-    # else:
-    #     with open(tickers_file, "rb") as f:
-    #         tickers = pickle.load(f)
-
-    # if not os.path.exists(stock_dfs_file):
-    #     os.makedirs(stock_dfs_file)
-
+def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reload_stockdata=False):
     df = []
     ticker = optimize_name_for_yahoo(ticker)
 
-    retry = 3
+    retry = 1 #TODO --> 3
 
     while retry > 0:
         try:
@@ -378,12 +369,12 @@ def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reloa
             break
 
         except Exception as e:
-            sys.stderr.write(
-                "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker) + ", retry: " + str(
-                    retry) + ", " + str(e) + "\n")
             # traceback.print_exc()
             # append_to_file(str(ticker), filepath + "failedReads.txt")
             if retry <= 0:
+                sys.stderr.write(
+                    "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker) + ", retry: " + str(
+                        retry) + ", " + str(e) + "\n")
                 break
             retry -= 1
 

@@ -27,5 +27,5 @@ while True:
     else:
         print("News analysis: no news")
 
-    time.sleep(20)  # check for new news after x seconds
+    time.sleep(60)  # check for new news after x seconds
     print("Runtime check: " + str(datetime.now() - thr_start))

@@ -2,10 +2,12 @@ import unittest
 
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
 from DataRead_Google_Yahoo import __get_symbol_from_name_from_yahoo
 from Signals import signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, \
     signal_is_a_few_higher_than_avg, signal_is_volume_raising, signal_is52_w_high, signal_is_volume_high_enough
+from StockScreening import run_stock_screening
 from Strategies import strat_52_w_hi_hi_volume
 from Utils.common_utils import calc_avg_vol, calculate_stopbuy_and_stoploss
 
@@ -228,6 +230,26 @@ class MyTest(unittest.TestCase):
     #     for name in names:
     #         res = read_data_from_google_with_client(name)
     #         print()
+
+    def test_run_stock_screening_performance (self):
+        # thr_start = datetime.now()
+        # stocks_per_threads = 10
+        # run_stock_screening(stocks_per_threads)
+        # txt1 = "\nRuntime mit " + str(stocks_per_threads) +" Threads: " + str(datetime.now() - thr_start)
+        #
+        # thr_start = datetime.now()
+        # stocks_per_threads = 5
+        # run_stock_screening(stocks_per_threads)
+        # txt2 = "\n\nRuntime mit " + str(stocks_per_threads) + " Threads: " + str(datetime.now() - thr_start)
+
+        thr_start = datetime.now()
+        stocks_per_threads = 2
+        run_stock_screening(stocks_per_threads)
+        txt3 = "\n\nRuntime mit " + str(stocks_per_threads) + " Threads: " + str(datetime.now() - thr_start)
+
+        # print(txt1)
+        # print(txt2)
+        print(txt3)
 
 
 

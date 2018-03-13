@@ -15,6 +15,7 @@ stocks_to_buy = []
 err = []
 program_start_time = datetime.now()
 params = []
+stocks_per_thread = 10
 
 
 # TODO maybe move to better place
@@ -45,7 +46,7 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, start_date, end
             traceback.print_exc()
 
 
-def run_stock_screening():
+def run_stock_screening(num_of_stocks_per_thread):
     try:
         # threads = []
         # stocks_to_buy = []
@@ -55,7 +56,7 @@ def run_stock_screening():
 
         ##########################
         # config
-        num_of_stocks_per_thread = 20
+
         volume_day_delta = 5
         volume_avg_day_delta = 15
         end = datetime.now()
@@ -167,6 +168,7 @@ def run_stock_screening():
 
         # Create new threads
         splits = split_list(all_symbols, num_of_stocks_per_thread)
+        num_of_threads = len(splits)
         stock_screening_threads = MyThread("stock_screening_threads")
 
         i = 0
@@ -186,10 +188,10 @@ def run_stock_screening():
 
         # print the results and plot it
         print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, datetime.now(),
-                            filepath + stock_list_name, filepath + stocks_to_buy_name)
+                            filepath + stock_list_name, filepath + stocks_to_buy_name, str(num_of_threads))
         # plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, ago52_w, end)
 
     except Exception as e:
         traceback.print_exc()
 
-run_stock_screening()
+#TODO run_stock_screening(stocks_per_thread)

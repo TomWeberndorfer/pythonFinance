@@ -22,7 +22,7 @@ except ImportError:
 def display(p1):
     # Match Button
     print('main_v1_support.display')
-    run_stock_screening()
+    run_stock_screening(10) #TODO
     sys.stdout.flush()
 
 def help():

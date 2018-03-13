@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import os
 import platform
 import sys
@@ -64,8 +64,10 @@ def calculate_stopbuy_and_stoploss(stock_data):
 
 
 def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, program_end_time,
-                        file_name_and_path_stock_list, file_name_and_path_stocks_to_buy):
-    if stocks_to_buy is None or num_of_stocks_per_thread is None or program_start_time is None or program_end_time is None or file_name_and_path_stock_list is None or file_name_and_path_stocks_to_buy is None:
+                        file_name_and_path_stock_list, file_name_and_path_stocks_to_buy, num_of_threads):
+    if stocks_to_buy is None or num_of_stocks_per_thread is None or program_start_time is None \
+            or program_end_time is None or file_name_and_path_stock_list is None \
+            or file_name_and_path_stocks_to_buy is None or num_of_threads is None:
         raise NotImplementedError
 
     url_1 = "https://www.google.com/finance?q="
@@ -100,7 +102,7 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
                     url = 'https://finance.yahoo.com/quote/' + stock_to_buy + '/chart?p=' + stock_to_buy
                     # https: // finance.yahoo.com / quote / RSG / chart?p = RSG
                     url2 = url_3 + stock_to_buy
-                    now = datetime.datetime.now()
+                    now = datetime.now()
                     to_print_cmd = ""
 
                     for line in array:
@@ -138,7 +140,7 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
 
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     print()
-    print("INFO: runtime with " + str(num_of_stocks_per_thread) + " stocks per thread: " + str(
+    print("INFO: runtime with " + num_of_threads + " Threads and " + str(num_of_stocks_per_thread) + " stocks per thread: " + str(
         program_end_time - program_start_time))
 
 
@@ -411,3 +413,22 @@ def send_stock_email(message_text, subject_text):
 
     else:
         return []
+
+
+def is_date_today(date_to_check):
+    """
+    TODO
+    :param date_to_check:
+    :return:
+    """
+    if date_to_check is None:
+        raise NotImplementedError
+
+    today_date_str = datetime.now().strftime("%d.%m.%Y")
+    today_date = datetime.strptime(today_date_str, "%d.%m.%Y")
+
+    date_to_check_str = date_to_check.strftime("%d.%m.%Y")
+    date_to_check_today = datetime.strptime(date_to_check_str, "%d.%m.%Y")
+
+    is_today = today_date == date_to_check_today
+    return is_today
