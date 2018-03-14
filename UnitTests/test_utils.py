@@ -27,6 +27,6 @@ class TestUtils(TestCase):
         datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
         self.assertEqual(is_date_today(datetime_object), False)
 
-        date_time = "12.03.2018 um 23:11"
+        date_time = "14.03.2018 um 23:11" #TODO
         datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
         self.assertEqual(is_date_today(datetime_object), True)

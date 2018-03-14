@@ -19,10 +19,6 @@ str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
 str2 = "&region=1&lang="
 str3 = "&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
 
-stocks = []
-names = []
-
-
 def read_data_from_google_with_client(stock_name, interval="86400", period="1M"):
     if stock_name is None:
         raise NotImplementedError
@@ -227,6 +223,8 @@ def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
     if file_stock_list is None or file_excel is None:
         raise NotImplementedError
 
+    result = []
+
     f = open(file_stock_list, 'w')
     f.write("Name,   Symbol \n")  # python will convert \n to os.linesep
 
@@ -244,7 +242,7 @@ def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
                 # values from today contain a time (=Uhr) and not a date
                 # TODO google data is from yesterday
                 if not "Uhr" in date_from_file:  # but google data is from yesterday
-                    get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name}))
+                    get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'name': name, 'result:': result}))
 
         except Exception as e:
             sys.stderr.write("Method exception in: " + get_current_function_name()
@@ -254,13 +252,13 @@ def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
     get_symbol_threads.execute_threads()
 
     cnt = 0
-    while (cnt < len(names)):
-        for symbol in stocks:
-            f.write(names[cnt] + ",  " + symbol + "\n")  # python will convert \n to os.linesep
+    while (cnt < len(result)):
+        for symbol in result:
+            f.write(result[cnt] + ",  " + symbol + "\n")  # python will convert \n to os.linesep
             cnt += 1
 
     f.close()  # you can omit in most cases as the destructor will call it
-    return stocks
+    return result
 
 
 def __get_symbols_from_names(symbol_names, stock_exchanges, num_of_stocks_per_thread=20):
@@ -272,6 +270,8 @@ def __get_symbols_from_names(symbol_names, stock_exchanges, num_of_stocks_per_th
     :return:
     """
 
+    result = []
+
     if symbol_names is None:
         raise NotImplementedError
 
@@ -282,7 +282,7 @@ def __get_symbols_from_names(symbol_names, stock_exchanges, num_of_stocks_per_th
     for split_names in splits:
         try:
             get_symbol_threads.append_thread(threading.Thread(target=symbol_thread, kwargs={'st_names': split_names,
-                                                                                            'stock_exchanges': stock_exchanges}))
+                                                                                            'stock_exchanges': stock_exchanges, 'result': result}))
 
         except Exception as e:
             sys.stderr.write("Method exception in: " + get_current_function_name()
@@ -291,7 +291,7 @@ def __get_symbols_from_names(symbol_names, stock_exchanges, num_of_stocks_per_th
 
     get_symbol_threads.execute_threads()
 
-    return stocks, names
+    return result #TODO braucht ma des: , names
 
 
 def optimize_name_for_yahoo(name, replace_whitespace=True, return_first_part=False):
@@ -326,7 +326,7 @@ def optimize_name_for_yahoo(name, replace_whitespace=True, return_first_part=Fal
     return name
 
 
-def symbol_thread(st_names, stock_exchanges):
+def symbol_thread(st_names, stock_exchanges, result):
     if st_names is None or stock_exchanges is None:
         raise NotImplementedError
 
@@ -335,7 +335,7 @@ def symbol_thread(st_names, stock_exchanges):
         try:
             symbol = __get_symbol_from_name_from_yahoo(st_names[i], stock_exchanges[i])
             if symbol != " ":
-                stocks.append(symbol)
+                result.append(symbol)
                 st_names.append(st_names[i])
 
         except Exception as e:

@@ -50,7 +50,7 @@ class NewsReaderTests(unittest.TestCase):
         print(txt)
         self.assertGreater(len(news), 0)
 
-    def analyse_single_news(self):
+    def test_analyse_single_news(self):
         filepath = 'C:\\temp\\'
         tickers_file_name = "stock_tickers.pickle"
         stocknames_file_name = "stock_names.pickle"
@@ -177,19 +177,59 @@ class NewsReaderTests(unittest.TestCase):
         stocknames_file_name = "stock_names.pickle"
         tickers_file = filepath + tickers_file_name
         stocknames_file = filepath + stocknames_file_name
-
         res = read_tickers_from_file(tickers_file, stocknames_file)
 
         #TODO self.assertEqual(len(res['tickers']), 505)
         self.assertEqual(len(res['tickers']), 818)
 
     def test_analyse_all_news(self):
-        filepath = 'C:\\temp\\'
+        num_of_news_per_thread = 1
+        runtimes = []
+        for x in range(0, 3): #TODO 3
+            all_news = []
+            news_elringklinger = "ANALYSE-FLASH: JPMorgan belässt ElringKlinger nach Zahlen auf 'Underweight'"
+            news_freenet = "ANALYSE-FLASH: DZ Bank senkt Freenet auf 'Halten' und fairen Wert auf 28 Euro"
+            all_news.append(news_elringklinger)
+            all_news.append(news_freenet)
+            text_analysis = TextBlobAnalyseNews()
+            thr_start = datetime.now()
+            result = text_analysis.analyse_all_news(all_news, num_of_news_per_thread)
+            runtimes.append("Runtime  " + str(x) + ": " + str(datetime.now() - thr_start))
 
-        data = pd.read_csv(filepath + "Sample_news.txt")
-        all_news = data.News.tolist()
+            #TODO umbauen auf: https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
+            freenet_idx = next((index for (index, d) in enumerate(result) if d["orig_news"] == news_freenet), None)
+            elringklinger_idx = next((index for (index, d) in enumerate(result) if d["orig_news"] == news_elringklinger), None)
 
-        text_analysis = TextBlobAnalyseNews()
-        results = text_analysis.analyse_all_news(all_news)
+            t1 = round(result[freenet_idx]['prob_dist'].prob("neg"), 2)
+            self.assertEqual(t1, 0.77)
+            self.assertEqual(result[freenet_idx]['name'], "FREENET AG NA")
 
-        self.assertEqual(len(results), 11)
+            t2 = round(result[elringklinger_idx]['prob_dist'].prob("neg"), 2)
+            self.assertEqual(t2, 0.77)
+            self.assertEqual(result[elringklinger_idx]['name'], "ELRINGKLINGER AG NA O.N.")
+
+        all_news_2 = []
+        news_elringklinger = "ANALYSE-FLASH: JPMorgan belässt ElringKlinger nach Zahlen auf 'Underweight'"
+        news_freenet = "ANALYSE-FLASH: DZ Bank senkt Freenet auf 'Halten' und fairen Wert auf 28 Euro"
+        all_news_2.append(news_elringklinger)
+        all_news_2.append(news_freenet)
+        text_analysis_2 = TextBlobAnalyseNews()
+        thr_start = datetime.now()
+        result_2 = text_analysis_2.analyse_all_news(all_news_2, num_of_news_per_thread)
+        runtimes.append("Runtime  " + str(x) + ": " + str(datetime.now() - thr_start))
+
+        # TODO umbauen auf: https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
+        freenet_idx = next((index for (index, d) in enumerate(result_2) if d["orig_news"] == news_freenet), None)
+        elringklinger_idx = next((index for (index, d) in enumerate(result_2) if d["orig_news"] == news_elringklinger),
+                                 None)
+
+        t1 = round(result_2[freenet_idx]['prob_dist'].prob("neg"), 2)
+        self.assertEqual(t1, 0.77)
+        self.assertEqual(result_2[freenet_idx]['name'], "FREENET AG NA")
+
+        t2 = round(result_2[elringklinger_idx]['prob_dist'].prob("neg"), 2)
+        self.assertEqual(t2, 0.77)
+        self.assertEqual(result_2[elringklinger_idx]['name'], "ELRINGKLINGER AG NA O.N.")
+
+        for rt in runtimes:
+            print (str(rt))

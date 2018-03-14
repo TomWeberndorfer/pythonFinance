@@ -1,18 +1,15 @@
 import traceback
 import datetime
 import sys
-
-##########################################################
 from Utils.file_utils import append_to_file
-
-filepath = 'C:\\temp\\' #TODO
 
 
 class MyThread:
-    def __init__(self, name):
+    def __init__(self, name, filepath='C:\\temp\\'):
         self.name = name
         self.thrToExe = []
         self.threads = []
+        self.filepath = filepath
 
     def execute_threads(self):
 
@@ -37,7 +34,7 @@ class MyThread:
         txt = "Runtime Threads " + str(self.name) + ": " + str(
             datetime.datetime.now() - thr_start) + ", cnt of threads: " + str(len(self.threads))
         print(txt)
-        append_to_file(txt, filepath + "Runtime.txt")
+        append_to_file(txt, self.filepath + "Runtime.txt")
 
     def append_thread(self, thread_to_append):
         try:
