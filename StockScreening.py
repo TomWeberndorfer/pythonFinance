@@ -25,7 +25,7 @@ def function_for_threading_strat_scheduler(stock_names_to_check, ago52_w_time, e
     stocks_to_buy.extend(strat_scheduler(stock_names_to_check, ago52_w_time, end_l, params))
 
 
-def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, start_date, end_date):
+def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
     """
     plots alist with stock names
     :param stocks_to_buy:
@@ -36,8 +36,6 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, start_date, end
     for stock in stocks_to_buy:
         try:
             stock_name = stock['stock_name']
-            # TODO weg
-            # stock_data = read_data_from_google_with_pandas(stock_name, start_date, end_date)
             stock_data = stock['data']
             plot_stock_as_candlechart_with_volume(stock_name, stock_data)
 
