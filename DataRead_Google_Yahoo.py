@@ -376,6 +376,6 @@ def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reloa
                     "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker) + ", retry: " + str(
                         retry) + ", " + str(e) + "\n")
                 break
-            retry -= 1
+        retry -= 1
 
     return df

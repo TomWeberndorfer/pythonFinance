@@ -196,12 +196,6 @@ class MyTest(unittest.TestCase):
         # https://www.jetbrains.com/help/pycharm/configuring-code-coverage-measurement.html
         # https://www.jetbrains.com/help/pycharm/viewing-code-coverage-results.html
 
-    def test_get_symbol_from_name(self):
-        # TODO
-        raise NotImplementedError("gibts es nicht mehr, bzw private ")
-        # self.assertEqual(__get_symbol_from_name_from_yahoo("Alliance Data Systems Corporation"), "ADS")
-        # self.assertEqual(__get_symbol_from_name_from_yahoo("ADS"), "ADS")
-        # self.assertEqual(__get_symbol_from_name_from_yahoo("SÜSS MicroTec"), "SMHN")
 
     # def test_read_current_day_from_yahoo(self):
     #

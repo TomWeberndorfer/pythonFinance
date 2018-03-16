@@ -177,6 +177,8 @@ def format_news_analysis_results(stocks_to_buy):
                     tmp_str += (res['name'] + ", ticker: " + res['ticker'] +
                                 ", pos: " + str(pos_class) +
                                 " ,neg: " + str(neg_class) +
+                                " , current value: " + str(res['current_val']) +
+                                " , taget price: " + str(res['price']) +
                                 ", orig News: " + res["orig_news"]) + "\n\n"
                     if pos_class > neg_class:
                         buy_str += tmp_str

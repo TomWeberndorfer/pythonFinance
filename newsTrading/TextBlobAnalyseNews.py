@@ -22,7 +22,7 @@ tickers_file_name = "stock_tickers.pickle"
 stocknames_file_name = "stock_names.pickle"
 tickers_file = filepath + tickers_file_name
 stocknames_file = filepath + stocknames_file_name
-hash_file = "C:\\temp\\news_hashes.txt"
+hash_file = filepath + "news_hashes.txt"
 
 
 ##########################
@@ -40,7 +40,6 @@ class TextBlobAnalyseNews:
             self.names = names
             self.tickers = tickers
 
-
     def analyse_single_news(self, news_to_analyze):
         """
            Analyses a news text and returns a dict with containing data, if news classification is above
@@ -55,14 +54,20 @@ class TextBlobAnalyseNews:
         if news_to_analyze is None:
             raise NotImplementedError
 
-        result = self.identify_stock_in_news(news_to_analyze)
+        result = self.identify_stock_and_price_from_news(news_to_analyze)
         if result != " ":
             prob_dist = self.classifier.prob_classify(news_to_analyze)
 
             if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
-                        round(prob_dist.prob("neg"), 2) > self.threshold):
+                    round(prob_dist.prob("neg"), 2) > self.threshold):
                 return {'name': result['name'], 'ticker': result['ticker'], 'prob_dist': prob_dist,
-                        'orig_news': str(news_to_analyze)}
+                        'orig_news': str(news_to_analyze), 'price': result['price']}
+
+            else:
+                print(
+                    'BELOW THRESHOLD FOR ' + str(result['name']) + 'ticker' + str(result['ticker']) + 'prob_dist' + str(
+                        prob_dist) +
+                    'orig_news' + str(news_to_analyze))
 
         return " "
 
@@ -102,7 +107,7 @@ class TextBlobAnalyseNews:
         print("\nRuntime to train classifier: " + str(datetime.datetime.now() - train_start))
         return cl
 
-    def identify_stock_in_news(self, news_to_analyze):
+    def identify_stock_and_price_from_news(self, news_to_analyze):
         """
         Identifies a stock name within a news and returns the name and ticker
         :param news_to_analyze: news text itself
@@ -121,19 +126,34 @@ class TextBlobAnalyseNews:
                 wiki = (wiki.translate(from_lang=wiki.detect_language(), to='en'))
 
             tags = wiki.tags
-            # TODO if "ANALYSE-FLASH" in tag:
-            for tag in tags:
-                # VB means verb --> the noun next to the verb is the stock name
-                # ex: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro
-                if "VB" in tag[1]:  # ex: <class 'tuple'>: ('lifts', 'VBZ')
-                    tag_idx = tags.index(tag)
-                    if len(tags) > tag_idx + 1 + 1:  # TODO beschreiben
-                        stock_to_check = tags[tag_idx + 1][0]
 
-                        name_to_find = self.lookup_stock_abr_in_all_names(stock_to_check)
-                        if name_to_find != " ":
-                            idx = self.names.index(name_to_find)
-                            return {'name': name_to_find, 'ticker': self.tickers[idx]}
+            # VB means verb --> the noun next to the verb is the stock name
+            # ex: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro
+            # TODO if "ANALYSE-FLASH" in tag:
+            # tag explanaition: https://www.clips.uantwerpen.be/pages/MBSP-tags
+            vb_tag = [i for i in tags if i[1].startswith("VB")]
+
+            if vb_tag is not None and len(vb_tag) > 0:
+                tag_idx = tags.index(vb_tag[0])  # [0] --> first tag in list
+
+                if len(tags) > tag_idx + 1 + 1:  # TODO beschreiben
+                    stock_to_check = tags[tag_idx + 1][0]
+
+                    name_to_find = self.lookup_stock_abr_in_all_names(stock_to_check)
+                    price_tuple = [i for i in tags if i[1].startswith("CD")]
+
+                    if name_to_find != " " and name_to_find is not None:
+                        idx = self.names.index(name_to_find)
+
+                        if len(price_tuple) > 0:
+                            price = price_tuple[0][0]
+                            # price_tuple: [0] --> number, [1]--> CD
+                            return {'name': name_to_find, 'ticker': self.tickers[idx],
+                                    'price': price}
+
+                        else:
+                            return {'name': name_to_find, 'ticker': self.tickers[idx],
+                                    'price': 0}
 
         print("ERR: no STOCK found for news: " + str(news_to_analyze))
         return " "
@@ -142,7 +162,7 @@ class TextBlobAnalyseNews:
         result = [i for i in self.names if i.lower().startswith(stock_abr.lower())]
 
         if result:
-            name_to_find = str(result[0])
+            name_to_find = str(result[0])  # TODO wieso [0]
             if name_to_find in self.names:  # TODO: check if this if is necessary
                 return name_to_find
 
@@ -171,14 +191,5 @@ class TextBlobAnalyseNews:
                                      kwargs={'news_to_check': curr_news, 'result': result}))
 
             news_screening_threads.execute_threads()
-
-        # TODO weg
-        # if len(stocks_to_buy_news) == 0:
-        #     print("No news")
-        # else:
-        #     for res in stocks_to_buy_news:
-        #         if res != " ":
-        #             print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
-        #                 round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
 
         return result

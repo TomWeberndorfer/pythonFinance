@@ -1,0 +1,4 @@
+from StockScreening import run_stock_screening
+
+stocks_per_threads = 5
+run_stock_screening(stocks_per_threads)

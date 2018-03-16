@@ -62,14 +62,22 @@ class NewsReaderTests(unittest.TestCase):
         thr_start = datetime.now()
         analysis = TextBlobAnalyseNews(res['names'], res['tickers'])
 
+        #TODO
+        #news ="DZ Bank empfiehlt Sixt-Aktie nach starken Geschäftszahlen zum Kauf'"
+        #result = analysis.analyse_single_news(news)
+        #t1 = round(result['prob_dist'].prob("pos"), 2)
+        #self.assertEqual(t1, 0.77)
+
         news = "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf"
         result = analysis.analyse_single_news(news)
         t1 = round(result['prob_dist'].prob("neg"), 2)
+        self.assertEqual(result['name'], "APPLE") #TODO
         self.assertEqual(t1, 0.77)
 
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Apple auf 118 Euro"
         result = analysis.analyse_single_news(news)
         t1 = round(result['prob_dist'].prob("neg"), 2)
+        self.assertEqual(result['name'], "APPLE")  # TODO
         self.assertEqual(t1, 0.77)
 
         news = "05.03.2018, ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125 Euro"
@@ -87,7 +95,7 @@ class NewsReaderTests(unittest.TestCase):
         self.assertEqual(result['ticker'], "ADS")
 
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118 Euro"
-        # TODO: statt für nimmt er beiersdorf --> english umwandeln funzt da a ned
+        # TODO: statt beiersdorf nimmt er ford --> english umwandeln funzt da a ned
         result = analysis.analyse_single_news(news)
         t1 = round(result['prob_dist'].prob("neg"), 2)
         self.assertEqual(t1, 0.77)
@@ -104,7 +112,7 @@ class NewsReaderTests(unittest.TestCase):
         txt = "\n\nRuntime : " + str(datetime.datetime.now() - thr_start)
         print(txt)
 
-    def test_identify_stock(self):
+    def test_identify_stock_and_price_from_news(self):
         filepath = 'C:\\temp\\'
         tickers_file_name = "stock_tickers.pickle"
         stocknames_file_name = "stock_names.pickle"
@@ -115,20 +123,34 @@ class NewsReaderTests(unittest.TestCase):
 
         analysis = TextBlobAnalyseNews(res['names'], res['tickers'])
 
+        news = "ANALYSE-FLASH: Credit Suisse nimmt Rheinmetall mit 'Underperform' und 118 Euro wieder auf"
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("neg"), 2)
+        self.assertEqual(t1, 0.77)
+        self.assertEqual(result['price'], "118")
+
         news = "ANALYSE-FLASH: Credit Suisse nimmt Rheinmetall mit 'Underperform' wieder auf"
-        result = analysis.identify_stock_in_news(news)
+        result = analysis.identify_stock_and_price_from_news(news)
         self.assertEqual(result['name'], "RHEINMETALL AG")
         self.assertEqual(result['ticker'], "RHM")
+        self.assertEqual(result['price'], 0)
 
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118 Euro"
-        result = analysis.identify_stock_in_news(news)
+        result = analysis.identify_stock_and_price_from_news(news)
         self.assertEqual(result['name'], "BEIERSDORF AG O.N.")
         self.assertEqual(result['ticker'], "BEI")
+        self.assertEqual(result['price'], "118")
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf"
-        result = analysis.identify_stock_in_news(news)
+        result = analysis.identify_stock_and_price_from_news(news)
         self.assertEqual(result['name'], "ADIDAS AG NA O.N.")
         self.assertEqual(result['ticker'], "ADS")
+
+        news = "ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125 Euro"
+        result = analysis.identify_stock_and_price_from_news(news)
+        self.assertEqual(result['name'], "APPLE") #TODO
+        self.assertEqual(result['ticker'], "AAPL")
+        self.assertEqual(result['price'], "125")
 
     def test_lookup_stock_abr_in_all_names(self):
         filepath = 'C:\\temp\\'

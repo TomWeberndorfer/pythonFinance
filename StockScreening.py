@@ -9,17 +9,10 @@ from Strategies import strat_scheduler
 from Utils.common_utils import split_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume
 from Utils.file_utils import append_to_file, read_tickers_from_file
 
-#TODO remove:
-threads = []
-err = []
-program_start_time = datetime.now()
-params = []
-stocks_per_thread = 10
-
 
 # TODO maybe move to better place
-#TODO strategy scheduler soll nicht ein thread sein, jeder strategie könnte eigener thread mit subthreads sein 
-def function_for_threading_strat_scheduler(stock_names_to_check, ago52_w_time, end_l, result):
+# TODO strategy scheduler soll nicht ein thread sein, jeder strategie könnte eigener thread mit subthreads sein
+def function_for_threading_strat_scheduler(stock_names_to_check, ago52_w_time, end_l, params, result):
     """
     TODO: result ist rückgabe
     :param stock_names_to_check:
@@ -53,6 +46,8 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
 
 
 def run_stock_screening(num_of_stocks_per_thread):
+    screening_start_time = datetime.now()
+
     try:
         end = datetime.now()
         ago52_w = (end - timedelta(weeks=52))
@@ -70,6 +65,7 @@ def run_stock_screening(num_of_stocks_per_thread):
         # logging.basicConfig(level=logging.DEBUG)
         all_symbols = []
         all_names = []
+        params = []
 
         # params for strat_52_w_hi_hi_volume
         params.append({'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98})
@@ -97,7 +93,7 @@ def run_stock_screening(num_of_stocks_per_thread):
             stock_screening_threads.append_thread(
                 threading.Thread(target=function_for_threading_strat_scheduler,
                                  kwargs={'stock_names_to_check': stock_names_to_check, 'ago52_w_time': ago52_w,
-                                         'end_l': end, 'result': result}))
+                                         'end_l': end, 'params': params, 'result': result}))
             i += 1
 
         # Start new Threads to schedule all stocks
@@ -107,10 +103,9 @@ def run_stock_screening(num_of_stocks_per_thread):
         stock_screening_threads.execute_threads()
 
         # print the results and plot it
-        print_stocks_to_buy(result, num_of_stocks_per_thread, program_start_time, datetime.now(),
+        print_stocks_to_buy(result, num_of_stocks_per_thread, screening_start_time, datetime.now(),
                             filepath + stock_list_name, filepath + stocks_to_buy_name, str(num_of_threads))
         # plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy, ago52_w, end)
 
     except Exception as e:
         traceback.print_exc()
-
