@@ -173,3 +173,4 @@ def check_file_exists_or_create(file, txt=""):
 
         myfile.close()
         return False
+

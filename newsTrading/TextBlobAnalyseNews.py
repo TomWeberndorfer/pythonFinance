@@ -8,8 +8,15 @@
 # https://nlp.stanford.edu/pubs/stock-event.html
 import threading
 
+import _pickle as pickle
+
+import nltk
+from textblob_de import TextBlobDE as TextBlob
+import textblob_de as textblob
 from textblob.classifiers import NaiveBayesClassifier
-from textblob import TextBlob
+
+#TODO
+#from textblob import TextBlob
 import datetime
 import pandas as pd
 
@@ -54,7 +61,7 @@ class TextBlobAnalyseNews:
         if news_to_analyze is None:
             raise NotImplementedError
 
-        result = self.identify_stock_and_price_from_news(news_to_analyze)
+        result = self.identify_stock_and_price_from_news_textblob(news_to_analyze)
         if result != " ":
             prob_dist = self.classifier.prob_classify(news_to_analyze)
 
@@ -107,7 +114,7 @@ class TextBlobAnalyseNews:
         print("\nRuntime to train classifier: " + str(datetime.datetime.now() - train_start))
         return cl
 
-    def identify_stock_and_price_from_news(self, news_to_analyze):
+    def identify_stock_and_price_from_news_textblob(self, news_to_analyze):
         """
         Identifies a stock name within a news and returns the name and ticker
         :param news_to_analyze: news text itself
@@ -119,11 +126,13 @@ class TextBlobAnalyseNews:
             raise NotImplementedError
 
         wiki = TextBlob(news_to_analyze)
-        languages = ["de", "en"]  # TODO
+        languages = ["de"] #, "en"]  # TODO
+        #https: // pypi.python.org / pypi / textblob - de
 
         for lang in languages:
-            if lang not in wiki.detect_language():
-                wiki = (wiki.translate(from_lang=wiki.detect_language(), to='en'))
+            #TODO
+            #if lang not in wiki.detect_language():
+                #wiki = (wiki.translate(from_lang=wiki.detect_language(), to='en'))
 
             tags = wiki.tags
 
@@ -157,6 +166,103 @@ class TextBlobAnalyseNews:
 
         print("ERR: no STOCK found for news: " + str(news_to_analyze))
         return " "
+
+    def identify_stock_and_price_from_news_nltk_german_classifier_data(self, news_to_analyze, german_tagger):
+        """
+        Identifies a stock name within a news and returns the name and ticker
+        :param news_to_analyze: news text itself
+        :return: {'name': name_to_find, 'ticker': self.tickers[idx]}
+                  or " " if no name found
+        """
+
+        if news_to_analyze is None:
+            raise NotImplementedError
+
+        tags = german_tagger.tag(TextBlob(news_to_analyze).words)
+
+        # VB means verb --> the noun next to the verb is the stock name
+        # ex: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro
+        # TODO if "ANALYSE-FLASH" in tag:
+        # tag explanaition: https://www.clips.uantwerpen.be/pages/MBSP-tags
+        vb_tag = [i for i in tags if i[1].startswith("VAFIN") or i[1].startswith("VVFIN")]
+
+        if vb_tag is not None and len(vb_tag) > 0:
+            tag_idx = tags.index(vb_tag[0])  # [0] --> first tag in list
+
+            if len(tags) > tag_idx + 1 + 1:  # TODO beschreiben
+                stock_to_check = tags[tag_idx + 1][0]
+
+                name_to_find = self.lookup_stock_abr_in_all_names(stock_to_check)
+                price_tuple = [i for i in tags if i[1].startswith("CD")]
+
+                if name_to_find != " " and name_to_find is not None:
+                    idx = self.names.index(name_to_find)
+
+                    if len(price_tuple) > 0:
+                        price = price_tuple[0][0]
+                        # price_tuple: [0] --> number, [1]--> CD
+                        return {'name': name_to_find, 'ticker': self.tickers[idx],
+                                'price': price}
+
+                    else:
+                        return {'name': name_to_find, 'ticker': self.tickers[idx],
+                                'price': 0}
+
+        print("ERR: no STOCK found for news: " + str(news_to_analyze))
+        return " "
+
+    def identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self, news_to_analyze, german_tagger):
+        """
+        Identifies a stock name within a news and returns the name and ticker
+        :param news_to_analyze: news text itself
+        :return: {'name': name_to_find, 'ticker': self.tickers[idx]}
+                  or " " if no name found
+        """
+
+        if news_to_analyze is None:
+            raise NotImplementedError
+
+        news_to_analyze = news_to_analyze.replace ("'", "")
+        news_to_analyze = news_to_analyze.replace("Underperform", "unterdurchschnittlich")
+        news_to_analyze = news_to_analyze.replace("Euro", "€")
+        news_to_analyze = news_to_analyze.replace("Dollar", "$")#
+
+        # TODO: http://dsspace.wzb.eu/pyug/text_proc_feature_extraction/
+        tokens = nltk.word_tokenize(news_to_analyze, language="german")
+        stopwords = nltk.corpus.stopwords.words('german')
+        tokens_removed_words = [t for t in tokens if t.lower() not in stopwords]
+        tags = german_tagger.tag(tokens_removed_words)
+
+        # VB means verb --> the noun next to the verb is the stock name
+        # ex: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro
+        # TODO if "ANALYSE-FLASH" in tag:
+        # tag explanaition: https://www.clips.uantwerpen.be/pages/MBSP-tags
+        #TODO noun_tag = [i for i in tags if i[1].startswith("NN") or i[1].startswith("NE")]
+        noun_tag = [i for i in tags if i[1].startswith("NE")]
+
+        if noun_tag is not None and len(noun_tag) > 0:
+            noun_idx = len(noun_tag) - 1
+            stock_to_check = noun_tag[noun_idx][0]  # [0] --> first tag in list
+
+            name_to_find = self.lookup_stock_abr_in_all_names(stock_to_check)
+            price_tuple = [i for i in tags if i[1].startswith("CARD")]
+
+            if name_to_find != " " and name_to_find is not None:
+                idx = self.names.index(name_to_find)
+
+                if len(price_tuple) > 0:
+                    price = price_tuple[0][0]
+                    # price_tuple: [0] --> number, [1]--> CD
+                    return {'name': name_to_find, 'ticker': self.tickers[idx],
+                            'price': price}
+
+                else:
+                    return {'name': name_to_find, 'ticker': self.tickers[idx],
+                            'price': 0}
+
+        print("ERR: no STOCK found for news: " + str(news_to_analyze))
+        return " "
+
 
     def lookup_stock_abr_in_all_names(self, stock_abr):
         result = [i for i in self.names if i.lower().startswith(stock_abr.lower())]

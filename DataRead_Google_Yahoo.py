@@ -348,7 +348,7 @@ def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reloa
     df = []
     ticker = optimize_name_for_yahoo(ticker)
 
-    retry = 1 #TODO --> 3
+    retry = 3 # 3 retries as usual
 
     while retry > 0:
         try:
