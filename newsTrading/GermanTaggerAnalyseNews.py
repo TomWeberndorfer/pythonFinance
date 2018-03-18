@@ -15,8 +15,8 @@ from textblob_de import TextBlobDE as TextBlob
 import textblob_de as textblob
 from textblob.classifiers import NaiveBayesClassifier
 
-#TODO
-#from textblob import TextBlob
+# TODO
+# from textblob import TextBlob
 import datetime
 import pandas as pd
 
@@ -34,10 +34,17 @@ hash_file = filepath + "news_hashes.txt"
 
 ##########################
 
-class TextBlobAnalyseNews:
-    def __init__(self, names=None, tickers=None, threshold=0.7):
+class GermanTaggerAnalyseNews:
+    def __init__(self, names=None, tickers=None, threshold=0.7, german_tagger=None):
         self.classifier = self.__train_classifier()
         self.threshold = threshold
+        self.stopwords = nltk.corpus.stopwords.words('german')
+
+        if german_tagger is None:
+            with open('C:\\temp\\nltk_german_classifier_data.pickle', 'rb') as f:
+                self.german_tagger = pickle.load(f)
+        else:
+            self.german_tagger = german_tagger
 
         if names is None or tickers is None:
             res = read_tickers_from_file(tickers_file, stocknames_file)
@@ -72,8 +79,9 @@ class TextBlobAnalyseNews:
 
             else:
                 print(
-                    'BELOW THRESHOLD FOR ' + str(result['name']) + 'ticker' + str(result['ticker']) + 'prob_dist' + str(
-                        prob_dist) +
+                    'BELOW THRESHOLD FOR ' + str(result['name']) + ', ticker: ' + str(
+                        result['ticker']) + ', prob_dist pos: ' + str(
+                        round(prob_dist.prob("pos"), 2)) + ', prob_dist neg: ' + str(round(prob_dist.prob("neg"), 2)) +
                     'orig_news' + str(news_to_analyze))
 
         return " "
@@ -95,6 +103,7 @@ class TextBlobAnalyseNews:
             ('kaufen', 'pos'),
             ('buy', 'pos'),
             ('lifts', 'pos'),
+            ('empfiehlt', 'pos'),
 
             # ('', 'pos'),
             # ('', 'neg')
@@ -114,7 +123,7 @@ class TextBlobAnalyseNews:
         print("\nRuntime to train classifier: " + str(datetime.datetime.now() - train_start))
         return cl
 
-    def identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self, news_to_analyze, german_tagger):
+    def identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self, news_to_analyze):
         """
         Identifies a stock name within a news and returns the name and ticker
         :param news_to_analyze: news text itself
@@ -125,22 +134,28 @@ class TextBlobAnalyseNews:
         if news_to_analyze is None:
             raise NotImplementedError
 
-        news_to_analyze = news_to_analyze.replace ("'", "")
-        news_to_analyze = news_to_analyze.replace("Underperform", "unterdurchschnittlich")
+        split_apostrophe = news_to_analyze.split("'")
+        for split in split_apostrophe:
+            news_to_analyze = news_to_analyze.replace("'" + split + "'", split.lower())
+
         news_to_analyze = news_to_analyze.replace("Euro", "€")
-        news_to_analyze = news_to_analyze.replace("Dollar", "$")#
+        news_to_analyze = news_to_analyze.replace("Dollar", "$")
+        news_to_analyze = news_to_analyze.replace("-", " ")  # TODO with expand_compound_token
 
         # TODO: http://dsspace.wzb.eu/pyug/text_proc_feature_extraction/
         tokens = nltk.word_tokenize(news_to_analyze, language="german")
-        stopwords = nltk.corpus.stopwords.words('german')
-        tokens_removed_words = [t for t in tokens if t.lower() not in stopwords]
-        tags = german_tagger.tag(tokens_removed_words)
+        tokens_removed_words = [t for t in tokens if t.lower() not in self.stopwords]
 
-        # VB means verb --> the noun next to the verb is the stock name
-        # ex: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro
-        # TODO if "ANALYSE-FLASH" in tag:
-        # tag explanaition: https://www.clips.uantwerpen.be/pages/MBSP-tags
-        #TODO noun_tag = [i for i in tags if i[1].startswith("NN") or i[1].startswith("NE")]
+        # http: // dsspace.wzb.eu / pyug / text_proc_feature_extraction /
+        # tmp_tokens = {}
+        # for doc_label, doc_tok in tokens_removed_words:
+        #     tmp_tokens[doc_label] = []
+        #     for t in doc_tok:
+        #         t_parts = self.expand_compound_token(t)
+        #         tmp_tokens[doc_label].extend(t_parts)
+
+        tags = self.german_tagger.tag(tokens_removed_words)
+
         noun_tag = [i for i in tags if i[1].startswith("NE")]
 
         if noun_tag is not None and len(noun_tag) > 0:
@@ -166,8 +181,12 @@ class TextBlobAnalyseNews:
         print("ERR: no STOCK found for news: " + str(news_to_analyze))
         return " "
 
-
     def lookup_stock_abr_in_all_names(self, stock_abr):
+        """
+        Look up the stock abbreviation in the stock list with names
+        :param stock_abr: abbrevation
+        :return: name or " "
+        """
         result = [i for i in self.names if i.lower().startswith(stock_abr.lower())]
 
         if result:
@@ -202,3 +221,17 @@ class TextBlobAnalyseNews:
             news_screening_threads.execute_threads()
 
         return result
+
+    def expand_compound_token(t, split_chars="-"):
+        parts = []
+        add = False  # signals if current part should be appended to previous part
+        for p in t.split(split_chars):  # for each part p in compound token t
+            if not p: continue  # skip empty part
+            if add and parts:  # append current part p to previous part
+                parts[-1] += p
+            else:  # add p as separate token
+                parts.append(p)
+            add = len(p) <= 1  # if p only consists of a single character -> append the next p to it
+            # add = p.isupper()   # alt. strategy: if p is all uppercase ("US", "E", etc.) -> append the next p to it
+
+        return parts

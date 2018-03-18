@@ -3,12 +3,11 @@ from datetime import datetime
 
 from DataRead_Google_Yahoo import get_ticker_data_with_webreader
 from Utils.common_utils import format_news_analysis_results, send_stock_email
-from newsFeedReader.traderfox_hp_news import read_news_from_traderfox
-from newsTrading.TextBlobAnalyseNews import TextBlobAnalyseNews
+from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 filepath = 'C:\\temp\\'
 ##########################
-text_analysis = TextBlobAnalyseNews()
+text_analysis = GermanTaggerAnalyseNews()
 
 while True:
     # ++++++++++ FOR SAMPLE NEWS
@@ -16,14 +15,14 @@ while True:
     # all_news = data.News.tolist()
 
     all_news = []
-    # all_news.append("ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125,5 Euro")
+    all_news.append("ANALYSE-FLASH: NordLB senkt Apple auf 'Kaufen' - Ziel 125,5 Euro")
     # all_news.append("Bryan Garnier hebt Apple auf 'Buy' - Ziel 91 Euro")
 
     # ++++++++++ FOR REAL NEWS
     # TODO hash_file = "C:\\temp\\news_hashes.txt"
 
     thr_start = datetime.now()
-    all_news = read_news_from_traderfox()
+    #TODO all_news = read_news_from_traderfox()
 
     results = text_analysis.analyse_all_news(all_news)
 
