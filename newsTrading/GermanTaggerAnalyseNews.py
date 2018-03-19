@@ -12,7 +12,7 @@ import threading
 import nltk
 from textblob.classifiers import NaiveBayesClassifier
 from MyThread import MyThread
-from Utils.common_utils import split_list
+from Utils.common_utils import split_list, is_float
 
 
 class GermanTaggerAnalyseNews:
@@ -70,7 +70,7 @@ class GermanTaggerAnalyseNews:
                     'BELOW THRESHOLD FOR ' + str(result['name']) + ', ticker: ' + str(
                         result['ticker']) + ', prob_dist pos: ' + str(
                         round(prob_dist.prob("pos"), 2)) + ', prob_dist neg: ' + str(round(prob_dist.prob("neg"), 2)) +
-                    'orig_news' + str(news_to_analyze))
+                    ' orig_news: ' + str(news_to_analyze))
 
         return " "
 
@@ -93,6 +93,7 @@ class GermanTaggerAnalyseNews:
             ('lifts', 'pos'),
             ('empfiehlt', 'pos'),
             ('outperform', 'pos'),
+            ('overweight', 'pos'),
 
             # ('', 'pos'),
             # ('', 'neg')
@@ -103,7 +104,9 @@ class GermanTaggerAnalyseNews:
             ('senkt', 'neg'),
             ('belässt', 'neg'),
             ('Sell', 'neg'),
-            ('Underperform', 'neg'),
+            ('underperform', 'neg'),
+            ('neutral', 'neg'),
+            ('reduce', 'neg'),
         ]
 
         train_start = datetime.datetime.now()
@@ -152,9 +155,14 @@ class GermanTaggerAnalyseNews:
 
                 if len(price_tuple) > 0:
                     price = price_tuple[len(price_tuple)-1][0] #TODO
+                    price = price.replace (",", ".") #replace german comma
+                    if is_float(price):
                     # price_tuple: [0] --> number, [1]--> CD
-                    return {'name': name_to_find, 'ticker': self.tickers[idx],
-                            'stock_exchange': self.stock_exchanges[idx], 'price': price}
+                        return {'name': name_to_find, 'ticker': self.tickers[idx],
+                            'stock_exchange': self.stock_exchanges[idx], 'price': float(price)}
+                    else:
+                        return {'name': name_to_find, 'ticker': self.tickers[idx],
+                                'stock_exchange': self.stock_exchanges[idx], 'price': 0}
 
                 else:
                     return {'name': name_to_find, 'ticker': self.tickers[idx],
@@ -229,6 +237,7 @@ class GermanTaggerAnalyseNews:
             news_to_analyze = news_to_analyze.replace("'" + split + "'", split.lower())
 
         news_to_analyze = news_to_analyze.replace("Euro", "€")
+        news_to_analyze = news_to_analyze.replace("US-Dollar", "$")
         news_to_analyze = news_to_analyze.replace("Dollar", "$")
         news_to_analyze = news_to_analyze.replace("-", " ")  # TODO with expand_compound_token
 

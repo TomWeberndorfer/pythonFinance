@@ -140,8 +140,9 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
 
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     print()
-    print("INFO: runtime with " + num_of_threads + " Threads and " + str(num_of_stocks_per_thread) + " stocks per thread: " + str(
-        program_end_time - program_start_time))
+    print("INFO: runtime with " + num_of_threads + " Threads and " +
+          str(num_of_stocks_per_thread) + " stocks per thread: " +
+          str(program_end_time - program_start_time))
 
 
 def print_news_analysis_results(stocks_to_buy):
@@ -179,7 +180,7 @@ def format_news_analysis_results(stocks_to_buy):
                                 ", pos: " + str(pos_class) +
                                 " ,neg: " + str(neg_class) +
                                 " , current value: " + str(res['current_val']) +
-                                " , taget price: " + str(res['price']) +
+                                " , target price: " + str(res['price']) +
                                 ", orig News: " + res["orig_news"]) + "\n\n"
                     if pos_class > neg_class:
                         buy_str += tmp_str
@@ -435,3 +436,12 @@ def is_date_today(date_to_check):
 
     is_today = today_date == date_to_check_today
     return is_today
+
+
+def is_float(n):
+    try:
+        float_n = float(n)
+    except ValueError:
+        return False
+    else:
+        return True

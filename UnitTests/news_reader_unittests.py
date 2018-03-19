@@ -227,6 +227,21 @@ class NewsReaderTests(unittest.TestCase):
         ##########################
         analysis = GermanTaggerAnalyseNews(res)
 
+        news = "ANALYSE-FLASH: Jefferies hebt Ziel für RWE auf 250 US-Dollar - 'Underperform'"
+        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result['name'], "RWE AG ST O.N.")
+        self.assertEqual(result['ticker'], "RWE")
+        self.assertEqual(result['stock_exchange'], "de")
+        self.assertEqual(result['price'], 250)
+
+        #no price --> 0
+        news = "19.03.2018 um 08:21, ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf"
+        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result['name'], "RWE AG ST O.N.")
+        self.assertEqual(result['ticker'], "RWE")
+        self.assertEqual(result['stock_exchange'], "de")
+        self.assertEqual(result['price'], 0)
+
         news = "ANALYSE-FLASH: Credit Suisse nimmt Rheinmetall mit 'Underperform' wieder auf"
         result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "RHEINMETALL AG")
@@ -234,12 +249,21 @@ class NewsReaderTests(unittest.TestCase):
         self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['price'], 0)
 
-        news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118 Euro"
+        # price with german coma, should also be possible
+        news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118,7 Euro"
         result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "BEIERSDORF AG O.N.")
         self.assertEqual(result['ticker'], "BEI")
         self.assertEqual(result['stock_exchange'], "de")
-        self.assertEqual(result['price'], "118")
+        self.assertEqual(result['price'], 118.7)
+
+        #price with english comma
+        news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118.7 Euro"
+        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result['name'], "BEIERSDORF AG O.N.")
+        self.assertEqual(result['ticker'], "BEI")
+        self.assertEqual(result['stock_exchange'], "de")
+        self.assertEqual(result['price'], 118.7)
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf"
         result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
@@ -252,7 +276,7 @@ class NewsReaderTests(unittest.TestCase):
         self.assertEqual(result['name'], "Apple Inc.")
         self.assertEqual(result['ticker'], "AAPL")
         self.assertEqual(result['stock_exchange'], "en")
-        self.assertEqual(result['price'], "125")
+        self.assertEqual(result['price'], 125)
 
         news = "Credit Suisse nimmt RWE mit 'Outperform' wieder auf"
         result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
@@ -266,5 +290,5 @@ class NewsReaderTests(unittest.TestCase):
         self.assertEqual(result['name'], 'BET-AT-HOME.COM AG O.N.')
         self.assertEqual(result['ticker'], "ACX")
         self.assertEqual(result['stock_exchange'], "de")
-        self.assertEqual(result['price'], "89")
+        self.assertEqual(result['price'], 89)
 
