@@ -5,22 +5,16 @@ from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_a
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 test_filepath = 'C:\\temp\\test_data\\'
-test_url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"
-
 
 class NewsReaderTests(unittest.TestCase):
     def test_read_from_traderfox(self):
-        # TODO hash temp disabled, if performance good enough without hash
-        # test_file = test_filepath + "news_hashes.txt"
+        #TODO ois mit file is kein unit test
         test_file = "C:\\temp\\last_date_time.csv"
 
         with open(test_file, "w") as myfile:
             myfile.write("last_check_date" + "\n")
             myfile.write("08.03.2018 um 02:17" + "\n")
 
-        # write new hash to reload
-        # last_id = get_hash_from_file(test_file, test_url)
-        # replace_in_file(test_file, last_id, "123")  # replace --> read
         news = read_news_from_traderfox(test_file)
         self.assertGreater(len(news), 0)
 
@@ -29,12 +23,6 @@ class NewsReaderTests(unittest.TestCase):
         self.assertEqual(0, len(news))  # no news should be read
 
     def test_read_from_traderfox_performance(self):
-        # TODO hash temp disabled, if performance good enough without hash
-        # test_file = test_filepath + "news_hashes.txt"
-        # write new hash to reload
-        # last_id = get_hash_from_file(test_file, test_url)
-        # replace_in_file(test_file, last_id, "123")  # replace --> read
-
         test_file = "C:\\temp\\last_date_time.csv"
 
         with open(test_file, "w") as myfile:
@@ -54,11 +42,19 @@ class NewsReaderTests(unittest.TestCase):
         stocknames_file_name = "stock_names.pickle"
         tickers_file = filepath + tickers_file_name
         stocknames_file = filepath + stocknames_file_name
-        res = read_tickers_from_file(tickers_file, stocknames_file)
+        stock_exchange_file_name = "stock_exchange_file.pickle"
+        stock_exchange_file = filepath + stock_exchange_file_name
+        res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
         ##########################
 
         thr_start = datetime.now()
-        analysis = GermanTaggerAnalyseNews(res['names'], res['tickers'])
+        analysis = GermanTaggerAnalyseNews(res)
+
+        news = "19.03.2018 um 08:58, ANALYSE-FLASH: HSBC senkt RWE auf 'Reduce' - Ziel 18 Euro"
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("neg"), 2)
+        self.assertEqual(result['name'], "RWE AG ST O.N.")
+        self.assertGreater(t1, 0.7)
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf"
         result = analysis.analyse_single_news(news)
@@ -78,7 +74,6 @@ class NewsReaderTests(unittest.TestCase):
         self.assertGreater(t1, 0.7)
 
         # CDAX companies
-
         news = "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf"
         result = analysis.analyse_single_news(news)
         t1 = round(result['prob_dist'].prob("neg"), 2)
@@ -105,6 +100,15 @@ class NewsReaderTests(unittest.TestCase):
         t1 = round(result['prob_dist'].prob("pos"), 2)
         self.assertGreater(t1, 0.7)
 
+        # should fail and return " "
+        news = "01.03.2018, Das sagen Ökonomen zur bevorstehenden Wahl in Italien"
+        result = analysis.analyse_single_news(news)
+        self.assertEqual(" ", result)
+
+        news = "17.03.2018 um 09:05, PROSIEBENSAT.1 IM FOKUS: Dax-Absteiger stellt Weichen für bessere Zeiten"
+        result = analysis.analyse_single_news(news)
+        self.assertEqual(" ", result)
+
         txt = "\n\nRuntime : " + str(datetime.now() - thr_start)
         print(txt)
 
@@ -114,10 +118,12 @@ class NewsReaderTests(unittest.TestCase):
         stocknames_file_name = "stock_names.pickle"
         tickers_file = filepath + tickers_file_name
         stocknames_file = filepath + stocknames_file_name
-        res = read_tickers_from_file(tickers_file, stocknames_file)
+        stock_exchange_file_name = "stock_exchange_file.pickle"
+        stock_exchange_file = filepath + stock_exchange_file_name
+        res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
         ##########################
 
-        analysis = GermanTaggerAnalyseNews(res['names'], res['tickers'])
+        analysis = GermanTaggerAnalyseNews(res)
 
         result = analysis.lookup_stock_abr_in_all_names("Rheinmetall")
         self.assertEqual(result, "RHEINMETALL AG")
@@ -156,19 +162,37 @@ class NewsReaderTests(unittest.TestCase):
         stocknames_file_name = "stock_names.pickle"
         tickers_file = filepath + tickers_file_name
         stocknames_file = filepath + stocknames_file_name
-        res = read_tickers_from_file(tickers_file, stocknames_file)
+        stock_exchange_file_name = "stock_exchange_file.pickle"
+        stock_exchange_file = filepath + stock_exchange_file_name
 
-        # TODO self.assertEqual(len(res['tickers']), 505)
+        res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file, True)
         self.assertEqual(len(res['tickers']), 818)
+        self.assertEqual(len(res['names']), 818)
+        self.assertEqual(len(res['stock_exchange']), 818)
+
+        res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file, False)
+        self.assertEqual(len(res['tickers']), 818)
+        self.assertEqual(len(res['names']), 818)
+        self.assertEqual(len(res['stock_exchange']), 818)
 
     def test_analyse_all_news(self):
+        filepath = 'C:\\temp\\'
+        tickers_file_name = "stock_tickers.pickle"
+        stocknames_file_name = "stock_names.pickle"
+        tickers_file = filepath + tickers_file_name
+        stocknames_file = filepath + stocknames_file_name
+        stock_exchange_file_name = "stock_exchange_file.pickle"
+        stock_exchange_file = filepath + stock_exchange_file_name
+        res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
+        ##########################
+
         num_of_news_per_thread = 1
         all_news = []
         news_elringklinger = "ANALYSE-FLASH: JPMorgan belässt ElringKlinger nach Zahlen auf 'Underweight'"
         news_freenet = "ANALYSE-FLASH: DZ Bank senkt Freenet auf 'Halten' und fairen Wert auf 28 Euro"
         all_news.append(news_elringklinger)
         all_news.append(news_freenet)
-        text_analysis = GermanTaggerAnalyseNews()
+        text_analysis = GermanTaggerAnalyseNews(res)
         result = text_analysis.analyse_all_news(all_news, num_of_news_per_thread)
 
         # TODO umbauen auf: https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
@@ -191,30 +215,50 @@ class NewsReaderTests(unittest.TestCase):
         stocknames_file_name = "stock_names.pickle"
         tickers_file = filepath + tickers_file_name
         stocknames_file = filepath + stocknames_file_name
-        res = read_tickers_from_file(tickers_file, stocknames_file)
+        stock_exchange_file_name = "stock_exchange_file.pickle"
+        stock_exchange_file = filepath + stock_exchange_file_name
+        res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
         ##########################
-        analysis = GermanTaggerAnalyseNews(res['names'], res['tickers'])
+        analysis = GermanTaggerAnalyseNews(res)
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Rheinmetall mit 'Underperform' wieder auf"
         result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "RHEINMETALL AG")
         self.assertEqual(result['ticker'], "RHM")
+        self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['price'], 0)
 
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118 Euro"
         result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "BEIERSDORF AG O.N.")
         self.assertEqual(result['ticker'], "BEI")
+        self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['price'], "118")
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf"
         result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "ADIDAS AG NA O.N.")
+        self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['ticker'], "ADS")
 
         news = "ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125 Dollar"
         result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "Apple Inc.")
         self.assertEqual(result['ticker'], "AAPL")
+        self.assertEqual(result['stock_exchange'], "en")
         self.assertEqual(result['price'], "125")
+
+        news = "Credit Suisse nimmt RWE mit 'Outperform' wieder auf"
+        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result['name'], "RWE AG ST O.N.")
+        self.assertEqual(result['ticker'], "RWE")
+        self.assertEqual(result['stock_exchange'], "de")
+        self.assertEqual(result['price'], 0)
+
+        news = "ANALYSE-FLASH: Hauck & Aufhäuser senkt Bet-at-home auf 'Hold' - Ziel 89 Euro"
+        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result['name'], 'BET-AT-HOME.COM AG O.N.')
+        self.assertEqual(result['ticker'], "ACX")
+        self.assertEqual(result['stock_exchange'], "de")
+        self.assertEqual(result['price'], "89")
 

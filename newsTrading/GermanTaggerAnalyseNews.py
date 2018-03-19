@@ -3,56 +3,36 @@
 # import textblob
 # https://banking.einnews.com/sections
 
+import _pickle as pickle
+import datetime
 # corpus:
 # https://nlp.stanford.edu/pubs/lrec2014-stock.pdf
 # https://nlp.stanford.edu/pubs/stock-event.html
 import threading
-
-import _pickle as pickle
-
 import nltk
-from textblob_de import TextBlobDE as TextBlob
-import textblob_de as textblob
 from textblob.classifiers import NaiveBayesClassifier
-
-# TODO
-# from textblob import TextBlob
-import datetime
-import pandas as pd
-
 from MyThread import MyThread
 from Utils.common_utils import split_list
-from Utils.file_utils import read_tickers_from_file
 
-filepath = 'C:\\temp\\'
-tickers_file_name = "stock_tickers.pickle"
-stocknames_file_name = "stock_names.pickle"
-tickers_file = filepath + tickers_file_name
-stocknames_file = filepath + stocknames_file_name
-hash_file = filepath + "news_hashes.txt"
-
-
-##########################
 
 class GermanTaggerAnalyseNews:
-    def __init__(self, names=None, tickers=None, threshold=0.7, german_tagger=None):
+    def __init__(self, stock_list, threshold=0.7, german_tagger=None):
+        if stock_list is None:
+            raise NotImplementedError
+
         self.classifier = self.__train_classifier()
         self.threshold = threshold
         self.stopwords = nltk.corpus.stopwords.words('german')
+        self.names = stock_list['names']
+        self.tickers = stock_list['tickers']
+        self.stock_exchanges = stock_list ['stock_exchange']
 
         if german_tagger is None:
+            #TODO not fixed
             with open('C:\\temp\\nltk_german_classifier_data.pickle', 'rb') as f:
                 self.german_tagger = pickle.load(f)
         else:
             self.german_tagger = german_tagger
-
-        if names is None or tickers is None:
-            res = read_tickers_from_file(tickers_file, stocknames_file)
-            self.names = res['names']
-            self.tickers = res['tickers']
-        else:
-            self.names = names
-            self.tickers = tickers
 
     def analyse_single_news(self, news_to_analyze):
         """
@@ -74,7 +54,7 @@ class GermanTaggerAnalyseNews:
 
             if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
                     round(prob_dist.prob("neg"), 2) > self.threshold):
-                return {'name': result['name'], 'ticker': result['ticker'], 'prob_dist': prob_dist,
+                return {'name': result['name'], 'ticker': result['ticker'], 'stock_exchange': result['stock_exchange'], 'prob_dist': prob_dist,
                         'orig_news': str(news_to_analyze), 'price': result['price']}
 
             else:
@@ -104,6 +84,7 @@ class GermanTaggerAnalyseNews:
             ('buy', 'pos'),
             ('lifts', 'pos'),
             ('empfiehlt', 'pos'),
+            ('outperform', 'pos'),
 
             # ('', 'pos'),
             # ('', 'neg')
@@ -115,7 +96,6 @@ class GermanTaggerAnalyseNews:
             ('belässt', 'neg'),
             ('Sell', 'neg'),
             ('Underperform', 'neg'),
-
         ]
 
         train_start = datetime.datetime.now()
@@ -169,14 +149,14 @@ class GermanTaggerAnalyseNews:
                 idx = self.names.index(name_to_find)
 
                 if len(price_tuple) > 0:
-                    price = price_tuple[0][0]
+                    price = price_tuple[len(price_tuple)-1][0] #TODO
                     # price_tuple: [0] --> number, [1]--> CD
                     return {'name': name_to_find, 'ticker': self.tickers[idx],
-                            'price': price}
+                            'stock_exchange': self.stock_exchanges[idx], 'price': price}
 
                 else:
                     return {'name': name_to_find, 'ticker': self.tickers[idx],
-                            'price': 0}
+                            'stock_exchange': self.stock_exchanges[idx], 'price': 0}
 
         print("ERR: no STOCK found for news: " + str(news_to_analyze))
         return " "

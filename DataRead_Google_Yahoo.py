@@ -344,38 +344,40 @@ def symbol_thread(st_names, stock_exchanges, result):
         i += 1
 
 
-def get_ticker_data_with_webreader(ticker, stock_dfs_file, source='yahoo', reload_stockdata=False):
+def get_ticker_data_with_webreader(ticker, stock_exchange=".en", stock_dfs_file="", source='yahoo', reload_stockdata=False, weeks_delta=52):
+    """
+    TODO
+    :param stock_exchange:
+    :param ticker:
+    :param stock_dfs_file:
+    :param source:
+    :param reload_stockdata:
+    :param weeks_delta:
+    :return:
+    """
     df = []
     ticker = optimize_name_for_yahoo(ticker)
+    ticker_exchange = ticker + "." + stock_exchange
 
-    retry = 3 # 3 retries as usual
-
-    while retry > 0:
-        try:
-            # TODO does not reload new data
-            if not os.path.exists(stock_dfs_file + '/{}.csv'.format(ticker)) or reload_stockdata:
-                end = dt.datetime.now()
-                start = (end - dt.timedelta(weeks=52))
-                df = web.DataReader(ticker, source, start, end)
-                if len(df) > 0:
-                    df.to_csv(stock_dfs_file + '/{}.csv'.format(ticker))
-                else:
-                    print('FAILED: Reading {}'.format(ticker))
-                    raise Exception
+    try:
+        # TODO does not reload new data
+        if not os.path.exists(stock_dfs_file + '/{}.csv'.format(ticker_exchange)) or reload_stockdata:
+            end = dt.datetime.now()
+            start = (end - dt.timedelta(weeks=weeks_delta))
+            df = web.DataReader(ticker_exchange, source, start, end)
+            if len(df) > 0:
+                df.to_csv(stock_dfs_file + '/{}.csv'.format(ticker_exchange))
             else:
-                # print('Already have {}'.format(ticker))
-                df = pd.read_csv(stock_dfs_file + '/{}.csv'.format(ticker))
+                print('FAILED: Reading {}'.format(ticker_exchange))
+                raise Exception
+        else:
+            df = pd.read_csv(stock_dfs_file + '/{}.csv'.format(ticker_exchange))
 
-            break
+    except Exception as e:
+        # traceback.print_exc()
+        # append_to_file(str(ticker_exchange), filepath + "failedReads.txt")
 
-        except Exception as e:
-            # traceback.print_exc()
-            # append_to_file(str(ticker), filepath + "failedReads.txt")
-            if retry <= 0:
-                sys.stderr.write(
-                    "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker) + ", retry: " + str(
-                        retry) + ", " + str(e) + "\n")
-                break
-        retry -= 1
+            sys.stderr.write(
+                "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + ", " + str(e) + "\n")
 
     return df

@@ -58,8 +58,10 @@ def run_stock_screening(num_of_stocks_per_thread):
         stocks_to_buy_name = "StocksToBuy.CSV"
         tickers_file_name = "stock_tickers.pickle"
         stocknames_file_name = "stock_names.pickle"
+        stock_exchange_file_name = "stock_exchange_file.pickle"
         tickers_file = filepath + tickers_file_name
         stocknames_file = filepath + stocknames_file_name
+        stock_exchange_file = filepath + stock_exchange_file_name
 
         # enhanced stock messages:
         # logging.basicConfig(level=logging.DEBUG)
@@ -77,7 +79,7 @@ def run_stock_screening(num_of_stocks_per_thread):
         params.append({'hammer_length_in_factor': 1.01, 'handle_bigger_than_head_factor': 2})
         ###########################################################
 
-        res = read_tickers_from_file(tickers_file, stocknames_file)
+        res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
         all_symbols.extend(res['tickers'])
         all_names.extend(res['names'])
         result = []

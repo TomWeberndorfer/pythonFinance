@@ -1,11 +1,10 @@
-from datetime import datetime
 import os
-
 import _pickle as pickle
 import re
 import pandas as pd
 import os.path
 from Utils.common_utils import read_table_column_from_wikipedia
+from itertools import repeat
 
 
 def replace_in_file(file, pattern, subst):
@@ -71,9 +70,11 @@ def append_to_file(txt, file_with_path):
     myfile.close()
 
 
-def read_tickers_from_file(tickers_file, names_file, reload_file=False):
+def read_tickers_from_file(tickers_file, names_file, stock_exchange_file,  reload_file=False):
     """
+        TODO
        read the sp500 and CDAX tickers and saves it to given file
+        :param stock_exchange_file:
         :param names_file:
         :param reload_file: reload the tickers
         :param tickers_file: file to save the tickers
@@ -96,7 +97,6 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
 
         stock_tickers_names['tickers'] += tickers
         stock_tickers_names['names'] += names_with_symbols
-        from itertools import repeat
         stock_tickers_names['stock_exchange'] += list(repeat("en", len(names_with_symbols)))
 
         # ########## CDAX +++++++++++++
@@ -115,8 +115,7 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
 
         stock_tickers_names['tickers'] += tickers
         stock_tickers_names['names'] += names_with_symbols
-        from itertools import repeat
-        stock_tickers_names['stock_exchange'] += list(repeat("en", len(names_with_symbols)))
+        stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
 
         # TODO: b) General Standard is not included of page:
         # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/
@@ -142,7 +141,8 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
         with open(names_file, "wb") as f:
             pickle.dump(stock_tickers_names['names'], f)
 
-            # TODO stock exchange speichern
+        with open(stock_exchange_file, "wb") as f:
+            pickle.dump(stock_tickers_names['stock_exchange'], f)
 
     else:
         with open(tickers_file, "rb") as f:
@@ -150,6 +150,9 @@ def read_tickers_from_file(tickers_file, names_file, reload_file=False):
 
         with open(names_file, "rb") as f:
             stock_tickers_names['names'] += pickle.load(f)
+
+        with open(stock_exchange_file, "rb") as f:
+            stock_tickers_names['stock_exchange'] += pickle.load(f)
 
     return stock_tickers_names
 

@@ -34,7 +34,6 @@ class MyThread:
         txt = "Runtime Threads " + str(self.name) + ": " + str(
             datetime.datetime.now() - thr_start) + ", cnt of threads: " + str(len(self.threads))
         print(txt)
-        append_to_file(txt, self.filepath + "Runtime.txt")
 
     def append_thread(self, thread_to_append):
         try:

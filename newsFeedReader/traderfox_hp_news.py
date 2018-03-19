@@ -8,45 +8,33 @@ from datetime import datetime
 import pandas as pd
 
 
-def read_news_from_traderfox(hash_file=None):
+def read_news_from_traderfox(date_file, date_time_format="%d.%m.%Y um %H:%M"):
     """
-    Read the news from traderfox homepage with html parsing to "articles"
-    :param hash_file filepath+name  for hash id
+    read news from traderfox home page with dpa-afx-compact news
+    :param date_time_format: news datetime format
+    :param date_file: file for last check date
     :return: news as list
     """
-    # TODO
+    # TODO for enhanced
     # url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
     url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-5/"
-    date_time_format = "%d.%m.%Y um %H:%M"
-    date_file = "C:\\temp\\last_date_time.csv"
-
     resp = requests.get(url)
     soup = bs.BeautifulSoup(resp.text, 'lxml')
     # article --> h2 --> a href for news text, article --> footer for date
     all_articles = soup.find_all("article")
 
-    # TODO reactivate hash maybe, if read all news to slow
-    # last_id = get_hash_from_file(hash_file, url)
-    # hash_id = generate_hash(url, all_articles)
-    # if last_id == hash_id:
-    #    print("no news")
-    #    return ""
-    # else:
-
     # ex: #news = "27.02. 10:41 dpa-AFX: ANALYSE-FLASH: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro"
     all_news = []
     last_date = ""
-    # replace_in_file(hash_file, last id)
     for elm in all_articles:
         date_time = (str(elm.footer.span.get_text()))  # date and Time
-        date_time = date_time.rsplit(' Uhr')[0]
+        date_time = date_time.rsplit(' Uhr')[0] #TODO: split because of datetime format
         datetime_object = datetime.strptime(date_time, date_time_format)
         is_a_new_news, last_date = is_date_actual(datetime_object, date_file, last_date)
 
         if is_a_new_news:
             article_text = (str(elm.h2.get_text(strip=True)))  # h2 --> article head line
             news_text = date_time.replace(',', '.') + ", " + article_text.replace(',', '.')
-            append_to_file(news_text, "C:\\temp\\Traderfox_News.csv")  # TODO only for first data example collection
             all_news.append(news_text)
 
     return all_news
@@ -55,6 +43,7 @@ def read_news_from_traderfox(hash_file=None):
 def is_date_actual(date_to_check, last_date_file="", last_date="", date_time_format="%d.%m.%Y um %H:%M"):
     """
 
+    :param date_time_format:
     :type last_date: object
     :param last_date_file:
     :param date_to_check:
