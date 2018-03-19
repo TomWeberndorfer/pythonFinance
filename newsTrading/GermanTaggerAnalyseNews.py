@@ -17,6 +17,12 @@ from Utils.common_utils import split_list
 
 class GermanTaggerAnalyseNews:
     def __init__(self, stock_list, threshold=0.7, german_tagger=None):
+        """
+        Init for german tagger class
+        :param stock_list: stock list with all names, tickers and stock_echange
+        :param threshold: classifier threshold to recognize
+        :param german_tagger: can be none, and will be loaded otherwise
+        """
         if stock_list is None:
             raise NotImplementedError
 
@@ -28,7 +34,7 @@ class GermanTaggerAnalyseNews:
         self.stock_exchanges = stock_list ['stock_exchange']
 
         if german_tagger is None:
-            #TODO not fixed
+            #TODO übergabe param
             with open('C:\\temp\\nltk_german_classifier_data.pickle', 'rb') as f:
                 self.german_tagger = pickle.load(f)
         else:
@@ -48,9 +54,11 @@ class GermanTaggerAnalyseNews:
         if news_to_analyze is None:
             raise NotImplementedError
 
-        result = self.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news_to_analyze)
+        prep_news = self.__process_news(news_to_analyze)
+
+        result = self.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(prep_news)
         if result != " ":
-            prob_dist = self.classifier.prob_classify(news_to_analyze)
+            prob_dist = self.classifier.prob_classify(prep_news)
 
             if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
                     round(prob_dist.prob("neg"), 2) > self.threshold):
@@ -114,16 +122,10 @@ class GermanTaggerAnalyseNews:
         if news_to_analyze is None:
             raise NotImplementedError
 
-        split_apostrophe = news_to_analyze.split("'")
-        for split in split_apostrophe:
-            news_to_analyze = news_to_analyze.replace("'" + split + "'", split.lower())
-
-        news_to_analyze = news_to_analyze.replace("Euro", "€")
-        news_to_analyze = news_to_analyze.replace("Dollar", "$")
-        news_to_analyze = news_to_analyze.replace("-", " ")  # TODO with expand_compound_token
+        preprocessed_news = self.__process_news(news_to_analyze)
 
         # TODO: http://dsspace.wzb.eu/pyug/text_proc_feature_extraction/
-        tokens = nltk.word_tokenize(news_to_analyze, language="german")
+        tokens = nltk.word_tokenize(preprocessed_news, language="german")
         tokens_removed_words = [t for t in tokens if t.lower() not in self.stopwords]
 
         # http: // dsspace.wzb.eu / pyug / text_proc_feature_extraction /
@@ -215,3 +217,19 @@ class GermanTaggerAnalyseNews:
             # add = p.isupper()   # alt. strategy: if p is all uppercase ("US", "E", etc.) -> append the next p to it
 
         return parts
+
+    def __process_news(self, news_to_analyze):
+        """
+        Preprocess news for text analysis
+        :param news_to_analyze: original news
+        :return: preprocessed news
+        """
+        split_apostrophe = news_to_analyze.split("'")
+        for split in split_apostrophe:
+            news_to_analyze = news_to_analyze.replace("'" + split + "'", split.lower())
+
+        news_to_analyze = news_to_analyze.replace("Euro", "€")
+        news_to_analyze = news_to_analyze.replace("Dollar", "$")
+        news_to_analyze = news_to_analyze.replace("-", " ")  # TODO with expand_compound_token
+
+        return news_to_analyze

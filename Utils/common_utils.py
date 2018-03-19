@@ -175,6 +175,7 @@ def format_news_analysis_results(stocks_to_buy):
                     neg_class = round(res['prob_dist'].prob("neg"), 2)
                     tmp_str = ""
                     tmp_str += (res['name'] + ", ticker: " + res['ticker'] +
+                                ", stock_exchange: " + res['stock_exchange'] +
                                 ", pos: " + str(pos_class) +
                                 " ,neg: " + str(neg_class) +
                                 " , current value: " + str(res['current_val']) +

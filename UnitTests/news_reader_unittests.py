@@ -50,6 +50,12 @@ class NewsReaderTests(unittest.TestCase):
         thr_start = datetime.now()
         analysis = GermanTaggerAnalyseNews(res)
 
+        news = "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf"
+        result = analysis.analyse_single_news(news)
+        t1 = round(result['prob_dist'].prob("pos"), 2)
+        self.assertEqual(result['name'], "RWE AG ST O.N.")
+        self.assertGreater(t1, 0.7)
+
         news = "19.03.2018 um 08:58, ANALYSE-FLASH: HSBC senkt RWE auf 'Reduce' - Ziel 18 Euro"
         result = analysis.analyse_single_news(news)
         t1 = round(result['prob_dist'].prob("neg"), 2)
