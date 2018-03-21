@@ -17,8 +17,10 @@ stock_exchange_file_name = "stock_exchange_file.pickle"
 stock_exchange_file = filepath + stock_exchange_file_name
 res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
 date_file = "C:\\temp\\last_date_time.csv"
+news_threshold = 0.5
 ##########################
-text_analysis = GermanTaggerAnalyseNews(res)
+
+text_analysis = GermanTaggerAnalyseNews(res, news_threshold)
 
 while True:
     # ++++++++++ FOR SAMPLE NEWS

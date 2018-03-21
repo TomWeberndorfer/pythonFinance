@@ -143,13 +143,6 @@ class NewsReaderTests(unittest.TestCase):
         result = analysis.lookup_stock_abr_in_all_names("XCERET")
         self.assertEqual(result, " ")
 
-        #TODO 10: critical 
-        result = analysis.lookup_stock_abr_in_all_names("Roche")
-        self.assertEqual(result, "RHHBY")
-
-        result = analysis.lookup_stock_abr_in_all_names("Tesla")
-        self.assertEqual(result, "TSLA")
-
     def test_date_check(self):
 
         last_date_time_str = "07.03.2018 um 03:11"
@@ -298,4 +291,22 @@ class NewsReaderTests(unittest.TestCase):
         self.assertEqual(result['ticker'], "ACX")
         self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['price'], 89)
+
+        #not in stock list --> read stock tickers and names from webservice
+        news = "Goldman belässt Roche auf conviction buy list"
+        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result['name'], 'Roche Holding AG')
+        self.assertEqual(result['ticker'], "RHHBY")
+        self.assertEqual(result['stock_exchange'], "")
+        self.assertEqual(result['price'], 0)
+
+        news = "Jefferies senkt Ziel für Loreal auf 186 euro Hold"
+        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result['name'], 'LOrealfuture')
+        self.assertEqual(result['ticker'], "LORFF9.EX")
+        self.assertEqual(result['stock_exchange'], "")
+        self.assertEqual(result['price'], 186)
+
+
+
 

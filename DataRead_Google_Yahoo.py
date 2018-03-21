@@ -3,8 +3,10 @@ import os
 import sys
 import threading
 import traceback
+import json
 
 import urllib3
+from numpy import unicode
 from pandas import DataFrame
 from pandas_datareader import data, data
 from yahoo_finance import Share
@@ -129,66 +131,20 @@ def read_current_day_from_yahoo(stock_name):
     return []
 
 
-def __get_symbol_from_name_from_yahoo(name, stock_exchange):
-    """
-    TODO
-    name: name to convert
-    """
-    if name is None or stock_exchange is None:
-        raise NotImplementedError
-
-    names_to_get = []
-    names_to_get.append(optimize_name_for_yahoo(name))
-    names_to_get.append(optimize_name_for_yahoo(name, False))
-    names_to_get.append(optimize_name_for_yahoo(name, False, True))
-
-    for name in names_to_get:
-
-        try:
-
-            http = urllib3.PoolManager()
-            # query: http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=Priceline&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
-
-            try:
-                # ex: 'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=BMW+AG&region=1&lang=de&callback=YAHOO.Finance.SymbolSuggest.ssCallback'
-                req = str1 + name + str2 + stock_exchange + str3
-                r = http.request('GET', req)  # build url
-            except Exception as e:
-                # TODO return " "
-                sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
-
-            str_res = str(r.data)
-            if len(str_res) > 0 and "symbol" in str_res:
-                symbol = str_res.rsplit('{"symbol":"')[1].rsplit('"')[0]
-                if "." in symbol:
-                    symbol = symbol.rsplit('.')[0]  # cut the stock exchange market from yahoo
-                return symbol
-            # else:
-            #   sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
-            # return " "  # no symbol found
-
-        except Exception as e:
-            sys.stderr.write("Exception: no symbol found for " + name + ", str_res: " + str_res + str(e) + "\n")
-            # return " "  # no symbol found
-
-    sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
-    return " "
-
-
-def get_symbol_from_name_from_topforeignstocks(name):
+def get_symbol_from_name_from_topforeignstocks(name_abbr):
     """
     TODO
     name: name to convert
     :param name:
     :return:
     """
-    if name is None:
+    if name_abbr is None:
         raise NotImplementedError
 
     names_to_get = []
-    names_to_get.append(optimize_name_for_yahoo(name))
-    names_to_get.append(optimize_name_for_yahoo(name, False))
-    names_to_get.append(optimize_name_for_yahoo(name, False, True))
+    names_to_get.append(optimize_name_for_yahoo(name_abbr))
+    names_to_get.append(optimize_name_for_yahoo(name_abbr, False))
+    names_to_get.append(optimize_name_for_yahoo(name_abbr, False, True))
 
     for name in names_to_get:
 
@@ -196,32 +152,40 @@ def get_symbol_from_name_from_topforeignstocks(name):
 
             http = urllib3.PoolManager()
             # query: http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=Priceline&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
+            # ex: 'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=BMW+AG&region=1&lang=de&callback=YAHOO.Finance.SymbolSuggest.ssCallback'
+            req = str1 + name + str2 + str3
+            r = http.request('GET', req)  # build url
 
-            try:
-                # ex: 'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=BMW+AG&region=1&lang=de&callback=YAHOO.Finance.SymbolSuggest.ssCallback'
-                req = str1 + name + str2 + str3
-                r = http.request('GET', req)  # build url
-            except Exception as e:
-                # TODO return " "
-                sys.stderr.write("no symbol found for " + name + ", exception: " + str(e)+ "\n")
+            result = r.data.decode('utf-8')
+            result = result.replace(")", "")
+            result = result.replace(";", "")
+            # TODO 3: find a better solution to convert to json instead
+            result  = result.replace("YAHOO.Finance.SymbolSuggest.ssCallback(", "")
+            result = result.strip("'<>() ").replace('\'', '\"')
+            json_struct = json.loads(result)
+            result_set = json_struct['ResultSet']['Result']
 
-            str_res = str(r.data)
-            if len(str_res) > 0 and "symbol" in str_res:
-                symbol = str_res.rsplit('{"symbol":"')[1].rsplit('"')[0]
-                if "." in symbol:
-                    symbol = symbol.rsplit('.')[0]  # cut the stock exchange market from yahoo
-                return symbol
-            # else:
-            #   sys.stderr.write("no symbol found for " + name + ", str_res: " + str_res + "\n")
-            # return " "  # no symbol found
+            # gets the first result in the result set
+            if len(result_set) > 0:
+                first_stock = result_set[0]
+                found_name = first_stock['name']
+                found_symbol = first_stock['symbol']
+                return found_name, found_symbol
 
         except Exception as e:
-            sys.stderr.write("Exception: no symbol found for " + str(name) + str(e) + "\n")
+            sys.stderr.write("Exception: no symbol found for " + str(name) + ", exception: " + str(e) + "\n")
             # return " "  # no symbol found
 
-    sys.stderr.write("no symbol found for " + str(name) + "\n")
-    return " "
+    print("No symbol found for " + str(name) + "\n")
+    return " ", " "
 
+def max3bytes(unicode_string):
+    """
+    TODO entfernen?
+    :param unicode_string:
+    :return:
+    """
+    return u''.join(uc if uc <= u'\uffff' else u'\ufffd' for uc in unicode_string)
 
 def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
     if file_stock_list is None or file_excel is None:
@@ -350,7 +314,7 @@ def symbol_thread(st_names, stock_exchanges, result):
         i += 1
 
 
-def get_ticker_data_with_webreader(ticker, stock_exchange=".en", stock_dfs_file="", source='yahoo',
+def get_ticker_data_with_webreader(ticker, stock_exchange="", stock_dfs_file="", source='yahoo',
                                    reload_stockdata=False, weeks_delta=52):
     """
     TODO
@@ -364,7 +328,11 @@ def get_ticker_data_with_webreader(ticker, stock_exchange=".en", stock_dfs_file=
     """
     df = []
     ticker = optimize_name_for_yahoo(ticker)
-    ticker_exchange = ticker + "." + stock_exchange
+    ticker_exchange = ticker
+
+    #TODO 3: yahoo does not take en, so skip
+    if stock_exchange != "" and stock_exchange is not None and stock_exchange!="en":
+        ticker_exchange += "." + stock_exchange
 
     try:
         # TODO does not reload new data

@@ -146,6 +146,11 @@ class GermanTaggerAnalyseNews:
         noun_tag = [i for i in tags if i[1].startswith("NE")]
 
         if noun_tag is not None and len(noun_tag) > 0:
+            name_return = ""
+            price_return = 0
+            ticker_return = ""
+            stock_exchange_return = ""
+
             noun_idx = len(noun_tag) - 1
             stock_to_check = noun_tag[noun_idx][0]  # [0] --> first tag in list
 
@@ -154,26 +159,28 @@ class GermanTaggerAnalyseNews:
 
             if name_to_find != " " and name_to_find is not None:
                 idx = self.names.index(name_to_find)
+                name_return = name_to_find
+                ticker_return = self.tickers[idx]
+                stock_exchange_return = self.stock_exchanges[idx]
 
-                if len(price_tuple) > 0:
-                    price = price_tuple[len(price_tuple)-1][0] #TODO 1: comment
-                    price = price.replace (",", ".") #replace german comma
-                    if is_float(price):
-                    # price_tuple: [0] --> number, [1]--> CD
-                        return {'name': name_to_find, 'ticker': self.tickers[idx],
-                            'stock_exchange': self.stock_exchanges[idx], 'price': float(price)}
-                    else:
-                        return {'name': name_to_find, 'ticker': self.tickers[idx],
-                                'stock_exchange': self.stock_exchanges[idx], 'price': 0}
-
+            else: #look up symbol in web instead of list
+                name, symbol = get_symbol_from_name_from_topforeignstocks(stock_to_check)
+                if symbol is not None and symbol != " " and name is not None and name != " ":
+                    name_return = name
+                    ticker_return = symbol
+                    stock_exchange_return = "" #TODO 3: return something
                 else:
-                    return {'name': name_to_find, 'ticker': self.tickers[idx],
-                            'stock_exchange': self.stock_exchanges[idx], 'price': 0}
-            else:
-                #TODO 10: critical
-                symbol = get_symbol_from_name_from_topforeignstocks(name_to_find)
-                if symbol is not None and symbol != " ":
-                    return symbol
+                    return " "
+
+            if len(price_tuple) > 0:
+                price = price_tuple[len(price_tuple) - 1][0]  # TODO 1: comment
+                price = price.replace(",", ".")  # replace german comma
+                if is_float(price):
+                    # price_tuple: [0] --> number, [1]--> CD
+                   price_return = float(price)
+
+            return {'name': name_return, 'ticker': ticker_return,
+                    'stock_exchange':stock_exchange_return , 'price': price_return}
 
         print("ERR: no STOCK found for news: " + str(news_to_analyze))
         return " "

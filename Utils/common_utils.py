@@ -180,11 +180,11 @@ def format_news_analysis_results(stocks_to_buy):
                                 " ,neg: " + str(neg_class) +
                                 " , current value: " + str(res['current_val']) +
                                 " , target price: " + str(res['price']) +
-                                ", orig News: " + res["orig_news"]) + "\n\n"
+                                ", orig News: " + res["orig_news"]) + "\n"
                     if pos_class > neg_class:
-                        buy_str += tmp_str
+                        buy_str += "BUY: " + tmp_str
                     else:
-                        sell_str += tmp_str
+                        sell_str += "SELL: " + tmp_str
 
             if len(buy_str) > 0:
                 str_print += "Stocks to BUY: \n"
