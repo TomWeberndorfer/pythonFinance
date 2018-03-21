@@ -166,7 +166,6 @@ def format_news_analysis_results(stocks_to_buy):
         str_print = ""
 
         if stocks_to_buy is not None and len(stocks_to_buy) > 0:
-            str_print += "\nNews analysis results: \n"
             buy_str = ""
             sell_str = ""
 

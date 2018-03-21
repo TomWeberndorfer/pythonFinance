@@ -11,6 +11,8 @@ import datetime
 import threading
 import nltk
 from textblob.classifiers import NaiveBayesClassifier
+
+from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
 from MyThread import MyThread
 from Utils.common_utils import split_list, is_float
 
@@ -154,7 +156,7 @@ class GermanTaggerAnalyseNews:
                 idx = self.names.index(name_to_find)
 
                 if len(price_tuple) > 0:
-                    price = price_tuple[len(price_tuple)-1][0] #TODO
+                    price = price_tuple[len(price_tuple)-1][0] #TODO 1: comment
                     price = price.replace (",", ".") #replace german comma
                     if is_float(price):
                     # price_tuple: [0] --> number, [1]--> CD
@@ -167,6 +169,11 @@ class GermanTaggerAnalyseNews:
                 else:
                     return {'name': name_to_find, 'ticker': self.tickers[idx],
                             'stock_exchange': self.stock_exchanges[idx], 'price': 0}
+            else:
+                #TODO 10: critical
+                symbol = get_symbol_from_name_from_topforeignstocks(name_to_find)
+                if symbol is not None and symbol != " ":
+                    return symbol
 
         print("ERR: no STOCK found for news: " + str(news_to_analyze))
         return " "

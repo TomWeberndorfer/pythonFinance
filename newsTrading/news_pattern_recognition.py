@@ -3,7 +3,7 @@ from datetime import datetime
 
 from DataRead_Google_Yahoo import get_ticker_data_with_webreader
 from Utils.common_utils import format_news_analysis_results, send_stock_email
-from Utils.file_utils import read_tickers_from_file
+from Utils.file_utils import read_tickers_from_file, append_to_file
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
@@ -37,7 +37,6 @@ while True:
     for single_res in results:
         # get the last available price and compare with rating
         #TODO des is zu langsam
-        #TODO warum + stockexchange
         stock52_w = get_ticker_data_with_webreader(single_res['ticker'], single_res['stock_exchange'], filepath + 'stock_dfs', 'yahoo', False, 1)
         single_res['current_val'] = 0
         if stock52_w is not None and len(stock52_w) > 0:
@@ -49,6 +48,8 @@ while True:
 
     if res_str is not None and len(res_str) > 0:
         print(res_str)
+        append_to_file(res_str, filepath + "Backtesting.txt") #TODO da ghert a aktuelle abfrage für preis
+
         send_stock_email(res_str, "News Trading: New news available")
     else:
         print("News analysis: no news")

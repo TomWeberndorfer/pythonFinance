@@ -143,6 +143,13 @@ class NewsReaderTests(unittest.TestCase):
         result = analysis.lookup_stock_abr_in_all_names("XCERET")
         self.assertEqual(result, " ")
 
+        #TODO 10: critical 
+        result = analysis.lookup_stock_abr_in_all_names("Roche")
+        self.assertEqual(result, "RHHBY")
+
+        result = analysis.lookup_stock_abr_in_all_names("Tesla")
+        self.assertEqual(result, "TSLA")
+
     def test_date_check(self):
 
         last_date_time_str = "07.03.2018 um 03:11"

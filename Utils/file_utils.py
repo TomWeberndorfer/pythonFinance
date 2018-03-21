@@ -58,6 +58,12 @@ def get_hash_from_file(file, url):
 
 
 def append_to_file(txt, file_with_path):
+    """
+    appends the given text to the file + path
+    :param txt: text to append
+    :param file_with_path: file name + path
+    :return: none
+    """
     if txt is None or file_with_path is None:
         raise NotImplementedError
 
