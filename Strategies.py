@@ -30,7 +30,7 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
             #TODO
             #stock52_w = read_data_from_google_with_pandas(stock_name, ago52_w, end)
             #stock52_w = get_data_from_google_with_webreader (stock_name,  filepath + 'stock_dfs', False, False)
-            stock52_w = get_ticker_data_with_webreader(stock_name, filepath + 'stock_dfs', 'yahoo', False)
+            stock52_w = get_ticker_data_with_webreader(stock_name, "", filepath + 'stock_dfs', 'yahoo', False)
 
         except Exception as e:
             # traceback.print_exc()
