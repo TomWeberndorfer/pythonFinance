@@ -1,3 +1,4 @@
+import traceback
 from datetime import datetime
 import os
 import platform
@@ -444,3 +445,22 @@ def is_float(n):
         return False
     else:
         return True
+
+
+def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
+    """
+    plots alist with stock names
+    :param stocks_to_buy:
+    :param start_date:
+    :param end_date:
+    :return:
+    """
+    for stock in stocks_to_buy:
+        try:
+            stock_name = stock['stock_name']
+            stock_data = stock['data']
+            plot_stock_as_candlechart_with_volume(stock_name, stock_data)
+
+        except Exception as e:
+            sys.stderr.write("EXCEPTION execute_threads: " + str(e) + "\n")
+            traceback.print_exc()

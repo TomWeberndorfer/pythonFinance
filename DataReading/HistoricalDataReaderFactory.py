@@ -1,4 +1,4 @@
-from StockScreener import StockScreener
+from Strategies.StockScreener import StockScreener
 
 
 class HistoricalDataReaderFacotry (StockScreener):

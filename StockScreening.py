@@ -2,11 +2,10 @@ import threading
 import traceback
 from datetime import datetime
 from datetime import timedelta
-import sys
 
 from MyThread import MyThread
-from Strategies import strat_scheduler
-from Utils.common_utils import split_list, print_stocks_to_buy, plot_stock_as_candlechart_with_volume
+from Strategies.Strategy import strat_scheduler
+from Utils.common_utils import split_list, print_stocks_to_buy
 from Utils.file_utils import append_to_file, read_tickers_from_file
 
 
@@ -24,25 +23,6 @@ def function_for_threading_strat_scheduler(stock_names_to_check, ago52_w_time, e
     print("Started with: " + str(stock_names_to_check))
 
     result.extend(strat_scheduler(stock_names_to_check, ago52_w_time, end_l, params))
-
-
-def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
-    """
-    plots alist with stock names
-    :param stocks_to_buy:
-    :param start_date:
-    :param end_date:
-    :return:
-    """
-    for stock in stocks_to_buy:
-        try:
-            stock_name = stock['stock_name']
-            stock_data = stock['data']
-            plot_stock_as_candlechart_with_volume(stock_name, stock_data)
-
-        except Exception as e:
-            sys.stderr.write("EXCEPTION execute_threads: " + str(e) + "\n")
-            traceback.print_exc()
 
 
 def run_stock_screening(num_of_stocks_per_thread):
