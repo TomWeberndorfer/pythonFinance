@@ -6,7 +6,7 @@ from datetime import datetime
 
 from Signals import signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, \
     signal_is_a_few_higher_than_avg, signal_is_volume_raising, signal_is52_w_high, signal_is_volume_high_enough
-from StockScreening import run_stock_screening
+from Strategies.StockScreener import run_stock_screening
 from Strategies import strat_52_w_hi_hi_volume
 from Utils.common_utils import calc_avg_vol, calculate_stopbuy_and_stoploss
 

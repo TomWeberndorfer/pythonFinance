@@ -1,7 +1,10 @@
 from Strategies.StockScreener import StockScreener
 
 
-class HistoricalDataReaderFacotry (StockScreener):
+class HistoricalDataReaderFactory (StockScreener):
+
+    def _create_strategy(self, strategy_to_create):
+        pass
 
     def read_data(self):
         raise NotImplementedError('TODO')

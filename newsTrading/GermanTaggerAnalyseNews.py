@@ -18,22 +18,22 @@ from Utils.common_utils import split_list, is_float
 
 
 class GermanTaggerAnalyseNews:
-    def __init__(self, stock_list, threshold=0.7, german_tagger=None):
+    def __init__(self, stock_name_list, threshold=0.7, german_tagger=None):
         """
         Init for german tagger class
-        :param stock_list: stock list with all names, tickers and stock_echange
+        :param stock_name_list: stock list with all names, tickers and stock_echange
         :param threshold: classifier threshold to recognize
         :param german_tagger: can be none, and will be loaded otherwise
         """
-        if stock_list is None:
+        if stock_name_list is None:
             raise NotImplementedError
 
         self.classifier = self.__train_classifier()
         self.threshold = threshold
         self.stopwords = nltk.corpus.stopwords.words('german')
-        self.names = stock_list['names']
-        self.tickers = stock_list['tickers']
-        self.stock_exchanges = stock_list ['stock_exchange']
+        self.names = stock_name_list['names']
+        self.tickers = stock_name_list['tickers']
+        self.stock_exchanges = stock_name_list ['stock_exchange']
 
         if german_tagger is None:
             #TODO übergabe param

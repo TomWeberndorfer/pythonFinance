@@ -7,7 +7,6 @@ class StockDataReader(ABC):
         self.stock_name = stock_name
         self.interval = interval
         self.period = period
-        super().__init__()
 
     @abstractmethod
     def read_data(self):

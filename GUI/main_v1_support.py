@@ -5,7 +5,7 @@
 #    Jan 05, 2018 10:23:07 PM
 
 
-from StockScreening import run_stock_screening
+from Strategies.StockScreener import run_stock_screening
 
 try:
     from Tkinter import *

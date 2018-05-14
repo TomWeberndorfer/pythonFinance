@@ -8,22 +8,19 @@ from Signals.Signals import signal_is_volume_raising
 from Utils.common_utils import calculate_stopbuy_and_stoploss, get_current_function_name
 
 
-
 class Strategy(ABC):
-    def __init__(self, stock_name_list, stock_data_list, parameter_list, stocks_to_buy):
-        self.stocks_to_buy = stocks_to_buy
+    def __init__(self, stock_name_list, stock_data_list, parameter_list):
+        self.stocks_to_buy = []
         self.parameter_list = parameter_list
         self.stock_data_list = stock_data_list
         self.stock_name_list = stock_name_list
-        super().__init__()
 
     @abstractmethod
     def run_strategy(self):
         pass
 
 
-
-#TODO as parameter
+# TODO as parameter
 filepath = 'C:\\temp\\'
 
 
@@ -44,9 +41,9 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
 
         try:
             # read data
-            #TODO
-            #stock52_w = read_data_from_google_with_pandas(stock_name, ago52_w, end)
-            #stock52_w = get_data_from_google_with_webreader (stock_name,  filepath + 'stock_dfs', False, False)
+            # TODO
+            # stock52_w = read_data_from_google_with_pandas(stock_name, ago52_w, end)
+            # stock52_w = get_data_from_google_with_webreader (stock_name,  filepath + 'stock_dfs', False, False)
             stock52_w = get_ticker_data_with_webreader(stock_name, "", filepath + 'stock_dfs', 'yahoo', False)
 
         except Exception as e:
@@ -55,7 +52,7 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
             read_exception = True
 
         if not read_exception and len(stock52_w) > 0:
-            #print(" try with " + str(stock_name))
+            # print(" try with " + str(stock_name))
             ##############################################################
             # insert STRATEGIES here
             try:
@@ -65,10 +62,12 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
                 min_cnt = str_52w_p['min_cnt']
                 min_vol_dev_fact = str_52w_p['min_vol_dev_fact']
                 within52w_high_fact = str_52w_p['within52w_high_fact']
-                res = strat_52_w_hi_hi_volume(stock_name, stock52_w, check_days, min_cnt, min_vol_dev_fact, within52w_high_fact)
+                res = strat_52_w_hi_hi_volume(stock_name, stock52_w, check_days, min_cnt, min_vol_dev_fact,
+                                              within52w_high_fact)
                 if res['buy']:
                     stocks_to_buy.append(
-                        {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'], 'strategy_name': res['strategy_name'], 'params': params[0], 'data': stock52_w})
+                        {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
+                         'strategy_name': res['strategy_name'], 'params': params[0], 'data': stock52_w})
 
                     # TODO canslim / Henkel
                     # TODO text auswertung http://www.learndatasci.com/python-finance-part-3-moving-average-trading-strategy/
@@ -87,23 +86,23 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
                 #              {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
                 #               'strategy_name': res['strategy_name'], 'params': params[1]})
 
-                    # else :
-                    #     str_52w_p = params[2]
-                    #     hammer_length_in_factor = str_52w_p['hammer_length_in_factor']
-                    #     handle_bigger_than_head_factor = str_52w_p['handle_bigger_than_head_factor']
-                    #     res = strat_candlestick_hammer_hi_vol(stock_name, stock52_w, hammer_length_in_factor, handle_bigger_than_head_factor)
-                    #     if res['buy']:
-                    #         stocks_to_buy.append(
-                    #             {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
-                    #              'strategy_name': res['strategy_name'], 'params': params[1]})
-                    # TODO candlestick signal_hammer
+                # else :
+                #     str_52w_p = params[2]
+                #     hammer_length_in_factor = str_52w_p['hammer_length_in_factor']
+                #     handle_bigger_than_head_factor = str_52w_p['handle_bigger_than_head_factor']
+                #     res = strat_candlestick_hammer_hi_vol(stock_name, stock52_w, hammer_length_in_factor, handle_bigger_than_head_factor)
+                #     if res['buy']:
+                #         stocks_to_buy.append(
+                #             {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
+                #              'strategy_name': res['strategy_name'], 'params': params[1]})
+                # TODO candlestick signal_hammer
 
-                    # TODO negativer signal_hammer in den letzten 10 tagen als zeichen für nicht kaufen
-                    # TODO zusätzliche reihung nach:
-                    # - volumen anstieg stärke
+                # TODO negativer signal_hammer in den letzten 10 tagen als zeichen für nicht kaufen
+                # TODO zusätzliche reihung nach:
+                # - volumen anstieg stärke
 
-                    # TODO http://www.finanzen.at/analysen
-                    # TODO ansehen: https://www.youtube.com/watch?v=IuhLfRJTHmY
+                # TODO http://www.finanzen.at/analysen
+                # TODO ansehen: https://www.youtube.com/watch?v=IuhLfRJTHmY
 
             except Exception as e:
                 # e = sys.exc_info()[0]
@@ -177,5 +176,3 @@ def strat_gap_up__hi_volume(stock_name, stock_data, min_gap_factor):
 
     return {'buy': True, 'stock_name': stock_name, 'sb': result['sb'], 'sl': result['sl'],
             'strategy_name': get_current_function_name()}
-
-
