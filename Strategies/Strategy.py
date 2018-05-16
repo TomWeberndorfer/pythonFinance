@@ -9,11 +9,17 @@ from Utils.common_utils import calculate_stopbuy_and_stoploss, get_current_funct
 
 
 class Strategy(ABC):
-    def __init__(self, stock_name_list, stock_data_list, parameter_list):
-        self.stocks_to_buy = []
-        self.parameter_list = parameter_list
-        self.stock_data_list = stock_data_list
-        self.stock_name_list = stock_name_list
+    def __init__(self, num_of_stocks_per_thread, stock_data_container_list, parameter_list):
+        """
+        Initialization of the strategy as definition of variables only.
+        :param num_of_stocks_per_thread:
+        :param stock_data_container_list: a list with objects of StockDataContainer - class
+        :param parameter_list: a list with parameters for the strategy
+        """
+        self.num_of_stocks_per_thread = num_of_stocks_per_thread
+        self.stock_data_container_list = stock_data_container_list
+        self.result_list = [] # result list with stocks to buy or other results
+        self.parameter_list = parameter_list # parameter for the strategy
 
     @abstractmethod
     def run_strategy(self):

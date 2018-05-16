@@ -9,7 +9,7 @@ import urllib3
 from numpy import unicode
 from pandas import DataFrame
 from pandas_datareader import data, data
-from yahoo_finance import Share
+#TODO from yahoo_finance import Share
 import googlefinance.client as google_client
 import xlrd
 import pandas as pd

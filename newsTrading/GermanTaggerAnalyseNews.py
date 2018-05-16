@@ -18,22 +18,34 @@ from Utils.common_utils import split_list, is_float
 
 
 class GermanTaggerAnalyseNews:
-    def __init__(self, stock_name_list, threshold=0.7, german_tagger=None):
+    def __init__(self, stock_data_container_list, threshold=0.7, german_tagger=None):
         """
         Init for german tagger class
-        :param stock_name_list: stock list with all names, tickers and stock_echange
+        :param stock_data_container_list: list with data of stocks as list with class StockDataContainer
         :param threshold: classifier threshold to recognize
         :param german_tagger: can be none, and will be loaded otherwise
         """
-        if stock_name_list is None:
+        if stock_data_container_list is None:
+            #TODO check is child of StockDataContainer
             raise NotImplementedError
 
         self.classifier = self.__train_classifier()
         self.threshold = threshold
         self.stopwords = nltk.corpus.stopwords.words('german')
-        self.names = stock_name_list['names']
-        self.tickers = stock_name_list['tickers']
-        self.stock_exchanges = stock_name_list ['stock_exchange']
+        self.stock_data_container_list = stock_data_container_list
+        self.names = []
+        self.tickers = []
+        self.stock_exchanges = []
+
+        #TODO
+        for data_entry in self.stock_data_container_list:
+            self.names.append (data_entry.stock_name)
+            self.tickers.append (data_entry.stock_ticker)
+            self.stock_exchanges.append (data_entry.stock_exchange)
+
+        #self.names = stock_name_list['names']
+        #self.tickers = stock_name_list['tickers']
+        #self.stock_exchanges = stock_name_list['stock_exchange']
 
         if german_tagger is None:
             #TODO übergabe param

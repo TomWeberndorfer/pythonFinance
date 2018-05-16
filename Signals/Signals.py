@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-from talib.func import ATR
+#TODO from talib.func import ATR
 from Utils.common_utils import calc_avg_vol
 
 def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
@@ -285,7 +285,8 @@ def signal_hammer(stock_data, hammer_length_in_factor, handle_bigger_than_head_f
 
     # TODO use this instead: https://github.com/mrjbq7/ta-lib/tree/master/docs/func_groups
     #true_range = calc_true_range(tday_high_value, tday_low_value, yesterday_close_value)
-    true_range = ATR(tday_high_value, tday_low_value, yesterday_close_value, timeperiod=14)
+    #TODO
+    #true_range = ATR(tday_high_value, tday_low_value, yesterday_close_value, timeperiod=14)
 
 
     raise NotImplementedError  # TODO

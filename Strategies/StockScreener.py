@@ -6,17 +6,12 @@ from datetime import datetime, timedelta
 from MyThread import MyThread
 from Strategies.Strategy import strat_scheduler
 from Utils.common_utils import split_list, print_stocks_to_buy
-from Utils.file_utils import read_tickers_from_file, append_to_file
+#from Utils.file_utils import read_tickers_from_file, append_to_file
 
 
 class StockScreener():
-    def __init__(self, num_of_stocks_per_thread, dataproviders):
-        self.dataproviders = dataproviders
-        self.num_of_stocks_per_thread = num_of_stocks_per_thread
-
-    # todo falsch --> holeapp
-    def prepare_strategy(self, strategy_to_create, stock_name_list, stock_data_list, parameter_list):
-        strategy = self._create_strategy(strategy_to_create, stock_name_list, stock_data_list, parameter_list)
+    def prepare_strategy(self, strategy_to_create, num_of_stocks_per_thread, stock_data_container_list, parameter_list):
+        strategy = self._create_strategy(strategy_to_create, num_of_stocks_per_thread, stock_data_container_list, parameter_list)
         return strategy
 
     @abstractmethod
@@ -25,10 +20,10 @@ class StockScreener():
 
 
 # # TODO maybe move to better place
-# # TODO strategy scheduler soll nicht ein thread sein, jeder strategie könnte eigener thread mit subthreads sein
+# # TODO strategy scheduler soll nicht ein thread sein, jeder strategie kï¿½nnte eigener thread mit subthreads sein
 # def function_for_threading_strat_scheduler(stock_names_to_check, ago52_w_time, end_l, params, result):
 #     """
-#     TODO: result ist rückgabe
+#     TODO: result ist rï¿½ckgabe
 #     :param stock_names_to_check:
 #     :param ago52_w_time:
 #     :param end_l:

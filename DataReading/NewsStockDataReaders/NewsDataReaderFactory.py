@@ -1,14 +1,15 @@
 from DataReading.DataStorage import DataStorage
+from DataReading.NewsStockDataReaders.NewsDataStorage import NewsDataStorage
 from DataReading.NewsStockDataReaders.TraderfoxNewsDataReader import TraderfoxNewsDataReader
 
 
-class NewsDataReaderFactory(DataStorage):
+class NewsDataReaderFactory(NewsDataStorage):
 
-    def create_data_storage(self, storage_to_create, period, interval, stock_name, date_time_format):
+    def create_data_storage(self, storage_to_create):
         storage = ""
 
         if storage_to_create in "traderfox_hp_news":
-            storage = TraderfoxNewsDataReader(period, interval, stock_name, date_time_format)
+            storage = TraderfoxNewsDataReader()
         else:
             raise NotImplementedError
 

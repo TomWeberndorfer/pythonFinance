@@ -1,4 +1,4 @@
-from DataReading.StockDataReader import StockDataReader
+from DataReading.NewsStockDataReader import NewsStockDataReader
 import bs4 as bs
 import datetime
 import requests
@@ -9,12 +9,12 @@ from datetime import datetime
 import pandas as pd
 
 
-class TraderfoxNewsDataReader(StockDataReader):
+class TraderfoxNewsDataReader(NewsStockDataReader):
     def read_data(self):
         date_file = "C:\\temp\\last_date_time.csv"
         all_news = self.__read_news_from_traderfox(date_file)
 
-        #TODO eventuell newsdatarader geben immer news als liste zurück
+        #TODO eventuell newsdatarader geben immer news als liste zurï¿½ck
         return all_news
 
     def __read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):
