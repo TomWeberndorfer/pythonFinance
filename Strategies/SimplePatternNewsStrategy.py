@@ -25,8 +25,8 @@ class SimplePatternNewsStrategy (Strategy):
 
         # all_news.append("ANALYSE-FLASH: NordLB senkt Apple auf 'Kaufen' - Ziel 125,5 Euro")
         # all_news.append("Bryan Garnier hebt Apple auf 'Buy' - Ziel 91 Euro")
-        data_storage = NewsDataReaderFactory("traderfox_hp_news")
-        all_news = data_storage.read()
+        data_storage = NewsDataReaderFactory()
+        all_news = data_storage.read("traderfox_hp_news")
         self.result_list = text_analysis.analyse_all_news(all_news)
 
         return self.result_list
