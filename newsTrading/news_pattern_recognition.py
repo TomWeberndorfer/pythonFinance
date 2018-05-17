@@ -2,8 +2,9 @@ import time
 from datetime import datetime
 
 from DataRead_Google_Yahoo import get_ticker_data_with_webreader
-from Utils.common_utils import format_news_analysis_results, send_stock_email
-from Utils.file_utils import read_tickers_from_file, append_to_file
+from Utils.common_utils import CommonUtils
+from Utils.file_utils import FileUtils
+from Utils.news_utils import NewsUtils
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
@@ -15,7 +16,7 @@ tickers_file = filepath + tickers_file_name
 stocknames_file = filepath + stocknames_file_name
 stock_exchange_file_name = "stock_exchange_file.pickle"
 stock_exchange_file = filepath + stock_exchange_file_name
-res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
+res = CommonUtils.read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
 date_file = "C:\\temp\\last_date_time.csv"
 news_threshold = 0.5
 ##########################
@@ -46,13 +47,13 @@ while True:
             if current_val:
                 single_res['current_val'] = current_val
 
-    res_str = format_news_analysis_results(results)
+    res_str = NewsUtils.format_news_analysis_results(results)
 
     if res_str is not None and len(res_str) > 0:
         print(res_str)
-        append_to_file(res_str, filepath + "Backtesting.txt") #TODO da ghert a aktuelle abfrage für preis
+        FileUtils.append_to_file(res_str, filepath + "Backtesting.txt") #TODO da ghert a aktuelle abfrage für preis
 
-        send_stock_email(res_str, "News Trading: New news available")
+        CommonUtils.send_stock_email(res_str, "News Trading: New news available")
     else:
         print("News analysis: no news")
 

@@ -1,7 +1,6 @@
 import traceback
 import datetime
 import sys
-from Utils.file_utils import append_to_file
 
 
 class MyThread:

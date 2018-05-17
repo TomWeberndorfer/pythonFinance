@@ -13,6 +13,28 @@ import plotly.plotly as py
 import requests
 
 
+class CommonUtils:
+    @staticmethod
+    def send_stock_email(message_text, subject_text):
+        """
+        TODO
+        :param message_text:
+        :param subject_text:
+        :return:
+        """
+
+        if message_text is not None and len(message_text) > 0:
+            return send_email(from_addr='python.trading.framework@gmail.com',
+                              to_addr_list=['weberndorfer.thomas@gmail.com'],
+                              cc_addr_list=[],
+                              subject=subject_text,
+                              message=message_text,
+                              login='python.trading.framework',
+                              password='8n6Qw8YoJe8m')
+
+        else:
+            return []
+
 def calc_avg_vol(stock_data):
     """
     Calculates the average volume of stock data except the days to skip from end.
@@ -155,47 +177,6 @@ def print_news_analysis_results(stocks_to_buy):
                     round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
     else:
         print("News analysis: no news")
-
-
-def format_news_analysis_results(stocks_to_buy):
-    """
-    TODO
-    :param stocks_to_buy:
-    :return:
-    """
-    if stocks_to_buy is not None and len(stocks_to_buy) > 0:
-        str_print = ""
-
-        if stocks_to_buy is not None and len(stocks_to_buy) > 0:
-            buy_str = ""
-            sell_str = ""
-
-            for res in stocks_to_buy:
-                if res != " " and len(res) > 0:
-                    pos_class = round(res['prob_dist'].prob("pos"), 2)
-                    neg_class = round(res['prob_dist'].prob("neg"), 2)
-                    tmp_str = ""
-                    tmp_str += (res['name'] + ", ticker: " + res['ticker'] +
-                                ", stock_exchange: " + res['stock_exchange'] +
-                                ", pos: " + str(pos_class) +
-                                " ,neg: " + str(neg_class) +
-                                " , current value: " + str(res['current_val']) +
-                                " , target price: " + str(res['price']) +
-                                ", orig News: " + res["orig_news"]) + "\n"
-                    if pos_class > neg_class:
-                        buy_str += "BUY: " + tmp_str
-                    else:
-                        sell_str += "SELL: " + tmp_str
-
-            if len(buy_str) > 0:
-                str_print += "Stocks to BUY: \n"
-                str_print += buy_str
-
-            if len(sell_str) > 0:
-                str_print += "\nStocks to SELL: \n"
-                str_print += sell_str
-
-        return str_print
 
 
 def get_current_function_name():
@@ -396,28 +377,6 @@ def send_email(from_addr, to_addr_list, cc_addr_list, subject, message, login, p
     problems = server.sendmail(from_addr, to_addr_list, message)
     server.quit()
     return problems
-
-
-def send_stock_email(message_text, subject_text):
-    """
-    TODO
-    :param message_text:
-    :param subject_text:
-    :return:
-    """
-
-    if message_text is not None and len(message_text) > 0:
-        return send_email(from_addr='python.trading.framework@gmail.com',
-                          to_addr_list=['weberndorfer.thomas@gmail.com'],
-                          cc_addr_list=[],
-                          subject=subject_text,
-                          message=message_text,
-                          login='python.trading.framework',
-                          password='8n6Qw8YoJe8m')
-
-    else:
-        return []
-
 
 def is_date_today(date_to_check):
     """

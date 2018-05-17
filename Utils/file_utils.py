@@ -130,6 +130,24 @@ class FileUtils:
 
         return stock_data_container_list
 
+    @staticmethod
+    def append_to_file(txt, file_with_path):
+        """
+        appends the given text to the file + path
+        :param txt: text to append
+        :param file_with_path: file name + path
+        :return: none
+        """
+        if txt is None or file_with_path is None:
+            raise NotImplementedError
+
+        check_file_exists_or_create(file_with_path)  # no need to check, creates anyway
+
+        with open(file_with_path, "a") as myfile:
+            myfile.write(str(txt) + "\n")
+            myfile.write("")
+
+        myfile.close()
 
 def replace_in_file(file, pattern, subst):
     """
@@ -171,33 +189,14 @@ def get_hash_from_file(file, url):
         try:
             last_id = str(test[url][0])
         except Exception:
-            append_to_file(url + "," + str(0), file)
+            FileUtils.append_to_file(url + "," + str(0), file)
 
         return last_id
 
     else:
-        append_to_file("url,hash", file)
-        append_to_file(url + "," + str(0), file)
+        FileUtils.append_to_file("url,hash", file)
+        FileUtils.append_to_file(url + "," + str(0), file)
         return str(0)
-
-
-def append_to_file(txt, file_with_path):
-    """
-    appends the given text to the file + path
-    :param txt: text to append
-    :param file_with_path: file name + path
-    :return: none
-    """
-    if txt is None or file_with_path is None:
-        raise NotImplementedError
-
-    check_file_exists_or_create(file_with_path)  # no need to check, creates anyway
-
-    with open(file_with_path, "a") as myfile:
-        myfile.write(str(txt) + "\n")
-        myfile.write("")
-
-    myfile.close()
 
 
 def check_file_exists_or_create(file, txt=""):

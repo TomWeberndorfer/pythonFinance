@@ -9,7 +9,7 @@ from datetime import datetime
 #from newsFeedReader.traderfox_hp_news import read_news_from_traderfox
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
-#TODO parameter aus self statt da oben --> parameter_list.news_threshold
+#TODO parameter aus self statt da oben --> parameter_dict.news_threshold
 #news_threshold = 0.5
 ##########################
 
@@ -17,7 +17,7 @@ class SimplePatternNewsStrategy (Strategy):
 
     def run_strategy(self):
 
-        text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list, self.parameter_list['news_threshold'])
+        text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list, self.parameter_dict['news_threshold'], self.parameter_dict['german_tagger'])
 
         # ++++++++++ FOR SAMPLE NEWS
         # data = pd.read_csv(filepath + "Sample_news.txt")

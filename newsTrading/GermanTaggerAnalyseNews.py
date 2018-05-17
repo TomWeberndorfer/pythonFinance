@@ -19,11 +19,8 @@ from MyThread import MyThread
 from Utils.common_utils import split_list, is_float
 
 
-
 class GermanTaggerAnalyseNews:
-    #Todo ctemp
-    todo parameter list als übergabe
-    def __init__(self, stock_data_container_list, threshold=0.7, german_tagger='C:\\temp\\nltk_german_classifier_data.pickle'):
+    def __init__(self, stock_data_container_list, threshold=0.7, german_tagger=None):
         """
         Init for german tagger class
         :param stock_data_container_list: list with data of stocks as list with class or subclass of StockDataContainer
@@ -31,7 +28,7 @@ class GermanTaggerAnalyseNews:
         :param german_tagger: can be none, and will be loaded otherwise
         """
         if stock_data_container_list is None or not isinstance(stock_data_container_list[0], StockDataContainer):
-           raise NotImplementedError ("stock_data_container_list is used wrong")
+            raise NotImplementedError("stock_data_container_list is used wrong")
 
         self.classifier = self.__train_classifier()
         self.threshold = threshold
@@ -41,15 +38,15 @@ class GermanTaggerAnalyseNews:
         self.tickers = []
         self.stock_exchanges = []
 
-        #TODO
+        # TODO
         for data_entry in self.stock_data_container_list:
-            self.names.append (data_entry.stock_name)
-            self.tickers.append (data_entry.stock_ticker)
-            self.stock_exchanges.append (data_entry.stock_exchange)
+            self.names.append(data_entry.stock_name)
+            self.tickers.append(data_entry.stock_ticker)
+            self.stock_exchanges.append(data_entry.stock_exchange)
 
-        #self.names = stock_name_list['names']
-        #self.tickers = stock_name_list['tickers']
-        #self.stock_exchanges = stock_name_list['stock_exchange']
+        # self.names = stock_name_list['names']
+        # self.tickers = stock_name_list['tickers']
+        # self.stock_exchanges = stock_name_list['stock_exchange']
 
         if german_tagger is None or isinstance(german_tagger, str):
             with open(german_tagger, 'rb') as f:
@@ -73,7 +70,8 @@ class GermanTaggerAnalyseNews:
 
         prep_news = self.__process_news(news_to_analyze)
 
-        resultNewsStockDataContainer = self._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(prep_news)
+        resultNewsStockDataContainer = self._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(
+            prep_news)
         if resultNewsStockDataContainer != " ":
             prob_dist = self.classifier.prob_classify(prep_news)
 
@@ -82,8 +80,8 @@ class GermanTaggerAnalyseNews:
 
                 resultNewsStockDataContainer.set_prop_dist(prob_dist)
                 return resultNewsStockDataContainer
-                #TODO weg nach testen
-                #return {'name': resultNewsStockDataContainer['name'], 'ticker': resultNewsStockDataContainer['ticker'], 'stock_exchange': resultNewsStockDataContainer['stock_exchange'], 'prob_dist': prob_dist,
+                # TODO weg nach testen
+                # return {'name': resultNewsStockDataContainer['name'], 'ticker': resultNewsStockDataContainer['ticker'], 'stock_exchange': resultNewsStockDataContainer['stock_exchange'], 'prob_dist': prob_dist,
                 #        'orig_news': str(news_to_analyze), 'price': resultNewsStockDataContainer['price']}
 
             else:
@@ -182,25 +180,26 @@ class GermanTaggerAnalyseNews:
                 ticker_return = self.tickers[idx]
                 stock_exchange_return = self.stock_exchanges[idx]
 
-            else: #look up symbol in web instead of list
+            else:  # look up symbol in web instead of list
                 name, symbol = get_symbol_from_name_from_topforeignstocks(stock_to_check)
                 if symbol is not None and symbol != " " and name is not None and name != " ":
                     name_return = name
                     ticker_return = symbol
-                    stock_exchange_return = "" #TODO 3: return something
+                    stock_exchange_return = ""  # TODO 3: return something
                 else:
-                    return " " #todo new stockdata container
+                    return " "  # todo new stockdata container
 
             if len(price_tuple) > 0:
                 price = price_tuple[len(price_tuple) - 1][0]  # TODO 1: comment
                 price = price.replace(",", ".")  # replace german comma
                 if is_float(price):
                     # price_tuple: [0] --> number, [1]--> CD
-                   price_return = float(price)
+                    price_return = float(price)
 
-            return NewsStockDataContainer (name_return, ticker_return, stock_exchange_return, price_return, "", single_news_to_analyze)
-            #TODO price hinzu
-            #return {'name': name_return, 'ticker': ticker_return,
+            return NewsStockDataContainer(name_return, ticker_return, stock_exchange_return, price_return, "",
+                                          single_news_to_analyze, 0)
+            # TODO price hinzu
+            # return {'name': name_return, 'ticker': ticker_return,
             #        'stock_exchange':stock_exchange_return , 'price': price_return}
 
         print("ERR: no STOCK found for news: " + str(single_news_to_analyze))

@@ -64,7 +64,7 @@ class StockResults:
 class StockData:
     def __init__(self):
         self.stocks_name = ""
-        self.stock_price_data = []
+        self.stock_target_price_data = []
         self.stock_news_data = []
     # 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'], 'strategy_name': res['strategy_name'], 'params': params[0], 'data': stock52_w})
 
