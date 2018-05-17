@@ -10,3 +10,7 @@ class NewsDataStorage:
     @abstractmethod
     def create_data_storage(self, storage_to_create):
         raise Exception ("Abstractmethod")
+
+    def get_symbol_from_name(self):
+        #TODO
+        raise NotImplementedError('TODO')

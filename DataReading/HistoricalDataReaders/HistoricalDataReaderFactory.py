@@ -1,13 +1,18 @@
+from DataReading.HistoricalDataReaders.GoogleHistoricalDataReader import GoogleHistoricalDataReader
 from Strategies.StockScreener import StockScreener
 
 
 class HistoricalDataReaderFactory (StockScreener):
 
-    def _create_strategy(self, strategy_to_create):
-        pass
+    def create_data_storage(self, storage_to_create):
+        storage = ""
+
+        if storage_to_create in "GoogleHistoricalDataReader":
+            storage = GoogleHistoricalDataReader()
+        else:
+            raise NotImplementedError
+
+        return storage
 
     def read_data(self):
-        raise NotImplementedError('TODO')
-
-    def get_symbol_from_name (self):
         raise NotImplementedError('TODO')

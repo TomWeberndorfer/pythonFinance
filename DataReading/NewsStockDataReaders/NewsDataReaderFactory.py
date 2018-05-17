@@ -15,5 +15,4 @@ class NewsDataReaderFactory(NewsDataStorage):
 
         return storage
 
-    def get_symbol_from_name(self):
-        raise NotImplementedError('TODO')
+
