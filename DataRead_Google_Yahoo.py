@@ -179,14 +179,6 @@ def get_symbol_from_name_from_topforeignstocks(name_abbr):
     print("No symbol found for " + str(name) + "\n")
     return " ", " "
 
-def max3bytes(unicode_string):
-    """
-    TODO entfernen?
-    :param unicode_string:
-    :return:
-    """
-    return u''.join(uc if uc <= u'\uffff' else u'\ufffd' for uc in unicode_string)
-
 def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
     if file_stock_list is None or file_excel is None:
         raise NotImplementedError

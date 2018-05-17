@@ -228,7 +228,7 @@ class NewsReaderTests(unittest.TestCase):
         analysis = GermanTaggerAnalyseNews(res)
 
         news = "ANALYSE-FLASH: Jefferies hebt Ziel für RWE auf 250 US-Dollar - 'Underperform'"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "RWE AG ST O.N.")
         self.assertEqual(result['ticker'], "RWE")
         self.assertEqual(result['stock_exchange'], "de")
@@ -236,14 +236,14 @@ class NewsReaderTests(unittest.TestCase):
 
         #no price --> 0
         news = "19.03.2018 um 08:21, ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "RWE AG ST O.N.")
         self.assertEqual(result['ticker'], "RWE")
         self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['price'], 0)
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Rheinmetall mit 'Underperform' wieder auf"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "RHEINMETALL AG")
         self.assertEqual(result['ticker'], "RHM")
         self.assertEqual(result['stock_exchange'], "de")
@@ -251,7 +251,7 @@ class NewsReaderTests(unittest.TestCase):
 
         # price with german coma, should also be possible
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118,7 Euro"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "BEIERSDORF AG O.N.")
         self.assertEqual(result['ticker'], "BEI")
         self.assertEqual(result['stock_exchange'], "de")
@@ -259,34 +259,34 @@ class NewsReaderTests(unittest.TestCase):
 
         #price with english comma
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118.7 Euro"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "BEIERSDORF AG O.N.")
         self.assertEqual(result['ticker'], "BEI")
         self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['price'], 118.7)
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "ADIDAS AG NA O.N.")
         self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['ticker'], "ADS")
 
         news = "ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125 Dollar"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "Apple Inc.")
         self.assertEqual(result['ticker'], "AAPL")
         self.assertEqual(result['stock_exchange'], "en")
         self.assertEqual(result['price'], 125)
 
         news = "Credit Suisse nimmt RWE mit 'Outperform' wieder auf"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], "RWE AG ST O.N.")
         self.assertEqual(result['ticker'], "RWE")
         self.assertEqual(result['stock_exchange'], "de")
         self.assertEqual(result['price'], 0)
 
         news = "ANALYSE-FLASH: Hauck & Aufhäuser senkt Bet-at-home auf 'Hold' - Ziel 89 Euro"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], 'BET-AT-HOME.COM AG O.N.')
         self.assertEqual(result['ticker'], "ACX")
         self.assertEqual(result['stock_exchange'], "de")
@@ -294,14 +294,14 @@ class NewsReaderTests(unittest.TestCase):
 
         #not in stock list --> read stock tickers and names from webservice
         news = "Goldman belässt Roche auf conviction buy list"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], 'Roche Holding AG')
         self.assertEqual(result['ticker'], "RHHBY")
         self.assertEqual(result['stock_exchange'], "")
         self.assertEqual(result['price'], 0)
 
         news = "Jefferies senkt Ziel für Loreal auf 186 euro Hold"
-        result = analysis.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result['name'], 'LOrealfuture')
         self.assertEqual(result['ticker'], "LORFF9.EX")
         self.assertEqual(result['stock_exchange'], "")

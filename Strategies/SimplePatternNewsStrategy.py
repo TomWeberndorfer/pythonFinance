@@ -10,14 +10,14 @@ from datetime import datetime
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 #TODO parameter aus self statt da oben --> parameter_list.news_threshold
-news_threshold = 0.5
+#news_threshold = 0.5
 ##########################
 
 class SimplePatternNewsStrategy (Strategy):
 
     def run_strategy(self):
 
-        text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list, news_threshold)
+        text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list, self.parameter_list['news_threshold'])
 
         # ++++++++++ FOR SAMPLE NEWS
         # data = pd.read_csv(filepath + "Sample_news.txt")

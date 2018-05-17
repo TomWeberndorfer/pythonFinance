@@ -13,21 +13,25 @@ import nltk
 from textblob.classifiers import NaiveBayesClassifier
 
 from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
+from DataReading.NewsStockDataContainer import NewsStockDataContainer
+from DataReading.StockDataContainer import StockDataContainer
 from MyThread import MyThread
 from Utils.common_utils import split_list, is_float
 
 
+
 class GermanTaggerAnalyseNews:
-    def __init__(self, stock_data_container_list, threshold=0.7, german_tagger=None):
+    #Todo ctemp
+    todo parameter list als übergabe
+    def __init__(self, stock_data_container_list, threshold=0.7, german_tagger='C:\\temp\\nltk_german_classifier_data.pickle'):
         """
         Init for german tagger class
-        :param stock_data_container_list: list with data of stocks as list with class StockDataContainer
+        :param stock_data_container_list: list with data of stocks as list with class or subclass of StockDataContainer
         :param threshold: classifier threshold to recognize
         :param german_tagger: can be none, and will be loaded otherwise
         """
-        if stock_data_container_list is None:
-            #TODO check is child of StockDataContainer
-            raise NotImplementedError
+        if stock_data_container_list is None or not isinstance(stock_data_container_list[0], StockDataContainer):
+           raise NotImplementedError ("stock_data_container_list is used wrong")
 
         self.classifier = self.__train_classifier()
         self.threshold = threshold
@@ -47,9 +51,8 @@ class GermanTaggerAnalyseNews:
         #self.tickers = stock_name_list['tickers']
         #self.stock_exchanges = stock_name_list['stock_exchange']
 
-        if german_tagger is None:
-            #TODO übergabe param
-            with open('C:\\temp\\nltk_german_classifier_data.pickle', 'rb') as f:
+        if german_tagger is None or isinstance(german_tagger, str):
+            with open(german_tagger, 'rb') as f:
                 self.german_tagger = pickle.load(f)
         else:
             self.german_tagger = german_tagger
@@ -70,19 +73,23 @@ class GermanTaggerAnalyseNews:
 
         prep_news = self.__process_news(news_to_analyze)
 
-        result = self.identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(prep_news)
-        if result != " ":
+        resultNewsStockDataContainer = self._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(prep_news)
+        if resultNewsStockDataContainer != " ":
             prob_dist = self.classifier.prob_classify(prep_news)
 
             if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
                     round(prob_dist.prob("neg"), 2) > self.threshold):
-                return {'name': result['name'], 'ticker': result['ticker'], 'stock_exchange': result['stock_exchange'], 'prob_dist': prob_dist,
-                        'orig_news': str(news_to_analyze), 'price': result['price']}
+
+                resultNewsStockDataContainer.set_prop_dist(prob_dist)
+                return resultNewsStockDataContainer
+                #TODO weg nach testen
+                #return {'name': resultNewsStockDataContainer['name'], 'ticker': resultNewsStockDataContainer['ticker'], 'stock_exchange': resultNewsStockDataContainer['stock_exchange'], 'prob_dist': prob_dist,
+                #        'orig_news': str(news_to_analyze), 'price': resultNewsStockDataContainer['price']}
 
             else:
                 print(
-                    'BELOW THRESHOLD FOR ' + str(result['name']) + ', ticker: ' + str(
-                        result['ticker']) + ', prob_dist pos: ' + str(
+                    'BELOW THRESHOLD FOR ' + str(resultNewsStockDataContainer.stock_name) + ', ticker: ' + str(
+                        resultNewsStockDataContainer.stock_ticker) + ', prob_dist pos: ' + str(
                         round(prob_dist.prob("pos"), 2)) + ', prob_dist neg: ' + str(round(prob_dist.prob("neg"), 2)) +
                     ' orig_news: ' + str(news_to_analyze))
 
@@ -128,18 +135,18 @@ class GermanTaggerAnalyseNews:
         print("\nRuntime to train classifier: " + str(datetime.datetime.now() - train_start))
         return cl
 
-    def identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self, news_to_analyze):
+    def _identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self, single_news_to_analyze):
         """
         Identifies a stock name within a news and returns the name and ticker
-        :param news_to_analyze: news text itself
+        :param single_news_to_analyze: news text itself
         :return: {'name': name_to_find, 'ticker': self.tickers[idx]}
                   or " " if no name found
         """
 
-        if news_to_analyze is None:
+        if single_news_to_analyze is None:
             raise NotImplementedError
 
-        preprocessed_news = self.__process_news(news_to_analyze)
+        preprocessed_news = self.__process_news(single_news_to_analyze)
 
         # TODO: http://dsspace.wzb.eu/pyug/text_proc_feature_extraction/
         tokens = nltk.word_tokenize(preprocessed_news, language="german")
@@ -182,7 +189,7 @@ class GermanTaggerAnalyseNews:
                     ticker_return = symbol
                     stock_exchange_return = "" #TODO 3: return something
                 else:
-                    return " "
+                    return " " #todo new stockdata container
 
             if len(price_tuple) > 0:
                 price = price_tuple[len(price_tuple) - 1][0]  # TODO 1: comment
@@ -191,10 +198,12 @@ class GermanTaggerAnalyseNews:
                     # price_tuple: [0] --> number, [1]--> CD
                    price_return = float(price)
 
-            return {'name': name_return, 'ticker': ticker_return,
-                    'stock_exchange':stock_exchange_return , 'price': price_return}
+            return NewsStockDataContainer (name_return, ticker_return, stock_exchange_return, price_return, "", single_news_to_analyze)
+            #TODO price hinzu
+            #return {'name': name_return, 'ticker': ticker_return,
+            #        'stock_exchange':stock_exchange_return , 'price': price_return}
 
-        print("ERR: no STOCK found for news: " + str(news_to_analyze))
+        print("ERR: no STOCK found for news: " + str(single_news_to_analyze))
         return " "
 
     def lookup_stock_abr_in_all_names(self, stock_abr):
