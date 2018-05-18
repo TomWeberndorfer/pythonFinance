@@ -27,7 +27,7 @@ class SimplePatternNewsStrategy (Strategy):
         # all_news.append("Bryan Garnier hebt Apple auf 'Buy' - Ziel 91 Euro")
         data_storage = NewsDataReaderFactory()
         all_news = data_storage.read("traderfox_hp_news")
-        self.result_list = text_analysis.analyse_all_news(all_news)
+        self.result_list = text_analysis.analyse_all_news(all_news, self.parameter_dict['num_of_stocks_per_thread'])
 
         return self.result_list
 

@@ -14,7 +14,9 @@ filepath = 'C:\\temp\\'
 stocks_per_threads = 5
 #run_stock_screening(stocks_per_threads)
 stock_data_list = []
-parameter_dict = {'news_threshold': 0.7, 'german_tagger': 'C:\\temp\\nltk_german_classifier_data.pickle'}
+parameter_dict = {'news_threshold': 0.7, 'german_tagger': 'C:\\temp\\nltk_german_classifier_data.pickle', 'num_of_stocks_per_thread': 2}
+# params for strat_52_w_hi_hi_volume
+w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98, 'num_of_stocks_per_thread': 5}
 data_provider = "google"  # TODO
 filepath = 'C:\\temp\\'
 stock_list_name = "stockList.txt"
@@ -33,6 +35,7 @@ results = news_strategy.run_strategy()
 for single_res in results:
     # get the last available price and compare with rating
     # TODO des is zu langsam
+
     stock52_w = get_ticker_data_with_webreader(single_res.stock_ticker, single_res.stock_exchange,
                                             filepath + 'stock_dfs', 'yahoo', False, 1)
     current_val  = 0
