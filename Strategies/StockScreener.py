@@ -72,6 +72,13 @@ def run_stock_screening(num_of_stocks_per_thread):
         ###########################################################
 
         #todo des mach i vorher im main schon --> ubergaben
+        stock_data_container_file_name = "stock_data_container_file.pickle"
+        stock_data_container_file = filepath + stock_data_container_file_name
+
+        # TODO- eini verschieben irgendwo, ned manuell
+        # TODO muss die strategie schon de daten griagn? ja schon, wanns mehrere san kinan ned alle wieder lesen
+
+        res = FileUtils.read_tickers_from_file(stock_data_container_file)
         res = FileUtils.read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
         all_symbols.extend(res['tickers'])
         all_names.extend(res['names'])
@@ -85,7 +92,7 @@ def run_stock_screening(num_of_stocks_per_thread):
         i = 0
         while i < len(splits):
             stock_names_to_check = splits[i]
-            stock_screening_threads.append_thread(
+            stock_screening_threads._append_thread(
                 threading.Thread(target=function_for_threading_strat_scheduler,
                                  kwargs={'stock_names_to_check': stock_names_to_check, 'ago52_w_time': ago52_w,
                                          'end_l': end, 'params': params, 'result': result}))
@@ -94,7 +101,7 @@ def run_stock_screening(num_of_stocks_per_thread):
         FileUtils.append_to_file(
             "Start screening with " + str(len(all_symbols)) + " symbols and num_of_stocks_per_thread = " + str(
                 num_of_stocks_per_thread), filepath + "Runtime.txt")
-        stock_screening_threads.execute_threads()
+        stock_screening_threads._execute_threads()
 
         # print the results and plot it
         print_stocks_to_buy(result, num_of_stocks_per_thread, screening_start_time, datetime.now(),

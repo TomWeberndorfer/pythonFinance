@@ -54,7 +54,7 @@ class w52HighStrategy(Strategy):
             i = 0
             while i < len(splits):
                 stock_data_container = splits[i]
-                stock_screening_threads.append_thread(
+                stock_screening_threads._append_thread(
                     threading.Thread(target=self.__function_for_threading_strat_scheduler,
                                      kwargs={'stock_data_container': stock_data_container, 'ago52_w_time': ago52_w,
                                              'end_l': end, 'params': self.parameter_dict, 'result': result}))
@@ -64,7 +64,7 @@ class w52HighStrategy(Strategy):
                 "Start screening with " + str(
                     len(self.stock_data_container_list)) + " symbols and num_of_stocks_per_thread = " + str(
                     self.parameter_dict['num_of_stocks_per_thread']), filepath + "Runtime.txt")
-            stock_screening_threads.execute_threads()
+            stock_screening_threads._execute_threads()
 
             # print the results and plot it
             print_stocks_to_buy(result, self.parameter_dict['num_of_stocks_per_thread'], screening_start_time,

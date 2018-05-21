@@ -421,5 +421,5 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
             plot_stock_as_candlechart_with_volume(stock_name, stock_data)
 
         except Exception as e:
-            sys.stderr.write("EXCEPTION execute_threads: " + str(e) + "\n")
+            sys.stderr.write("EXCEPTION _execute_threads: " + str(e) + "\n")
             traceback.print_exc()

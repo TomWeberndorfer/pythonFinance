@@ -1,19 +1,13 @@
-from datetime import datetime
-
 import os
-
-from DataRead_Google_Yahoo import get_ticker_data_with_webreader
-
+from datetime import datetime
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.NewsStrategyFactory import NewsStrategyFactory
+from Utils.file_utils import FileUtils
+from Utils.news_utils import NewsUtils
 
 #TODO
-from Utils.common_utils import CommonUtils
-from Utils.file_utils import FileUtils
-
 #try:
-from Utils.news_utils import NewsUtils
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 #TODO ev in config file -->  gui load
@@ -37,12 +31,9 @@ stock_data_container_file = filepath + stock_data_container_file_name
 stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_container_file)
 #TODO abstract factory: http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
 data_storage = DataReaderFactory()
-#TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("GoogleHistoricalDataReader", stock_data_container_list, weeks_delta, filepath + 'stock_dfs')
-stock_data_reader = data_storage.prepare("GoogleHistoricalDataReader")
-
-
-# TODO 10: disabled zu langsam ohne threading
-#stock_data_reader.read_data(stock_data_container_list, weeks_delta, filepath + 'stock_dfs', source)
+#TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, filepath + 'stock_dfs')
+stock_data_reader = data_storage.prepare("HistoricalDataReader")
+stock_data_reader.read_data(stock_data_container_list, weeks_delta, filepath + 'stock_dfs', source)
 
 news_data_storage = DataReaderFactory()
 news_stock_data_reader = news_data_storage.prepare("traderfox_hp_news")

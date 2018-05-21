@@ -239,11 +239,11 @@ class GermanTaggerAnalyseNews:
             splits = split_list(all_news, num_of_news_per_thread)
 
             for curr_news in splits:
-                news_screening_threads.append_thread(
+                news_screening_threads._append_thread(
                     threading.Thread(target=self.__function_for_threading_news_analysis,
                                      kwargs={'news_to_check': curr_news, 'result': result}))
 
-            news_screening_threads.execute_threads()
+            news_screening_threads._execute_threads()
 
         return result
 

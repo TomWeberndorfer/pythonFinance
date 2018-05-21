@@ -55,7 +55,7 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
                 save_val = True
 
         except Exception as e:
-            sys.stderr.write("EXCEPTION execute_threads: " + str(e) + "\n")
+            sys.stderr.write("EXCEPTION _execute_threads: " + str(e) + "\n")
             traceback.print_exc()
 
         i -= 1

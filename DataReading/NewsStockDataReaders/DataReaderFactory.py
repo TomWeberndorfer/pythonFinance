@@ -1,5 +1,5 @@
 from DataReading.DataStorage import DataStorage
-from DataReading.HistoricalDataReaders.GoogleHistoricalDataReader import GoogleHistoricalDataReader
+from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
 from DataReading.NewsStockDataReaders.TraderfoxNewsDataReader import TraderfoxNewsDataReader
 
 # todo umstellen auf abstract factory
@@ -12,8 +12,8 @@ class DataReaderFactory(DataStorage):
         if storage_to_create in "traderfox_hp_news":
             storage = TraderfoxNewsDataReader()
 
-        elif storage_to_create in "GoogleHistoricalDataReader":
-            storage = GoogleHistoricalDataReader()
+        elif storage_to_create in "HistoricalDataReader":
+            storage = HistoricalDataReader()
         else:
             raise NotImplementedError
 

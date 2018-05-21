@@ -1,8 +1,9 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import os
 
+from DataRead_Google_Yahoo_TEMP2 import read_data_from_google_with_pandas
 from Utils.file_utils import FileUtils
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
@@ -12,6 +13,13 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 
 
 class NewsReaderTests(unittest.TestCase):
+
+    def test_read_data_from_google_with_pandas(self):
+        end = datetime.now()
+        ago52_w = (end - timedelta(weeks=52))
+        stock_data_df = read_data_from_google_with_pandas("AAPL", ago52_w, end)
+        self.assertGreater(len(stock_data_df), 0)
+
     def test_read_from_traderfox(self):
         #TODO ois mit file is kein unit test
         test_file = filepath + "\\last_date_time.csv"
