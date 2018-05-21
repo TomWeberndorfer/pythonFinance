@@ -1,8 +1,13 @@
 import unittest
 
+import os
+
 from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
 
-test_filepath = 'C:\\temp\\test_data\\'
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = ROOT_DIR + '\\DataFiles\\'
+test_filepath = filepath + 'TestData'
 
 
 

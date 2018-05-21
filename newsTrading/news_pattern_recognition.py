@@ -1,6 +1,8 @@
 import time
 from datetime import datetime
 
+import os
+
 from DataRead_Google_Yahoo import get_ticker_data_with_webreader
 from Utils.common_utils import CommonUtils
 from Utils.file_utils import FileUtils
@@ -9,7 +11,8 @@ from newsFeedReader.traderfox_hp_news import read_news_from_traderfox
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
-filepath = 'C:\\temp\\'
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = ROOT_DIR + '\\DataFiles\\'
 tickers_file_name = "stock_tickers.pickle"
 stocknames_file_name = "stock_names.pickle"
 tickers_file = filepath + tickers_file_name
@@ -17,7 +20,7 @@ stocknames_file = filepath + stocknames_file_name
 stock_exchange_file_name = "stock_exchange_file.pickle"
 stock_exchange_file = filepath + stock_exchange_file_name
 res = CommonUtils.read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
-date_file = "C:\\temp\\last_date_time.csv"
+date_file = filepath + "last_date_time.csv"
 news_threshold = 0.5
 ##########################
 

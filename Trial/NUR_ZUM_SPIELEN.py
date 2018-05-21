@@ -21,7 +21,8 @@ import urllib
 
 from Utils.file_utils import read_tickers_from_file
 
-filepath = 'C:\\temp\\'
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = ROOT_DIR + '\\DataFiles\\'
 stock_list_name = "stockList.txt"
 stocks_to_buy_name = "StocksToBuy.CSV"
 excel_file_name = '52W-HochAutomatisch_Finanzen.xlsx'

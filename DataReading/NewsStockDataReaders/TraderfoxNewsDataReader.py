@@ -1,21 +1,20 @@
-from DataReading.NewsStockDataReader import NewsStockDataReader
 import bs4 as bs
 import datetime
 import requests
 
+from DataReading.StockDataReader import StockDataReader
 from Utils.file_utils import replace_in_file, get_hash_from_file, check_file_exists_or_create
 from Utils.news_utils import generate_hash
 from datetime import datetime
 import pandas as pd
 
 
-class TraderfoxNewsDataReader(NewsStockDataReader):
-    def read_data(self):
-        date_file = "C:\\temp\\last_date_time.csv"
-        all_news = self.__read_news_from_traderfox(date_file)
+class TraderfoxNewsDataReader(StockDataReader):
+    def read_data(self, date_file):
+        all_news_text_list = self.__read_news_from_traderfox(date_file)
 
         #TODO eventuell newsdatarader geben immer news als liste zur�ck
-        return all_news
+        return all_news_text_list
 
     def __read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):
         """

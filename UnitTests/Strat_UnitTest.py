@@ -1,16 +1,20 @@
 import unittest
 
+import os
 import numpy as np
 import pandas as pd
-from datetime import datetime
 
-from Signals import signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, \
-    signal_is_a_few_higher_than_avg, signal_is_volume_raising, signal_is52_w_high, signal_is_volume_high_enough
-from Strategies.StockScreener import run_stock_screening
-from Strategies import strat_52_w_hi_hi_volume
+from Signals.Signals import signal_is_volume_high_enough, signal_is52_w_high, \
+    signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, signal_is_a_few_higher_than_avg, \
+    signal_is_volume_raising
+from Strategies.Strategy import strat_52_w_hi_hi_volume
 from Utils.common_utils import calc_avg_vol, calculate_stopbuy_and_stoploss
 
-test_filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
+
+# from directory UnitTests to --> root folder with: ..\\..\\
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = ROOT_DIR + '\\DataFiles\\'
+test_filepath = filepath + 'TestData\\'
 
 
 class MyTest(unittest.TestCase):
@@ -224,7 +228,7 @@ class MyTest(unittest.TestCase):
     #         print()
 
 
-    def test_run_stock_screening_performance(self):
+    #def test_run_stock_screening_performance(self):
         # thr_start = datetime.now()
         # stocks_per_threads = 10
         # run_stock_screening(stocks_per_threads)
@@ -235,11 +239,11 @@ class MyTest(unittest.TestCase):
         # run_stock_screening(stocks_per_threads)
         # txt2 = "\n\nRuntime mit " + str(stocks_per_threads) + " Threads: " + str(datetime.now() - thr_start)
 
-        thr_start = datetime.now()
-        stocks_per_threads = 2
-        run_stock_screening(stocks_per_threads)
-        txt3 = "\n\nRuntime mit " + str(stocks_per_threads) + " Threads: " + str(datetime.now() - thr_start)
+        #thr_start = datetime.now()
+        #stocks_per_threads = 2
+        #run_stock_screening(stocks_per_threads)
+        #txt3 = "\n\nRuntime mit " + str(stocks_per_threads) + " Threads: " + str(datetime.now() - thr_start)
 
         # print(txt1)
         # print(txt2)
-        print(txt3)
+        #print(txt3)

@@ -2,7 +2,7 @@ import bs4 as bs
 import datetime
 import requests
 
-from Utils.file_utils import replace_in_file, get_hash_from_file, append_to_file, check_file_exists_or_create
+from Utils.file_utils import replace_in_file, get_hash_from_file, check_file_exists_or_create
 from Utils.news_utils import generate_hash
 from datetime import datetime
 import pandas as pd

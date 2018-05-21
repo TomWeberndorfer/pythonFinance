@@ -20,7 +20,7 @@ from Utils.common_utils import split_list, is_float
 
 
 class GermanTaggerAnalyseNews:
-    def __init__(self, stock_data_container_list, threshold=0.7, german_tagger=None):
+    def __init__(self, stock_data_container_list, threshold, german_tagger):
         """
         Init for german tagger class
         :param stock_data_container_list: list with data of stocks as list with class or subclass of StockDataContainer
@@ -58,11 +58,8 @@ class GermanTaggerAnalyseNews:
         """
            Analyses a news text and returns a dict with containing data, if news classification is above
            the given threshold (default =0.7)
-           :param classifier: news classifier instance
-           :param threshold: threshold for classification
            :param news_to_analyze: news text to analyze
-           :return: {'name': name_to_find, 'ticker': all_symbols[idx], 'prob_dist': prob_dist,
-                     orig_news': str(news_to_analyze), 'translated_news:': str(wiki)}
+           :return: result_news_stock_data_container
            """
 
         if news_to_analyze is None:
@@ -70,24 +67,28 @@ class GermanTaggerAnalyseNews:
 
         prep_news = self.__process_news(news_to_analyze)
 
-        resultNewsStockDataContainer = self._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(
+        result_news_stock_data_container = self._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(
             prep_news)
-        if resultNewsStockDataContainer != " ":
+        if result_news_stock_data_container != " ":
             prob_dist = self.classifier.prob_classify(prep_news)
 
             if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
                     round(prob_dist.prob("neg"), 2) > self.threshold):
 
-                resultNewsStockDataContainer.set_prop_dist(prob_dist)
-                return resultNewsStockDataContainer
-                # TODO weg nach testen
-                # return {'name': resultNewsStockDataContainer['name'], 'ticker': resultNewsStockDataContainer['ticker'], 'stock_exchange': resultNewsStockDataContainer['stock_exchange'], 'prob_dist': prob_dist,
-                #        'orig_news': str(news_to_analyze), 'price': resultNewsStockDataContainer['price']}
+                result_news_stock_data_container.set_prop_dist(prob_dist)
+
+                #TODO better solution
+                for stock_data_container in self.stock_data_container_list:
+                    if stock_data_container.stock_ticker == result_news_stock_data_container.stock_ticker:
+                        result_news_stock_data_container.set_historical_stock_data(stock_data_container.historical_stock_data)
+                        break
+
+                return result_news_stock_data_container
 
             else:
                 print(
-                    'BELOW THRESHOLD FOR ' + str(resultNewsStockDataContainer.stock_name) + ', ticker: ' + str(
-                        resultNewsStockDataContainer.stock_ticker) + ', prob_dist pos: ' + str(
+                    'BELOW THRESHOLD FOR ' + str(result_news_stock_data_container.stock_name) + ', ticker: ' + str(
+                        result_news_stock_data_container.stock_ticker) + ', prob_dist pos: ' + str(
                         round(prob_dist.prob("pos"), 2)) + ', prob_dist neg: ' + str(round(prob_dist.prob("neg"), 2)) +
                     ' orig_news: ' + str(news_to_analyze))
 
@@ -176,7 +177,7 @@ class GermanTaggerAnalyseNews:
 
             if name_to_find != " " and name_to_find is not None:
                 idx = self.names.index(name_to_find)
-                name_return = name_to_find
+                name_return = self.names[idx]
                 ticker_return = self.tickers[idx]
                 stock_exchange_return = self.stock_exchanges[idx]
 

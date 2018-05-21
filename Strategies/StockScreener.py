@@ -3,12 +3,17 @@ import traceback
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 
+import os
+
 from MyThread import MyThread
 from Strategies.Strategy import strat_scheduler
 from Utils.common_utils import split_list, print_stocks_to_buy
 #from Utils.file_utils import read_tickers_from_file, append_to_file
 from Utils.file_utils import FileUtils
 
+#TODO übergeben
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = ROOT_DIR + '\\DataFiles\\'
 
 class StockScreener():
     def prepare_strategy(self, strategy_to_create, num_of_stocks_per_thread, stock_data_container_list, parameter_list):
@@ -43,7 +48,6 @@ def run_stock_screening(num_of_stocks_per_thread):
         end = datetime.now()
         ago52_w = (end - timedelta(weeks=52))
         data_provider = "google"  # TODO
-        filepath = 'C:\\temp\\'
         stock_list_name = "stockList.txt"
         stocks_to_buy_name = "StocksToBuy.CSV"
         tickers_file_name = "stock_tickers.pickle"

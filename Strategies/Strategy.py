@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 import sys
 import traceback
 
+import os
+
 from DataRead_Google_Yahoo import get_ticker_data_with_webreader
 from Signals.Signals import signal_is_volume_high_enough, signal_is52_w_high, signal_gap_up
 from Signals.Signals import signal_is_volume_raising
@@ -27,7 +29,9 @@ class Strategy(ABC):
 
 
 # TODO as parameter
-filepath = 'C:\\temp\\'
+# from directory UnitTests to --> root folder with: ..\\..\\
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = ROOT_DIR + '\\DataFiles\\'
 
 
 def strat_scheduler(stock_names_to_check, ago52_w, end, params):

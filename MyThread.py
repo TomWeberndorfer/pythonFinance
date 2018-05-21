@@ -3,8 +3,13 @@ import datetime
 import sys
 
 
+import os
+
+#TODO übergeben
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 class MyThread:
-    def __init__(self, name, filepath='C:\\temp\\'):
+    def __init__(self, name, filepath=ROOT_DIR):
         self.name = name
         self.thrToExe = []
         self.threads = []

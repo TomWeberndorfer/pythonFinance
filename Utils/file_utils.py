@@ -19,7 +19,7 @@ class FileUtils:
             :param names_file:
             :param reload_file: reload the tickers
             :param tickers_file: file to save the tickers
-           :return: tickers
+           :return: stock_data_container_list
         """
 
         # TODO:
@@ -53,7 +53,7 @@ class FileUtils:
             stock_exchange += list(repeat("en", len(names_with_symbols)))
 
             for idx in range(0, len(tickers)):
-                stock_data_container_list.append(StockDataContainer(tickers[idx], names_with_symbols[idx], stock_exchange[idx]))
+                stock_data_container_list.append(StockDataContainer(names_with_symbols[idx], tickers[idx], stock_exchange[idx]))
 
             # ########## CDAX +++++++++++++
 
@@ -79,7 +79,7 @@ class FileUtils:
 
             for idx in range(0, len(tickers)):
                 stock_data_container_list.append(
-                    StockDataContainer(tickers[idx], names_with_symbols[idx], stock_exchange[idx]))
+                    StockDataContainer(names_with_symbols[idx], tickers[idx], stock_exchange[idx]))
 
             # TODO: b) General Standard is not included of page:
             # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/
