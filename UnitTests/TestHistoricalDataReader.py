@@ -1,12 +1,8 @@
 import os
 import unittest
-from datetime import datetime
 
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.file_utils import FileUtils
-from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
-
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
@@ -28,7 +24,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         data_reader = HistoricalDataReader()
         df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
                                                          stock_data_container.stock_exchange, stock_dfs_file="",
-                                                         source='yahoo', weeks_delta=52, reload_stockdata=True)
+                                                         data_source='yahoo', weeks_delta=52, reload_stockdata=True)
 
         self.assertGreater(len(df), 200)
 

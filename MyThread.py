@@ -5,18 +5,18 @@ import sys
 import os
 from abc import abstractmethod
 
-from Utils.common_utils import split_list
+from Utils.common_utils import split_list, get_current_function_name
 
 #TODO uebergeben statt filepath can be none
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-entries_per_split = 7
+
 
 class MyThread:
-    def __init__(self, name=None):
-        self.name = name
+    def __init__(self, num_of_stocks_per_thread):
         self.thrToExe = []
         self.threads = []
         self.filepath = ROOT_DIR #TODO uebergabe
+        self.num_of_stocks_per_thread = num_of_stocks_per_thread
 
     def _execute_threads(self):
 
@@ -38,12 +38,12 @@ class MyThread:
         for t in self.threads:
             t.join()
 
-        txt = "Runtime Threads " + str(self.name) + ": " + str(
+        txt = "Runtime Threads " + str(get_current_function_name()) + ": " + str(
             datetime.datetime.now() - thr_start) + ", cnt of threads: " + str(len(self.threads))
         print(txt)
 
     def _append_list(self, list_to_execute):
-        split_sub_list = split_list(list_to_execute, entries_per_split)
+        split_sub_list = split_list(list_to_execute, self.num_of_stocks_per_thread)
         for sub_list in split_sub_list:
             self._append_thread(
                 threading.Thread(target=self._method_to_execute,
@@ -58,7 +58,7 @@ class MyThread:
             traceback.print_exc()
 
     @abstractmethod
-    def _method_to_execute(self):
+    def _method_to_execute(self, sub_list):
         raise NotImplementedError ("Abstract Method!!")
 
 

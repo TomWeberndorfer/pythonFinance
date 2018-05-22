@@ -14,6 +14,17 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 
 class NewsReaderTests(unittest.TestCase):
 
+    def test_sample(self):
+        #TODO
+        # ++++++++++ FOR SAMPLE NEWS
+        # data = pd.read_csv(filepath + "Sample_news.txt")
+        data= []
+        # all_news = data.News.tolist()
+
+        # all_news.append("ANALYSE-FLASH: NordLB senkt Apple auf 'Kaufen' - Ziel 125,5 Euro")
+        # all_news.append("Bryan Garnier hebt Apple auf 'Buy' - Ziel 91 Euro")
+
+
     def test_read_data_from_google_with_pandas(self):
         end = datetime.now()
         ago52_w = (end - timedelta(weeks=52))

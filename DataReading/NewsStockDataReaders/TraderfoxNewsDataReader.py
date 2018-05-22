@@ -12,8 +12,6 @@ import pandas as pd
 class TraderfoxNewsDataReader(StockDataReader):
     def read_data(self, date_file):
         all_news_text_list = self.__read_news_from_traderfox(date_file)
-
-        #TODO eventuell newsdatarader geben immer news als liste zur�ck
         return all_news_text_list
 
     def __read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):
@@ -23,7 +21,7 @@ class TraderfoxNewsDataReader(StockDataReader):
         :param date_file: file for last check date
         :return: news as list
         """
-        # TODO for enhanced
+        # TODO enable for enhanced info
         # url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
         url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-5/"
         resp = requests.get(url)

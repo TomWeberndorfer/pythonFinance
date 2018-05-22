@@ -38,15 +38,11 @@ class GermanTaggerAnalyseNews:
         self.tickers = []
         self.stock_exchanges = []
 
-        # TODO
+        # TODO statt einzellisten umwandeln glei gscheid
         for data_entry in self.stock_data_container_list:
             self.names.append(data_entry.stock_name)
             self.tickers.append(data_entry.stock_ticker)
             self.stock_exchanges.append(data_entry.stock_exchange)
-
-        # self.names = stock_name_list['names']
-        # self.tickers = stock_name_list['tickers']
-        # self.stock_exchanges = stock_name_list['stock_exchange']
 
         if german_tagger is None or isinstance(german_tagger, str):
             with open(german_tagger, 'rb') as f:
@@ -165,7 +161,7 @@ class GermanTaggerAnalyseNews:
 
         if noun_tag is not None and len(noun_tag) > 0:
             name_return = ""
-            price_return = 0
+            target_price_return = 0
             ticker_return = ""
             stock_exchange_return = ""
 
@@ -195,13 +191,10 @@ class GermanTaggerAnalyseNews:
                 price = price.replace(",", ".")  # replace german comma
                 if is_float(price):
                     # price_tuple: [0] --> number, [1]--> CD
-                    price_return = float(price)
+                    target_price_return = float(price)
 
-            return NewsStockDataContainer(name_return, ticker_return, stock_exchange_return, price_return, "",
+            return NewsStockDataContainer(name_return, ticker_return, stock_exchange_return, target_price_return, "",
                                           single_news_to_analyze, 0)
-            # TODO price hinzu
-            # return {'name': name_return, 'ticker': ticker_return,
-            #        'stock_exchange':stock_exchange_return , 'price': price_return}
 
         print("ERR: no STOCK found for news: " + str(single_news_to_analyze))
         return " "
@@ -209,7 +202,7 @@ class GermanTaggerAnalyseNews:
     def lookup_stock_abr_in_all_names(self, stock_abr):
         """
         Look up the stock abbreviation in the stock list with names
-        :param stock_abr: abbrevation
+        :param stock_abr: abbreviation
         :return: name or " "
         """
         result = [i for i in self.names if i.lower().startswith(stock_abr.lower())]

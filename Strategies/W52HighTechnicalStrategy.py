@@ -25,17 +25,17 @@ from Utils.common_utils import split_list, print_stocks_to_buy, calculate_stopbu
 # from Utils.file_utils import read_tickers_from_file, append_to_file
 from Utils.file_utils import FileUtils
 
-
 # TODO parameter aus self statt da oben --> parameter_dict.news_threshold
 # news_threshold = 0.5
 ##########################
 
 # from directory UnitTests to --> root folder with: ..\\..\\
-#TODO übergeben
+# TODO übergeben
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
 
-class w52HighStrategy(Strategy):
+
+class W52HighTechnicalStrategy(Strategy):
     def run_strategy(self):
         try:
             result = []
@@ -110,8 +110,9 @@ class w52HighStrategy(Strategy):
                 min_cnt = str_52w_p['min_cnt']
                 min_vol_dev_fact = str_52w_p['min_vol_dev_fact']
                 within52w_high_fact = str_52w_p['within52w_high_fact']
-                res = self.__strat_52_w_hi_hi_volume(stock_data.stock_name, stock52_w, check_days, min_cnt, min_vol_dev_fact,
-                                              within52w_high_fact)
+                res = self.__strat_52_w_hi_hi_volume(stock_data.stock_name, stock52_w, check_days, min_cnt,
+                                                     min_vol_dev_fact,
+                                                     within52w_high_fact)
                 if res['buy']:
                     stocks_to_buy.append(
                         {'buy': True, 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'],
@@ -119,7 +120,8 @@ class w52HighStrategy(Strategy):
 
             except Exception as e:
                 sys.stderr.write(
-                    "strat_scheduler: Strategy Exception: " + str(stock_data.stock_name) + " is faulty: " + str(e) + "\n")
+                    "strat_scheduler: Strategy Exception: " + str(stock_data.stock_name) + " is faulty: " + str(
+                        e) + "\n")
                 traceback.print_exc()
 
         print("Finished with [" + str(stock_data.stock_name) + "]")
@@ -165,4 +167,3 @@ class w52HighStrategy(Strategy):
 
         return {'buy': True, 'stock_name': stock_name, 'sb': result['sb'], 'sl': result['sl'],
                 'strategy_name': get_current_function_name()}
-

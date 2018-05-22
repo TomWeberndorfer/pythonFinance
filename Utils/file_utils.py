@@ -26,15 +26,7 @@ class FileUtils:
         # https://de.wikipedia.org/wiki/Liste_von_Aktienindizes
         # https://de.wikipedia.org/wiki/EURO_STOXX_50#Zusammensetzung
 
-        # TODO weg wenn stockdatacontainer getestet
-        # stock_tickers_names = {'tickers': [], 'names': [], 'stock_exchange': []}
         stock_data_container_list = []
-
-        # TODO weg wenn stockdatacontainer getestet
-        #if not os.path.exists(tickers_file) or reload_file \
-        #        or not os.path.exists(names_file) \
-        #        or not os.path.exists(stock_exchange_file):
-            # column 0 contains ticker symbols, column 1 contains security (=name)
 
         if not os.path.exists(stock_data_container_file) or reload_file:
 
@@ -43,11 +35,6 @@ class FileUtils:
             names_with_symbols = read_table_column_from_wikipedia(
                 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
                 'wikitable sortable', 1)
-
-            #TODO weg wenn stockdatacontainer getestet
-            #stock_tickers_names['tickers'] += tickers
-            #stock_tickers_names['names'] += names_with_symbols
-            #stock_tickers_names['stock_exchange'] += list(repeat("en", len(names_with_symbols)))
 
             stock_exchange = []
             stock_exchange += list(repeat("en", len(names_with_symbols)))
@@ -68,11 +55,6 @@ class FileUtils:
             names_with_symbols = read_table_column_from_webpage(
                 'http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
                 'tbody', 'class', 'row-hover', 1)
-
-            # TODO weg wenn stockdatacontainer getestet
-            #stock_tickers_names['tickers'] += tickers
-            #stock_tickers_names['names'] += names_with_symbols
-            #stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
 
             stock_exchange = []
             stock_exchange += list(repeat("de", len(names_with_symbols)))
@@ -99,32 +81,10 @@ class FileUtils:
             # stock_tickers_names['names'] += names_with_symbols
             # stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
 
-            # TODO weg wenn stockdatacontainer getestet
-            # with open(tickers_file, "wb") as f:
-            #     pickle.dump(stock_tickers_names['tickers'], f)
-            #
-            # with open(names_file, "wb") as f:
-            #     pickle.dump(stock_tickers_names['names'], f)
-            #
-            # with open(stock_exchange_file, "wb") as f:
-            #     pickle.dump(stock_tickers_names['stock_exchange'], f)
-
             with open(stock_data_container_file, "wb") as f:
                 pickle.dump(stock_data_container_list, f)
 
-
         else:
-
-            # TODO weg wenn stockdatacontainer getestet
-            # with open(tickers_file, "rb") as f:
-            #     stock_tickers_names['tickers'] += pickle.load(f)
-            #
-            # with open(names_file, "rb") as f:
-            #     stock_tickers_names['names'] += pickle.load(f)
-            #
-            # with open(stock_exchange_file, "rb") as f:
-            #     stock_tickers_names['stock_exchange'] += pickle.load(f)
-
             with open(stock_data_container_file, "rb") as f:
                 stock_data_container_list += pickle.load(f)
 

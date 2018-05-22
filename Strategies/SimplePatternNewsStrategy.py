@@ -1,27 +1,23 @@
-from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
+from MyThread import MyThread
 from Strategies.Strategy import Strategy
-import time
-from datetime import datetime
-
-# from DataRead_Google_Yahoo import get_ticker_data_with_webreader
-# from Utils.common_utils import format_news_analysis_results, send_stock_email
-# from Utils.file_utils import read_tickers_from_file, append_to_file
-# from newsFeedReader.traderfox_hp_news import read_news_from_traderfox
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
-class SimplePatternNewsStrategy(Strategy):
+class SimplePatternNewsStrategy(Strategy, MyThread):
+    def __init__(self, stock_data_container_list, parameter_dict):
+        Strategy.__init__(self, parameter_dict['num_of_stocks_per_thread'], stock_data_container_list, parameter_dict)
+        MyThread.__init__(self, parameter_dict['num_of_stocks_per_thread'])
+        self.text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list,
+                                                     self.parameter_dict['news_threshold'],
+                                                     self.parameter_dict['german_tagger'])
 
     def run_strategy(self, all_news_text_list):
-        text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list, self.parameter_dict['news_threshold'],
-                                                self.parameter_dict['german_tagger'])
-
-        # ++++++++++ FOR SAMPLE NEWS
-        # data = pd.read_csv(filepath + "Sample_news.txt")
-        # all_news = data.News.tolist()
-
-        # all_news.append("ANALYSE-FLASH: NordLB senkt Apple auf 'Kaufen' - Ziel 125,5 Euro")
-        # all_news.append("Bryan Garnier hebt Apple auf 'Buy' - Ziel 91 Euro")
-        self.result_list = text_analysis.analyse_all_news(all_news_text_list, self.parameter_dict['num_of_stocks_per_thread'])
+        self._append_list(all_news_text_list)
+        self._execute_threads()
 
         return self.result_list
+
+    def _method_to_execute(self, stock_data_container_sub_list):
+        # TODO bezeichnung stock_data_container_sub_list is falsch --> news sub list
+        for single_news_text in stock_data_container_sub_list:
+            self.result_list.append(self.text_analysis.analyse_single_news(single_news_text))

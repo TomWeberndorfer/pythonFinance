@@ -8,16 +8,17 @@ import os
 from MyThread import MyThread
 from Strategies.Strategy import strat_scheduler
 from Utils.common_utils import split_list, print_stocks_to_buy
-#from Utils.file_utils import read_tickers_from_file, append_to_file
+# from Utils.file_utils import read_tickers_from_file, append_to_file
 from Utils.file_utils import FileUtils
 
-#TODO übergeben
+# TODO übergeben
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
 
+
 class StockScreener():
-    def prepare_strategy(self, strategy_to_create, num_of_stocks_per_thread, stock_data_container_list, parameter_list):
-        strategy = self._create_strategy(strategy_to_create, num_of_stocks_per_thread, stock_data_container_list, parameter_list)
+    def prepare_strategy(self, strategy_to_create, stock_data_container_list, parameter_list):
+        strategy = self._create_strategy(strategy_to_create, stock_data_container_list, parameter_list)
         return strategy
 
     @abstractmethod
@@ -28,7 +29,7 @@ class StockScreener():
 # # TODO maybe move to better place
 # # TODO strategy scheduler soll nicht ein thread sein, jeder strategie k�nnte eigener thread mit subthreads sein
 def function_for_threading_strat_scheduler(stock_names_to_check, ago52_w_time, end_l, params, result):
-     """
+    """
      TODO: result ist r�ckgabe
     :param stock_names_to_check:
      :param ago52_w_time:
@@ -36,9 +37,9 @@ def function_for_threading_strat_scheduler(stock_names_to_check, ago52_w_time, e
      :param result:
      :return:
      """
-     print("Started with: " + str(stock_names_to_check))
+    print("Started with: " + str(stock_names_to_check))
 
-     result.extend(strat_scheduler(stock_names_to_check, ago52_w_time, end_l, params))
+    result.extend(strat_scheduler(stock_names_to_check, ago52_w_time, end_l, params))
 
 
 def run_stock_screening(num_of_stocks_per_thread):
@@ -47,7 +48,6 @@ def run_stock_screening(num_of_stocks_per_thread):
     try:
         end = datetime.now()
         ago52_w = (end - timedelta(weeks=52))
-        data_provider = "google"  # TODO
         stock_list_name = "stockList.txt"
         stocks_to_buy_name = "StocksToBuy.CSV"
         tickers_file_name = "stock_tickers.pickle"
@@ -71,7 +71,7 @@ def run_stock_screening(num_of_stocks_per_thread):
         params.append({'hammer_length_in_factor': 1.01, 'handle_bigger_than_head_factor': 2})
         ###########################################################
 
-        #todo des mach i vorher im main schon --> ubergaben
+        # todo des mach i vorher im main schon --> ubergaben
         stock_data_container_file_name = "stock_data_container_file.pickle"
         stock_data_container_file = filepath + stock_data_container_file_name
 

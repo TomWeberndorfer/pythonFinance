@@ -15,25 +15,57 @@ import requests
 
 class CommonUtils:
     @staticmethod
-    def send_stock_email(message_text, subject_text):
+    def send_stock_email(message_text, subject_text, from_addr='python.trading.framework@gmail.com',
+                         to_addr='weberndorfer.thomas@gmail.com'):
         """
-        TODO
-        :param message_text:
-        :param subject_text:
-        :return:
+        Sends a stock email with the given message
+        :param to_addr: send email to address
+        :param from_addr: send mail from address
+        :param message_text: message text for mail: content
+        :param subject_text: mail subject text
+        :return: status
         """
 
-        if message_text is not None and len(message_text) > 0:
-            return send_email(from_addr='python.trading.framework@gmail.com',
-                              to_addr_list=['weberndorfer.thomas@gmail.com'],
-                              cc_addr_list=[],
-                              subject=subject_text,
-                              message=message_text,
-                              login='python.trading.framework',
-                              password='8n6Qw8YoJe8m')
+        if message_text is None or len(message_text) <= 0:
+            raise AttributeError("arguments false")
 
-        else:
-            return []
+        return send_email(from_addr=from_addr,
+                          to_addr_list=[to_addr],
+                          cc_addr_list=[],
+                          subject=subject_text,
+                          message=message_text,
+                          login='python.trading.framework',
+                          password='8n6Qw8YoJe8m')
+
+
+def send_email(from_addr, to_addr_list, cc_addr_list, subject, message, login, password,
+               smtpserver='smtp.gmail.com:587'):
+    """
+    TODO
+    :param from_addr:
+    :param to_addr_list:
+    :param cc_addr_list:
+    :param subject:
+    :param message:
+    :param login:
+    :param password:
+    :param smtpserver:
+    :return:
+    """
+    header = 'From: %s\n' % from_addr
+    header += 'To: %s\n' % ','.join(to_addr_list)
+    header += 'Cc: %s\n' % ','.join(cc_addr_list)
+    header += 'Subject: %s\n\n' % subject
+    # message = u''.join((header, message)).encode('utf-8')
+    message = (header + message).encode('latin-1', 'ignore')
+
+    server = smtplib.SMTP(smtpserver)
+    server.starttls()
+    server.login(login, password)
+    problems = server.sendmail(from_addr, to_addr_list, message)
+    server.quit()
+    return problems
+
 
 def calc_avg_vol(stock_data):
     """
@@ -51,21 +83,21 @@ def calc_avg_vol(stock_data):
 
 def split_list(list_to_split, size):
     """
-    TODO description
-    :param list_to_split:
-    :param size:
-    :return:
+    Split into a sublist with given size each.
+    :param list_to_split: list for split input
+    :param size: size of split list
+    :return: the final list of lists
     """
     if list_to_split is None or size is None:
         raise NotImplementedError
 
-    arrs = []
+    list_of_lists = []
     while len(list_to_split) > size:
         pice = list_to_split[:size]
-        arrs.append(pice)
+        list_of_lists.append(pice)
         list_to_split = list_to_split[size:]
-    arrs.append(list_to_split)
-    return arrs
+    list_of_lists.append(list_to_split)
+    return list_of_lists
 
 
 def calculate_stopbuy_and_stoploss(stock_data):
@@ -349,34 +381,6 @@ def convert_backtrader_to_dataframe(data):
 
     return df1
 
-
-def send_email(from_addr, to_addr_list, cc_addr_list, subject, message, login, password,
-               smtpserver='smtp.gmail.com:587'):
-    """
-    TODO
-    :param from_addr:
-    :param to_addr_list:
-    :param cc_addr_list:
-    :param subject:
-    :param message:
-    :param login:
-    :param password:
-    :param smtpserver:
-    :return:
-    """
-    header = 'From: %s\n' % from_addr
-    header += 'To: %s\n' % ','.join(to_addr_list)
-    header += 'Cc: %s\n' % ','.join(cc_addr_list)
-    header += 'Subject: %s\n\n' % subject
-    # message = u''.join((header, message)).encode('utf-8')
-    message = (header + message).encode('latin-1', 'ignore')
-
-    server = smtplib.SMTP(smtpserver)
-    server.starttls()
-    server.login(login, password)
-    problems = server.sendmail(from_addr, to_addr_list, message)
-    server.quit()
-    return problems
 
 def is_date_today(date_to_check):
     """
