@@ -27,6 +27,7 @@ class MyThread:
             try:
                 if tr is not None:
                     tr.start()
+                    print("Thread started:" + str(tr))
                     self.threads.append(tr)
 
             except Exception as e:

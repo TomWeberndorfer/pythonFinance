@@ -11,7 +11,6 @@ from datetime import datetime
 # from DataRead_Google_Yahoo import get_ticker_data_with_webreader
 # from Utils.common_utils import format_news_analysis_results, send_stock_email
 # from Utils.file_utils import read_tickers_from_file, append_to_file
-# from newsFeedReader.traderfox_hp_news import read_news_from_traderfox
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 import threading
 import traceback

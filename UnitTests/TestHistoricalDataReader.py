@@ -2,6 +2,7 @@ import os
 import unittest
 
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
+from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from DataReading.StockDataContainer import StockDataContainer
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,25 +29,45 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
 
         self.assertGreater(len(df), 200)
 
-
-
     def test_read_data_without_factory(self):
         stock_data_container_list = []
 
-    #Todo mit mehreren testen, auch ohne file --> fileinhalt mit übergeben --> dann kann ichs faken
-    #--> file zugriff nicht im webreader drinnen
+        # Todo mit mehreren testen, auch ohne file --> fileinhalt mit übergeben --> dann kann ichs faken
+        # --> file zugriff nicht im webreader drinnen
         apple_stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
-        intel_container =StockDataContainer("Intel Corporation", "INTC", "")
+        intel_container = StockDataContainer("Intel Corporation", "INTC", "")
         stock_data_container_list.append(apple_stock_data_container)
         stock_data_container_list.append(intel_container)
 
         self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)
 
-        #TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
+        # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
         data_reader = HistoricalDataReader()
         data_reader.read_data(stock_data_container_list, 52, filepath + 'TestData', "yahoo", reload_stockdata=False)
 
-        #the container must have at least 200 entry days for last and current year
+        # the container must have at least 200 entry days for last and current year
         self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
         self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)
-        self.assertNotEqual(stock_data_container_list[1].historical_stock_data.High[0], stock_data_container_list[0].historical_stock_data.High[0])
+        self.assertNotEqual(stock_data_container_list[1].historical_stock_data.High[0],
+                            stock_data_container_list[0].historical_stock_data.High[0])
+
+    def test_read_data(self):
+        reader_stocks_per_threads = 1
+        weeks_delta = 52
+        data_source = "yahoo"
+        stock_data_container_list = []
+        apple_stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        intel_container = StockDataContainer("Intel Corporation", "INTC", "")
+        stock_data_container_list.append(apple_stock_data_container)
+        stock_data_container_list.append(intel_container)
+
+        self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)
+
+        data_storage = DataReaderFactory()
+        stock_data_reader = data_storage.prepare("HistoricalDataReader", reader_stocks_per_threads)
+        stock_data_reader.read_data(stock_data_container_list, weeks_delta, filepath + 'stock_dfs', data_source,
+                                    reload_stockdata=True)
+
+        self.assertEqual(len(stock_data_container_list), 2)
+        self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
+        self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)

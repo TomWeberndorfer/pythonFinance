@@ -8,7 +8,7 @@ from Utils.news_utils import NewsUtils
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 # TODO ev in config file -->  gui load
 filepath = ROOT_DIR + '\\DataFiles\\'
-stocks_per_threads = 5
+reader_stocks_per_threads = 10
 data_source = 'yahoo'
 weeks_delta = 52  # one year in the past
 
@@ -21,12 +21,12 @@ stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_containe
 # TODO abstract factory: http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
 data_storage = DataReaderFactory()
 # TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, filepath + 'stock_dfs')
-stock_data_reader = data_storage.prepare("HistoricalDataReader")
+stock_data_reader = data_storage.prepare("HistoricalDataReader", reader_stocks_per_threads)
 # TODO relead data
 stock_data_reader.read_data(stock_data_container_list, weeks_delta, filepath + 'stock_dfs', data_source, reload_stockdata=False)
 
 news_data_storage = DataReaderFactory()
-news_stock_data_reader = news_data_storage.prepare("traderfox_hp_news")
+news_stock_data_reader = news_data_storage.prepare("TraderfoxNewsDataReader", reader_stocks_per_threads)
 all_news_text_list = news_stock_data_reader.read_data(filepath + "last_date_time.csv")
 
 thr_start = datetime.now()

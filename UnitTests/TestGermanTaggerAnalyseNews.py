@@ -4,7 +4,6 @@ from datetime import datetime
 import os
 
 from Utils.file_utils import FileUtils
-from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 # from directory UnitTests to --> root folder with: ..\\..\\

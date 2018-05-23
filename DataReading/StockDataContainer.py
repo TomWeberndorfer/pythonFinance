@@ -6,6 +6,9 @@ class StockDataContainer:
         self.stock_ticker = stock_ticker
         self.historical_stock_data = []
 
+    def __str__(self):
+        return self.stock_name() + ", " + self.stock_ticker()
+
     #@property
     def stock_exchange(self):
         return self.stock_exchange
