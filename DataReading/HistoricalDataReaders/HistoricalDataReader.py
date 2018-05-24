@@ -1,8 +1,7 @@
+import _pickle as pickle
 import datetime as dt
-import os
 import sys
 
-import pandas as pd
 from pandas_datareader import data
 
 from DataRead_Google_Yahoo import optimize_name_for_yahoo
@@ -14,33 +13,41 @@ from Utils.common_utils import get_current_function_name
 class HistoricalDataReader(StockDataReader, MyThread):
 
     def read_data(self, stock_data_container_list, weeks_delta, filepath_stock_dfs, data_source, reload_stockdata):
+        # TODO filepath_stock_dfs missbraucht für stock_data_container_file --> umbennennen
 
         self.weeks_delta = weeks_delta
         self.filepath_stock_dfs = filepath_stock_dfs
         self.data_source = data_source
         self.reload_stockdata = reload_stockdata
+        self.stock_data_container_list = stock_data_container_list
 
         self._append_list(stock_data_container_list)
+        print ("Reading started...")
         self._execute_threads()
 
-    def _method_to_execute(self, stock_data_container_sub_list):
+        with open(filepath_stock_dfs, "wb") as f:
+            pickle.dump(stock_data_container_list, f)
+
+    def _method_to_execute(self, start_idx, end_idx):
         """
         Method to execute implemented for multi threading, executed for every sublist
         :param stock_data_container_sub_list: sub list of the whole stock data container (already split)
         :return: nothing, sublist in changed
         """
 
-        for stock_data_container in stock_data_container_sub_list:
-            stock52_w = self._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
-                                                             stock_data_container.stock_exchange,
-                                                             self.filepath_stock_dfs, self.data_source,
-                                                             self.weeks_delta,
-                                                             self.reload_stockdata)
+        for i in range(start_idx, end_idx + 1): # + 1 because range exclude the upper index
+            if self.stock_data_container_list[i] not in self.stock_data_container_list \
+                    or len(self.stock_data_container_list[i].historical_stock_data) <= 0 \
+                    or self.reload_stockdata:
+                stock52_w = self._get_ticker_data_with_webreader(self.stock_data_container_list[i].stock_ticker,
+                                                                 self.stock_data_container_list[i].stock_exchange,
+                                                                 self.data_source,
+                                                                 self.weeks_delta)
 
-            stock_data_container.set_historical_stock_data(stock52_w)
+                self.stock_data_container_list[i].set_historical_stock_data(stock52_w)
 
-    def _get_ticker_data_with_webreader(self, ticker, stock_exchange, stock_dfs_file, data_source,
-                                        weeks_delta, reload_stockdata):
+    def _get_ticker_data_with_webreader(self, ticker, stock_exchange, data_source,
+                                        weeks_delta):
         """
         Method to read the data from the web or from temp file.
         :param stock_exchange: current stock exchange place (de, en..)
@@ -59,25 +66,27 @@ class HistoricalDataReader(StockDataReader, MyThread):
         if stock_exchange != "" and stock_exchange is not None and stock_exchange != "en":
             ticker_exchange += "." + stock_exchange
 
-        try:
-            if not os.path.exists(stock_dfs_file + '/{}.csv'.format(ticker_exchange)) or reload_stockdata:
+        # TODO autmatisieren von pandas=??
+        for i in range(0, 4):
+            try:
                 end = dt.datetime.now()
                 start = (end - dt.timedelta(weeks=weeks_delta))
 
                 df = data.DataReader(ticker_exchange, data_source, start, end)
                 if len(df) > 0:
-                    df.to_csv(stock_dfs_file + '/{}.csv'.format(ticker_exchange))
-                else:
-                    print('FAILED: Reading {}'.format(ticker_exchange))
-                    raise Exception
-            else:
-                df = pd.read_csv(stock_dfs_file + '/{}.csv'.format(ticker_exchange))
+                    break
 
-        except Exception as e:
-            # exception but the df is filled --> ok
-            if len(df) <= 0:
-                sys.stderr.write(
-                    "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + ", " + str(
-                        e) + "\n")
+            except Exception as e:
+                # exception but the df is filled --> ok
+                if len(df) > 0:
+                    break
+
+            from time import sleep
+            sleep(0.1)  # Time in seconds.
+
+        if len(df) <= 0:
+            sys.stderr.write(
+                "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + ", num od retries: " + i)
+            print('FAILED: Reading {}'.format(ticker_exchange))
 
         return df

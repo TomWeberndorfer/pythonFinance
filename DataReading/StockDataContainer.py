@@ -9,6 +9,9 @@ class StockDataContainer:
     def __str__(self):
         return self.stock_name() + ", " + self.stock_ticker()
 
+    def __eq__(self, other):
+        return other.stock_name == self.stock_name
+
     #@property
     def stock_exchange(self):
         return self.stock_exchange

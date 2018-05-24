@@ -65,7 +65,7 @@ class GermanTaggerAnalyseNews:
 
         result_news_stock_data_container = self._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(
             prep_news)
-        if result_news_stock_data_container != " ":
+        if result_news_stock_data_container is not None and result_news_stock_data_container.stock_name != "":
             prob_dist = self.classifier.prob_classify(prep_news)
 
             if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
@@ -73,10 +73,11 @@ class GermanTaggerAnalyseNews:
 
                 result_news_stock_data_container.set_prop_dist(prob_dist)
 
-                #TODO better solution
+                # TODO better solution
                 for stock_data_container in self.stock_data_container_list:
                     if stock_data_container.stock_ticker == result_news_stock_data_container.stock_ticker:
-                        result_news_stock_data_container.set_historical_stock_data(stock_data_container.historical_stock_data)
+                        result_news_stock_data_container.set_historical_stock_data(
+                            stock_data_container.historical_stock_data)
                         break
 
                 return result_news_stock_data_container
@@ -88,7 +89,7 @@ class GermanTaggerAnalyseNews:
                         round(prob_dist.prob("pos"), 2)) + ', prob_dist neg: ' + str(round(prob_dist.prob("neg"), 2)) +
                     ' orig_news: ' + str(news_to_analyze))
 
-        return " "
+        return result_news_stock_data_container
 
     def __train_classifier(self):
         """
@@ -184,7 +185,7 @@ class GermanTaggerAnalyseNews:
                     ticker_return = symbol
                     stock_exchange_return = ""  # TODO 3: return something
                 else:
-                    return " "  # todo new stockdata container
+                    return NewsStockDataContainer("", "", "", 0, 0, "", 0)
 
             if len(price_tuple) > 0:
                 price = price_tuple[len(price_tuple) - 1][0]  # TODO 1: comment
@@ -197,7 +198,7 @@ class GermanTaggerAnalyseNews:
                                           single_news_to_analyze, 0)
 
         print("ERR: no STOCK found for news: " + str(single_news_to_analyze))
-        return " "
+        return NewsStockDataContainer("", "", "", 0, 0, "", 0)
 
     def lookup_stock_abr_in_all_names(self, stock_abr):
         """
@@ -220,7 +221,7 @@ class GermanTaggerAnalyseNews:
         for news in news_to_check:
             res_analysis = self.analyse_single_news(news)
 
-            if res_analysis != " ":
+            if res_analysis is not None and res_analysis.stock_name != "":
                 result.append(res_analysis)
 
     def analyse_all_news(self, all_news, num_of_news_per_thread=2):

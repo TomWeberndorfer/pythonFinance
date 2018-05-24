@@ -27,7 +27,6 @@ class MyThread:
             try:
                 if tr is not None:
                     tr.start()
-                    print("Thread started:" + str(tr))
                     self.threads.append(tr)
 
             except Exception as e:
@@ -44,11 +43,34 @@ class MyThread:
         print(txt)
 
     def _append_list(self, list_to_execute):
-        split_sub_list = split_list(list_to_execute, self.num_of_stocks_per_thread)
-        for sub_list in split_sub_list:
+        #TODO weg split_sub_list = split_list(list_to_execute, self.num_of_stocks_per_thread)
+        #for sub_list in split_sub_list:
+        #mod_calc = len(list_to_execute) % self.num_of_stocks_per_thread
+        #if mod_calc != 0:
+        #    full_parts = len(list_to_execute) / self.num_of_stocks_per_thread
+        #    for i in range (1, full_parts):
+        #        start_idx = i * self.num_of_stocks_per_thread
+
+        start_idx = 0
+        end_idx = 0
+        first_run = True # decrement 1 first, to run until len - 1
+        cont = True # to run again
+        while cont:
+            if end_idx + self.num_of_stocks_per_thread <= len(list_to_execute)-1:
+                if first_run:
+                    end_idx -= 1
+                    first_run = False
+
+                end_idx += self.num_of_stocks_per_thread
+            else:
+                end_idx = len(list_to_execute) -1
+                cont = False
+
             self._append_thread(
                 threading.Thread(target=self._method_to_execute,
-                                 kwargs={'stock_data_container_sub_list': sub_list}))
+                                 kwargs={'start_idx': start_idx, 'end_idx': end_idx}))
+
+            start_idx += self.num_of_stocks_per_thread
 
     def _append_thread(self, thread_to_append):
         try:

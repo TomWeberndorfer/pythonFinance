@@ -37,13 +37,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
 
         results = news_strategy.run_strategy(all_news_text_list)
 
-        # TODO geshceider machen
-        if results[0].stock_name.startswith(apple_stock_data_container.stock_name):
-            apple_idx = 0
-            rwe_idx = 1
-        else:
-            apple_idx = 1
-            rwe_idx = 0
+        self.assertEqual(results[0] in stock_data_container_list, True)
+        apple_idx = results.index(apple_stock_data_container)
+        rwe_idx = results.index(rwe_stock_data_container)
 
         t1 = round(results[apple_idx].prob_dist.prob("neg"), 2)
         self.assertEqual(results[apple_idx].stock_name, "Apple Inc.")

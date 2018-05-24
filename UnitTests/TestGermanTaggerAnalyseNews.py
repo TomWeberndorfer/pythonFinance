@@ -3,6 +3,7 @@ from datetime import datetime
 
 import os
 
+from DataReading.StockDataContainer import StockDataContainer
 from Utils.file_utils import FileUtils
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
@@ -73,8 +74,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         result = analysis.analyse_single_news(news)
         t1 = round(result.prob_dist.prob("pos"), 2)
         self.assertGreater(t1, 0.7)
-        result = analysis.lookup_stock_abr_in_all_names("Rheinmetall")
-        self.assertEqual(result, "RHEINMETALL AG")
+        self.assertEqual(result.stock_name, "RHEINMETALL AG")
 
         news = "DZ Bank empfiehlt Sixt-Aktie nach starken Geschäftszahlen zum Kauf"
         result = analysis.analyse_single_news(news)
@@ -84,11 +84,11 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         # should fail and return " "
         news = "01.03.2018, Das sagen Ökonomen zur bevorstehenden Wahl in Italien"
         result = analysis.analyse_single_news(news)
-        self.assertEqual(" ", result)
+        self.assertEqual("", result.stock_name)
 
         news = "17.03.2018 um 09:05, PROSIEBENSAT.1 IM FOKUS: Dax-Absteiger stellt Weichen für bessere Zeiten"
         result = analysis.analyse_single_news(news)
-        self.assertEqual(" ", result)
+        self.assertEqual("", result.stock_name)
 
         txt = "\n\nRuntime : " + str(datetime.now() - thr_start)
         print(txt)
@@ -181,7 +181,8 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         news = "Jefferies senkt Ziel für Loreal auf 186 euro Hold"
         result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result.stock_name, 'LOrealfuture')
-        self.assertEqual(result.stock_ticker, "LORFK8.EX")
+        #TODO des ändeert se imma: - LORFM8.EX oder LORFK8.EX
+        #  self.assertEqual(result.stock_ticker, "LORFK8.EX")
         self.assertEqual(result.stock_exchange, "")
         self.assertEqual(result.stock_target_price, 186)
 
@@ -204,11 +205,8 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         result = text_analysis.analyse_all_news(all_news, num_of_news_per_thread)
 
         # TODO umbauen auf: https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
-        # freenet_idx = next((index for (index, d) in enumerate(result) if d.orignal_news == news_freenet), None)
-        # elringklinger_idx = next(
-        #    (index for (index, d) in enumerate(result) if d.orignal_news == news_elringklinger), None)
-        freenet_idx = 1
-        elringklinger_idx = 0
+        freenet_idx = result.index(StockDataContainer("FREENET AG NA", "", ""))
+        elringklinger_idx = result.index(StockDataContainer("ELRINGKLINGER AG NA O.N.", "", ""))
 
         t1 = round(result[freenet_idx].prob_dist.prob("neg"), 2)
         self.assertGreater(t1, 0.7)
