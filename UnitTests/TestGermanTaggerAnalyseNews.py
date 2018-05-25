@@ -15,12 +15,14 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
     def test_analyse_single_news(self):
-        stock_data_container_file_name = "stock_data_container_file.pickle"
-        stock_data_container_file = filepath + stock_data_container_file_name
-
-        # TODO des is ned guad waun ma an fixen container hat
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
-        ##########################
+        stock_data_container_list = [StockDataContainer("RWE AG ST O.N.", "RWE", "de"),
+                                     StockDataContainer("RHEINMETALL AG", "RHM", "de"),
+                                     StockDataContainer("BEIERSDORF AG O.N.", "BEI", "de"),
+                                     StockDataContainer("ADIDAS AG NA O.N.", "ADS", "de"),
+                                     StockDataContainer("Apple Inc.", "AAPL", "en"),
+                                     StockDataContainer("BET-AT-HOME.COM AG O.N.", "ACX", "de"),
+                                     StockDataContainer("Roche Holding AG", "RHHBY", ""),
+                                     StockDataContainer("LOrealfuture", "LORFK8.EX", "")]
 
         thr_start = datetime.now()
         analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
@@ -94,14 +96,16 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         print(txt)
 
     def test_identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self):
-        stock_data_container_file_name = "stock_data_container_file.pickle"
-        stock_data_container_file = filepath + stock_data_container_file_name
+        stock_data_container_list = [StockDataContainer("RWE AG ST O.N.", "RWE", "de"),
+                                     StockDataContainer("RHEINMETALL AG", "RHM", "de"),
+                                     StockDataContainer("BEIERSDORF AG O.N.", "BEI", "de"),
+                                     StockDataContainer("ADIDAS AG NA O.N.", "ADS", "de"),
+                                     StockDataContainer("Apple Inc.", "AAPL", "en"),
+                                     StockDataContainer("BET-AT-HOME.COM AG O.N.", "ACX", "de"),
+                                     StockDataContainer("Roche Holding AG", "RHHBY", ""),
+                                     StockDataContainer("LOrealfuture", "LORFK8.EX", "")]
 
-        # TODO des is ned guad waun ma an fixen container hat
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
-        ##########################
 
-        thr_start = datetime.now()
         analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
                                            filepath + 'nltk_german_classifier_data.pickle')
 
@@ -181,18 +185,14 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         news = "Jefferies senkt Ziel für Loreal auf 186 euro Hold"
         result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result.stock_name, 'LOrealfuture')
-        #TODO des ändeert se imma: - LORFM8.EX oder LORFK8.EX
+        # TODO des ändeert se imma: - LORFM8.EX oder LORFK8.EX
         #  self.assertEqual(result.stock_ticker, "LORFK8.EX")
         self.assertEqual(result.stock_exchange, "")
         self.assertEqual(result.stock_target_price, 186)
 
     def test_analyse_all_news(self):
-        stock_data_container_file_name = "stock_data_container_file.pickle"
-        stock_data_container_file = filepath + stock_data_container_file_name
-
-        # TODO des is ned guad waun ma an fixen container hat
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
-        ##########################
+        stock_data_container_list = [StockDataContainer("FREENET AG NA", "", ""),
+                                     StockDataContainer("ELRINGKLINGER AG NA O.N.", "", "")]
 
         num_of_news_per_thread = 1
         all_news = []
@@ -202,7 +202,9 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         all_news.append(news_freenet)
         text_analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
                                                 filepath + 'nltk_german_classifier_data.pickle')
-        result = text_analysis.analyse_all_news(all_news, num_of_news_per_thread)
+        result = text_analysis.analyse_all_news(all_news)
+
+        self.assertEquals(len(result), 2)
 
         # TODO umbauen auf: https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
         freenet_idx = result.index(StockDataContainer("FREENET AG NA", "", ""))

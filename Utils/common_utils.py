@@ -11,6 +11,7 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.plotly as py
 import requests
+from multiprocessing.dummy import Pool as ThreadPool
 
 
 class CommonUtils:
@@ -295,28 +296,8 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     return
 
 
-def read_table_column_from_wikipedia(websource_address, table_class, ticker_name_col, name_col):
-    """
-    read the sp500 tickers and saves it to given file
-    :param ticker_name_col: 0 for sp500, 2 for cdax
-    :param table_class: like 'wikitable sortable' or 'wikitable sortable zebra'
-    :param websource_address: like wikepedia: 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-    :return: nothing
-    """
-    resp = requests.get(websource_address)
-    soup = bs.BeautifulSoup(resp.text, 'lxml')
-    table = soup.find('table', {'class': table_class})
-    tickers = []
-    names = []
-    for row in table.findAll('tr')[1:]:
-        ticker = row.findAll('td')[ticker_name_col].text
-        name = row.findAll('td')[name_col].text
-        ticker = ticker.replace("\n", "")
-        name = name.replace("\n", "")
-        tickers.append(ticker)
-        names.append(name)
-
-    return tickers, names
+def read_table_columns_from_webpage_list(list):
+    return read_table_columns_from_webpage(list[0], list[1], list[2], list[3], list[4], list[5])
 
 
 def read_table_columns_from_webpage(websource_address, find_name, class_name, table_class, first_column_to_read,
@@ -457,3 +438,19 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
         except Exception as e:
             sys.stderr.write("EXCEPTION _execute_threads: " + str(e) + "\n")
             traceback.print_exc()
+
+
+def create_threading_pool(list_len, max_number_threads=400):
+    """
+    Returns a thread pool with maximum number of threads or the number of list len
+    :param list_len: elements in the list --> number of threads (max limited)
+    :param max_number_threads: maximum number of possible threads
+    :return: thread pool object
+    """
+
+    if list_len > max_number_threads:
+        pool = ThreadPool(max_number_threads)
+    else:
+        pool = ThreadPool(list_len)
+
+    return pool

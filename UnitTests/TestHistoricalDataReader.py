@@ -76,8 +76,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)
 
     def test_read_data_all(self):
-        # TODO 10: threading
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file, reload_file=True)
+        stock_data_container_list = read_tickers_from_file(stock_data_container_file, reload_file=False)
 
         # TODO abstract factory: http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
         # TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, filepath + 'stock_dfs')
@@ -94,3 +93,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
             # self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
 
         print ("Failed reads: " + str(failed_reads))
+
+        self.assertEqual(len(stock_data_container_list), 818)
+        self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
+        self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)

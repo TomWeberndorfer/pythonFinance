@@ -1,16 +1,15 @@
 import _pickle as pickle
 import datetime as dt
 import sys
-
+from multiprocessing.dummy import Pool as ThreadPool
 from pandas_datareader import data
 
 from DataRead_Google_Yahoo import optimize_name_for_yahoo
 from DataReading.StockDataReader import StockDataReader
-from MyThread import MyThread
-from Utils.common_utils import get_current_function_name
+from Utils.common_utils import get_current_function_name, create_threading_pool
 
 
-class HistoricalDataReader(StockDataReader, MyThread):
+class HistoricalDataReader(StockDataReader):
 
     def read_data(self, stock_data_container_list, weeks_delta, filepath_stock_dfs, data_source, reload_stockdata):
         # TODO filepath_stock_dfs missbraucht für stock_data_container_file --> umbennennen
@@ -21,30 +20,28 @@ class HistoricalDataReader(StockDataReader, MyThread):
         self.reload_stockdata = reload_stockdata
         self.stock_data_container_list = stock_data_container_list
 
-        self._append_list(stock_data_container_list)
-        print ("Reading started...")
-        self._execute_threads()
+        pool = create_threading_pool(len(self.stock_data_container_list))
+        pool.map(self._method_to_execute, self.stock_data_container_list)
 
         with open(filepath_stock_dfs, "wb") as f:
             pickle.dump(stock_data_container_list, f)
 
-    def _method_to_execute(self, start_idx, end_idx):
+    def _method_to_execute(self, stock_data_container):
         """
         Method to execute implemented for multi threading, executed for every sublist
         :param stock_data_container_sub_list: sub list of the whole stock data container (already split)
         :return: nothing, sublist in changed
         """
 
-        for i in range(start_idx, end_idx + 1): # + 1 because range exclude the upper index
-            if self.stock_data_container_list[i] not in self.stock_data_container_list \
-                    or len(self.stock_data_container_list[i].historical_stock_data) <= 0 \
-                    or self.reload_stockdata:
-                stock52_w = self._get_ticker_data_with_webreader(self.stock_data_container_list[i].stock_ticker,
-                                                                 self.stock_data_container_list[i].stock_exchange,
-                                                                 self.data_source,
-                                                                 self.weeks_delta)
+        if stock_data_container not in self.stock_data_container_list \
+                or len(stock_data_container.historical_stock_data) <= 0 \
+                or self.reload_stockdata:
+            stock52_w = self._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
+                                                             stock_data_container.stock_exchange,
+                                                             self.data_source,
+                                                             self.weeks_delta)
 
-                self.stock_data_container_list[i].set_historical_stock_data(stock52_w)
+            stock_data_container.set_historical_stock_data(stock52_w)
 
     def _get_ticker_data_with_webreader(self, ticker, stock_exchange, data_source,
                                         weeks_delta):

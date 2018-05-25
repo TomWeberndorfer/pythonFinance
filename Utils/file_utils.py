@@ -5,8 +5,8 @@ import pandas as pd
 import os.path
 
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import read_table_column_from_wikipedia, read_table_columns_from_webpage
-from itertools import repeat
+from Utils.common_utils import read_table_columns_from_webpage, read_table_columns_from_webpage_list
+from multiprocessing.dummy import Pool as ThreadPool
 
 
 class FileUtils:
@@ -50,30 +50,24 @@ def read_tickers_from_file(stock_data_container_file, reload_file=False):
 
     if not os.path.exists(stock_data_container_file) or reload_file:
 
-        import datetime
-        thr_start = datetime.datetime.now()
+        pool = ThreadPool(4)
+        list_in_list1 = ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
+                         'wikitable sortable', 0, 1]
+        lil2 = ['http://topforeignstocks.com/stock-lists/the'
+                '-list-of-listed-companies-in-germany/',
+                'tbody', 'class', 'row-hover', 1, 2]
 
-        tickers, names_with_symbols = read_table_column_from_wikipedia(
-            'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
-            'wikitable sortable', 0, 1)
+        list_with_stock_pages_to_read = [list_in_list1, lil2]
+        res1, res2 = pool.map(read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
 
-        # TODO ned fix en
-        for idx in range(0, len(tickers)):
+        # TODO ned fix de / en
+        for idx in range(0, len(res1[0])):
             stock_data_container_list.append(
-                StockDataContainer(names_with_symbols[idx], tickers[idx], "en"))
+                StockDataContainer(res1[1][idx], res1[0][idx], "en"))
 
-        txt = "Runtime 1 " + ": " + str(datetime.datetime.now() - thr_start)
-        print(txt)
-
-        # ########## CDAX +++++++++++++
-        names_with_symbols, tickers = read_table_columns_from_webpage('http://topforeignstocks.com/stock-lists/the'
-                                                                      '-list-of-listed-companies-in-germany/',
-                                                                      'tbody', 'class', 'row-hover', 1, 2)
-
-        # TODO ned fix de
-        for idx in range(0, len(tickers)):
+        for idx in range(0, len(res2[0])):
             stock_data_container_list.append(
-                StockDataContainer(names_with_symbols[idx], tickers[idx], "de"))
+                StockDataContainer(res2[1][idx], res2[0][idx], "de"))
 
         # TODO: b) General Standard is not included of page:
         # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/

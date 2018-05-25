@@ -1,16 +1,14 @@
+import os
 import unittest
 
-import os
 import numpy as np
 import pandas as pd
 
 from Signals.Signals import signal_is_volume_high_enough, signal_is52_w_high, \
     signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, signal_is_a_few_higher_than_avg, \
     signal_is_volume_raising
-from Strategies.StockScreener import run_stock_screening
 from Strategies.Strategy import strat_52_w_hi_hi_volume
 from Utils.common_utils import calc_avg_vol, calculate_stopbuy_and_stoploss
-
 
 # from directory UnitTests to --> root folder with: ..\\..\\
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

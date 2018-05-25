@@ -7,7 +7,7 @@ import pandas as pd
 # Define the instruments to download. We would like to see Apple, Microsoft and the S&P500 index.
 #tickers = ['AAPL']
 
-# Define which online source one should use
+# Define which online data_source one should use
 #data_source = 'google'
 
 # We would like all available data from 01/01/2000 until 12/31/2016.

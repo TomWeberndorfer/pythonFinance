@@ -1,24 +1,11 @@
-import sys
-
 import os
-
-from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
-from Signals.Signals import signal_is_volume_high_enough, signal_is_volume_raising, signal_is52_w_high
-from Strategies.Strategy import Strategy
-import time
-from datetime import datetime
-
-# from DataRead_Google_Yahoo import get_ticker_data_with_webreader
-# from Utils.common_utils import format_news_analysis_results, send_stock_email
-# from Utils.file_utils import read_tickers_from_file, append_to_file
-from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
+import sys
 import threading
 import traceback
-from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 
-from MyThread import MyThread
-from Strategies.Strategy import strat_scheduler
+from Signals.Signals import signal_is_volume_high_enough, signal_is_volume_raising, signal_is52_w_high
+from Strategies.Strategy import Strategy
 from Utils.common_utils import split_list, print_stocks_to_buy, calculate_stopbuy_and_stoploss, \
     get_current_function_name
 # from Utils.file_utils import read_tickers_from_file, append_to_file

@@ -4,12 +4,13 @@ from datetime import datetime, timedelta
 import os
 
 from DataRead_Google_Yahoo_TEMP2 import read_data_from_google_with_pandas
+from DataReading.StockDataContainer import StockDataContainer
 from Utils.file_utils import FileUtils, read_tickers_from_file
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = ROOT_DIR + '\\DataFiles\\'
+filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
 
 
 class NewsReaderTests(unittest.TestCase):
@@ -61,14 +62,15 @@ class NewsReaderTests(unittest.TestCase):
         self.assertGreater(len(news), 0)
 
     def test_lookup_stock_abr_in_all_names(self):
-        stock_data_container_file_name = "stock_data_container_file.pickle"
-        stock_data_container_file = filepath + stock_data_container_file_name
+        stock_data_container_list = [StockDataContainer("RWE AG ST O.N.", "RWE", "de"),
+                                     StockDataContainer("RHEINMETALL AG", "RHM", "de"),
+                                     StockDataContainer("BEIERSDORF AG O.N.", "BEI", "de"),
+                                     StockDataContainer("ADIDAS AG NA O.N.", "ADS", "de"),
+                                     StockDataContainer("Apple Inc.", "AAPL", "en"),
+                                     StockDataContainer("BET-AT-HOME.COM AG O.N.", "ACX", "de"),
+                                     StockDataContainer("Roche Holding AG", "RHHBY", ""),
+                                     StockDataContainer("LOrealfuture", "LORFK8.EX", "")]
 
-        # TODO des is ned guad waun ma an fixen container hat
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
-        ##########################
-
-        thr_start = datetime.now()
         analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
                                            filepath + 'nltk_german_classifier_data.pickle')
 
@@ -89,7 +91,7 @@ class NewsReaderTests(unittest.TestCase):
         last_date_time_str = "07.03.2018 um 03:11"
         date_time = "07.03.2018 um 23:11"
 
-        test_file = filepath + "\\TestData\\last_date_time.csv"
+        test_file = filepath + "\\last_date_time.csv"
         with open(test_file, "w") as myfile:
             myfile.write("last_check_date" + "\n")
             myfile.write(last_date_time_str + "\n")
@@ -106,7 +108,7 @@ class NewsReaderTests(unittest.TestCase):
         stock_data_container_file_name = "stock_data_container_file.pickle"
         stock_data_container_file = filepath + stock_data_container_file_name
 
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
+        stock_data_container_list = read_tickers_from_file(stock_data_container_file, True)
         self.assertEqual(len(stock_data_container_list), 818)
 
         stock_data_container_list = read_tickers_from_file(stock_data_container_file, False)

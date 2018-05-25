@@ -2,7 +2,7 @@
 
 # import textblob
 # https://banking.einnews.com/sections
-
+from multiprocessing.dummy import Pool as ThreadPool
 import _pickle as pickle
 import datetime
 # corpus:
@@ -15,8 +15,7 @@ from textblob.classifiers import NaiveBayesClassifier
 from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
 from DataReading.NewsStockDataContainer import NewsStockDataContainer
 from DataReading.StockDataContainer import StockDataContainer
-from MyThread import MyThread
-from Utils.common_utils import split_list, is_float
+from Utils.common_utils import split_list, is_float, create_threading_pool
 
 
 class GermanTaggerAnalyseNews:
@@ -215,31 +214,21 @@ class GermanTaggerAnalyseNews:
 
         return " "
 
-    def __function_for_threading_news_analysis(self, news_to_check, result):
-        print("Started with: " + str(news_to_check))
+    def _method_to_execute(self, news_text_to_check):
+        print("Started with: " + str(news_text_to_check))
+        result_news_stock_data_container = self.analyse_single_news(news_text_to_check)
 
-        for news in news_to_check:
-            res_analysis = self.analyse_single_news(news)
+        if result_news_stock_data_container is not None and result_news_stock_data_container.stock_name != "":
+            return  result_news_stock_data_container
 
-            if res_analysis is not None and res_analysis.stock_name != "":
-                result.append(res_analysis)
-
-    def analyse_all_news(self, all_news, num_of_news_per_thread=2):
-
-        result = []
+    def analyse_all_news(self, all_news):
+        result_news_stock_data_container_list = []
 
         if all_news != "" and len(all_news) >= 1:
-            news_screening_threads = MyThread("news_screening_threads")
-            splits = split_list(all_news, num_of_news_per_thread)
+            pool = create_threading_pool(len(all_news))
+            result_news_stock_data_container_list = pool.map(self._method_to_execute, all_news)
 
-            for curr_news in splits:
-                news_screening_threads._append_thread(
-                    threading.Thread(target=self.__function_for_threading_news_analysis,
-                                     kwargs={'news_to_check': curr_news, 'result': result}))
-
-            news_screening_threads._execute_threads()
-
-        return result
+        return result_news_stock_data_container_list
 
     def expand_compound_token(t, split_chars="-"):
         parts = []

@@ -4,9 +4,6 @@
 # In conjunction with Tcl version 8.6
 #    Jan 05, 2018 10:23:07 PM
 
-
-from Strategies.StockScreener import run_stock_screening
-
 try:
     from Tkinter import *
 except ImportError:
@@ -22,7 +19,7 @@ except ImportError:
 def display(p1):
     # Match Button
     print('main_v1_support.display')
-    run_stock_screening(10) #TODO
+    # run_stock_screening(10) #TODO 8
     sys.stdout.flush()
 
 def help():

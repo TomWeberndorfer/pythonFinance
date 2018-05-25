@@ -179,82 +179,6 @@ def get_symbol_from_name_from_topforeignstocks(name_abbr):
     print("No symbol found for " + str(name) + "\n")
     return " ", " "
 
-def get52_w__h__symbols__from_excel(file_stock_list, file_excel):
-    if file_stock_list is None or file_excel is None:
-        raise NotImplementedError
-
-    result = []
-
-    f = open(file_stock_list, 'w')
-    f.write("Name,   Symbol \n")  # python will convert \n to os.linesep
-
-    sh = xlrd.open_workbook(file_excel).sheet_by_index(0)
-
-    from MyThread import MyThread
-    get_symbol_threads = MyThread("get_symbol_threads")
-
-    for rownum in range(sh.nrows):
-        try:
-            if rownum != 0:
-                name = str(sh.cell(rownum, 0).value)
-                date_from_file = str(sh.cell(rownum, 1).value)
-
-                # values from today contain a time (=Uhr) and not a date
-                # TODO google data is from yesterday
-                if not "Uhr" in date_from_file:  # but google data is from yesterday
-                    get_symbol_threads._append_thread(
-                        threading.Thread(target=symbol_thread, kwargs={'name': name, 'result:': result}))
-
-        except Exception as e:
-            sys.stderr.write("Method exception in: " + get_current_function_name()
-                             + ": stock name: " + str(name) + " is faulty: " + str(e) + "\n")
-            traceback.print_exc()
-
-    get_symbol_threads._execute_threads()
-
-    cnt = 0
-    while (cnt < len(result)):
-        for symbol in result:
-            f.write(result[cnt] + ",  " + symbol + "\n")  # python will convert \n to os.linesep
-            cnt += 1
-
-    f.close()  # you can omit in most cases as the destructor will call it
-    return result
-
-
-def __get_symbols_from_names(symbol_names, stock_exchanges, num_of_stocks_per_thread=20):
-    """
-    TODO
-    :param stock_exchanges:
-    :param num_of_stocks_per_thread:
-    :param symbol_names:
-    :return:
-    """
-
-    result = []
-
-    if symbol_names is None:
-        raise NotImplementedError
-
-    from MyThread import MyThread
-    get_symbol_threads = MyThread("get_symbol_threads")
-    splits = split_list(symbol_names, num_of_stocks_per_thread)
-
-    for split_names in splits:
-        try:
-            get_symbol_threads._append_thread(threading.Thread(target=symbol_thread, kwargs={'st_names': split_names,
-                                                                                            'stock_exchanges': stock_exchanges,
-                                                                                            'result': result}))
-
-        except Exception as e:
-            sys.stderr.write("Method exception in: " + get_current_function_name()
-                             + ": stock name: " + str(split_names) + " is faulty: " + str(e) + "\n")
-            traceback.print_exc()
-
-    get_symbol_threads._execute_threads()
-
-    return result  # TODO braucht ma des: , names
-
 
 def optimize_name_for_yahoo(name, replace_whitespace=True, return_first_part=False):
     if name is None:
@@ -286,24 +210,6 @@ def optimize_name_for_yahoo(name, replace_whitespace=True, return_first_part=Fal
     if return_first_part:
         name = name_spl[0]
     return name
-
-
-def symbol_thread(st_names, stock_exchanges, result):
-    if st_names is None or stock_exchanges is None:
-        raise NotImplementedError
-
-    i = 0
-    while i < len(st_names):
-        try:
-            symbol = __get_symbol_from_name_from_yahoo(st_names[i], stock_exchanges[i])
-            if symbol != " ":
-                result.append(symbol)
-                st_names.append(st_names[i])
-
-        except Exception as e:
-            sys.stderr.write(
-                "EXCEPTION " + get_current_function_name() + ": " + str(st_names[i]) + ", " + (str(e)) + "\n")
-        i += 1
 
 
 def get_ticker_data_with_webreader(ticker, stock_exchange="", stock_dfs_file="", source='yahoo',
