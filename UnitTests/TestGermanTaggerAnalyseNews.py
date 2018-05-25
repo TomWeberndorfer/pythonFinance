@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.file_utils import FileUtils
+from Utils.file_utils import FileUtils, read_tickers_from_file
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 # from directory UnitTests to --> root folder with: ..\\..\\
@@ -19,7 +19,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         stock_data_container_file = filepath + stock_data_container_file_name
 
         # TODO des is ned guad waun ma an fixen container hat
-        stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_container_file)
+        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
         ##########################
 
         thr_start = datetime.now()
@@ -98,7 +98,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         stock_data_container_file = filepath + stock_data_container_file_name
 
         # TODO des is ned guad waun ma an fixen container hat
-        stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_container_file)
+        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
         ##########################
 
         thr_start = datetime.now()
@@ -191,7 +191,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         stock_data_container_file = filepath + stock_data_container_file_name
 
         # TODO des is ned guad waun ma an fixen container hat
-        stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_container_file)
+        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
         ##########################
 
         num_of_news_per_thread = 1

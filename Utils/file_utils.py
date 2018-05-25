@@ -5,90 +5,11 @@ import pandas as pd
 import os.path
 
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import read_table_column_from_wikipedia
+from Utils.common_utils import read_table_column_from_wikipedia, read_table_columns_from_webpage
 from itertools import repeat
 
 
 class FileUtils:
-    @staticmethod
-    def read_tickers_from_file(stock_data_container_file, reload_file=False):
-        """
-            TODO
-           read the sp500 and CDAX tickers and saves it to given file
-            :param stock_exchange_file:
-            :param names_file:
-            :param reload_file: reload the tickers
-            :param tickers_file: file to save the tickers
-           :return: stock_data_container_list
-        """
-
-        # TODO:
-        # https://de.wikipedia.org/wiki/Liste_von_Aktienindizes
-        # https://de.wikipedia.org/wiki/EURO_STOXX_50#Zusammensetzung
-
-        stock_data_container_list = []
-
-        if not os.path.exists(stock_data_container_file) or reload_file:
-
-            tickers = read_table_column_from_wikipedia('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
-                                                       'wikitable sortable', 0)
-            names_with_symbols = read_table_column_from_wikipedia(
-                'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
-                'wikitable sortable', 1)
-
-            stock_exchange = []
-            stock_exchange += list(repeat("en", len(names_with_symbols)))
-
-            for idx in range(0, len(tickers)):
-                stock_data_container_list.append(StockDataContainer(names_with_symbols[idx], tickers[idx], stock_exchange[idx]))
-
-            # ########## CDAX +++++++++++++
-
-            from Utils.common_utils import read_table_column_from_webpage
-            # names_with_symbols = read_table_column_from_webpage('http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
-            #    'table', 'class', 'tablepress tablepress-id-1563 dataTable no-footer',  1)
-
-            tickers = read_table_column_from_webpage(
-                'http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
-                'tbody', 'class', 'row-hover', 2)
-
-            names_with_symbols = read_table_column_from_webpage(
-                'http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
-                'tbody', 'class', 'row-hover', 1)
-
-            stock_exchange = []
-            stock_exchange += list(repeat("de", len(names_with_symbols)))
-
-            for idx in range(0, len(tickers)):
-                stock_data_container_list.append(
-                    StockDataContainer(names_with_symbols[idx], tickers[idx], stock_exchange[idx]))
-
-            # TODO: b) General Standard is not included of page:
-            # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/
-
-            # TODO temp disabled: wartung
-            # TODO: http://www.boerse-online.de/index/liste/cdax
-            # no tickers symbols available,  column 2 contains security (=name)
-            # all_names += read_table_column_from_wikipedia(
-            #    'https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
-            #   'wikitable sortable zebra', 2)
-
-            # from DataRead_Google_Yahoo import __get_symbols_from_names
-            # all_exchanges = []
-            # all_exchanges += list(repeat("de", len(all_names)))
-            # tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
-            # stock_tickers_names['tickers'] += tickers
-            # stock_tickers_names['names'] += names_with_symbols
-            # stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
-
-            with open(stock_data_container_file, "wb") as f:
-                pickle.dump(stock_data_container_list, f)
-
-        else:
-            with open(stock_data_container_file, "rb") as f:
-                stock_data_container_list += pickle.load(f)
-
-        return stock_data_container_list
 
     @staticmethod
     def append_to_file(txt, file_with_path):
@@ -108,6 +29,79 @@ class FileUtils:
             myfile.write("")
 
         myfile.close()
+
+
+def read_tickers_from_file(stock_data_container_file, reload_file=False):
+    """
+        TODO
+       read the sp500 and CDAX tickers and saves it to given file
+        :param stock_exchange_file:
+        :param names_file:
+        :param reload_file: reload the tickers
+        :param tickers_file: file to save the tickers
+       :return: stock_data_container_list
+    """
+
+    # TODO:
+    # https://de.wikipedia.org/wiki/Liste_von_Aktienindizes
+    # https://de.wikipedia.org/wiki/EURO_STOXX_50#Zusammensetzung
+
+    stock_data_container_list = []
+
+    if not os.path.exists(stock_data_container_file) or reload_file:
+
+        import datetime
+        thr_start = datetime.datetime.now()
+
+        tickers, names_with_symbols = read_table_column_from_wikipedia(
+            'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
+            'wikitable sortable', 0, 1)
+
+        # TODO ned fix en
+        for idx in range(0, len(tickers)):
+            stock_data_container_list.append(
+                StockDataContainer(names_with_symbols[idx], tickers[idx], "en"))
+
+        txt = "Runtime 1 " + ": " + str(datetime.datetime.now() - thr_start)
+        print(txt)
+
+        # ########## CDAX +++++++++++++
+        names_with_symbols, tickers = read_table_columns_from_webpage('http://topforeignstocks.com/stock-lists/the'
+                                                                      '-list-of-listed-companies-in-germany/',
+                                                                      'tbody', 'class', 'row-hover', 1, 2)
+
+        # TODO ned fix de
+        for idx in range(0, len(tickers)):
+            stock_data_container_list.append(
+                StockDataContainer(names_with_symbols[idx], tickers[idx], "de"))
+
+        # TODO: b) General Standard is not included of page:
+        # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/
+
+        # TODO temp disabled: wartung
+        # TODO: http://www.boerse-online.de/index/liste/cdax
+        # no tickers symbols available,  column 2 contains security (=name)
+        # all_names += read_table_column_from_wikipedia(
+        #    'https://de.wikipedia.org/wiki/Liste_der_im_CDAX_gelisteten_Aktien',
+        #   'wikitable sortable zebra', 2)
+
+        # from DataRead_Google_Yahoo import __get_symbols_from_names
+        # all_exchanges = []
+        # all_exchanges += list(repeat("de", len(all_names)))
+        # tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
+        # stock_tickers_names['tickers'] += tickers
+        # stock_tickers_names['names'] += names_with_symbols
+        # stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
+
+        with open(stock_data_container_file, "wb") as f:
+            pickle.dump(stock_data_container_list, f)
+
+    else:
+        with open(stock_data_container_file, "rb") as f:
+            stock_data_container_list += pickle.load(f)
+
+    return stock_data_container_list
+
 
 def replace_in_file(file, pattern, subst):
     """

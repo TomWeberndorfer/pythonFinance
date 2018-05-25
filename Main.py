@@ -2,13 +2,13 @@ import os
 from datetime import datetime
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from Strategies.StrategyFactory import NewsStrategyFactory
-from Utils.file_utils import FileUtils
+from Utils.file_utils import FileUtils, read_tickers_from_file
 from Utils.news_utils import NewsUtils
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 # TODO ev in config file -->  gui load
 filepath = ROOT_DIR + '\\DataFiles\\'
-reader_stocks_per_threads = 2 #TODO
+reader_stocks_per_threads = 5 #TODO
 data_source = 'yahoo'
 weeks_delta = 52  # one year in the past
 
@@ -17,7 +17,7 @@ w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 
 stock_data_container_file_name = "stock_data_container_file.pickle"
 stock_data_container_file = filepath + stock_data_container_file_name
 
-stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_container_file)
+stock_data_container_list = read_tickers_from_file(stock_data_container_file)
 # TODO abstract factory: http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
 # TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, filepath + 'stock_dfs')
 # TODO relead data
@@ -25,6 +25,7 @@ data_storage = DataReaderFactory()
 stock_data_reader = data_storage.prepare("HistoricalDataReader", reader_stocks_per_threads)
 stock_data_reader.read_data(stock_data_container_list, weeks_delta, stock_data_container_file, data_source,
                             reload_stockdata=False)
+
 news_data_storage = DataReaderFactory()
 news_stock_data_reader = news_data_storage.prepare("TraderfoxNewsDataReader", reader_stocks_per_threads)
 all_news_text_list = news_stock_data_reader.read_data(filepath + "last_date_time.csv")

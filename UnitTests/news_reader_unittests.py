@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import os
 
 from DataRead_Google_Yahoo_TEMP2 import read_data_from_google_with_pandas
-from Utils.file_utils import FileUtils
+from Utils.file_utils import FileUtils, read_tickers_from_file
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
@@ -65,7 +65,7 @@ class NewsReaderTests(unittest.TestCase):
         stock_data_container_file = filepath + stock_data_container_file_name
 
         # TODO des is ned guad waun ma an fixen container hat
-        stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_container_file)
+        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
         ##########################
 
         thr_start = datetime.now()
@@ -106,10 +106,10 @@ class NewsReaderTests(unittest.TestCase):
         stock_data_container_file_name = "stock_data_container_file.pickle"
         stock_data_container_file = filepath + stock_data_container_file_name
 
-        stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_container_file)
+        stock_data_container_list = read_tickers_from_file(stock_data_container_file)
         self.assertEqual(len(stock_data_container_list), 818)
 
-        stock_data_container_list = FileUtils.read_tickers_from_file(stock_data_container_file, False)
+        stock_data_container_list = read_tickers_from_file(stock_data_container_file, False)
         self.assertEqual(len(stock_data_container_list), 818)
 
 

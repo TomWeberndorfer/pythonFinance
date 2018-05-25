@@ -295,7 +295,7 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     return
 
 
-def read_table_column_from_wikipedia(websource_address, table_class, ticker_name_col):
+def read_table_column_from_wikipedia(websource_address, table_class, ticker_name_col, name_col):
     """
     read the sp500 tickers and saves it to given file
     :param ticker_name_col: 0 for sp500, 2 for cdax
@@ -307,18 +307,49 @@ def read_table_column_from_wikipedia(websource_address, table_class, ticker_name
     soup = bs.BeautifulSoup(resp.text, 'lxml')
     table = soup.find('table', {'class': table_class})
     tickers = []
+    names = []
     for row in table.findAll('tr')[1:]:
         ticker = row.findAll('td')[ticker_name_col].text
+        name = row.findAll('td')[name_col].text
         ticker = ticker.replace("\n", "")
-        ticker = ticker.replace("\n", "")
+        name = name.replace("\n", "")
         tickers.append(ticker)
+        names.append(name)
 
-    return tickers
+    return tickers, names
+
+
+def read_table_columns_from_webpage(websource_address, find_name, class_name, table_class, first_column_to_read,
+                                    second_column_to_read):
+    """
+    read the sp500 tickers and saves it to given file
+    :param first_column_to_read: 0 for sp500, 2 for cdax
+    :param table_class: like 'wikitable sortable' or 'wikitable sortable zebra'
+    :param websource_address: like wikepedia: 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    :return: nothing
+    """
+    resp = requests.get(websource_address)
+    soup = bs.BeautifulSoup(resp.text, 'lxml')
+    table = soup.find(find_name, {class_name: table_class})
+    tickers = []
+    names = []
+    for row in table.findAll('tr')[1:]:
+        ticker = row.findAll('td')[first_column_to_read].text
+        name = row.findAll('td')[second_column_to_read].text
+        ticker = ticker.replace("\n", "")
+        name = name.replace("\n", "")
+        tickers.append(ticker)
+        names.append(name)
+
+    return tickers, names
 
 
 def read_table_column_from_webpage(websource_address, find_name, class_name, table_class, ticker_name_col):
     """
     read the sp500 tickers and saves it to given file
+    :param find_name:
+    :param class_name:
+    :return:
     :param ticker_name_col: 0 for sp500, 2 for cdax
     :param table_class: like 'wikitable sortable' or 'wikitable sortable zebra'
     :param websource_address: like wikepedia: 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
@@ -330,7 +361,6 @@ def read_table_column_from_webpage(websource_address, find_name, class_name, tab
     tickers = []
     for row in table.findAll('tr')[1:]:
         ticker = row.findAll('td')[ticker_name_col].text
-        ticker = ticker.replace("\n", "")
         ticker = ticker.replace("\n", "")
         tickers.append(ticker)
 

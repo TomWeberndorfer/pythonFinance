@@ -67,7 +67,7 @@ class HistoricalDataReader(StockDataReader, MyThread):
             ticker_exchange += "." + stock_exchange
 
         # TODO autmatisieren von pandas=??
-        for i in range(0, 4):
+        for i in range(0, 2): #TODO 4
             try:
                 end = dt.datetime.now()
                 start = (end - dt.timedelta(weeks=weeks_delta))
@@ -81,12 +81,13 @@ class HistoricalDataReader(StockDataReader, MyThread):
                 if len(df) > 0:
                     break
 
-            from time import sleep
-            sleep(0.1)  # Time in seconds.
+            # TODO performance: wird dann langsam
+            # from time import sleep
+            #sleep(0.1)  # Time in seconds.
 
         if len(df) <= 0:
             sys.stderr.write(
-                "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + ", num od retries: " + i)
+                "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + ", num od retries: " + str(i) + "\n")
             print('FAILED: Reading {}'.format(ticker_exchange))
 
         return df

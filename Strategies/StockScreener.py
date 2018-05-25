@@ -9,7 +9,7 @@ from MyThread import MyThread
 from Strategies.Strategy import strat_scheduler
 from Utils.common_utils import split_list, print_stocks_to_buy
 # from Utils.file_utils import read_tickers_from_file, append_to_file
-from Utils.file_utils import FileUtils
+from Utils.file_utils import FileUtils, read_tickers_from_file
 
 # TODO übergeben
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -78,8 +78,8 @@ def run_stock_screening(num_of_stocks_per_thread):
         # TODO- eini verschieben irgendwo, ned manuell
         # TODO muss die strategie schon de daten griagn? ja schon, wanns mehrere san kinan ned alle wieder lesen
 
-        res = FileUtils.read_tickers_from_file(stock_data_container_file)
-        res = FileUtils.read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
+        res = read_tickers_from_file(stock_data_container_file)
+        res = read_tickers_from_file(tickers_file, stocknames_file, stock_exchange_file)
         all_symbols.extend(res['tickers'])
         all_names.extend(res['names'])
         result = []
