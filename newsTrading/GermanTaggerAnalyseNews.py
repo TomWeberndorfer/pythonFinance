@@ -72,12 +72,9 @@ class GermanTaggerAnalyseNews:
 
                 result_news_stock_data_container.set_prop_dist(prob_dist)
 
-                # TODO better solution
-                for stock_data_container in self.stock_data_container_list:
-                    if stock_data_container.stock_ticker == result_news_stock_data_container.stock_ticker:
-                        result_news_stock_data_container.set_historical_stock_data(
-                            stock_data_container.historical_stock_data)
-                        break
+                if result_news_stock_data_container in self.stock_data_container_list:
+                    idx = self.stock_data_container_list.index(result_news_stock_data_container)
+                    result_news_stock_data_container.set_historical_stock_data(self.stock_data_container_list[idx].historical_stock_data)
 
                 return result_news_stock_data_container
 
@@ -88,7 +85,8 @@ class GermanTaggerAnalyseNews:
                         round(prob_dist.prob("pos"), 2)) + ', prob_dist neg: ' + str(round(prob_dist.prob("neg"), 2)) +
                     ' orig_news: ' + str(news_to_analyze))
 
-        return result_news_stock_data_container
+        return None
+
 
     def __train_classifier(self):
         """
@@ -125,9 +123,7 @@ class GermanTaggerAnalyseNews:
             ('reduce', 'neg'),
         ]
 
-        train_start = datetime.datetime.now()
         cl = NaiveBayesClassifier(train)
-        print("\nRuntime to train classifier: " + str(datetime.datetime.now() - train_start))
         return cl
 
     def _identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self, single_news_to_analyze):
@@ -157,34 +153,46 @@ class GermanTaggerAnalyseNews:
 
         tags = self.german_tagger.tag(tokens_removed_words)
 
-        noun_tag = [i for i in tags if i[1].startswith("NE")]
+        noun_tags = ""
+        enable_tags = False
 
-        if noun_tag is not None and len(noun_tag) > 0:
+        for i in range(len(tags)):
+            # TODO gscheider: erst nach dem ersten verb lesen
+            if tags[i][1].startswith("V"):
+                enable_tags = True
+            if enable_tags:
+                if tags[i][1].startswith("N"):
+                    if i > 1 and tags[i -1][1].startswith("ADJ"):
+                        noun_tags = (tags[i -1][0] + " " + tags[i][0])
+                        break
+
+                    if tags[i][1].startswith("NE") or tags[i][1].startswith("NN"):
+                        noun_tags= (tags[i][0])
+                        break
+
+        if noun_tags is not None and len(noun_tags) > 0:
             name_return = ""
             target_price_return = 0
             ticker_return = ""
             stock_exchange_return = ""
 
-            noun_idx = len(noun_tag) - 1
-            stock_to_check = noun_tag[noun_idx][0]  # [0] --> first tag in list
-
-            name_to_find = self.lookup_stock_abr_in_all_names(stock_to_check)
+            stock_to_check = noun_tags  # [0] --> first tag in list
             price_tuple = [i for i in tags if i[1].startswith("CARD")]
 
-            if name_to_find != " " and name_to_find is not None:
+            try:
+                name_to_find = self.lookup_stock_abr_in_all_names(stock_to_check)
                 idx = self.names.index(name_to_find)
                 name_return = self.names[idx]
                 ticker_return = self.tickers[idx]
                 stock_exchange_return = self.stock_exchanges[idx]
 
-            else:  # look up symbol in web instead of list
-                name, symbol = get_symbol_from_name_from_topforeignstocks(stock_to_check)
-                if symbol is not None and symbol != " " and name is not None and name != " ":
-                    name_return = name
-                    ticker_return = symbol
-                    stock_exchange_return = ""  # TODO 3: return something
-                else:
-                    return NewsStockDataContainer("", "", "", 0, 0, "", 0)
+            except Exception as e:  # look up symbol in web instead of list
+                try:
+                    name_return, ticker_return = get_symbol_from_name_from_topforeignstocks(stock_to_check)
+
+                except Exception as e:
+                    print("no STOCK found for news: " + str(single_news_to_analyze))
+                    return None
 
             if len(price_tuple) > 0:
                 price = price_tuple[len(price_tuple) - 1][0]  # TODO 1: comment
@@ -196,8 +204,8 @@ class GermanTaggerAnalyseNews:
             return NewsStockDataContainer(name_return, ticker_return, stock_exchange_return, target_price_return, "",
                                           single_news_to_analyze, 0)
 
-        print("ERR: no STOCK found for news: " + str(single_news_to_analyze))
-        return NewsStockDataContainer("", "", "", 0, 0, "", 0)
+        print("no STOCK found for news: " + str(single_news_to_analyze))
+        return None
 
     def lookup_stock_abr_in_all_names(self, stock_abr):
         """
@@ -212,23 +220,7 @@ class GermanTaggerAnalyseNews:
             if name_to_find in self.names:  # TODO: check if this if is necessary
                 return name_to_find
 
-        return " "
-
-    def _method_to_execute(self, news_text_to_check):
-        print("Started with: " + str(news_text_to_check))
-        result_news_stock_data_container = self.analyse_single_news(news_text_to_check)
-
-        if result_news_stock_data_container is not None and result_news_stock_data_container.stock_name != "":
-            return  result_news_stock_data_container
-
-    def analyse_all_news(self, all_news):
-        result_news_stock_data_container_list = []
-
-        if all_news != "" and len(all_news) >= 1:
-            pool = create_threading_pool(len(all_news))
-            result_news_stock_data_container_list = pool.map(self._method_to_execute, all_news)
-
-        return result_news_stock_data_container_list
+        raise AttributeError("Stock abbr not found: " + str(stock_abr))
 
     def expand_compound_token(t, split_chars="-"):
         parts = []
@@ -254,9 +246,11 @@ class GermanTaggerAnalyseNews:
         for split in split_apostrophe:
             news_to_analyze = news_to_analyze.replace("'" + split + "'", split.lower())
 
-        news_to_analyze = news_to_analyze.replace("Euro", "€")
-        news_to_analyze = news_to_analyze.replace("US-Dollar", "$")
-        news_to_analyze = news_to_analyze.replace("Dollar", "$")
+        # tod euronext wird falscherweise ersetzt
+        news_to_analyze = news_to_analyze.replace(" Euro", " €")
+        news_to_analyze = news_to_analyze.replace(" US-Dollar ", "$")
+        news_to_analyze = news_to_analyze.replace(" Dollar ", "$")
         news_to_analyze = news_to_analyze.replace("-", " ")  # TODO with expand_compound_token
+        news_to_analyze = news_to_analyze.replace("Ziel", "")  # TODO
 
         return news_to_analyze

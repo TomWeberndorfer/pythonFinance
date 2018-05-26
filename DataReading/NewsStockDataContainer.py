@@ -7,7 +7,6 @@ class NewsStockDataContainer(StockDataContainer):
         self.stock_target_price = stock_target_price
         self.prob_dist = prob_dist
         self.orignal_news = orignal_news
-        self.stock_current_prize = stock_current_prize
 
     def stock_target_price (self):
         return self.stock_target_price
@@ -26,9 +25,6 @@ class NewsStockDataContainer(StockDataContainer):
 
     def set_stock_target_price (self, stock_target_price):
         self.stock_target_price = stock_target_price
-
-    def set_stock_current_prize(self, stock_current_prize):
-        self.stock_current_prize = stock_current_prize
 
 
 

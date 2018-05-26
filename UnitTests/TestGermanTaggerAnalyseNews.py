@@ -86,11 +86,11 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         # should fail and return " "
         news = "01.03.2018, Das sagen Ökonomen zur bevorstehenden Wahl in Italien"
         result = analysis.analyse_single_news(news)
-        self.assertEqual("", result.stock_name)
+        self.assertEqual(result is None, True)
 
         news = "17.03.2018 um 09:05, PROSIEBENSAT.1 IM FOKUS: Dax-Absteiger stellt Weichen für bessere Zeiten"
         result = analysis.analyse_single_news(news)
-        self.assertEqual("", result.stock_name)
+        self.assertEqual(result is None, True)
 
         txt = "\n\nRuntime : " + str(datetime.now() - thr_start)
         print(txt)
@@ -108,6 +108,13 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
         analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
                                            filepath + 'nltk_german_classifier_data.pickle')
+
+        news = " ANALYSE FLASH: NordLB senkt Ziel für Deutsche Bank auf 11.50 €   halten"#
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result.stock_name, "Deutsche Bank Aktiengesellschaft")
+        self.assertEqual(result.stock_ticker, "DB")
+        self.assertEqual(result.stock_exchange, "")
+        self.assertEqual(result.stock_target_price, 11.5)
 
         news = "ANALYSE-FLASH: Jefferies hebt Ziel für RWE auf 250 US-Dollar - 'Underperform'"
         result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
@@ -190,30 +197,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         self.assertEqual(result.stock_exchange, "")
         self.assertEqual(result.stock_target_price, 186)
 
-    def test_analyse_all_news(self):
-        stock_data_container_list = [StockDataContainer("FREENET AG NA", "", ""),
-                                     StockDataContainer("ELRINGKLINGER AG NA O.N.", "", "")]
+        news = "senkt Ziel für auf 186 euro"
+        result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
+        self.assertEqual(result is None, True)
 
-        num_of_news_per_thread = 1
-        all_news = []
-        news_elringklinger = "ANALYSE-FLASH: JPMorgan belässt ElringKlinger nach Zahlen auf 'Underweight'"
-        news_freenet = "ANALYSE-FLASH: DZ Bank senkt Freenet auf 'Halten' und fairen Wert auf 28 Euro"
-        all_news.append(news_elringklinger)
-        all_news.append(news_freenet)
-        text_analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
-                                                filepath + 'nltk_german_classifier_data.pickle')
-        result = text_analysis.analyse_all_news(all_news)
-
-        self.assertEquals(len(result), 2)
-
-        # TODO umbauen auf: https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
-        freenet_idx = result.index(StockDataContainer("FREENET AG NA", "", ""))
-        elringklinger_idx = result.index(StockDataContainer("ELRINGKLINGER AG NA O.N.", "", ""))
-
-        t1 = round(result[freenet_idx].prob_dist.prob("neg"), 2)
-        self.assertGreater(t1, 0.7)
-        self.assertEqual(result[freenet_idx].stock_name, "FREENET AG NA")
-
-        t2 = round(result[elringklinger_idx].prob_dist.prob("neg"), 2)
-        self.assertGreater(t2, 0.7)
-        self.assertEqual(result[elringklinger_idx].stock_name, "ELRINGKLINGER AG NA O.N.")

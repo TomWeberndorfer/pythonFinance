@@ -59,7 +59,7 @@ class TraderfoxNewsDataReader(StockDataReader):
             raise NotImplementedError
 
         if last_date == "":
-            if check_file_exists_or_create(last_date_file, "last_check_date"):  # no need to check, creates anyway
+            if check_file_exists_or_create(last_date_file, "last_check_date" + "\n01.01.2000 um 00:00"):  # no need to check, creates anyway
                 data = pd.read_csv(last_date_file)
                 last_date_str = str(data.last_check_date[0])
                 last_date = datetime.strptime(last_date_str, date_time_format)

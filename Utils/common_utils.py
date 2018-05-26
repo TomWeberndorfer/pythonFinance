@@ -119,9 +119,9 @@ def calculate_stopbuy_and_stoploss(stock_data):
     return {'sb': sb, 'sl': sl}
 
 
-def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_time, program_end_time,
+def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
                         file_name_and_path_stock_list, file_name_and_path_stocks_to_buy, num_of_threads):
-    if stocks_to_buy is None or num_of_stocks_per_thread is None or program_start_time is None \
+    if stocks_to_buy is None or program_start_time is None \
             or program_end_time is None or file_name_and_path_stock_list is None \
             or file_name_and_path_stocks_to_buy is None or num_of_threads is None:
         raise NotImplementedError
@@ -197,7 +197,6 @@ def print_stocks_to_buy(stocks_to_buy, num_of_stocks_per_thread, program_start_t
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     print()
     print("INFO: runtime with " + num_of_threads + " Threads and " +
-          str(num_of_stocks_per_thread) + " stocks per thread: " +
           str(program_end_time - program_start_time))
 
 

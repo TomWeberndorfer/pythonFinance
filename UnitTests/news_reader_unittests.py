@@ -1,11 +1,9 @@
-import unittest
-from datetime import datetime, timedelta
-
 import os
+import unittest
+from datetime import datetime
 
-from DataRead_Google_Yahoo_TEMP2 import read_data_from_google_with_pandas
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.file_utils import FileUtils, read_tickers_from_file
+from Utils.file_utils import read_tickers_from_file
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
@@ -24,13 +22,6 @@ class NewsReaderTests(unittest.TestCase):
 
         # all_news.append("ANALYSE-FLASH: NordLB senkt Apple auf 'Kaufen' - Ziel 125,5 Euro")
         # all_news.append("Bryan Garnier hebt Apple auf 'Buy' - Ziel 91 Euro")
-
-
-    def test_read_data_from_google_with_pandas(self):
-        end = datetime.now()
-        ago52_w = (end - timedelta(weeks=52))
-        stock_data_df = read_data_from_google_with_pandas("AAPL", ago52_w, end)
-        self.assertGreater(len(stock_data_df), 0)
 
     def test_read_from_traderfox(self):
         #TODO ois mit file is kein unit test
@@ -83,8 +74,7 @@ class NewsReaderTests(unittest.TestCase):
         result = analysis.lookup_stock_abr_in_all_names("Adidas")
         self.assertEqual(result, "ADIDAS AG NA O.N.")
 
-        result = analysis.lookup_stock_abr_in_all_names("XCERET")
-        self.assertEqual(result, " ")
+        self.assertRaises(AttributeError, analysis.lookup_stock_abr_in_all_names, "XCERET")
 
     def test_date_check(self):
 

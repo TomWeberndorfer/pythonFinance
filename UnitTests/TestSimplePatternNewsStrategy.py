@@ -25,8 +25,7 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         rwe_stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [apple_stock_data_container, rwe_stock_data_container]
 
-        parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle',
-                          'num_of_stocks_per_thread': 2}
+        parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
 
         stock_screener = NewsStrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",

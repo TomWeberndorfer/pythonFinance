@@ -18,7 +18,7 @@ class NewsUtils:
                 sell_str = ""
 
                 for res in stocks_to_buy:
-                    if res != " " and res.stock_name is not None:
+                    if res.stock_name is not None:
                         pos_class = round(res.prob_dist.prob("pos"), 2)
                         neg_class = round(res.prob_dist.prob("neg"), 2)
                         tmp_str = ""

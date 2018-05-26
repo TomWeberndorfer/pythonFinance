@@ -135,16 +135,15 @@ def get_symbol_from_name_from_topforeignstocks(name_abbr):
     """
     TODO
     name: name to convert
+    :param name_abbr:
     :param name:
     :return:
     """
     if name_abbr is None:
         raise NotImplementedError
 
-    names_to_get = []
-    names_to_get.append(optimize_name_for_yahoo(name_abbr))
-    names_to_get.append(optimize_name_for_yahoo(name_abbr, False))
-    names_to_get.append(optimize_name_for_yahoo(name_abbr, False, True))
+    names_to_get = [optimize_name_for_yahoo(name_abbr), optimize_name_for_yahoo(name_abbr, False),
+                    optimize_name_for_yahoo(name_abbr, False, True)]
 
     for name in names_to_get:
 
@@ -173,11 +172,9 @@ def get_symbol_from_name_from_topforeignstocks(name_abbr):
                 return found_name, found_symbol
 
         except Exception as e:
-            sys.stderr.write("Exception: no symbol found for " + str(name) + ", exception: " + str(e) + "\n")
-            # return " "  # no symbol found
+            continue
 
-    print("No symbol found for " + str(name) + "\n")
-    return " ", " "
+        raise Exception("Exception: no symbol found for " + str(name_abbr))
 
 
 def optimize_name_for_yahoo(name, replace_whitespace=True, return_first_part=False):

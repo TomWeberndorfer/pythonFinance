@@ -35,6 +35,7 @@ def read_tickers_from_file(stock_data_container_file, reload_file=False):
     """
         TODO
        read the sp500 and CDAX tickers and saves it to given file
+        :param stock_data_container_file:
         :param stock_exchange_file:
         :param names_file:
         :param reload_file: reload the tickers
@@ -67,7 +68,7 @@ def read_tickers_from_file(stock_data_container_file, reload_file=False):
 
         for idx in range(0, len(res2[0])):
             stock_data_container_list.append(
-                StockDataContainer(res2[1][idx], res2[0][idx], "de"))
+                StockDataContainer(res2[0][idx], res2[1][idx], "de"))
 
         # TODO: b) General Standard is not included of page:
         # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/
