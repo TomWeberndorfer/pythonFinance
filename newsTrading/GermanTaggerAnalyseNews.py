@@ -15,7 +15,7 @@ from textblob.classifiers import NaiveBayesClassifier
 from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
 from DataReading.NewsStockDataContainer import NewsStockDataContainer
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import split_list, is_float, create_threading_pool
+from Utils.common_utils import is_float
 
 
 class GermanTaggerAnalyseNews:

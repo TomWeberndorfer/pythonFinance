@@ -124,43 +124,6 @@ def strat_scheduler(stock_names_to_check, ago52_w, end, params):
     return stocks_to_buy
 
 
-def strat_52_w_hi_hi_volume(stock_name, stock52_w_data, check_days, min_cnt, min_vol_dev_fact, within52w_high_fact):
-    """
-    Check 52 week High, raising volume, and high enough volume
-
-    :param  stock_name: name of the stock
-    :param  stock52_w_data: stock data
-    :param  check_days: number of days to check
-    :param  min_cnt: min higher days within check days
-    :param min_vol_dev_fact:
-    :param within52w_high_fact:: factor current data within 52 w high (ex: currVal > (Max * 0.98))
-
-    :return: stock to buy with {'buy', 'stock_name', 'sb', 'sl'}
-    """
-    if stock_name is None or stock52_w_data is None or check_days is None or min_cnt is None or min_vol_dev_fact is None or within52w_high_fact is None:
-        raise NotImplementedError
-
-    if min_vol_dev_fact < 1:
-        raise AttributeError("parameter min_vol_dev_fact must be higher than 1!")  # should above other avg volume
-
-    if within52w_high_fact > 1:
-        raise AttributeError("parameter within52w_high_fact must be lower than 1!")  # should above other avg volume
-
-    if not signal_is_volume_high_enough(stock52_w_data):
-        return {'buy': False}
-
-    if not signal_is_volume_raising(stock52_w_data, check_days, min_cnt, min_vol_dev_fact):
-        return {'buy': False}
-
-    if not signal_is52_w_high(stock52_w_data, within52w_high_fact):
-        return {'buy': False}
-
-    result = calculate_stopbuy_and_stoploss(stock52_w_data)
-
-    return {'buy': True, 'stock_name': stock_name, 'sb': result['sb'], 'sl': result['sl'],
-            'strategy_name': get_current_function_name()}
-
-
 def strat_gap_up__hi_volume(stock_name, stock_data, min_gap_factor):
     """
     Strategy with gap between last and open and high volume

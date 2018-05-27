@@ -1,12 +1,12 @@
 import sys
 
 from Strategies.Strategy import Strategy
-from Utils.common_utils import create_threading_pool
+from Utils.common_utils import CommonUtils
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 from multiprocessing.dummy import Pool as ThreadPool
 
 
-class SimplePatternNewsStrategy(Strategy, ):
+class SimplePatternNewsStrategy(Strategy):
     def __init__(self, stock_data_container_list, parameter_dict):
         Strategy.__init__(self, stock_data_container_list, parameter_dict)
         self.text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list,
@@ -15,7 +15,7 @@ class SimplePatternNewsStrategy(Strategy, ):
 
     def run_strategy(self, all_news_text_list):
         if len(all_news_text_list) > 0:
-            pool = create_threading_pool(len(all_news_text_list))
+            pool = CommonUtils.get_threading_pool()
             pool.map(self._method_to_execute, all_news_text_list)
 
         return self.result_list

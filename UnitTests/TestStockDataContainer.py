@@ -2,7 +2,7 @@ import os
 import unittest
 from pandas import DataFrame
 from DataReading.StockDataContainer import StockDataContainer
-from Strategies.StrategyFactory import NewsStrategyFactory
+from Strategies.StrategyFactory import StrategyFactory
 
 # from directory UnitTests to --> root folder with: ..\\..\\
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

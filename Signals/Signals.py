@@ -292,17 +292,17 @@ def signal_hammer(stock_data, hammer_length_in_factor, handle_bigger_than_head_f
     raise NotImplementedError  # TODO
 
 
-def signal_is_volume_high_enough(stock, min_req_vol=15000):
+def signal_is_volume_high_enough(historical_stock_data, min_req_vol=15000):
     """
     Checks, if the volume is high enough (liquid stock)
-    :param stock:
+    :param historical_stock_data: historical stock data
     :param min_req_vol:  min volume for liquid stocks
-    :return:
+    :return: true, if min volume requested
     """
-    if stock is None:
+    if historical_stock_data is None:
         raise NotImplementedError
 
-    vol_avg = calc_avg_vol(stock)
+    vol_avg = calc_avg_vol(historical_stock_data)
 
     if vol_avg > min_req_vol:
         return True

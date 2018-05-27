@@ -6,7 +6,7 @@ from pandas_datareader import data
 
 from DataRead_Google_Yahoo import optimize_name_for_yahoo
 from DataReading.StockDataReader import StockDataReader
-from Utils.common_utils import get_current_function_name, create_threading_pool
+from Utils.common_utils import get_current_function_name, CommonUtils
 
 
 class HistoricalDataReader(StockDataReader):
@@ -20,8 +20,12 @@ class HistoricalDataReader(StockDataReader):
         self.reload_stockdata = reload_stockdata
         self.stock_data_container_list = stock_data_container_list
 
-        pool = create_threading_pool(len(self.stock_data_container_list))
+        # TODO 11
+        pool = CommonUtils.get_threading_pool()
+        #pool = ThreadPool(100)
         pool.map(self._method_to_execute, self.stock_data_container_list)
+        #pool.close()
+        #pool.join()
 
         with open(filepath_stock_dfs, "wb") as f:
             pickle.dump(stock_data_container_list, f)
@@ -36,12 +40,14 @@ class HistoricalDataReader(StockDataReader):
         if stock_data_container not in self.stock_data_container_list \
                 or len(stock_data_container.historical_stock_data) <= 0 \
                 or self.reload_stockdata:
+            print("Read stock data " + stock_data_container.stock_name + " started.")
             stock52_w = self._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
                                                              stock_data_container.stock_exchange,
                                                              self.data_source,
                                                              self.weeks_delta)
 
             stock_data_container.set_historical_stock_data(stock52_w)
+            print("Read stock data " + stock_data_container.stock_name + " finished.")
 
     def _get_ticker_data_with_webreader(self, ticker, stock_exchange, data_source,
                                         weeks_delta):

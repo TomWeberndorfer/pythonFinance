@@ -2,7 +2,7 @@ import os
 import unittest
 from pandas import DataFrame
 from DataReading.StockDataContainer import StockDataContainer
-from Strategies.StrategyFactory import NewsStrategyFactory
+from Strategies.StrategyFactory import StrategyFactory
 
 # from directory UnitTests to --> root folder with: ..\\..\\
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +27,7 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
 
         parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
 
-        stock_screener = NewsStrategyFactory()
+        stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
                                                         stock_data_container_list, parameter_dict)
 

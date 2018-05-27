@@ -15,6 +15,8 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 
 class CommonUtils:
+    threadpool = None
+
     @staticmethod
     def send_stock_email(message_text, subject_text, from_addr='python.trading.framework@gmail.com',
                          to_addr='weberndorfer.thomas@gmail.com'):
@@ -37,6 +39,20 @@ class CommonUtils:
                           message=message_text,
                           login='python.trading.framework',
                           password='8n6Qw8YoJe8m')
+
+    @staticmethod
+    def get_threading_pool(max_number_threads=200):
+        """
+        Returns a thread pool with maximum number of threads or the number of list len
+        :param list_len: elements in the list --> number of threads (max limited)
+        :param max_number_threads: maximum number of possible threads
+        :return: thread pool object
+        """
+
+        if CommonUtils.threadpool is None:
+            CommonUtils.threadpool = ThreadPool(max_number_threads)
+
+        return CommonUtils.threadpool
 
 
 def send_email(from_addr, to_addr_list, cc_addr_list, subject, message, login, password,
@@ -75,7 +91,7 @@ def calc_avg_vol(stock_data):
     :return: Average Value
     """
 
-    if stock_data is None:
+    if stock_data is None or len(stock_data) <= 0:
         raise NotImplementedError
 
     vol_avg = stock_data["Volume"].mean()
@@ -89,7 +105,7 @@ def split_list(list_to_split, size):
     :param size: size of split list
     :return: the final list of lists
     """
-    if list_to_split is None or size is None:
+    if list_to_split is None or len(list_to_split) <= 0 or size is None:
         raise NotImplementedError
 
     list_of_lists = []
@@ -311,6 +327,10 @@ def read_table_columns_from_webpage(websource_address, find_name, class_name, ta
     resp = requests.get(websource_address)
     soup = bs.BeautifulSoup(resp.text, 'lxml')
     table = soup.find(find_name, {class_name: table_class})
+
+    if table is None or len(table) <= 0:
+        raise ConnectionError("Error establishing a database connection")
+
     tickers = []
     names = []
     for row in table.findAll('tr')[1:]:
@@ -439,17 +459,4 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
             traceback.print_exc()
 
 
-def create_threading_pool(list_len, max_number_threads=400):
-    """
-    Returns a thread pool with maximum number of threads or the number of list len
-    :param list_len: elements in the list --> number of threads (max limited)
-    :param max_number_threads: maximum number of possible threads
-    :return: thread pool object
-    """
 
-    if list_len > max_number_threads:
-        pool = ThreadPool(max_number_threads)
-    else:
-        pool = ThreadPool(list_len)
-
-    return pool
