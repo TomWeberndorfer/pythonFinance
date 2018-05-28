@@ -1,3 +1,4 @@
+import inspect
 import os
 import sys
 import threading
@@ -23,25 +24,16 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 
 class W52HighTechnicalStrategy(Strategy):
 
-    def run_strategy(self):
-        if len(self.stock_data_container_list) > 0:
-            pool = CommonUtils.get_threading_pool()
-            pool.map(self._method_to_execute, self.stock_data_container_list)
-
-        print ("W52HighTechnicalStrategy finished." )
-        return self.result_list
-
     def _method_to_execute(self, stock_data_container):
-        #TODO 10
-        # try:
-        if len(stock_data_container.historical_stock_data) > 0:
-            print("W52HighTechnicalStrategy for " + stock_data_container.stock_name + " started.")
-            result = self._strat_52_w_hi_hi_volume(stock_data_container, self.parameter_dict)
+        try:
+            if len(stock_data_container.historical_stock_data) > 0:
+                print("W52HighTechnicalStrategy for " + stock_data_container.stock_name + " started.")
+                result = self._strat_52_w_hi_hi_volume(stock_data_container, self.parameter_dict)
 
-            if result is not None:
-                self.result_list.append(result)
-        #except Exception as e:
-        #    sys.stderr.write("Exception:  " + str(e) + "\n")
+                if result is not None:
+                    self.result_list.append(result)
+        except Exception as e:
+            sys.stderr.write("Exception:  " + str(e) + "\n")
 
     def _strat_52_w_hi_hi_volume(self, stock_data_container, parameter_dict):
         """

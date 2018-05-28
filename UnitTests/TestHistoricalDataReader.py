@@ -28,7 +28,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)
 
         # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
-        data_reader = HistoricalDataReader()
+        data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file, data_source, False)
         df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
                                                          stock_data_container.stock_exchange,
                                                          data_source='yahoo', weeks_delta=52)
@@ -47,8 +47,8 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)
 
         # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
-        data_reader = HistoricalDataReader()
-        data_reader.read_data(stock_data_container_list, 52, stock_data_container_file, "yahoo", reload_stockdata=True)
+        data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file, data_source, False)
+        data_reader.read_data()
 
         # the container must have at least 200 entry days for last and current year
         self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
@@ -66,9 +66,9 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)
 
         data_storage = DataReaderFactory()
-        stock_data_reader = data_storage.prepare("HistoricalDataReader")
-        stock_data_reader.read_data(stock_data_container_list, weeks_delta, stock_data_container_file, data_source,
+        stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list, weeks_delta, stock_data_container_file, data_source,
                                     reload_stockdata=True)
+        stock_data_reader.read_data()
 
         self.assertEqual(len(stock_data_container_list), 2)
         self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
@@ -81,9 +81,9 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         # TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, filepath + 'stock_dfs')
         # TODO relead data
         data_storage = DataReaderFactory()
-        stock_data_reader = data_storage.prepare("HistoricalDataReader")
-        stock_data_reader.read_data(stock_data_container_list, weeks_delta, stock_data_container_file, data_source,
+        stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list, weeks_delta, stock_data_container_file, data_source,
                                     reload_stockdata=True)
+        stock_data_reader.read_data()
 
         failed_reads = 0
         for stock_data_container in stock_data_container_list:

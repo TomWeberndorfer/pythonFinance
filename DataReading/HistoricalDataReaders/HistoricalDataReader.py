@@ -11,25 +11,6 @@ from Utils.common_utils import get_current_function_name, CommonUtils
 
 class HistoricalDataReader(StockDataReader):
 
-    def read_data(self, stock_data_container_list, weeks_delta, filepath_stock_dfs, data_source, reload_stockdata):
-        # TODO filepath_stock_dfs missbraucht für stock_data_container_file --> umbennennen
-
-        self.weeks_delta = weeks_delta
-        self.filepath_stock_dfs = filepath_stock_dfs
-        self.data_source = data_source
-        self.reload_stockdata = reload_stockdata
-        self.stock_data_container_list = stock_data_container_list
-
-        # TODO 11
-        pool = CommonUtils.get_threading_pool()
-        #pool = ThreadPool(100)
-        pool.map(self._method_to_execute, self.stock_data_container_list)
-        #pool.close()
-        #pool.join()
-
-        with open(filepath_stock_dfs, "wb") as f:
-            pickle.dump(stock_data_container_list, f)
-
     def _method_to_execute(self, stock_data_container):
         """
         Method to execute implemented for multi threading, executed for every sublist

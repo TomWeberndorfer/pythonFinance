@@ -1,3 +1,4 @@
+import inspect
 import sys
 
 from Strategies.Strategy import Strategy
@@ -14,10 +15,13 @@ class SimplePatternNewsStrategy(Strategy):
                                                      self.parameter_dict['german_tagger'])
 
     def run_strategy(self, all_news_text_list):
+        stack = inspect.stack()
+        the_class = stack[1][0].f_locals["self"].__class__  # get the inherited class name
         if len(all_news_text_list) > 0:
             pool = CommonUtils.get_threading_pool()
             pool.map(self._method_to_execute, all_news_text_list)
 
+        print(str(the_class) + " finished.")
         return self.result_list
 
     def _method_to_execute(self, news_text):
