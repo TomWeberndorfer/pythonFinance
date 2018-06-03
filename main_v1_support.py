@@ -4,6 +4,7 @@
 # In conjunction with Tcl version 8.6
 #    Jun 03, 2018 10:50:55 AM
 import sys
+import _pickle as pickle
 import os
 from tkinter import messagebox
 from Main import start_main
@@ -32,34 +33,81 @@ class MyController:
         self.parent = parent
         self.model = MyModel(self)  # initializes the model
         self.view = w  # initializes the view
-        self.view.Match.config(command=self.all_parameter_dicts_changed)
-        self.view.ButtonRunStrategy.config(command=self.start_screening())
+        # self.view.Match.config(command=self.all_parameter_dicts_changed)
+        self.view.ButtonRunStrategy.config(command=self.start_screening)
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect)
         self.all_parameter_dicts_changed()
         self.available_strategies_changed()
 
     def start_screening(self):
-        pass
+        index = self.model.get_strategy_selection_index()
+
+        if index != -1:
+            messagebox.showerror("Not Implemented Error", "Run not implemented yet")
+        else:
+            messagebox.showerror("Selection Error", "Please select a strategy first!")
+
+    def load_parameter_from_file(self):
+        self.model.clear_all_parameter_dicts()
+        self.model.clear_list()
+
+        try:
+            with open(filepath + "ParameterFile.pickle", "rb") as f:
+                items = pickle.load(f)
+                self.model.add_to_all_parameter_dicts(items)
+                for item in items:
+                    self.model.add_to_available_strategies(item)
+
+        except Exception as e:
+            print(str(e))
+            return
+
+        self.model.add_to_log("Params Read")
+
+    def dump_parameter_from_file(self):
+        content = self.view.Scrolledtext_params.get(1.0, END)
+        import ast
+        content_dict = ast.literal_eval(content)
+
+        if content_dict == {}:
+            messagebox.showerror("Parameters empty", "Please insert parameters")
+        else:
+            self.model.add_to_all_parameter_dicts(content_dict)
+            with open(filepath + "ParameterFile.pickle", "wb") as f:
+                pickle.dump(self.model.all_parameter_dicts, f)
+
+            self.model.add_to_log("Params Saved")
 
     # event handlers
     def quitButtonPressed(self):
         self.parent.destroy()
 
     def add_button_pressed(self):
-        self.model.add_to_list(self.view.entry_text.get())
+        self.model.add_to_available_strategies(self.view.entry_text.get())
         self.model.add_to_all_parameter_dicts({self.view.entry_text.get(): self.view.entry_text.get()})
 
     def clear_button_pressed(self):
         self.model.clear_list()
 
     def all_parameter_dicts_changed(self):
+        w.Scrolledtext_params.delete(1.0, END)
         # model internally chages and needs to signal a change
+        #TODO 11:
         test = self.model.get_all_parameter_dicts()
-        for key, value in test.items():
-            w.Scrolledtext1.insert(END, "{'" + key + "':" + str(value) + "}")
-            w.Scrolledtext1.insert(END, "\n")
+        w.Scrolledtext_params.insert(END, str(test))
+        #for key, value in test.items():
+        #    w.Scrolledtext_params.insert(END, "{'" + key + "':" + str(value) + "}")
+        #    w.Scrolledtext_params.insert(END, "\n")
+
+    def log_changed_delegate(self):
+        w.Scrolledtext_log.delete(1.0, END)
+        test = self.model.get_log()
+        for t in test:
+            w.Scrolledtext_log.insert(END, t)
+            w.Scrolledtext_log.insert(END, "\n")
 
     def available_strategies_changed(self):
+        w.Scrolledlistbox_selectStrategy.delete(0, END)
         # model internally chages and needs to signal a change
         test = self.model.getList()
         for value in test:
@@ -76,28 +124,27 @@ class MyController:
         index = int(w.curselection()[0])
         value = w.get(index)
         print('You selected item %d: "%s"' % (index, value))
-
-    def OnListboxSelectionChanged(self, val):
-        # NOTE: If your listbox's select mode is MULTIPLE, then you may use this portion of code
-        selections = val.widget.curselection()
-
-        print("---------------------------")
-
-        if (selections != ()):
-            for index in selections:
-                print(self.sarcCountries[int(index)])
-
-        print("---------------------------")
+        self.model.set_strategy_selection_index(index)
 
 
 class MyModel:
     def __init__(self, vc):
         self.vc = vc
-        self.available_strategies = ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy"]
+        self.available_strategies = [] #TODO ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy"]
+        #TODO verwenden
+        self.program_parameter_dict = {'data_source': 'iex', 'weeks_delta': 52}
+        self.all_parameter_dicts = {}
         w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
         parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
-        self.all_parameter_dicts = {'w52hi_parameter_dict': w52hi_parameter_dict, 'parameter_dict': parameter_dict,
-                                    'data_source': 'iex', 'weeks_delta': 52}
+        #self.all_parameter_dicts = {'W52HighTechnicalStrategy': w52hi_parameter_dict, "SimplePatternNewsStrategy": parameter_dict}
+        self.log_text = []
+        self.strategy_selection_index = -1
+
+    def set_strategy_selection_index(self, index):
+        self.strategy_selection_index = index
+
+    def get_strategy_selection_index(self):
+        return self.strategy_selection_index
 
     # Delegates-- Model would call this on internal change
     def all_parameter_dicts_changed(self):
@@ -107,8 +154,9 @@ class MyModel:
     def get_all_parameter_dicts(self):
         return self.all_parameter_dicts
 
-    def add_to_all_parameter_dicts(self, item):
-        self.all_parameter_dicts.update(item)
+    def add_to_all_parameter_dicts(self, items):
+        for key, value in items.items():
+            self.all_parameter_dicts.update({key: value})
         self.all_parameter_dicts_changed()
 
     def clear_all_parameter_dicts(self):
@@ -117,13 +165,13 @@ class MyModel:
 
     # Delegates-- Model would call this on internal change
     def list_changed(self):
-        self.vc.list_changed_delegate()
+        self.vc.available_strategies_changed()
 
     # setters and getters
     def getList(self):
         return self.available_strategies
 
-    def add_to_list(self, item):
+    def add_to_available_strategies(self, item):
         myList = self.available_strategies
         myList.append(item)
         self.available_strategies = myList
@@ -133,9 +181,20 @@ class MyModel:
         self.available_strategies = []
         self.list_changed()
 
+    def add_to_log(self, log_text):
+        self.log_text.append(log_text)
+        self.log_changed()
+
+    def log_changed(self):
+        self.vc.log_changed_delegate()
+
+    def get_log(self):
+        return self.log_text
+
+
 
 def init(top, gui, *args, **kwargs):
-    global w, top_level, root
+    global w, top_level, root, app
     w = gui
     top_level = top
     root = top
@@ -148,6 +207,22 @@ def destroy_window():
     global top_level
     top_level.destroy()
     top_level = None
+
+
+def save():
+    app.dump_parameter_from_file()
+
+
+def quit():
+    pass
+
+
+def edit():
+    pass
+
+
+def load_params():
+    app.load_parameter_from_file()
 
 
 if __name__ == '__main__':
