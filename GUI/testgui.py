@@ -30,8 +30,6 @@
 
 import tkinter as tk
 
-from GUI.DataModel import DataModel
-
 
 class Observable:
     def __init__(self, initialValue=None):
@@ -59,15 +57,34 @@ class Observable:
         self.data = None
 
 
+class Model:
+    def __init__(self):
+        self.myMoney = Observable(0)
+        self.available_stock_indices = Observable(["CDAX", "SP500", "Test1"])  # TODO # list with stock indices (DAX,..)
+
+    def addMoney(self, value):
+        self.myMoney.set(self.myMoney.get() + value)
+
+    def removeMoney(self, value):
+        self.myMoney.set(self.myMoney.get() - value)
+
+    def set_available_stock_indices(self, available_stock_indices):
+        t1 = self.available_stock_indices.get()
+        t1.append(available_stock_indices)
+        self.available_stock_indices.set(t1)
+
+
 class View(tk.Toplevel):
     def __init__(self, master):
         tk.Toplevel.__init__(self, master)
         self.protocol('WM_DELETE_WINDOW', self.master.destroy)
         tk.Label(self, text='My Money').pack(side='left')
-        self.moneyCtrl = tk.Entry(self, width=8)
+        self.moneyCtrl = tk.Entry(self, width=80)
         self.moneyCtrl.pack(side='left')
         self.addButton = tk.Button(self, text='Add', width=8)
-        self.addButton.pack(side='left')
+        self.addButton.pack(side='right')
+        self.removeButton = tk.Button(self, text='Remove', width=8)
+        self.removeButton.pack(side='right')
 
     def SetMoney(self, money):
         self.moneyCtrl.delete(0, 'end')
@@ -76,19 +93,23 @@ class View(tk.Toplevel):
 
 class Controller:
     def __init__(self, root):
-        self.model = DataModel()
-        self.model.available_stock_indices.addCallback(self.MoneyChanged)
+        self.model = Model()
+        self.model.myMoney.addCallback(self.MoneyChanged)
+        self.model.available_stock_indices.addCallback(self.available_indices_changed)
         self.view1 = View(root)
-        self.view1.addButton.config(command=self.set_available_indices)
+        self.view1.addButton.config(command=self.add_available_indices)
         self.view1.removeButton.config(command=self.RemoveMoney)
-        self.TestB.removeButton.config(command=self.RemoveMoney)
-        self.MoneyChanged(self.model.available_stock_indices.get())
-
-    def set_available_indices(self):
-        self.model.set_available_stock_indices(["CDAX", "SP500", "Test1"])
+        self.MoneyChanged(self.model.myMoney.get())
+        self.available_indices_changed(self.model.available_stock_indices.get())
 
     def RemoveMoney(self):
-        self.model.set_available_stock_indices("test rem")
+        self.model.removeMoney(10)
+
+    def add_available_indices(self):
+        self.model.set_available_stock_indices("Test1")
+
+    def available_indices_changed(self, money):
+        self.view1.SetMoney(money)
 
     def MoneyChanged(self, money):
         self.view1.SetMoney(money)

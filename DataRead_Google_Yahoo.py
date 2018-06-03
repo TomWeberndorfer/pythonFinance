@@ -209,7 +209,7 @@ def optimize_name_for_yahoo(name, replace_whitespace=True, return_first_part=Fal
     return name
 
 
-def get_ticker_data_with_webreader(ticker, stock_exchange="", stock_dfs_file="", source='yahoo',
+def get_ticker_data_with_webreader(ticker, stock_exchange="", stock_dfs_file="", source='quandl',
                                    reload_stockdata=False, weeks_delta=52):
     """
     TODO
@@ -234,7 +234,7 @@ def get_ticker_data_with_webreader(ticker, stock_exchange="", stock_dfs_file="",
         if not os.path.exists(stock_dfs_file + '/{}.csv'.format(ticker_exchange)) or reload_stockdata:
             end = dt.datetime.now()
             start = (end - dt.timedelta(weeks=weeks_delta))
-            df = web.DataReader(ticker_exchange, source, start, end)
+            df = web.DataReader(ticker_exchange, source, start, end, timeout=0.5)
             if len(df) > 0:
                 df.to_csv(stock_dfs_file + '/{}.csv'.format(ticker_exchange))
             else:

@@ -1,57 +1,50 @@
-from pandas_datareader import data
-import googlefinance.client as google_client
-import numpy as np
-import pandas as pd
+import os
+import unittest
+
+from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
+from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
+from DataReading.StockDataContainer import StockDataContainer
+from Utils.file_utils import read_tickers_from_file
+import pandas_datareader.data as web
+import datetime
+
+import socket
+socket.setdefaulttimeout(5) # Time out after 5 seconds
 
 
-# Define the instruments to download. We would like to see Apple, Microsoft and the S&P500 index.
-#tickers = ['AAPL']
+def split_list(self, alist, wanted_parts=1):
+    length = len(alist)
+    return [alist[i * length // wanted_parts: (i + 1) * length // wanted_parts]
+            for i in range(wanted_parts)]
 
-# Define which online data_source one should use
-#data_source = 'google'
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
+stock_data_container_file_name = "stock_data_container_file.pickle"
+stock_data_container_file = filepath + stock_data_container_file_name
 
-# We would like all available data from 01/01/2000 until 12/31/2016.
-#start_date = '2016-12-01'
-#end_date = '2016-12-31'
+data_source = 'quandl'
+weeks_delta = 52  # one year in the past
 
-# User pandas_reader.data.DataReader to load the desired data. As simple as that.
-#panel_data = data.DataReader(tickers, data_source, start_date, end_date)
-#print(len(panel_data))
 
-# Dow Jones
-#param = {
-#     'q': "ETR:PUM", # Stock symbol (ex: "AAPL")
-#     'i': "86400", # Interval size in seconds ("86400" = 1 day intervals)
-#     #'x': "INDEXDJX", # Stock exchange symbol on which stock is traded (ex: "NASD")
-#     #'x': "INDEXDB", # Stock exchange symbol on which stock is traded (ex: "NASD")
-#     'p': "1M" # Period (Ex: "1Y" = 1 year)
-# }
-# # get price data (return pandas dataframe)
-# df = google_client.get_price_data(param)
-# print(df)
+def split_list(alist, wanted_parts=1):
+    length = len(alist)
+    return [alist[i * length // wanted_parts: (i + 1) * length // wanted_parts]
+            for i in range(wanted_parts)]
 
-import talib
-# list of functions
-#print (talib.get_functions())
+stock_data_container_list = read_tickers_from_file(stock_data_container_file, reload_file=True)
 
-filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
-file = filepath + 'avg_below.csv'
-stock_data = pd.read_csv(file)
+stock_data_container_list = split_list(stock_data_container_list, 3)
+stock_data_container_list = stock_data_container_list[0]
 
-data_len = len(stock_data)
-close_value = stock_data.iloc[data_len - 1].Close
-yesterday_close_value = stock_data.iloc[data_len - 2].Close
-tday_open_value = stock_data.iloc[data_len - 1].Open
-tday_high_value = stock_data.iloc[data_len - 1].High
-tday_low_value = stock_data.iloc[data_len - 1].Low
+data_storage = DataReaderFactory()
+stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list, weeks_delta,
+                                         stock_data_container_file, data_source,
+                                         reload_stockdata=True)
+stock_data_reader.read_data()
 
-close_value = np.array([stock_data.Close])
-high_value = np.array([stock_data.High])
-low_value = np.array([stock_data.Low])
+failed_reads = 0
+for stock_data_container in stock_data_container_list:
+    if len(stock_data_container.historical_stock_data) <= 0:
+        failed_reads += 1
 
-# real = ATR(high, low, close, timeperiod=14)
-true_range = talib.ATR(high_value, low_value, close_value, timeperiod=14)
-
-print(true_range)
-
-#test
+print("Failed reads: " + str(failed_reads))

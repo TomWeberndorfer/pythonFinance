@@ -2,13 +2,11 @@
 
 # import textblob
 # https://banking.einnews.com/sections
-from multiprocessing.dummy import Pool as ThreadPool
 import _pickle as pickle
-import datetime
+
 # corpus:
 # https://nlp.stanford.edu/pubs/lrec2014-stock.pdf
 # https://nlp.stanford.edu/pubs/stock-event.html
-import threading
 import nltk
 from textblob.classifiers import NaiveBayesClassifier
 

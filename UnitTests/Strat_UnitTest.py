@@ -18,7 +18,7 @@ test_filepath = filepath + 'TestData\\'
 class MyTest(unittest.TestCase):
 
     def test_convert(self):
-        file = test_filepath + 'test_calculate_stopbuy_and_stoploss_Ok.csv'
+        file = test_filepath + 'Autodesk Inc..csv'
         data = pd.read_csv(file)
         print()
         print()

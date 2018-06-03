@@ -1,10 +1,10 @@
 
 class StockDataContainer:
-    def __init__(self, stock_name, stock_ticker, stock_exchange):
+    def __init__(self, stock_name, stock_ticker, stock_exchange, historical_stock_data=[]):
         self.stock_exchange = stock_exchange
         self.stock_name = stock_name
         self.stock_ticker = stock_ticker
-        self.historical_stock_data = []
+        self.historical_stock_data = historical_stock_data
         self.stock_current_prize = 0
 
     def __str__(self):

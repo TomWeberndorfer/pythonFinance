@@ -1,12 +1,12 @@
-import os
 import _pickle as pickle
-import re
-import pandas as pd
+import os
 import os.path
+import re
+
+import pandas as pd
 
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import read_table_columns_from_webpage, read_table_columns_from_webpage_list
-from multiprocessing.dummy import Pool as ThreadPool
+from Utils.common_utils import read_table_columns_from_webpage_list, CommonUtils
 
 
 class FileUtils:
@@ -51,24 +51,28 @@ def read_tickers_from_file(stock_data_container_file, reload_file=False):
 
     if not os.path.exists(stock_data_container_file) or reload_file:
 
-        pool = ThreadPool(4)
-        list_in_list1 = ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
-                         'wikitable sortable', 0, 1]
-        lil2 = ['http://topforeignstocks.com/stock-lists/the'
-                '-list-of-listed-companies-in-germany/',
-                'tbody', 'class', 'row-hover', 1, 2]
+        pool = CommonUtils.get_threading_pool()
 
-        list_with_stock_pages_to_read = [list_in_list1, lil2]
-        res1, res2 = pool.map(read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
+        # TODO 11: seite geht nicht mehr
+        list_with_stock_pages_to_read = [['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
+                                          'wikitable sortable', 0, 1]] # ,
+                                         # ['http://topforeignstocks.com/stock-lists/the'
+                                         # '-list-of-listed-companies-in-germany/',
+                                         # 'tbody', 'class', 'row-hover', 1, 2]]
+        result_list = pool.map(read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
 
+        res1= result_list[0]
         # TODO ned fix de / en
         for idx in range(0, len(res1[0])):
             stock_data_container_list.append(
                 StockDataContainer(res1[1][idx], res1[0][idx], "en"))
 
-        for idx in range(0, len(res2[0])):
-            stock_data_container_list.append(
-                StockDataContainer(res2[0][idx], res2[1][idx], "de"))
+        #TODO 11: des ned fix
+        if len(result_list) > 1:
+            res2=result_list[1]
+            for idx in range(0, len(res2[0])):
+                stock_data_container_list.append(
+                    StockDataContainer(res2[0][idx], res2[1][idx], "de"))
 
         # TODO: b) General Standard is not included of page:
         # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/

@@ -1,46 +1,41 @@
+# anderer quellen
+# import pandas_datareader.data as web
+# from datetime import datetime
+# start = datetime(2015, 2, 9)
+# end = datetime(2017, 5, 24)
+# f = web.DataReader('F', 'iex', start, end)
+
+# all symbols
+from pandas_datareader.nasdaq_trader import get_nasdaq_symbols
+
+symbols = get_nasdaq_symbols()
+
+
+def split_list(alist, wanted_parts=1):
+    length = len(alist)
+    return [alist[i * length // wanted_parts: (i + 1) * length // wanted_parts]
+            for i in range(wanted_parts)]
+
+
+B = split_list(symbols.index._data, 30)
+
+stock_list = []
+for x in range (0, len(B[0])):
+    stock_list.append(str(B[0][x]).replace("$", ""))
+
+# caching
+import pandas_datareader.data as web
 import datetime
-import pickle
-import sys
-import os
+import requests_cache
 
-import bs4 as bs
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
-import numpy
-import requests
-# from matplotlib import style
-import plotly.graph_objs as go
-# from matplotlib.finance import candlestick_ohlc
-import plotly.plotly as py
-import plotly.graph_objs as go
+expire_after = datetime.timedelta(days=3)
+session = requests_cache.CachedSession(cache_name='cache', backend='sqlite',
+                                       expire_after=expire_after)
+start = datetime.datetime(2017, 1, 1)
+end = datetime.datetime(2018, 1, 1)
+f = web.DataReader(stock_list, 'iex', start, end, session=session)
 
-import pandas as pd
-import soup as soup
-from bs4 import BeautifulSoup
-import urllib
-
-from Utils.file_utils import read_tickers_from_file
-
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = ROOT_DIR + '\\DataFiles\\'
-stock_list_name = "stockList.txt"
-stocks_to_buy_name = "StocksToBuy.CSV"
-excel_file_name = '52W-HochAutomatisch_Finanzen.xlsx'
-tickers_file_name = "tickers.pickle"
-tickers_file = filepath + tickers_file_name
-
-from urllib.request import urlopen
-
-#link = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-1-2-3-4-5-6-7-8-11-12-15/"
-link = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8/" #analysen, ad hoc, unternehmen
-
-resp = requests.get(link)
-soup = bs.BeautifulSoup(resp.text, 'lxml')
-
-#TODO instead of h2: article --> h2 --> a href
-for elm in soup.find_all("h2"):
-    #print(elm.get(".h2"))
-    print (str(elm.get_text(strip=True)))
-    #print (str(elm.contents[3].contents))
-
-
+print(f)
+# anderer reader / PARALLEL MEHRER LESEN
+# 4.5.2 Fama-French Data (Ken French’s Data Library)
+# oder 4.5.11 Quandl

@@ -27,13 +27,14 @@ class W52HighTechnicalStrategy(Strategy):
     def _method_to_execute(self, stock_data_container):
         try:
             if len(stock_data_container.historical_stock_data) > 0:
-                print("W52HighTechnicalStrategy for " + stock_data_container.stock_name + " started.")
                 result = self._strat_52_w_hi_hi_volume(stock_data_container, self.parameter_dict)
 
                 if result is not None:
                     self.result_list.append(result)
         except Exception as e:
             sys.stderr.write("Exception:  " + str(e) + "\n")
+
+        self.update_status("W52HighTechnicalStrategy:")
 
     def _strat_52_w_hi_hi_volume(self, stock_data_container, parameter_dict):
         """

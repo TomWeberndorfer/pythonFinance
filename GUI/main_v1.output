@@ -1,0 +1,14 @@
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "C:\Users\Tom\AppData\Local\Programs\Python\Python36-32\lib\tkinter\__init__.py", line 1699, in __call__
+    return self.func(*args)
+  File "C:\temp\pythonFinance\pythonFinance\GUI\main_v1_support.py", line 44, in all_parameter_dicts_changed
+    w.Text1.insert(END, self.model.get_all_parameter_dicts())
+AttributeError: 'XYZ_Framework_' object has no attribute 'Text1'
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "C:\Users\Tom\AppData\Local\Programs\Python\Python36-32\lib\tkinter\__init__.py", line 1699, in __call__
+    return self.func(*args)
+  File "C:\temp\pythonFinance\pythonFinance\GUI\main_v1_support.py", line 44, in all_parameter_dicts_changed
+    w.Text1.insert(END, self.model.get_all_parameter_dicts())
+AttributeError: 'XYZ_Framework_' object has no attribute 'Text1'

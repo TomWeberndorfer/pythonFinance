@@ -28,7 +28,7 @@ class StrategyAndParameter:
     def __init__(self):
         self.selected_strategy_type = ""  # string with name of call function
         self.strategy_parameters = []  # list with parameters, e.g.:{'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
-        self.available_strategy_types = []  # list with available types
+        self.available_strategy_types = ["Tst"]  # list with available types
 
     def set_strategy_type(self, strategy_type):
         self.selected_strategy_type = strategy_type
@@ -50,23 +50,6 @@ class StockFilter:
 
     def set_selected_index(self, selected_index):
         self.selected_index = selected_index
-
-
-class StockResults:
-    def __init__(self):
-        self.stocks_to_buy = []  # list with stocks
-        self.logging_line = ""
-
-    def append_stock(self, stock):
-        self.stocks_to_buy.append(stock)
-
-
-class StockData:
-    def __init__(self):
-        self.stocks_name = ""
-        self.stock_target_price_data = []
-        self.stock_news_data = []
-    # 'stock_name': res['stock_name'], 'sb': res['sb'], 'sl': res['sl'], 'strategy_name': res['strategy_name'], 'params': params[0], 'data': stock52_w})
 
 
 class OrderManagement:

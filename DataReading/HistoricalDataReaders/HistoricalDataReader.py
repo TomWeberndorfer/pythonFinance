@@ -1,7 +1,6 @@
 import _pickle as pickle
 import datetime as dt
 import sys
-from multiprocessing.dummy import Pool as ThreadPool
 from pandas_datareader import data
 
 from DataRead_Google_Yahoo import optimize_name_for_yahoo
@@ -17,18 +16,17 @@ class HistoricalDataReader(StockDataReader):
         :param stock_data_container_sub_list: sub list of the whole stock data container (already split)
         :return: nothing, sublist in changed
         """
+        if stock_data_container.stock_ticker != "":
+            if stock_data_container not in self.stock_data_container_list \
+                    or len(stock_data_container.historical_stock_data) <= 0 \
+                    or self.reload_stockdata:
+                stock52_w = self._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
+                                                                 stock_data_container.stock_exchange,
+                                                                 self.data_source,
+                                                                 self.weeks_delta)
 
-        if stock_data_container not in self.stock_data_container_list \
-                or len(stock_data_container.historical_stock_data) <= 0 \
-                or self.reload_stockdata:
-            print("Read stock data " + stock_data_container.stock_name + " started.")
-            stock52_w = self._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
-                                                             stock_data_container.stock_exchange,
-                                                             self.data_source,
-                                                             self.weeks_delta)
-
-            stock_data_container.set_historical_stock_data(stock52_w)
-            print("Read stock data " + stock_data_container.stock_name + " finished.")
+                stock_data_container.set_historical_stock_data(stock52_w)
+                self.update_status("HistoricalDataReader:")
 
     def _get_ticker_data_with_webreader(self, ticker, stock_exchange, data_source,
                                         weeks_delta):
@@ -42,36 +40,47 @@ class HistoricalDataReader(StockDataReader):
         :param weeks_delta: delta from now to read the past: 52 means 52 weeks in the past
         :return:
         """
+
         df = []
-        ticker = optimize_name_for_yahoo(ticker)  # TODO nicht nur für yahoo
+
+        if ticker == "" or ticker == '' or len(ticker) <= 0:
+            sys.stderr.write("EXCEPTION reading because ticker is empty")
+            return df
+
+        #TODO 11 ticker = optimize_name_for_yahoo(ticker)  # TODO nicht nur für yahoo
         ticker_exchange = ticker
 
+        if ticker_exchange == "" or ticker_exchange == '' or len(ticker_exchange) <= 0:
+            sys.stderr.write("EXCEPTION reading because ticker is empty")
+            return df
+
         # TODO 3: yahoo does not take en, so skip
-        if stock_exchange != "" and stock_exchange is not None and stock_exchange != "en":
+        if stock_exchange != '' and stock_exchange is not None and stock_exchange != "en":
             ticker_exchange += "." + stock_exchange
 
         # TODO autmatisieren von pandas=??
-        for i in range(0, 2): #TODO 4
-            try:
-                end = dt.datetime.now()
-                start = (end - dt.timedelta(weeks=weeks_delta))
+        # for i in range(0, 2): #TODO 4
+        try:
+            end = dt.datetime.now()
+            start = (end - dt.timedelta(weeks=weeks_delta))
 
-                df = data.DataReader(ticker_exchange, data_source, start, end)
-                if len(df) > 0:
-                    break
+            df = data.DataReader(ticker_exchange, data_source, start, end, 3, 0.05)
+        #        if len(df) > 0:
+        #            break
 
-            except Exception as e:
+        except Exception as e:
+            sys.stderr.write(str(e))
                 # exception but the df is filled --> ok
-                if len(df) > 0:
-                    break
+
+         #       if len(df) > 0:
+         #           break
 
             # TODO performance: wird dann langsam
             # from time import sleep
             #sleep(0.1)  # Time in seconds.
 
         if len(df) <= 0:
-            sys.stderr.write(
-                "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + ", num od retries: " + str(i) + "\n")
+            sys.stderr.write("EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + "\n")
             print('FAILED: Reading {}'.format(ticker_exchange))
 
         return df
