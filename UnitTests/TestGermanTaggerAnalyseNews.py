@@ -7,11 +7,6 @@ from DataReading.StockDataContainer import StockDataContainer
 from Utils.file_utils import FileUtils, read_tickers_from_file
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
-# from directory UnitTests to --> root folder with: ..\\..\\
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = ROOT_DIR + '\\DataFiles\\'
-
-
 class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
     def test_analyse_single_news(self):

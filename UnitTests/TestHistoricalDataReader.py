@@ -4,6 +4,7 @@ import unittest
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from DataReading.StockDataContainer import StockDataContainer
+from GUI.main_v1 import glob_stock_data_labels_dict
 from Utils.file_utils import read_tickers_from_file
 import pandas_datareader.data as web
 import datetime
@@ -64,8 +65,9 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         self.assertEqual(len(stock_data_container_list), 2)
         self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
         self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)
-        self.assertNotEqual(stock_data_container_list[1].historical_stock_data.High[0],
-                            stock_data_container_list[0].historical_stock_data.High[0])
+        self.assertNotEqual(stock_data_container_list[1].historical_stock_data[glob_stock_data_labels_dict['High']][0],
+                            stock_data_container_list[0].historical_stock_data[glob_stock_data_labels_dict['High']][0])
+
 
     def test_read_data_without_factory_t(self):
 
@@ -118,7 +120,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         #stock_data_container_list = stock_data_container_list[0]
 
         # TODO abstract factory: http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
-        # TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, filepath + 'stock_dfs')
+        # TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, global_filepath + 'stock_dfs')
         # TODO relead data
         data_storage = DataReaderFactory()
         stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list, weeks_delta,

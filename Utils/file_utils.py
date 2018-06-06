@@ -156,7 +156,7 @@ def check_file_exists_or_create(file, txt=""):
     """
     Checks if the file exists and create it otherwise if not.
     :param txt: text to append in file, if empty
-    :param file: filepath + name
+    :param file: global_filepath + name
     :return: true if it exists
     """
     if os.path.exists(file):

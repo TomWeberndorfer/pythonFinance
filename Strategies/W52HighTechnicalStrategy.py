@@ -16,12 +16,6 @@ from Utils.file_utils import FileUtils
 # news_threshold = 0.5
 ##########################
 
-# from directory UnitTests to --> root folder with: ..\\..\\
-# TODO übergeben
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = ROOT_DIR + '\\DataFiles\\'
-
-
 class W52HighTechnicalStrategy(Strategy):
 
     def _method_to_execute(self, stock_data_container):
@@ -32,7 +26,7 @@ class W52HighTechnicalStrategy(Strategy):
                 if result is not None:
                     self.result_list.append(result)
         except Exception as e:
-            sys.stderr.write("Exception:  " + str(e) + "\n")
+            sys.stderr.write("Exception:  " + str(e) + ", args: " + str(e.args) + "\n")
 
         self.update_status("W52HighTechnicalStrategy:")
 

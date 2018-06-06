@@ -16,7 +16,7 @@ class NewsReaderTests(unittest.TestCase):
     def test_sample(self):
         #TODO
         # ++++++++++ FOR SAMPLE NEWS
-        # data = pd.read_csv(filepath + "Sample_news.txt")
+        # data = pd.read_csv(global_filepath + "Sample_news.txt")
         data= []
         # all_news = data.News.tolist()
 

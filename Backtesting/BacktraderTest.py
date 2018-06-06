@@ -17,6 +17,7 @@ import backtrader as bt
 # Create a Stratey
 from pandas import DataFrame
 
+from GUI.main_v1 import glob_stock_data_labels_dict
 from Signals import signal_is_volume_raising_within_check_days
 from Strategies import strat_52_w_hi_hi_volume
 from Utils.common_utils import convert_backtrader_to_dataframe, calc_avg_vol
@@ -36,10 +37,10 @@ class TestStrategy(bt.Strategy):
 
     def __init__(self):
         # Keep a reference to the "close" line in the data[0] dataseries
-        self.dataclose = self.datas[0].close
-        self.datavol = self.datas[0].volume
-        self.datahi = self.datas[0].high # TODO: high
-        self.datalo = self.datas[0].low # TODO: .low
+        self.dataclose = self.datas[0][glob_stock_data_labels_dict['Close']]
+        self.datavol = self.datas[0][glob_stock_data_labels_dict['Volume']]
+        self.datahi = self.datas[0][glob_stock_data_labels_dict['High']]
+        self.datalo = self.datas[0][glob_stock_data_labels_dict['Low']]
         self.buy_price = 0
 
         # To keep track of pending orders and buy price/commission

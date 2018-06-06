@@ -245,7 +245,7 @@ def get_ticker_data_with_webreader(ticker, stock_exchange="", stock_dfs_file="",
 
     except Exception as e:
         # traceback.print_exc()
-        # append_to_file(str(ticker_exchange), filepath + "failedReads.txt")
+        # append_to_file(str(ticker_exchange), global_filepath + "failedReads.txt")
 
         sys.stderr.write(
             "EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + ", " + str(e) + "\n")

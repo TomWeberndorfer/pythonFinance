@@ -10,9 +10,9 @@ from Signals.Signals import signal_is_volume_high_enough, signal_is52_w_high, \
 from Utils.common_utils import calc_avg_vol, calculate_stopbuy_and_stoploss
 
 # from directory UnitTests to --> root folder with: ..\\..\\
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = ROOT_DIR + '\\DataFiles\\'
-test_filepath = filepath + 'TestData\\'
+from GUI.main_v1 import global_filepath, glob_stock_data_labels_dict
+
+test_filepath = global_filepath + 'TestData\\'
 
 
 class MyTest(unittest.TestCase):
@@ -27,13 +27,14 @@ class MyTest(unittest.TestCase):
         print(" data = [")
         for i in range(0, len(data)):
             if i == len(data) - 1:
-                print("(\'{0}\', {1}, {2}, {3}, {4}, {5})]".format(str(data.Date[i]), str(data.Open[i]),
-                                                                   str(data.High[i]), str(data.Low[i]),
-                                                                   str(data.Close[i]), str(data.Volume[i])))
+                print("(\'{0}\', {1}, {2}, {3}, {4}, {5})]".format(str(data[glob_stock_data_labels_dict['Date']][i]), str(data[glob_stock_data_labels_dict['Open']][i]),
+                                                                   str(data[glob_stock_data_labels_dict['High']][i]), str(data[glob_stock_data_labels_dict['Low']][i]),
+                                                                   str(data[glob_stock_data_labels_dict['Close']][i]), str(data[glob_stock_data_labels_dict['Volume']][i])))
             else:
-                print("(\'{0}\', {1}, {2}, {3}, {4}, {5}),".format(str(data.Date[i]), str(data.Open[i]),
-                                                                   str(data.High[i]), str(data.Low[i]),
-                                                                   str(data.Close[i]), str(data.Volume[i])))
+                #TODO des is desselbe wie oben nur klammer anders hinten
+                print("(\'{0}\', {1}, {2}, {3}, {4}, {5}),".format(str(data[glob_stock_data_labels_dict['Date']][i]), str(data[glob_stock_data_labels_dict['Open']][i]),
+                                                                   str(data[glob_stock_data_labels_dict['High']][i]), str(data[glob_stock_data_labels_dict['Low']][i]),
+                                                                   str(data[glob_stock_data_labels_dict['Close']][i]), str(data[glob_stock_data_labels_dict['Volume']][i])))
 
         print ("data = pd.DataFrame.from_records(data, columns=labels)")
 

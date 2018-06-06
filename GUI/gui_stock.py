@@ -40,6 +40,9 @@ class MyController:
         print(self.model.getList())
         self.view.setLabel_text(self.model.getList())
 
+    def log_changed_delegate(self):
+        self.view.Scrolledtext_log
+
     def all_parameter_dicts_changed(self):
         # model internally chages and needs to signal a change
         print(self.model.get_all_parameter_dicts())

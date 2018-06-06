@@ -13,6 +13,8 @@ import plotly.plotly as py
 import requests
 from multiprocessing.dummy import Pool as ThreadPool
 
+from GUI.main_v1 import glob_stock_data_labels_dict
+
 
 class CommonUtils:
     threadpool = None
@@ -94,7 +96,7 @@ def calc_avg_vol(stock_data):
     if stock_data is None or len(stock_data) <= 0:
         raise NotImplementedError
 
-    vol_avg = stock_data["Volume"].mean()
+    vol_avg = stock_data[glob_stock_data_labels_dict["Volume"]].mean()
     return vol_avg
 
 
@@ -128,7 +130,7 @@ def calculate_stopbuy_and_stoploss(stock_data):
         raise NotImplementedError
 
     # values should be calc with max (real 52wHigh)
-    highest_high = stock_data['High'].max()
+    highest_high = stock_data[glob_stock_data_labels_dict['High']].max()
     sb = highest_high * 1.005  # stop buy 0,5% higher than last val
     sl = sb * 0.97  # stop loss 3% lower than stop buy
 
@@ -282,9 +284,9 @@ def calc_mean_true_range(stock_data):
     tr = []
     i = 0
     while i < len(stock_data):
-        yesterday_close_value = stock_data.iloc[i - 1].Close
-        tday_high_value = stock_data.iloc[i].High
-        tday_low_value = stock_data.iloc[i].Low
+        yesterday_close_value = stock_data.iloc[i - 1][glob_stock_data_labels_dict['Close']]
+        tday_high_value = stock_data.iloc[i][glob_stock_data_labels_dict['High']]
+        tday_low_value = stock_data.iloc[i][glob_stock_data_labels_dict['Low']]
         tr.append(calc_true_range(tday_high_value, tday_low_value, yesterday_close_value))
 
         i += 1
@@ -302,10 +304,10 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     # py.plotly.tools.set_credentials_file(username='webc', api_key='bWWpIIZ51DsGeqBXNb15')
 
     trace = go.Candlestick(x=stock_data.index,
-                           open=stock_data.Open,
-                           high=stock_data.High,
-                           low=stock_data.Low,
-                           close=stock_data.Close)
+                           open=stock_data[glob_stock_data_labels_dict['Open']],
+                           high=stock_data[glob_stock_data_labels_dict['High']],
+                           low=stock_data[glob_stock_data_labels_dict['Low']],
+                           close=stock_data[glob_stock_data_labels_dict['Close']])
     data = [trace]
     py.plot(data, filename=stock_name)
     return
@@ -398,8 +400,8 @@ def convert_backtrader_to_dataframe(data):
     while i <= 0:
         try:
 
-            lst.append([float(data.open[i]), float(data.high[i]), float(data.low[i]),
-                        float(data.close[i]), float(data.volume[i])])
+            lst.append([float(data[glob_stock_data_labels_dict['Open']][i]), float(data[glob_stock_data_labels_dict['High']][i]), float(data[glob_stock_data_labels_dict['Low']][i]),
+                        float(data[glob_stock_data_labels_dict['Close']][i]), float(data[glob_stock_data_labels_dict['Volume']][i])])
 
         except:
             # nothing to do

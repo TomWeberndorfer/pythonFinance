@@ -7,7 +7,10 @@ import sys
 import _pickle as pickle
 import os
 from tkinter import messagebox
-from Main import start_main
+
+from GUI.main_v1 import global_filepath
+from Main import run_screening
+from Utils.news_utils import NewsUtils
 
 try:
     from Tkinter import *
@@ -23,10 +26,16 @@ except ImportError:
 
     py3 = 1
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 # TODO ev in config file -->  gui load
-filepath = ROOT_DIR + '\\DataFiles\\'
-
+# immer ins main kopieren
+# global ROOT_DIR
+# ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+# global global_filepath
+# global_filepath = ROOT_DIR + '\\DataFiles\\'
+# #TODO vom dataprovider lesen und dann zuweisen (irgendeine aktie abfragen)
+# global glob_stock_data_labels_dict
+# glob_stock_data_labels_dict = {'High': 'high', 'Low':'low', 'Open':'open',
+#                                'Close':'close', 'Volume':'volume'}
 
 class MyController:
     def __init__(self, parent):
@@ -38,21 +47,33 @@ class MyController:
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect)
         self.all_parameter_dicts_changed()
         self.available_strategies_changed()
+        self.load_parameter_from_file()
 
     def start_screening(self):
-        index = self.model.get_strategy_selection_index()
+        selection_value = self.model.get_strategy_selection_value()
 
-        if index != -1:
-            messagebox.showerror("Not Implemented Error", "Run not implemented yet")
-        else:
+        if selection_value == "" or len(selection_value) <= 0:
             messagebox.showerror("Selection Error", "Please select a strategy first!")
+        else:
+            # messagebox.showerror("Not Implemented Error", "Run not implemented yet")
+            selected_strategy_params = self.model.get_all_parameter_dicts()[selection_value]
+            stock_data_container_file_name = "stock_data_container_file.pickle"
+            stock_data_container_file = global_filepath + stock_data_container_file_name
+            last_date_time_file = global_filepath + "last_date_time.csv"
+            data_source = 'iex'
+            weeks_delta = 52  # one year in the past
+            other_params = {'stock_data_container_file': stock_data_container_file, 'weeks_delta': weeks_delta,
+                            'data_source': data_source, 'last_date_time_file': last_date_time_file}
+            results = run_screening(selection_value, selected_strategy_params, other_params)
+            self.model.extend_result_stock_data_container_list(results)
+
 
     def load_parameter_from_file(self):
         self.model.clear_all_parameter_dicts()
         self.model.clear_list()
 
         try:
-            with open(filepath + "ParameterFile.pickle", "rb") as f:
+            with open(global_filepath + "ParameterFile.pickle", "rb") as f:
                 items = pickle.load(f)
                 self.model.add_to_all_parameter_dicts(items)
                 for item in items:
@@ -73,7 +94,7 @@ class MyController:
             messagebox.showerror("Parameters empty", "Please insert parameters")
         else:
             self.model.add_to_all_parameter_dicts(content_dict)
-            with open(filepath + "ParameterFile.pickle", "wb") as f:
+            with open(global_filepath + "ParameterFile.pickle", "wb") as f:
                 pickle.dump(self.model.all_parameter_dicts, f)
 
             self.model.add_to_log("Params Saved")
@@ -109,9 +130,16 @@ class MyController:
     def available_strategies_changed(self):
         w.Scrolledlistbox_selectStrategy.delete(0, END)
         # model internally chages and needs to signal a change
-        test = self.model.getList()
-        for value in test:
-            w.Scrolledlistbox_selectStrategy.insert(END, value)
+        available_strategies_list = self.model.getList()
+        for available_strategy in available_strategies_list:
+            w.Scrolledlistbox_selectStrategy.insert(END, available_strategy)
+
+    def result_stock_data_container_list_changed(self):
+        w.Scrolledtext_Results.delete(1.0, END)
+        # model internally chages and needs to signal a change
+        stock_data_container_list = self.model.get_result_stock_data_container_list()
+        print_str = NewsUtils.format_news_analysis_results(stock_data_container_list)
+        w.Scrolledtext_Results.insert(END, print_str)
 
     def add_available_indices(self):
         # w.Text1.update(str({'w52hi_parameter_dict': {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}}))
@@ -124,7 +152,7 @@ class MyController:
         index = int(w.curselection()[0])
         value = w.get(index)
         print('You selected item %d: "%s"' % (index, value))
-        self.model.set_strategy_selection_index(index)
+        self.model.set_strategy_selection_value(value)
 
 
 class MyModel:
@@ -135,16 +163,28 @@ class MyModel:
         self.program_parameter_dict = {'data_source': 'iex', 'weeks_delta': 52}
         self.all_parameter_dicts = {}
         w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
-        parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
+        parameter_dict = {'news_threshold': 0.7, 'german_tagger': global_filepath + 'nltk_german_classifier_data.pickle'}
         #self.all_parameter_dicts = {'W52HighTechnicalStrategy': w52hi_parameter_dict, "SimplePatternNewsStrategy": parameter_dict}
         self.log_text = []
-        self.strategy_selection_index = -1
+        self.strategy_selection_value = ""
+        self.result_stock_data_container_list = []
 
-    def set_strategy_selection_index(self, index):
-        self.strategy_selection_index = index
+    def get_result_stock_data_container_list(self):
+        return self.result_stock_data_container_list
 
-    def get_strategy_selection_index(self):
-        return self.strategy_selection_index
+    def clear_result_stock_data_container_list(self):
+        self.result_stock_data_container_list = []
+        self.vc.result_stock_data_container_list_changed()
+
+    def extend_result_stock_data_container_list(self, stock_data_container_list):
+        self.result_stock_data_container_list.extend(stock_data_container_list)
+        self.vc.result_stock_data_container_list_changed()
+
+    def set_strategy_selection_value(self, value):
+        self.strategy_selection_value = value
+
+    def get_strategy_selection_value(self):
+        return self.strategy_selection_value
 
     # Delegates-- Model would call this on internal change
     def all_parameter_dicts_changed(self):
