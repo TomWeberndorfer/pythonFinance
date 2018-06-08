@@ -1,3 +1,4 @@
+
 class StatusUpdate:
 
     def __init__(self, cnt_to_reach):
@@ -13,5 +14,6 @@ class StatusUpdate:
         :return:
         """
         self.curr_data_reads += 1
-        print(text_to_print + " " + str(self.curr_data_reads) + "/" + str(self.max_data_reads) + " done.")
+        log_text = text_to_print + " " + str(self.curr_data_reads) + "/" + str(self.max_data_reads) + " done."
+        print(log_text)
 

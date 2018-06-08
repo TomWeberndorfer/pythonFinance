@@ -8,6 +8,7 @@ import _pickle as pickle
 import os
 from tkinter import messagebox
 
+from GUI.SimpleTable import SimpleTable
 from GUI.main_v1 import global_filepath
 from Main import run_screening
 from Utils.news_utils import NewsUtils
@@ -38,6 +39,9 @@ except ImportError:
 #                                'Close':'close', 'Volume':'volume'}
 
 class MyController:
+    """
+    Classs for the controlling of mvc design with gui
+    """
     def __init__(self, parent):
         self.parent = parent
         self.model = MyModel(self)  # initializes the model
@@ -50,12 +54,15 @@ class MyController:
         self.load_parameter_from_file()
 
     def start_screening(self):
+        """
+        Method to start the screening once
+        :return: nothing, results are saved in the model.
+        """
         selection_value = self.model.get_strategy_selection_value()
 
         if selection_value == "" or len(selection_value) <= 0:
             messagebox.showerror("Selection Error", "Please select a strategy first!")
         else:
-            # messagebox.showerror("Not Implemented Error", "Run not implemented yet")
             selected_strategy_params = self.model.get_all_parameter_dicts()[selection_value]
             stock_data_container_file_name = "stock_data_container_file.pickle"
             stock_data_container_file = global_filepath + stock_data_container_file_name
@@ -69,6 +76,10 @@ class MyController:
 
 
     def load_parameter_from_file(self):
+        """
+        Loads the parameters into the GUI from a given filepath and file.
+        :return: nothing
+        """
         self.model.clear_all_parameter_dicts()
         self.model.clear_list()
 
@@ -84,8 +95,15 @@ class MyController:
             return
 
         self.model.add_to_log("Params Read")
+        
+    def insert_log(self, log_text):
+        self.model.add_to_log(log_text)
 
-    def dump_parameter_from_file(self):
+    def dump_parameter_to_file(self):
+        """
+        dumps the parameters to a global given file
+        :return:
+        """
         content = self.view.Scrolledtext_params.get(1.0, END)
         import ast
         content_dict = ast.literal_eval(content)
@@ -114,37 +132,51 @@ class MyController:
         w.Scrolledtext_params.delete(1.0, END)
         # model internally chages and needs to signal a change
         #TODO 11:
-        test = self.model.get_all_parameter_dicts()
-        w.Scrolledtext_params.insert(END, str(test))
-        #for key, value in test.items():
+        parameters = self.model.get_all_parameter_dicts()
+        self.insert_text_into_gui(w.Scrolledtext_params, str(parameters))
+        #for key, value in parameters.items():
         #    w.Scrolledtext_params.insert(END, "{'" + key + "':" + str(value) + "}")
         #    w.Scrolledtext_params.insert(END, "\n")
 
     def log_changed_delegate(self):
-        w.Scrolledtext_log.delete(1.0, END)
-        test = self.model.get_log()
-        for t in test:
-            w.Scrolledtext_log.insert(END, t)
-            w.Scrolledtext_log.insert(END, "\n")
+        self.insert_text_into_gui(w.Scrolledtext_log, "", delete=True)
+        logs = self.model.get_log()
+        for log in logs:
+            self.insert_text_into_gui(w.Scrolledtext_log, log)
+            self.insert_text_into_gui(w.Scrolledtext_log, "\n")
 
     def available_strategies_changed(self):
-        w.Scrolledlistbox_selectStrategy.delete(0, END)
+        self.insert_text_into_gui(w.Scrolledlistbox_selectStrategy, "", delete=True, start=0)
         # model internally chages and needs to signal a change
         available_strategies_list = self.model.getList()
         for available_strategy in available_strategies_list:
-            w.Scrolledlistbox_selectStrategy.insert(END, available_strategy)
+            self.insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
 
     def result_stock_data_container_list_changed(self):
-        w.Scrolledtext_Results.delete(1.0, END)
+        #self.insert_text_into_gui(w.Scrolledtext_Results, "", delete=True)
         # model internally chages and needs to signal a change
         stock_data_container_list = self.model.get_result_stock_data_container_list()
+        #TODO des weg und treeview her
         print_str = NewsUtils.format_news_analysis_results(stock_data_container_list)
-        w.Scrolledtext_Results.insert(END, print_str)
+        print(print_str)
+        #self.insert_text_into_gui(w.Scrolledtext_Results, print_str)
 
-    def add_available_indices(self):
-        # w.Text1.update(str({'w52hi_parameter_dict': {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}}))
-        # w.Text1.insert(END, 'test')
-        w.Scrolledlistbox1.insert(END, 'test')
+        tree = w.Scrolledtreeview1
+        for res in stock_data_container_list:
+            if res.stock_name is not None:
+                pos_class = round(res.prob_dist.prob("pos"), 2)
+                neg_class = round(res.prob_dist.prob("neg"), 2)
+                if pos_class > neg_class:
+                    recommendation_text = "BUY"
+                else:
+                    recommendation_text = "SELL"
+
+            tree.insert('', 'end', text=recommendation_text, values=(res.stock_ticker, res.stock_name,
+                                                                     res.stock_exchange, str(pos_class), str(neg_class),
+                                                                     str(res.stock_current_prize),
+                                                                     str(res.stock_target_price), res.orignal_news))
+
+        treeview_sort_column(tree, 'Pos', False)
 
     def listbox_onselect(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect()
@@ -153,6 +185,22 @@ class MyController:
         value = w.get(index)
         print('You selected item %d: "%s"' % (index, value))
         self.model.set_strategy_selection_value(value)
+
+    def insert_text_into_gui(self, element, text, delete=False, start=1.0, end=END):
+        """
+        optionally deletes the given element and optionally insert text into given element.
+        :param element: element to insert into (ex: Scrolledtext)
+        :param text: text to insert
+        :param delete: true, if delete content first
+        :param start: start case, ex.: 1.0 or 0
+        :param end: END tag
+        :return: nothing
+        """
+        if delete:
+            element.delete(start, end)
+        if text is not None and len(text) > 0:
+            element.insert(end, text)
+
 
 
 class MyModel:
@@ -240,6 +288,35 @@ def init(top, gui, *args, **kwargs):
     root = top
 
     app = MyController(root)
+
+    #TODO wo anders
+    tree = w.Scrolledtreeview1
+    headings = ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Pos", "neg", "current value", "target price", "orig News"]
+    tree['columns'] = headings
+    for heading in range(len(headings)):
+        tree.heading('#' + str(heading), text=headings[heading])
+
+
+# todo ins gui utils
+def treeview_sort_column(tv, col, reverse):
+    """
+    https://stackoverflow.com/questions/1966929/tk-treeview-column-sort
+    :param tv:
+    :param col:
+    :param reverse:
+    :return:
+    """
+    l = [(tv.set(k, col), k) for k in tv.get_children('')]
+    try:
+        l.sort(key=lambda t: int(t[0]), reverse=reverse)
+        #      ^^^^^^^^^^^^^^^^^^^^^^^
+    except ValueError:
+        l.sort(reverse=reverse)
+
+    for index, (val, k) in enumerate(l):
+        tv.move(k, '', index)
+
+    tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))
 
 
 def destroy_window():

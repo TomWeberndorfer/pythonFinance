@@ -1,7 +1,6 @@
 import tkinter as tk
 from string import ascii_uppercase
 from tkinter import *
-from tkinter import ttk
 
 
 # https://stackoverflow.com/questions/11047803/creating-a-table-look-a-like-tkinter/11049650#11049650
@@ -35,7 +34,7 @@ class SimpleTable(tk.Frame):
                 else:
                     label_text = "%s/%s" % (row, column)
 
-                obj = cell_object(self, relief=RIDGE)
+                obj = cell_object(self, text=label_text, relief=RIDGE)
 
                 if cell_object != tk.Label:
                     obj.insert(END, label_text)
