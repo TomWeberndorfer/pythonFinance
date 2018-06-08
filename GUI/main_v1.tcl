@@ -38,12 +38,148 @@ proc vTcl:project:info {} {
 
     #Updating ttreeview attributes
     .top32.lab37.scr52.01 configure\
+        -columns  "Recommendation, Stockname, Ticker, Stock Exchange, Positive Zuordnung, Negative Zuordnung, current value, target price, orig News"\
         -height  4
 
+    #heading options.
+    .top32.lab37.scr52.01 heading Recommendation, \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading Stockname, \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading Ticker, \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading Stock \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading Exchange, \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading Positive \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading Zuordnung, \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading Negative \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading Zuordnung, \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading current \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading value, \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading target \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading price, \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading orig \
+             -anchor center
+    #heading options.
+    .top32.lab37.scr52.01 heading News \
+             -anchor center
     #heading options.
     .top32.lab37.scr52.01 heading #0 \
              -text "Tree" \
              -anchor center
+    #column options.
+    .top32.lab37.scr52.01 column Recommendation, \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column Stockname, \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column Ticker, \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column Stock \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column Exchange, \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column Positive \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column Zuordnung, \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column Negative \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column Zuordnung, \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column current \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column value, \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column target \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column price, \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column orig \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
+    #column options.
+    .top32.lab37.scr52.01 column News \
+             -width 200 \
+             -minwidth 20 \
+             -stretch 1 \
+             -anchor w
     #column options.
     .top32.lab37.scr52.01 column #0 \
              -width 555 \
@@ -88,7 +224,7 @@ proc vTclWindow.top32 {base} {
         -menu "$top.m33" -background {#eaeaea} -highlightbackground wheat \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 1261x671+352+57
+    wm geometry $top 1261x651+352+57
     update
     # set in toplevel.wgt.
     global vTcl

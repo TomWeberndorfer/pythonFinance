@@ -57,7 +57,7 @@ class MyController:
 
 class MyView(Frame):
     def loadView(self):
-        quitButton = Button(self.frame, text='Quit', command=self.vc.quitButtonPressed).grid(row=0, column=0)
+        quitButton = Button(self.frame, text='Quit', command=self.vc.quit_button_pressed).grid(row=0, column=0)
         addButton = Button(self.frame, text="Add", command=self.vc.add_button_pressed).grid(row=0, column=1)
         clearButton = Button(self.frame, text="Clear", command=self.vc.clear_button_pressed).grid(row=0, column=2)
         entry = Entry(self.frame, width=80, textvariable=self.entry_text).grid(row=1, column=0, columnspan=3, sticky=EW)

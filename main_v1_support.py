@@ -6,9 +6,8 @@
 import sys
 import _pickle as pickle
 import os
+from threading import Thread
 from tkinter import messagebox
-
-from GUI.SimpleTable import SimpleTable
 from GUI.main_v1 import global_filepath
 from Main import run_screening
 from Utils.news_utils import NewsUtils
@@ -27,16 +26,6 @@ except ImportError:
 
     py3 = 1
 
-# TODO ev in config file -->  gui load
-# immer ins main kopieren
-# global ROOT_DIR
-# ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-# global global_filepath
-# global_filepath = ROOT_DIR + '\\DataFiles\\'
-# #TODO vom dataprovider lesen und dann zuweisen (irgendeine aktie abfragen)
-# global glob_stock_data_labels_dict
-# glob_stock_data_labels_dict = {'High': 'high', 'Low':'low', 'Open':'open',
-#                                'Close':'close', 'Volume':'volume'}
 
 class MyController:
     """
@@ -52,12 +41,20 @@ class MyController:
         self.all_parameter_dicts_changed()
         self.available_strategies_changed()
         self.load_parameter_from_file()
+        self.thread_running = False
 
     def start_screening(self):
+        if not self.thread_running:
+            thread = Thread(target=self.screening)
+            thread.start()
+            self.thread_running = True
+
+    def screening(self):
         """
         Method to start the screening once
         :return: nothing, results are saved in the model.
         """
+        self.model.clear_result_stock_data_container_list()
         selection_value = self.model.get_strategy_selection_value()
 
         if selection_value == "" or len(selection_value) <= 0:
@@ -73,7 +70,7 @@ class MyController:
                             'data_source': data_source, 'last_date_time_file': last_date_time_file}
             results = run_screening(selection_value, selected_strategy_params, other_params)
             self.model.extend_result_stock_data_container_list(results)
-
+        self.thread_running = False
 
     def load_parameter_from_file(self):
         """
@@ -118,7 +115,7 @@ class MyController:
             self.model.add_to_log("Params Saved")
 
     # event handlers
-    def quitButtonPressed(self):
+    def quit_button_pressed(self):
         self.parent.destroy()
 
     def add_button_pressed(self):
@@ -153,6 +150,8 @@ class MyController:
             self.insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
 
     def result_stock_data_container_list_changed(self):
+        tree = w.Scrolledtreeview1
+        tree.delete(*tree.get_children())
         #self.insert_text_into_gui(w.Scrolledtext_Results, "", delete=True)
         # model internally chages and needs to signal a change
         stock_data_container_list = self.model.get_result_stock_data_container_list()
@@ -161,7 +160,6 @@ class MyController:
         print(print_str)
         #self.insert_text_into_gui(w.Scrolledtext_Results, print_str)
 
-        tree = w.Scrolledtreeview1
         for res in stock_data_container_list:
             if res.stock_name is not None:
                 pos_class = round(res.prob_dist.prob("pos"), 2)
@@ -171,12 +169,12 @@ class MyController:
                 else:
                     recommendation_text = "SELL"
 
-            tree.insert('', 'end', text=recommendation_text, values=(res.stock_ticker, res.stock_name,
+            tree.insert('', 'end', text=recommendation_text, values=(res.stock_name, res.stock_ticker,
                                                                      res.stock_exchange, str(pos_class), str(neg_class),
                                                                      str(res.stock_current_prize),
                                                                      str(res.stock_target_price), res.orignal_news))
 
-        treeview_sort_column(tree, 'Pos', False)
+        treeview_sort_column(tree, 'Positive Value', False)
 
     def listbox_onselect(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect()
@@ -291,11 +289,10 @@ def init(top, gui, *args, **kwargs):
 
     #TODO wo anders
     tree = w.Scrolledtreeview1
-    headings = ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Pos", "neg", "current value", "target price", "orig News"]
-    tree['columns'] = headings
-    for heading in range(len(headings)):
-        tree.heading('#' + str(heading), text=headings[heading])
-
+    #headings = ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Pos", "neg", "current value", "target price", "orig News"]
+    #tree['columns'] = headings
+    #for heading in range(len(headings)):
+        #tree.heading('#' + str(heading), text=headings[heading])
 
 # todo ins gui utils
 def treeview_sort_column(tv, col, reverse):
