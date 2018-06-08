@@ -31,6 +31,7 @@ class MyController:
     """
     Classs for the controlling of mvc design with gui
     """
+
     def __init__(self, parent):
         self.parent = parent
         self.model = MyModel(self)  # initializes the model
@@ -92,7 +93,7 @@ class MyController:
             return
 
         self.model.add_to_log("Params Read")
-        
+
     def insert_log(self, log_text):
         self.model.add_to_log(log_text)
 
@@ -127,13 +128,8 @@ class MyController:
 
     def all_parameter_dicts_changed(self):
         w.Scrolledtext_params.delete(1.0, END)
-        # model internally chages and needs to signal a change
-        #TODO 11:
         parameters = self.model.get_all_parameter_dicts()
         self.insert_text_into_gui(w.Scrolledtext_params, str(parameters))
-        #for key, value in parameters.items():
-        #    w.Scrolledtext_params.insert(END, "{'" + key + "':" + str(value) + "}")
-        #    w.Scrolledtext_params.insert(END, "\n")
 
     def log_changed_delegate(self):
         self.insert_text_into_gui(w.Scrolledtext_log, "", delete=True)
@@ -152,13 +148,9 @@ class MyController:
     def result_stock_data_container_list_changed(self):
         tree = w.Scrolledtreeview1
         tree.delete(*tree.get_children())
-        #self.insert_text_into_gui(w.Scrolledtext_Results, "", delete=True)
-        # model internally chages and needs to signal a change
         stock_data_container_list = self.model.get_result_stock_data_container_list()
-        #TODO des weg und treeview her
         print_str = NewsUtils.format_news_analysis_results(stock_data_container_list)
         print(print_str)
-        #self.insert_text_into_gui(w.Scrolledtext_Results, print_str)
 
         for res in stock_data_container_list:
             if res.stock_name is not None:
@@ -199,18 +191,20 @@ class MyController:
         if text is not None and len(text) > 0:
             element.insert(end, text)
 
+        element.see("end")
 
 
 class MyModel:
     def __init__(self, vc):
         self.vc = vc
-        self.available_strategies = [] #TODO ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy"]
-        #TODO verwenden
+        self.available_strategies = []  # TODO ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy"]
+        # TODO verwenden
         self.program_parameter_dict = {'data_source': 'iex', 'weeks_delta': 52}
         self.all_parameter_dicts = {}
         w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
-        parameter_dict = {'news_threshold': 0.7, 'german_tagger': global_filepath + 'nltk_german_classifier_data.pickle'}
-        #self.all_parameter_dicts = {'W52HighTechnicalStrategy': w52hi_parameter_dict, "SimplePatternNewsStrategy": parameter_dict}
+        parameter_dict = {'news_threshold': 0.7,
+                          'german_tagger': global_filepath + 'nltk_german_classifier_data.pickle'}
+        # self.all_parameter_dicts = {'W52HighTechnicalStrategy': w52hi_parameter_dict, "SimplePatternNewsStrategy": parameter_dict}
         self.log_text = []
         self.strategy_selection_value = ""
         self.result_stock_data_container_list = []
@@ -278,21 +272,14 @@ class MyModel:
         return self.log_text
 
 
-
 def init(top, gui, *args, **kwargs):
     global w, top_level, root, app
     w = gui
     top_level = top
     root = top
-
     app = MyController(root)
+    redirector()
 
-    #TODO wo anders
-    tree = w.Scrolledtreeview1
-    #headings = ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Pos", "neg", "current value", "target price", "orig News"]
-    #tree['columns'] = headings
-    #for heading in range(len(headings)):
-        #tree.heading('#' + str(heading), text=headings[heading])
 
 # todo ins gui utils
 def treeview_sort_column(tv, col, reverse):
@@ -337,6 +324,29 @@ def edit():
 
 def load_params():
     app.load_parameter_from_file()
+
+
+class IORedirector(object):
+    '''A general class for redirecting I/O to this Text widget.'''
+
+    def __init__(self, text_area):
+        self.text_area = text_area
+
+
+class StdoutRedirector(IORedirector):
+    '''A class for redirecting stdout to this Text widget.'''
+
+    def write(self, str):
+        app.insert_text_into_gui(w.Scrolledtext_log, str)
+
+
+def redirector():
+    """
+    redirects print(..) --> log text
+    :return:
+    """
+    import sys
+    sys.stdout = StdoutRedirector(root)
 
 
 if __name__ == '__main__':
