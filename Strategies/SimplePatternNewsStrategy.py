@@ -29,6 +29,9 @@ class SimplePatternNewsStrategy(Strategy):
         try:
             result = self.text_analysis.analyse_single_news(news_text)
             if result is not None:
+                #TODO
+                class_name = self.__class__.__name__
+                result.append_used_strategy(class_name)
                 self.result_list.append(result)
         except Exception as e:
             sys.stderr.write("Exception:  " + str(e) + "\n")

@@ -6,25 +6,33 @@ from Utils.file_utils import FileUtils, read_tickers_from_file
 from Utils.news_utils import NewsUtils
 
 
-def run_screening(strat_selection, strategy_parameter_dict, other_params):
-    thr_start = datetime.now()
-
+def run_analysis(strat_selection, strategy_parameter_dict, other_params):
     # TODO 10: only temp:
     try:
         import os
         os.remove("C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\last_date_time.csv")
     except Exception:
         pass
-    reload = False
+    reload = True
+
+    thr_start = datetime.now()
+
     stock_data_container_list = read_tickers_from_file(other_params['stock_data_container_file'], reload)
-    # TODO abstract factory: http://python-3-patterns-idioms-test.readthedocs.io/en/latest/Factory.html
-    # TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, global_filepath + 'stock_dfs')
-    # TODO releod data
-    data_storage = DataReaderFactory()
-    stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list, other_params['weeks_delta'],
+
+    readers = {'result': {}}
+    for data_reader in strategy_parameter_dict['data_readers']:
+        data_storage = DataReaderFactory()
+        reader_type = data_reader[0]
+        name = data_reader[1]
+        date_file = other_params['last_date_time_file']
+        readers[name] = data_storage.prepare(reader_type, stock_data_container_list, other_params['weeks_delta'],
                                              other_params['stock_data_container_file'], other_params['data_source'],
-                                             reload, other_params['last_date_time_file'])
-    stock_data_reader.read_data()
+                                             reload, date_file)
+        print("data_reader " + name + " initialised.\n")
+        readers['result'][name] = readers[name].read_data()
+        print("data_reader " + name + " read data.\n")
+
+    print(str(readers['result'][name]))
 
     ##################################################
     # 52 w strategy
@@ -39,14 +47,15 @@ def run_screening(strat_selection, strategy_parameter_dict, other_params):
 
     ##################################################
     # News strategy + 52 w auf results
-    elif strat_selection =="SimplePatternNewsStrategy":
+    elif strat_selection == "SimplePatternNewsStrategy":
 
         # TODO auch hier parallel
-        news_data_storage = DataReaderFactory()
-        news_stock_data_reader = news_data_storage.prepare("TraderfoxNewsDataReader", stock_data_container_list,
-                                                           other_params['weeks_delta'], other_params['stock_data_container_file'], other_params['data_source'],
-                                                           reload, other_params['last_date_time_file'])
-        all_news_text_list = news_stock_data_reader.read_data()
+        # news_data_storage = DataReaderFactory()
+        ##news_stock_data_reader = news_data_storage.prepare("TraderfoxNewsDataReader", stock_data_container_list,
+        # other_params['weeks_delta'], other_params['stock_data_container_file'], other_params['data_source'],
+        # reload, other_params['last_date_time_file'])
+        # all_news_text_list = news_stock_data_reader.read_data()
+        all_news_text_list = readers['result']["news_stock_data_reader"]
 
         stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy", stock_data_container_list,
@@ -65,8 +74,9 @@ def run_screening(strat_selection, strategy_parameter_dict, other_params):
         # TODO 10: eig nur de positiven nehmen???
         if 0:
             stock_data_reader = data_storage.prepare("HistoricalDataReader", results, other_params['weeks_delta'],
-                                                     other_params['stock_data_container_file'], other_params['data_source'],
-                                                     reload_stockdata=reload)
+                                                     other_params['stock_data_container_file'],
+                                                     other_params['data_source'],
+                                                     reload, other_params['last_date_time_file'])
             stock_data_reader.read_data()
 
             w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", results, strategy_parameter_dict)
@@ -96,11 +106,8 @@ if __name__ == '__main__':
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
     # TODO ev in config file -->  gui load
     filepath = ROOT_DIR + '\\DataFiles\\'
-    #data_source = 'iex'
-    #weeks_delta = 52  # one year in the past
+    # data_source = 'iex'
+    # weeks_delta = 52  # one year in the past
     selection = "SimplePatternNewsStrategy"
     news_parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
     w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
-
-    # TODO des geht nima
-    run_screening(selection, news_parameter_dict)

@@ -10,8 +10,8 @@ import pandas as pd
 
 
 class TraderfoxNewsDataReader(StockDataReader):
-    def read_data(self, date_file):
-        all_news_text_list = self.__read_news_from_traderfox(date_file)
+    def read_data(self):
+        all_news_text_list = self.__read_news_from_traderfox(self.date_file)
         return all_news_text_list
 
     def __read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):

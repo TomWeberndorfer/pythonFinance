@@ -224,7 +224,7 @@ proc vTclWindow.top32 {base} {
         -menu "$top.m33" -background {#eaeaea} -highlightbackground wheat \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 1261x651+352+57
+    wm geometry $top 1261x875+352+57
     update
     # set in toplevel.wgt.
     global vTcl
@@ -236,9 +236,6 @@ proc vTclWindow.top32 {base} {
     wm deiconify $top
     wm title $top "Framework"
     vTcl:DefineAlias "$top" "Toplevel1" vTcl:Toplevel:WidgetProc "" 1
-    ttk::style configure Menu -background wheat
-    ttk::style configure Menu -foreground #000000
-    ttk::style configure Menu -font TkDefaultFont
     menu $top.m33 \
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
@@ -273,13 +270,13 @@ proc vTclWindow.top32 {base} {
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
     frame $top.fra37 \
-        -borderwidth 2 -relief groove -background {#c0c0c0} -height 275 \
+        -borderwidth 2 -relief groove -background {#c0c0c0} -height 215 \
         -highlightbackground {#d9d9d9} -highlightcolor black -width 1185 
     vTcl:DefineAlias "$top.fra37" "Strategy" vTcl:WidgetProc "Toplevel1" 1
     set site_3_0 $top.fra37
     vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_3_0.scr38 \
-        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 125 
+        -background {#d9d9d9} -height 95 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 1161 
     vTcl:DefineAlias "$site_3_0.scr38" "Scrolledlistbox_selectStrategy" vTcl:WidgetProc "Toplevel1" 1
 
     $site_3_0.scr38.01 configure -background white \
@@ -310,10 +307,10 @@ proc vTclWindow.top32 {base} {
         -width 10 \
         -wrap none
     place $site_3_0.scr38 \
-        -in $site_3_0 -x 10 -y 10 -width 1161 -relwidth 0 -height 155 \
+        -in $site_3_0 -x 10 -y 10 -width 1161 -relwidth 0 -height 95 \
         -relheight 0 -anchor nw -bordermode ignore 
     place $site_3_0.scr41 \
-        -in $site_3_0 -x 10 -y 170 -width 1161 -relwidth 0 -height 91 \
+        -in $site_3_0 -x 10 -y 110 -width 1161 -relwidth 0 -height 91 \
         -relheight 0 -anchor nw -bordermode ignore 
     frame $top.fra39 \
         -borderwidth 2 -relief groove -background {#ebebeb} -height 85 \
@@ -339,27 +336,27 @@ proc vTclWindow.top32 {base} {
         -in $site_3_0 -x 190 -y 20 -width 137 -relwidth 0 -height 44 \
         -relheight 0 -anchor nw -bordermode ignore 
     labelframe $top.lab37 \
-        -foreground black -text Results -background {#dadada} -height 155 \
+        -foreground black -text Results -background {#dadada} -height 245 \
         -highlightbackground {#d9d9d9} -highlightcolor black -width 1180 
     vTcl:DefineAlias "$top.lab37" "Labelframe1" vTcl:WidgetProc "Toplevel1" 1
     set site_3_0 $top.lab37
     ttk::style configure Treeview.Heading -background #d9d9d9
     ttk::style configure Treeview.Heading -font TkDefaultFont
     vTcl::widgets::ttk::scrolledtreeview::CreateCmd $site_3_0.scr52 \
-        -background {#d9d9d9} -height 15 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 30 
+        -background {#d9d9d9} -height 217 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 1160 
     vTcl:DefineAlias "$site_3_0.scr52" "Scrolledtreeview1" vTcl:WidgetProc "Toplevel1" 1
     place $site_3_0.scr52 \
-        -in $site_3_0 -x 20 -y 30 -width 1130 -relwidth 0 -height 107 \
+        -in $site_3_0 -x 10 -y 20 -width 1160 -relwidth 0 -height 217 \
         -relheight 0 -anchor nw -bordermode ignore 
     labelframe $top.lab40 \
-        -foreground black -text Logging -background wheat -height 105 \
+        -foreground black -text Logging -background wheat -height 185 \
         -highlightbackground {#d9d9d9} -highlightcolor black -width 1180 
     vTcl:DefineAlias "$top.lab40" "Labelframe2" vTcl:WidgetProc "Toplevel1" 1
     set site_3_0 $top.lab40
     vTcl::widgets::ttk::scrolledtext::CreateCmd $site_3_0.scr41 \
-        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 125 
+        -background {#d9d9d9} -height 141 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 1161 
     vTcl:DefineAlias "$site_3_0.scr41" "Scrolledtext_log" vTcl:WidgetProc "Toplevel1" 1
 
     $site_3_0.scr41.01 configure -background white \
@@ -375,22 +372,22 @@ proc vTclWindow.top32 {base} {
         -width 10 \
         -wrap none
     place $site_3_0.scr41 \
-        -in $site_3_0 -x 10 -y 20 -width 1161 -relwidth 0 -height 71 \
+        -in $site_3_0 -x 10 -y 30 -width 1161 -relwidth 0 -height 141 \
         -relheight 0 -anchor nw -bordermode ignore 
     ###################
     # SETTING GEOMETRY
     ###################
     place $top.fra37 \
-        -in $top -x 10 -y 0 -width 1185 -relwidth 0 -height 275 -relheight 0 \
+        -in $top -x 10 -y 0 -width 1185 -relwidth 0 -height 215 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.fra39 \
-        -in $top -x 10 -y 450 -width 1175 -relwidth 0 -height 85 -relheight 0 \
+        -in $top -x 10 -y 470 -width 1175 -relwidth 0 -height 85 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab37 \
-        -in $top -x 10 -y 280 -width 1180 -relwidth 0 -height 155 \
+        -in $top -x 10 -y 220 -width 1180 -relwidth 0 -height 245 \
         -relheight 0 -anchor nw -bordermode ignore 
     place $top.lab40 \
-        -in $top -x 10 -y 550 -width 1180 -relwidth 0 -height 105 \
+        -in $top -x 10 -y 560 -width 1180 -relwidth 0 -height 185 \
         -relheight 0 -anchor nw -bordermode ignore 
 
     vTcl:FireEvent $base <<Ready>>

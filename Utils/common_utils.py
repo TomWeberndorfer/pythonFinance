@@ -149,11 +149,7 @@ def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
     url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
     tabs_for_print = "                       "
 
-    print()
-    print()
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     print("Buy this stocks: ")
-    print()
     if stocks_to_buy is not None:
         if len(stocks_to_buy) == 0:
             print("No stocks found")
@@ -212,8 +208,6 @@ def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
 
                     # write to file for backtesting and tracking
 
-    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print()
     print("INFO: runtime with " + num_of_threads + " Threads and " +
           str(program_end_time - program_start_time))
 

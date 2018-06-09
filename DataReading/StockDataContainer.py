@@ -6,6 +6,7 @@ class StockDataContainer:
         self.stock_ticker = stock_ticker
         self.historical_stock_data = historical_stock_data
         self.stock_current_prize = 0
+        self.strategies = []
 
     def __str__(self):
         return self.stock_name() + ", " + self.stock_ticker()
@@ -33,3 +34,10 @@ class StockDataContainer:
 
     def set_stock_current_prize(self, stock_current_prize):
         self.stock_current_prize = stock_current_prize
+
+    def get_strategies(self):
+        return self.strategies
+
+    def append_used_strategy(self, strategy_name):
+        self.strategies.append(strategy_name)
+

@@ -12,6 +12,7 @@ from Utils.common_utils import split_list, print_stocks_to_buy, calculate_stopbu
 # from Utils.file_utils import read_tickers_from_file, append_to_file
 from Utils.file_utils import FileUtils
 
+
 # TODO parameter aus self statt da oben --> parameter_dict.news_threshold
 # news_threshold = 0.5
 ##########################
@@ -24,6 +25,8 @@ class W52HighTechnicalStrategy(Strategy):
                 result = self._strat_52_w_hi_hi_volume(stock_data_container, self.parameter_dict)
 
                 if result is not None:
+                    class_name = self.__class__.__name__
+                    result.append_used_strategy(class_name)
                     self.result_list.append(result)
         except Exception as e:
             sys.stderr.write("Exception:  " + str(e) + ", args: " + str(e.args) + "\n")
@@ -60,7 +63,8 @@ class W52HighTechnicalStrategy(Strategy):
         if not signal_is_volume_high_enough(stock_data_container.historical_stock_data):
             return None
 
-        if not signal_is_volume_raising(stock_data_container.historical_stock_data, parameter_dict['check_days'], parameter_dict['min_cnt'], parameter_dict['min_vol_dev_fact']):
+        if not signal_is_volume_raising(stock_data_container.historical_stock_data, parameter_dict['check_days'],
+                                        parameter_dict['min_cnt'], parameter_dict['min_vol_dev_fact']):
             return None
 
         if not signal_is52_w_high(stock_data_container.historical_stock_data, parameter_dict['within52w_high_fact']):

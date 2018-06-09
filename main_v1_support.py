@@ -10,6 +10,7 @@ from threading import Thread
 from tkinter import messagebox
 from GUI.main_v1 import global_filepath
 from Main import run_screening
+from StockAnalysis import run_analysis
 from Utils.news_utils import NewsUtils
 
 try:
@@ -42,19 +43,20 @@ class MyController:
         self.all_parameter_dicts_changed()
         self.available_strategies_changed()
         self.load_parameter_from_file()
-        self.thread_running = False
 
     def start_screening(self):
-        if not self.thread_running:
+
+        if not self.model.get_is_thread_running():
             thread = Thread(target=self.screening)
             thread.start()
-            self.thread_running = True
+            self.model.set_is_thread_running(True)
 
     def screening(self):
         """
         Method to start the screening once
         :return: nothing, results are saved in the model.
         """
+        print("Screening started...")
         self.model.clear_result_stock_data_container_list()
         selection_value = self.model.get_strategy_selection_value()
 
@@ -69,9 +71,10 @@ class MyController:
             weeks_delta = 52  # one year in the past
             other_params = {'stock_data_container_file': stock_data_container_file, 'weeks_delta': weeks_delta,
                             'data_source': data_source, 'last_date_time_file': last_date_time_file}
-            results = run_screening(selection_value, selected_strategy_params, other_params)
+            results = run_analysis(selection_value, selected_strategy_params, other_params)
+            #TODO 10:  results = run_screening(selection_value, selected_strategy_params, other_params)
             self.model.extend_result_stock_data_container_list(results)
-        self.thread_running = False
+            self.model.set_is_thread_running(False)
 
     def load_parameter_from_file(self):
         """
@@ -145,26 +148,49 @@ class MyController:
         for available_strategy in available_strategies_list:
             self.insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
 
+    def is_thread_running_changed(self):
+        if self.model.get_is_thread_running():
+            w.ButtonRunStrategyRepetitive['state'] = 'disabled'
+            w.ButtonRunStrategy['state'] = 'disabled'
+        else:
+            w.ButtonRunStrategy['state'] = 'normal'
+            w.ButtonRunStrategyRepetitive['state'] = 'normal'
+
     def result_stock_data_container_list_changed(self):
         tree = w.Scrolledtreeview1
         tree.delete(*tree.get_children())
         stock_data_container_list = self.model.get_result_stock_data_container_list()
-        print_str = NewsUtils.format_news_analysis_results(stock_data_container_list)
-        print(print_str)
 
         for res in stock_data_container_list:
             if res.stock_name is not None:
-                pos_class = round(res.prob_dist.prob("pos"), 2)
-                neg_class = round(res.prob_dist.prob("neg"), 2)
-                if pos_class > neg_class:
+                try:
+                    pos_class = round(res.prob_dist.prob("pos"), 2)
+                    neg_class = round(res.prob_dist.prob("neg"), 2)
+                    if pos_class > neg_class:
+                        recommendation_text = "BUY"
+                    else:
+                        recommendation_text = "SELL"
+                # if no prop dist is given (technical strategies)
+                except Exception as e:
                     recommendation_text = "BUY"
-                else:
-                    recommendation_text = "SELL"
+                    pos_class=""
+                    neg_class = ""
+
+            try:
+                str_stock_target_price = str(res.stock_target_price)
+            except:
+                str_stock_target_price = "N.A"
+
+            try:
+                str_orignal_news = res.orignal_news
+            except:
+                str_orignal_news = "N.A"
 
             tree.insert('', 'end', text=recommendation_text, values=(res.stock_name, res.stock_ticker,
                                                                      res.stock_exchange, str(pos_class), str(neg_class),
                                                                      str(res.stock_current_prize),
-                                                                     str(res.stock_target_price), res.orignal_news))
+                                                                     str_stock_target_price, str_orignal_news,
+                                                                     res.strategies))
 
         treeview_sort_column(tree, 'Positive Value', False)
 
@@ -208,6 +234,14 @@ class MyModel:
         self.log_text = []
         self.strategy_selection_value = ""
         self.result_stock_data_container_list = []
+        self.is_thread_running = False
+
+    def get_is_thread_running(self):
+        return self.is_thread_running
+
+    def set_is_thread_running(self, is_thread_running):
+        self.is_thread_running = is_thread_running
+        self.vc.is_thread_running_changed()
 
     def get_result_stock_data_container_list(self):
         return self.result_stock_data_container_list
@@ -293,7 +327,6 @@ def treeview_sort_column(tv, col, reverse):
     l = [(tv.set(k, col), k) for k in tv.get_children('')]
     try:
         l.sort(key=lambda t: int(t[0]), reverse=reverse)
-        #      ^^^^^^^^^^^^^^^^^^^^^^^
     except ValueError:
         l.sort(reverse=reverse)
 
@@ -311,7 +344,7 @@ def destroy_window():
 
 
 def save():
-    app.dump_parameter_from_file()
+    app.dump_parameter_to_file()
 
 
 def quit():
@@ -326,18 +359,14 @@ def load_params():
     app.load_parameter_from_file()
 
 
-class IORedirector(object):
-    '''A general class for redirecting I/O to this Text widget.'''
-
-    def __init__(self, text_area):
-        self.text_area = text_area
-
-
-class StdoutRedirector(IORedirector):
+class StdoutRedirector():
     '''A class for redirecting stdout to this Text widget.'''
 
     def write(self, str):
         app.insert_text_into_gui(w.Scrolledtext_log, str)
+
+    def flush(self):
+        pass
 
 
 def redirector():
@@ -346,7 +375,7 @@ def redirector():
     :return:
     """
     import sys
-    sys.stdout = StdoutRedirector(root)
+    sys.stdout = StdoutRedirector()
 
 
 if __name__ == '__main__':
