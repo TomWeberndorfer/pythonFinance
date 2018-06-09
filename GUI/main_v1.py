@@ -4,19 +4,8 @@
 # In conjunction with Tcl version 8.6
 #    Jun 08, 2018 07:31:16 PM
 import sys
-
-try:
-    from Tkinter import *
-except ImportError:
-    from tkinter import *
-
-try:
-    import ttk
-    py3 = 0
-except ImportError:
-    import tkinter.ttk as ttk
-    py3 = 1
-
+from tkinter import *
+import tkinter.ttk as ttk
 import os
 import main_v1_support
 global ROOT_DIR
@@ -331,12 +320,9 @@ class AutoScroll(object):
         master.grid_rowconfigure(0, weight=1)
 
         # Copy geometry methods of master  (taken from ScrolledText.py)
-        if py3:
-            methods = Pack.__dict__.keys() | Grid.__dict__.keys() \
-                  | Place.__dict__.keys()
-        else:
-            methods = Pack.__dict__.keys() + Grid.__dict__.keys() \
-                  + Place.__dict__.keys()
+        methods = Pack.__dict__.keys() | Grid.__dict__.keys() \
+              | Place.__dict__.keys()
+
 
         for meth in methods:
             if meth[0] != '_' and meth not in ('config', 'configure'):

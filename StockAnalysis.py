@@ -93,7 +93,7 @@ def run_analysis(strat_selection, strategy_parameter_dict, other_params):
             print("News analysis: no news")
 
         # time.sleep(60)  # check for new news after x seconds
-    print("Runtime check um " + str(datetime.now()) + " und dauer: " + str(datetime.now() - thr_start))
+    print("Runtime check at " + str(datetime.now()) + " and duration: " + str(datetime.now() - thr_start) + " seconds.")
 
     # TODO 10: dazu
     # result = calculate_stopbuy_and_stoploss(stock_data_container)
