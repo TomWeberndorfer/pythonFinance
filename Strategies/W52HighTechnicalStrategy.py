@@ -9,7 +9,7 @@ from Signals.Signals import signal_is_volume_high_enough, signal_is_volume_raisi
 from Strategies.Strategy import Strategy
 from Utils.common_utils import split_list, print_stocks_to_buy, calculate_stopbuy_and_stoploss, \
     get_current_function_name, CommonUtils
-# from Utils.file_utils import read_tickers_from_file, append_to_file
+# from Utils.file_utils import read_tickers_from_file_or_web, append_to_file
 from Utils.file_utils import FileUtils
 
 

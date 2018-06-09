@@ -13,6 +13,7 @@ import plotly.plotly as py
 import requests
 from multiprocessing.dummy import Pool as ThreadPool
 
+from DataReading.StockDataContainer import StockDataContainer
 from GUI.main_v1 import glob_stock_data_labels_dict
 
 
@@ -307,38 +308,42 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     return
 
 
-def read_table_columns_from_webpage_list(list):
-    return read_table_columns_from_webpage(list[0], list[1], list[2], list[3], list[4], list[5])
+def read_table_columns_from_webpage_list(page_list):
+    """
+    TODO
+    :param page_list:
+    :return:
+    """
+    return read_table_columns_from_webpage(page_list[0], page_list[1], page_list[2], page_list[3], page_list[4], page_list[5], page_list[6])
 
 
 def read_table_columns_from_webpage(websource_address, find_name, class_name, table_class, first_column_to_read,
-                                    second_column_to_read):
+                                    second_column_to_read, stock_exchange):
     """
     read the sp500 tickers and saves it to given file
+    :param find_name:
     :param first_column_to_read: 0 for sp500, 2 for cdax
     :param table_class: like 'wikitable sortable' or 'wikitable sortable zebra'
     :param websource_address: like wikepedia: 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-    :return: nothing
+    :return: stock data container list
     """
     resp = requests.get(websource_address)
     soup = bs.BeautifulSoup(resp.text, 'lxml')
     table = soup.find(find_name, {class_name: table_class})
+    stock_data_container_list = []
 
     if table is None or len(table) <= 0:
         raise ConnectionError("Error establishing a database connection")
 
-    tickers = []
-    names = []
     for row in table.findAll('tr')[1:]:
         ticker = row.findAll('td')[first_column_to_read].text
         name = row.findAll('td')[second_column_to_read].text
         ticker = ticker.replace("\n", "")
         name = name.replace("\n", "")
-        tickers.append(ticker)
-        names.append(name)
+        stock_data_container_list.append(StockDataContainer(name, ticker, stock_exchange))
 
     print ("Tickers from " + websource_address + " read.")
-    return tickers, names
+    return stock_data_container_list
 
 
 def read_table_column_from_webpage(websource_address, find_name, class_name, table_class, ticker_name_col):

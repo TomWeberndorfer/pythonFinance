@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.file_utils import FileUtils, read_tickers_from_file
+from Utils.file_utils import FileUtils, read_tickers_from_file_or_web
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 class TestGermanTaggerAnalyseNews(unittest.TestCase):

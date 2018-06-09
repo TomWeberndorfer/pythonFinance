@@ -31,10 +31,11 @@ class FileUtils:
         myfile.close()
 
 
-def read_tickers_from_file(stock_data_container_file, reload_file=False):
+def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, list_with_stock_pages_to_read=[]):
     """
         TODO
        read the sp500 and CDAX tickers and saves it to given file
+        :param list_with_stock_pages_to_read:
         :param stock_data_container_file:
         :param stock_exchange_file:
         :param names_file:
@@ -53,27 +54,10 @@ def read_tickers_from_file(stock_data_container_file, reload_file=False):
         print("Start reading tickers...")
 
         pool = CommonUtils.get_threading_pool()
-
-        # TODO 11: seite geht nicht mehr
-        list_with_stock_pages_to_read = [['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
-                                          'wikitable sortable', 0, 1]] # ,
-                                         # ['http://topforeignstocks.com/stock-lists/the'
-                                         # '-list-of-listed-companies-in-germany/',
-                                         # 'tbody', 'class', 'row-hover', 1, 2]]
         result_list = pool.map(read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
 
-        res1= result_list[0]
-        # TODO ned fix de / en
-        for idx in range(0, len(res1[0])):
-            stock_data_container_list.append(
-                StockDataContainer(res1[1][idx], res1[0][idx], "en"))
-
-        #TODO 11: des ned fix
-        if len(result_list) > 1:
-            res2=result_list[1]
-            for idx in range(0, len(res2[0])):
-                stock_data_container_list.append(
-                    StockDataContainer(res2[0][idx], res2[1][idx], "de"))
+        for result in result_list:
+            stock_data_container_list.extend(result)
 
         # TODO: b) General Standard is not included of page:
         # http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/

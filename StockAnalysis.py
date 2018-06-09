@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from Strategies.StrategyFactory import StrategyFactory
-from Utils.file_utils import FileUtils, read_tickers_from_file
+from Utils.file_utils import FileUtils, read_tickers_from_file_or_web
 from Utils.news_utils import NewsUtils
 
 
@@ -16,15 +16,8 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
     reload = True
 
     thr_start = datetime.now()
-    stock_data_container_list = read_tickers_from_file(other_params['stock_data_container_file'], reload)
-
-    # {'W52HighTechnicalStrategy': {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98,
-    #                               'data_readers': [['HistoricalDataReader', 'stock_data_reader']]},
-    #  'SimplePatternNewsStrategy': {'news_threshold': 0.7,
-    #                                'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
-    #                                'data_readers': [['HistoricalDataReader', 'stock_data_reader'],
-    #                                                 ['TraderfoxNewsDataReader', 'news_stock_data_reader']]}}
-
+    stock_data_container_list = read_tickers_from_file_or_web(other_params['stock_data_container_file'], reload,
+                                                              other_params['list_with_stock_pages_to_read'])
     reader_results = {}
     readers = {}
     for selected_strat in selected_strategies_list:

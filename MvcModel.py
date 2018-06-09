@@ -5,8 +5,25 @@ class MyModel:
     def __init__(self, vc):
         self.vc = vc
         self.available_strategies = []  # TODO ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy"]
-        # TODO verwenden
-        self.program_parameter_dict = {'data_source': 'iex', 'weeks_delta': 52}
+
+        ##-----------------
+        #stock_data_container_file_name = "stock_data_container_file.pickle"
+        #stock_data_container_file = global_filepath + stock_data_container_file_name
+        #last_date_time_file = global_filepath + "last_date_time.csv"
+        #data_source = 'iex'
+        #weeks_delta = 52  # one year in the past
+        ## TODO 11: seite geht nicht mehr
+        #list_with_stock_pages_to_read = [
+        #    ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
+        #     'wikitable sortable', 0, 1, 'en']]  # ,
+        # ['http://topforeignstocks.com/stock-lists/the'
+        # '-list-of-listed-companies-in-germany/',
+        # 'tbody', 'class', 'row-hover', 1, 2, 'de']]
+        #self.other_params = {'stock_data_container_file': stock_data_container_file, 'weeks_delta': weeks_delta,
+        #                'data_source': data_source, 'last_date_time_file': last_date_time_file,
+        #                'list_with_stock_pages_to_read': list_with_stock_pages_to_read}
+
+        self.other_params = {}
         self.all_parameter_dicts = {}
         w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
         parameter_dict = {'news_threshold': 0.7,
@@ -59,6 +76,23 @@ class MyModel:
         self.all_parameter_dicts_changed()
 
     # Delegates-- Model would call this on internal change
+    def other_params_changed(self):
+        self.vc.other_params_changed()
+
+    def get_other_params(self):
+        return self.other_params
+
+    def add_to_other_params(self, items):
+        for key, value in items.items():
+            self.other_params.update({key: value})
+        self.other_params_changed()
+
+    def clear_other_params(self):
+        self.other_params = {}
+        self.other_params_changed()
+
+
+    # Delegates-- Model would call this on internal change
     def list_changed(self):
         self.vc.available_strategies_changed()
 
@@ -72,7 +106,7 @@ class MyModel:
         self.available_strategies = myList
         self.list_changed()
 
-    def clear_list(self):
+    def clear_available_strategies_list(self):
         self.available_strategies = []
         self.list_changed()
 

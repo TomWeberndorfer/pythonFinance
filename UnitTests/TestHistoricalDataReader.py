@@ -5,7 +5,7 @@ from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDat
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from DataReading.StockDataContainer import StockDataContainer
 from GUI.main_v1 import glob_stock_data_labels_dict
-from Utils.file_utils import read_tickers_from_file
+from Utils.file_utils import read_tickers_from_file_or_web
 import pandas_datareader.data as web
 import datetime
 
@@ -114,7 +114,15 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
                 for i in range(wanted_parts)]
 
     def test_read_data_all(self):
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file, reload_file=True)
+        # TODO 11: seite geht nicht mehr
+        list_with_stock_pages_to_read = [
+            ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
+             'wikitable sortable', 0, 1]]  # ,
+        # ['http://topforeignstocks.com/stock-lists/the'
+        # '-list-of-listed-companies-in-germany/',
+        # 'tbody', 'class', 'row-hover', 1, 2]]
+        stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, True,
+                                                                  list_with_stock_pages_to_read)
 
         #stock_data_container_list = self.split_list(stock_data_container_list, 3)
         #stock_data_container_list = stock_data_container_list[0]

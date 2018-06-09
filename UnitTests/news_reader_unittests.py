@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime
 
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.file_utils import read_tickers_from_file
+from Utils.file_utils import read_tickers_from_file_or_web
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
@@ -98,10 +98,20 @@ class NewsReaderTests(unittest.TestCase):
         stock_data_container_file_name = "stock_data_container_file.pickle"
         stock_data_container_file = filepath + stock_data_container_file_name
 
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file, True)
+        # TODO 11: seite geht nicht mehr
+        list_with_stock_pages_to_read = [
+            ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
+             'wikitable sortable', 0, 1]]  # ,
+        # ['http://topforeignstocks.com/stock-lists/the'
+        # '-list-of-listed-companies-in-germany/',
+        # 'tbody', 'class', 'row-hover', 1, 2]]
+
+        stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, True,
+                                                                  list_with_stock_pages_to_read)
         self.assertEqual(len(stock_data_container_list), 818)
 
-        stock_data_container_list = read_tickers_from_file(stock_data_container_file, False)
+        stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, False,
+                                                                  list_with_stock_pages_to_read)
         self.assertEqual(len(stock_data_container_list), 818)
 
 

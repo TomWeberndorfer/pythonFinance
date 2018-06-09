@@ -27,6 +27,7 @@ class MyController:
         self.all_parameter_dicts_changed()
         self.available_strategies_changed()
         self.load_parameter_from_file()
+        self.other_params_changed()
 
     def start_screening(self):
 
@@ -48,14 +49,7 @@ class MyController:
             print("Screening started...")
             self.model.clear_result_stock_data_container_list()
             strategy_params = self.model.get_all_parameter_dicts()
-            stock_data_container_file_name = "stock_data_container_file.pickle"
-            stock_data_container_file = global_filepath + stock_data_container_file_name
-            last_date_time_file = global_filepath + "last_date_time.csv"
-            data_source = 'iex'
-            weeks_delta = 52  # one year in the past
-            other_params = {'stock_data_container_file': stock_data_container_file, 'weeks_delta': weeks_delta,
-                            'data_source': data_source, 'last_date_time_file': last_date_time_file}
-            #TODO echte liste
+            other_params = self.model.get_other_params()
             results = run_analysis(selection_values, strategy_params, other_params)
             self.model.extend_result_stock_data_container_list(results)
             self.model.set_is_thread_running(False)
@@ -66,7 +60,8 @@ class MyController:
         :return: nothing
         """
         self.model.clear_all_parameter_dicts()
-        self.model.clear_list()
+        self.model.clear_available_strategies_list()
+        self.model.clear_other_params()
 
         try:
             with open(global_filepath + "ParameterFile.pickle", "rb") as f:
@@ -74,6 +69,10 @@ class MyController:
                 self.model.add_to_all_parameter_dicts(items)
                 for item in items:
                     self.model.add_to_available_strategies(item)
+
+            with open(global_filepath + "OtherParameterFile.pickle", "rb") as f:
+                items = pickle.load(f)
+                self.model.add_to_other_params(items)
 
         except Exception as e:
             print(str(e))
@@ -98,25 +97,36 @@ class MyController:
         else:
             self.model.add_to_all_parameter_dicts(content_dict)
             with open(global_filepath + "ParameterFile.pickle", "wb") as f:
-                pickle.dump(self.model.all_parameter_dicts, f)
+                pickle.dump(self.model.get_all_parameter_dicts(), f)
 
             self.model.add_to_log("Params Saved")
+
+        content_others = self.view.Scrolled_other_parameters.get(1.0, END)
+        content_others_dict = ast.literal_eval(content_others)
+
+        if content_others_dict == {}:
+            messagebox.showerror("Other Parameters empty", "Please insert parameters")
+        else:
+            self.model.add_to_other_params(content_others_dict)
+            with open(global_filepath + "OtherParameterFile.pickle", "wb") as f:
+                pickle.dump(self.model.get_other_params(), f)
+
+            self.model.add_to_log("Other Params Saved")
+
 
     # event handlers
     def quit_button_pressed(self):
         self.parent.destroy()
 
-    def add_button_pressed(self):
-        self.model.add_to_available_strategies(self.view.entry_text.get())
-        self.model.add_to_all_parameter_dicts({self.view.entry_text.get(): self.view.entry_text.get()})
-
-    def clear_button_pressed(self):
-        self.model.clear_list()
-
     def all_parameter_dicts_changed(self):
         w.Scrolledtext_params.delete(1.0, END)
         parameters = self.model.get_all_parameter_dicts()
         self.insert_text_into_gui(w.Scrolledtext_params, str(parameters))
+
+    def other_params_changed(self):
+        w.Scrolled_other_parameters.delete(1.0, END)
+        parameters = self.model.get_other_params()
+        self.insert_text_into_gui(w.Scrolled_other_parameters, str(parameters))
 
     def log_changed_delegate(self):
         self.insert_text_into_gui(w.Scrolledtext_log, "", delete=True)
@@ -252,7 +262,7 @@ def save():
 
 
 def quit():
-    pass
+    app.quit_button_pressed()
 
 
 def edit():
