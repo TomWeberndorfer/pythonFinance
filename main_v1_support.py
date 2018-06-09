@@ -33,21 +33,21 @@ class MyController:
         if not self.model.get_is_thread_running():
             thread = Thread(target=self.screening)
             thread.start()
-            self.model.set_is_thread_running(True)
 
     def screening(self):
         """
         Method to start the screening once
         :return: nothing, results are saved in the model.
         """
-        print("Screening started...")
-        self.model.clear_result_stock_data_container_list()
-        selection_value = self.model.get_strategy_selection_value()
+        selection_values = self.model.get_strategy_selection_value()
 
-        if selection_value == "" or len(selection_value) <= 0:
+        if selection_values == "" or len(selection_values) <= 0:
             messagebox.showerror("Selection Error", "Please select a strategy first!")
         else:
-            selected_strategy_params = self.model.get_all_parameter_dicts()[selection_value]
+            self.model.set_is_thread_running(True)
+            print("Screening started...")
+            self.model.clear_result_stock_data_container_list()
+            strategy_params = self.model.get_all_parameter_dicts()
             stock_data_container_file_name = "stock_data_container_file.pickle"
             stock_data_container_file = global_filepath + stock_data_container_file_name
             last_date_time_file = global_filepath + "last_date_time.csv"
@@ -55,7 +55,8 @@ class MyController:
             weeks_delta = 52  # one year in the past
             other_params = {'stock_data_container_file': stock_data_container_file, 'weeks_delta': weeks_delta,
                             'data_source': data_source, 'last_date_time_file': last_date_time_file}
-            results = run_analysis(selection_value, selected_strategy_params, other_params)
+            #TODO echte liste
+            results = run_analysis(selection_values, strategy_params, other_params)
             self.model.extend_result_stock_data_container_list(results)
             self.model.set_is_thread_running(False)
 
@@ -179,16 +180,14 @@ class MyController:
 
     def listbox_onselect(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect()
-        w = evt.widget
+        widget = evt.widget
         try:
-            index = int(w.curselection()[0])
-            value = w.get(index)
+            selected_text_list = [widget.get(i) for i in widget.curselection()]
         except Exception as e:
-            index = -1
-            value = ""
+            selected_text_list = []
 
-        print('You selected item %d: "%s"' % (index, value))
-        self.model.set_strategy_selection_value(value)
+        print("You selected items: " + str(selected_text_list))
+        self.model.set_strategy_selection_value(selected_text_list)
 
     def insert_text_into_gui(self, element, text, delete=False, start=1.0, end=END):
         """
@@ -268,6 +267,7 @@ class StdoutRedirector():
     '''A class for redirecting stdout to this Text widget.'''
 
     def write(self, str):
+        #TODO
         if 'status_update ' in str:
             app.insert_text_into_gui(w.Scrolledtext_log, str)
             app.set_status(str)

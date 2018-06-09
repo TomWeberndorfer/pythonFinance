@@ -50,6 +50,7 @@ def read_tickers_from_file(stock_data_container_file, reload_file=False):
     stock_data_container_list = []
 
     if not os.path.exists(stock_data_container_file) or reload_file:
+        print("Start reading tickers...")
 
         pool = CommonUtils.get_threading_pool()
 

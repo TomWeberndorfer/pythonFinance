@@ -123,7 +123,7 @@ class Framework:
         self.Strategy.configure(highlightcolor="black")
         self.Strategy.configure(width=1185)
 
-        self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.Strategy)
+        self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.Strategy, selectmode=MULTIPLE)
         self.Scrolledlistbox_selectStrategy.place(relx=0.01, rely=0.05
                 , relheight=0.44, relwidth=0.98)
         self.Scrolledlistbox_selectStrategy.configure(background="white")

@@ -13,7 +13,7 @@ class MyModel:
                           'german_tagger': global_filepath + 'nltk_german_classifier_data.pickle'}
         # self.all_parameter_dicts = {'W52HighTechnicalStrategy': w52hi_parameter_dict, "SimplePatternNewsStrategy": parameter_dict}
         self.log_text = []
-        self.strategy_selection_value = ""
+        self.strategy_selection_value = []
         self.result_stock_data_container_list = []
         self.is_thread_running = False
 

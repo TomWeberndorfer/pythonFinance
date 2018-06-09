@@ -7,20 +7,21 @@ from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
 class SimplePatternNewsStrategy(Strategy):
-    def __init__(self, stock_data_container_list, parameter_dict):
+    def __init__(self, stock_data_container_list, parameter_dict, all_news_text_list):
         Strategy.__init__(self, stock_data_container_list, parameter_dict)
         self.text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list,
                                                      self.parameter_dict['news_threshold'],
                                                      self.parameter_dict['german_tagger'])
+        self.all_news_text_list = all_news_text_list
 
-    def run_strategy(self, all_news_text_list):
+    def run_strategy(self):
         stack = inspect.stack()
         #the_class = stack[1][0].f_locals["self"].__class__  # get the inherited class name
         #TODO anders updaten
-        self.max_data_reads = len(all_news_text_list)
-        if len(all_news_text_list) > 0:
+        self.max_data_reads = len(self.all_news_text_list)
+        if len(self.all_news_text_list) > 0:
             pool = CommonUtils.get_threading_pool()
-            pool.map(self._method_to_execute, all_news_text_list)
+            pool.map(self._method_to_execute, self.all_news_text_list)
 
         #print(str(the_class) + " finished.")
         return self.result_list

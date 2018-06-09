@@ -337,6 +337,7 @@ def read_table_columns_from_webpage(websource_address, find_name, class_name, ta
         tickers.append(ticker)
         names.append(name)
 
+    print ("Tickers from " + websource_address + " read.")
     return tickers, names
 
 
