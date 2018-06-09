@@ -9,9 +9,8 @@ from tkinter import messagebox
 from GUI.main_v1 import global_filepath
 from MvcModel import MyModel
 from StockAnalysis import run_analysis
-
 from tkinter import *
-import tkinter.ttk as ttk
+
 
 class MyController:
     """
@@ -157,7 +156,7 @@ class MyController:
                 # if no prop dist is given (technical strategies)
                 except Exception as e:
                     recommendation_text = "BUY"
-                    pos_class=""
+                    pos_class = ""
                     neg_class = ""
 
             try:
@@ -181,8 +180,13 @@ class MyController:
     def listbox_onselect(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect()
         w = evt.widget
-        index = int(w.curselection()[0])
-        value = w.get(index)
+        try:
+            index = int(w.curselection()[0])
+            value = w.get(index)
+        except Exception as e:
+            index = -1
+            value = ""
+
         print('You selected item %d: "%s"' % (index, value))
         self.model.set_strategy_selection_value(value)
 
@@ -203,6 +207,9 @@ class MyController:
 
         element.see("end")
 
+    def set_status(self, str_status):
+        if str_status is not "" and len(str_status) > 1:
+            w.TLabel_status['text'] = str_status
 
 def init(top, gui, *args, **kwargs):
     global w, top_level, root, app
@@ -263,9 +270,10 @@ class StdoutRedirector():
     def write(self, str):
         if 'status_update ' in str:
             app.insert_text_into_gui(w.Scrolledtext_log, str)
-            #TODO 
+            app.set_status(str)
         else:
             app.insert_text_into_gui(w.Scrolledtext_log, str)
+            app.set_status(str)
 
     def flush(self):
         pass
