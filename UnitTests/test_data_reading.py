@@ -3,9 +3,9 @@ import unittest
 import os
 
 from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
-from GUI.main_v1 import global_filepath
+from Utils.GlobalVariables import *
 
-test_filepath = global_filepath + 'TestData\\'
+test_filepath = GlobalVariables.get_data_files_path() + 'TestData\\'
 
 class DataReaderTests(unittest.TestCase):
 

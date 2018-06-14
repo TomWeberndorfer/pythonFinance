@@ -1,4 +1,3 @@
-from GUI.main_v1 import global_filepath
 
 
 class MyModel:
@@ -8,8 +7,8 @@ class MyModel:
 
         ##-----------------
         #stock_data_container_file_name = "stock_data_container_file.pickle"
-        #stock_data_container_file = global_filepath + stock_data_container_file_name
-        #last_date_time_file = global_filepath + "last_date_time.csv"
+        #stock_data_container_file = GlobalVariables.get_data_files_path() + stock_data_container_file_name
+        #last_date_time_file = GlobalVariables.get_data_files_path() + "last_date_time.csv"
         #data_source = 'iex'
         #weeks_delta = 52  # one year in the past
         ## TODO 11: seite geht nicht mehr
@@ -25,9 +24,9 @@ class MyModel:
 
         self.other_params = {}
         self.all_parameter_dicts = {}
-        w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
-        parameter_dict = {'news_threshold': 0.7,
-                          'german_tagger': global_filepath + 'nltk_german_classifier_data.pickle'}
+        #w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
+        #parameter_dict = {'news_threshold': 0.7,
+        #                  'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle'}
         # self.all_parameter_dicts = {'W52HighTechnicalStrategy': w52hi_parameter_dict, "SimplePatternNewsStrategy": parameter_dict}
         self.log_text = []
         self.strategy_selection_value = []

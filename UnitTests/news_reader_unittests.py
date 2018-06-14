@@ -14,17 +14,17 @@ filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
 class NewsReaderTests(unittest.TestCase):
 
     def test_sample(self):
-        #TODO
+        # TODO
         # ++++++++++ FOR SAMPLE NEWS
-        # data = pd.read_csv(global_filepath + "Sample_news.txt")
-        data= []
+        # data = pd.read_csv(GlobalVariables.get_data_files_path() + "Sample_news.txt")
+        data = []
         # all_news = data.News.tolist()
 
         # all_news.append("ANALYSE-FLASH: NordLB senkt Apple auf 'Kaufen' - Ziel 125,5 Euro")
         # all_news.append("Bryan Garnier hebt Apple auf 'Buy' - Ziel 91 Euro")
 
     def test_read_from_traderfox(self):
-        #TODO ois mit file is kein unit test
+        # TODO ois mit file is kein unit test
         test_file = filepath + "\\last_date_time.csv"
 
         with open(test_file, "w") as myfile:
@@ -77,7 +77,6 @@ class NewsReaderTests(unittest.TestCase):
         self.assertRaises(AttributeError, analysis.lookup_stock_abr_in_all_names, "XCERET")
 
     def test_date_check(self):
-
         last_date_time_str = "07.03.2018 um 03:11"
         date_time = "07.03.2018 um 23:11"
 
@@ -94,29 +93,21 @@ class NewsReaderTests(unittest.TestCase):
         is_actual, date_time = is_date_actual(datetime_object, test_file)
         self.assertEqual(is_actual, False)
 
-    def test_read_tickers_from_file(self):
+    def test_read_tickers_from_file_or_web(self):
         stock_data_container_file_name = "stock_data_container_file.pickle"
         stock_data_container_file = filepath + stock_data_container_file_name
 
         # TODO 11: seite geht nicht mehr
         list_with_stock_pages_to_read = [
             ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
-             'wikitable sortable', 0, 1]]  # ,
-        # ['http://topforeignstocks.com/stock-lists/the'
-        # '-list-of-listed-companies-in-germany/',
-        # 'tbody', 'class', 'row-hover', 1, 2]]
+             'wikitable sortable', 0, 1, 'en'],
+            ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
+             'tbody', 'class', 'row-hover', 2, 1, 'de']]
 
         stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, True,
                                                                   list_with_stock_pages_to_read)
-        self.assertEqual(len(stock_data_container_list), 818)
+        self.assertGreater(len(stock_data_container_list), 800)
 
         stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, False,
                                                                   list_with_stock_pages_to_read)
-        self.assertEqual(len(stock_data_container_list), 818)
-
-
-
-
-
-
-
+        self.assertGreater(len(stock_data_container_list), 800)

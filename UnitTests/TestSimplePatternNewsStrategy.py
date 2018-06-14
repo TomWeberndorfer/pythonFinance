@@ -26,15 +26,14 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         stock_data_container_list = [apple_stock_data_container, rwe_stock_data_container]
 
         parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
-
-        stock_screener = StrategyFactory()
-        news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list, parameter_dict)
-
         all_news_text_list = ["ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
                               "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf"]
 
-        results = news_strategy.run_strategy(all_news_text_list)
+        stock_screener = StrategyFactory()
+        news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
+                                                        stock_data_container_list, parameter_dict, all_news_text_list)
+
+        results = news_strategy.run_strategy()
 
         self.assertEqual(results[0] in stock_data_container_list, True)
         apple_idx = results.index(apple_stock_data_container)

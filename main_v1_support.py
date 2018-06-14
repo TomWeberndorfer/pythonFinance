@@ -6,10 +6,13 @@
 import _pickle as pickle
 from threading import Thread
 from tkinter import messagebox
-from GUI.main_v1 import global_filepath
 from MvcModel import MyModel
 from StockAnalysis import run_analysis
 from tkinter import *
+import webbrowser as wb
+import ast
+
+from Utils.GlobalVariables import *
 
 
 class MyController:
@@ -21,15 +24,30 @@ class MyController:
         self.parent = parent
         self.model = MyModel(self)  # initializes the model
         self.view = w  # initializes the view
-        # self.view.Match.config(command=self.all_parameter_dicts_changed)
         self.view.ButtonRunStrategy.config(command=self.start_screening)
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect)
+        self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click)
         self.all_parameter_dicts_changed()
         self.available_strategies_changed()
         self.load_parameter_from_file()
         self.other_params_changed()
 
+    def on_double_click(self, event):
+        try:
+            cur_selection = self.view.Scrolledtreeview1.selection()[0]
+            cur_stock = self.view.Scrolledtreeview1.item(cur_selection)
+
+            stock_name = cur_stock['values'][0]  # 0 --> name is first
+            url_to_open = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
+            wb.open_new_tab(url_to_open + stock_name)
+        except Exception as e:
+            print("Exception while opening result stock:" + str(e))
+
     def start_screening(self):
+        """
+        start the screening thread for NON blocking GUI.
+        :return: nothing
+        """
 
         if not self.model.get_is_thread_running():
             thread = Thread(target=self.screening)
@@ -44,15 +62,50 @@ class MyController:
 
         if selection_values == "" or len(selection_values) <= 0:
             messagebox.showerror("Selection Error", "Please select a strategy first!")
-        else:
-            self.model.set_is_thread_running(True)
-            print("Screening started...")
-            self.model.clear_result_stock_data_container_list()
-            strategy_params = self.model.get_all_parameter_dicts()
-            other_params = self.model.get_other_params()
-            results = run_analysis(selection_values, strategy_params, other_params)
-            self.model.extend_result_stock_data_container_list(results)
-            self.model.set_is_thread_running(False)
+            return
+
+        if not self.accept_parameters_from_text():
+            return
+
+        self.model.set_is_thread_running(True)
+        print("Screening started...")
+        self.model.clear_result_stock_data_container_list()
+        strategy_params = self.model.get_all_parameter_dicts()
+        other_params = self.model.get_other_params()
+        results = run_analysis(selection_values, strategy_params, other_params)
+        self.model.extend_result_stock_data_container_list(results)
+        self.model.set_is_thread_running(False)
+
+    def accept_parameters_from_text(self):
+        """
+        Method to accept the changes in the scrolled text for the parameters.
+        :return: True, if parameters are valid and updated.
+        """
+        try:
+            content = self.view.Scrolledtext_params.get(1.0, END)
+            content_dict = ast.literal_eval(content)
+            content_others = self.view.Scrolled_other_parameters.get(1.0, END)
+            content_others_dict = ast.literal_eval(content_others)
+
+            if content_dict == {}:
+                messagebox.showerror("Parameters empty", "Please insert parameters")
+                return False
+
+            if content_others_dict == {}:
+                messagebox.showerror("Other Parameters empty", "Please insert parameters")
+                return False
+
+            self.model.clear_all_parameter_dicts()
+            self.model.add_to_all_parameter_dicts(content_dict)
+
+            self.model.clear_other_params()
+            self.model.add_to_other_params(content_others_dict)
+
+        except Exception as e:
+            messagebox.showerror("Parameters not valid", "Please insert valid parameters: " + str(e))
+            return False
+
+        return True
 
     def load_parameter_from_file(self):
         """
@@ -64,13 +117,13 @@ class MyController:
         self.model.clear_other_params()
 
         try:
-            with open(global_filepath + "ParameterFile.pickle", "rb") as f:
+            with open(GlobalVariables.get_data_files_path() + "ParameterFile.pickle", "rb") as f:
                 items = pickle.load(f)
                 self.model.add_to_all_parameter_dicts(items)
                 for item in items:
                     self.model.add_to_available_strategies(item)
 
-            with open(global_filepath + "OtherParameterFile.pickle", "rb") as f:
+            with open(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle", "rb") as f:
                 items = pickle.load(f)
                 self.model.add_to_other_params(items)
 
@@ -81,6 +134,11 @@ class MyController:
         self.model.add_to_log("Params Read")
 
     def insert_log(self, log_text):
+        """
+        Insert log text into the model.
+        :param log_text:
+        :return: -
+        """
         self.model.add_to_log(log_text)
 
     def dump_parameter_to_file(self):
@@ -89,14 +147,13 @@ class MyController:
         :return:
         """
         content = self.view.Scrolledtext_params.get(1.0, END)
-        import ast
         content_dict = ast.literal_eval(content)
 
         if content_dict == {}:
             messagebox.showerror("Parameters empty", "Please insert parameters")
         else:
             self.model.add_to_all_parameter_dicts(content_dict)
-            with open(global_filepath + "ParameterFile.pickle", "wb") as f:
+            with open(GlobalVariables.get_data_files_path() + "ParameterFile.pickle", "wb") as f:
                 pickle.dump(self.model.get_all_parameter_dicts(), f)
 
             self.model.add_to_log("Params Saved")
@@ -108,11 +165,10 @@ class MyController:
             messagebox.showerror("Other Parameters empty", "Please insert parameters")
         else:
             self.model.add_to_other_params(content_others_dict)
-            with open(global_filepath + "OtherParameterFile.pickle", "wb") as f:
+            with open(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle", "wb") as f:
                 pickle.dump(self.model.get_other_params(), f)
 
             self.model.add_to_log("Other Params Saved")
-
 
     # event handlers
     def quit_button_pressed(self):
@@ -151,10 +207,17 @@ class MyController:
             w.ButtonRunStrategyRepetitive['state'] = 'normal'
 
     def result_stock_data_container_list_changed(self):
+        """
+        TODO
+        :return:
+        """
         tree = w.Scrolledtreeview1
         tree.delete(*tree.get_children())
         stock_data_container_list = self.model.get_result_stock_data_container_list()
 
+        recommendation_text = ""
+        pos_class = 0
+        neg_class = 0
         for res in stock_data_container_list:
             if res.stock_name is not None:
                 try:
@@ -220,6 +283,7 @@ class MyController:
         if str_status is not "" and len(str_status) > 1:
             w.TLabel_status['text'] = str_status
 
+
 def init(top, gui, *args, **kwargs):
     global w, top_level, root, app
     w = gui
@@ -277,7 +341,7 @@ class StdoutRedirector():
     '''A class for redirecting stdout to this Text widget.'''
 
     def write(self, str):
-        #TODO
+        # TODO
         if 'status_update ' in str:
             app.insert_text_into_gui(w.Scrolledtext_log, str)
             app.set_status(str)

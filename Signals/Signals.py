@@ -1,8 +1,9 @@
 import sys
 import traceback
+from Utils.GlobalVariables import *
 
 #TODO from talib.func import ATR
-from GUI.main_v1 import glob_stock_data_labels_dict
+
 from Utils.common_utils import calc_avg_vol
 
 
@@ -47,9 +48,9 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
     save_val = False
     while i > 0:
         try:
-            vol_cur = stock.iloc[data_len - i][glob_stock_data_labels_dict['Volume']]
+            vol_cur = stock.iloc[data_len - i][GlobalVariables.get_stock_data_labels_dict()['Volume']]
             if not save_val:
-                vol_last = stock.iloc[data_len - i - 1][glob_stock_data_labels_dict['Volume']]
+                vol_last = stock.iloc[data_len - i - 1][GlobalVariables.get_stock_data_labels_dict()['Volume']]
             if vol_cur > vol_last:
                 raise_cnt += 1
                 save_val = False
@@ -93,7 +94,7 @@ def signal_is_last_volume_higher_than_avg(data, vol_avg, significance_factor):
         return False  # TODO
         raise IndexError
 
-    vol_last = data.iloc[data_len - 1][glob_stock_data_labels_dict['Volume']]
+    vol_last = data.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['Volume']]
     min_calc_vol = vol_avg * significance_factor
     if vol_last < min_calc_vol:
         return False
@@ -133,7 +134,7 @@ def signal_is_a_few_higher_than_avg(stock, check_days, min_cnt, volume_average):
 
     while cnt > 0:
 
-        vol = stock.iloc[data_len - cnt][glob_stock_data_labels_dict['Volume']]
+        vol = stock.iloc[data_len - cnt][GlobalVariables.get_stock_data_labels_dict()['Volume']]
         if vol > volume_average:
             higher_than_avg += 1
 
@@ -211,8 +212,8 @@ def signal_is52_w_high(stock, within52w_high_fact):
         return False  # TODO
         raise IndexError
 
-    cur_val = stock.iloc[data_len - 1][glob_stock_data_labels_dict['High']]
-    highest_high = stock[glob_stock_data_labels_dict['High']].max() #TODO  'Close', re-think
+    cur_val = stock.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['High']]
+    highest_high = stock[GlobalVariables.get_stock_data_labels_dict()['High']].max() #TODO  'Close', re-think
 
     if cur_val == highest_high:
         return True
@@ -243,8 +244,8 @@ def signal_gap_up(stock_data, min_gap_multiplier):
         raise NotImplementedError
 
     data_len = len(stock_data)
-    yesterday_val = stock_data.iloc[data_len - 2][glob_stock_data_labels_dict['Close']]
-    cur_val = stock_data.iloc[data_len - 1][glob_stock_data_labels_dict['Open']]
+    yesterday_val = stock_data.iloc[data_len - 2][GlobalVariables.get_stock_data_labels_dict()['Close']]
+    cur_val = stock_data.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['Open']]
     gap_up_val = (yesterday_val * min_gap_multiplier)
     # TODO: überprüfen ob tage hintereinander, achtung wochenende
     if cur_val > gap_up_val:
@@ -261,11 +262,11 @@ def signal_hammer(stock_data, hammer_length_in_factor, handle_bigger_than_head_f
 
     # hammer head
     data_len = len(stock_data)
-    close_value = stock_data.iloc[data_len - 1][glob_stock_data_labels_dict['Close']]
-    yesterday_close_value = stock_data.iloc[data_len - 2][glob_stock_data_labels_dict['Close']]
-    tday_open_value = stock_data.iloc[data_len - 1][glob_stock_data_labels_dict['Open']]
-    tday_high_value = stock_data.iloc[data_len - 1][glob_stock_data_labels_dict['High']]
-    tday_low_value = stock_data.iloc[data_len - 1][glob_stock_data_labels_dict['Low']]
+    close_value = stock_data.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['Close']]
+    yesterday_close_value = stock_data.iloc[data_len - 2][GlobalVariables.get_stock_data_labels_dict()['Close']]
+    tday_open_value = stock_data.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['Open']]
+    tday_high_value = stock_data.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['High']]
+    tday_low_value = stock_data.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['Low']]
 
     #do not use read hammer
     if tday_open_value > close_value:

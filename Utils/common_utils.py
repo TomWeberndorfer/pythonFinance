@@ -14,7 +14,7 @@ import requests
 from multiprocessing.dummy import Pool as ThreadPool
 
 from DataReading.StockDataContainer import StockDataContainer
-from GUI.main_v1 import glob_stock_data_labels_dict
+from Utils.GlobalVariables import *
 
 
 class CommonUtils:
@@ -97,7 +97,7 @@ def calc_avg_vol(stock_data):
     if stock_data is None or len(stock_data) <= 0:
         raise NotImplementedError
 
-    vol_avg = stock_data[glob_stock_data_labels_dict["Volume"]].mean()
+    vol_avg = stock_data[GlobalVariables.get_stock_data_labels_dict()["Volume"]].mean()
     return vol_avg
 
 
@@ -131,7 +131,7 @@ def calculate_stopbuy_and_stoploss(stock_data):
         raise NotImplementedError
 
     # values should be calc with max (real 52wHigh)
-    highest_high = stock_data[glob_stock_data_labels_dict['High']].max()
+    highest_high = stock_data[GlobalVariables.get_stock_data_labels_dict()['High']].max()
     sb = highest_high * 1.005  # stop buy 0,5% higher than last val
     sl = sb * 0.97  # stop loss 3% lower than stop buy
 
@@ -279,9 +279,9 @@ def calc_mean_true_range(stock_data):
     tr = []
     i = 0
     while i < len(stock_data):
-        yesterday_close_value = stock_data.iloc[i - 1][glob_stock_data_labels_dict['Close']]
-        tday_high_value = stock_data.iloc[i][glob_stock_data_labels_dict['High']]
-        tday_low_value = stock_data.iloc[i][glob_stock_data_labels_dict['Low']]
+        yesterday_close_value = stock_data.iloc[i - 1][GlobalVariables.get_stock_data_labels_dict()['Close']]
+        tday_high_value = stock_data.iloc[i][GlobalVariables.get_stock_data_labels_dict()['High']]
+        tday_low_value = stock_data.iloc[i][GlobalVariables.get_stock_data_labels_dict()['Low']]
         tr.append(calc_true_range(tday_high_value, tday_low_value, yesterday_close_value))
 
         i += 1
@@ -299,10 +299,10 @@ def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
     # py.plotly.tools.set_credentials_file(username='webc', api_key='bWWpIIZ51DsGeqBXNb15')
 
     trace = go.Candlestick(x=stock_data.index,
-                           open=stock_data[glob_stock_data_labels_dict['Open']],
-                           high=stock_data[glob_stock_data_labels_dict['High']],
-                           low=stock_data[glob_stock_data_labels_dict['Low']],
-                           close=stock_data[glob_stock_data_labels_dict['Close']])
+                           open=stock_data[GlobalVariables.get_stock_data_labels_dict()['Open']],
+                           high=stock_data[GlobalVariables.get_stock_data_labels_dict()['High']],
+                           low=stock_data[GlobalVariables.get_stock_data_labels_dict()['Low']],
+                           close=stock_data[GlobalVariables.get_stock_data_labels_dict()['Close']])
     data = [trace]
     py.plot(data, filename=stock_name)
     return
@@ -317,12 +317,12 @@ def read_table_columns_from_webpage_list(page_list):
     return read_table_columns_from_webpage(page_list[0], page_list[1], page_list[2], page_list[3], page_list[4], page_list[5], page_list[6])
 
 
-def read_table_columns_from_webpage(websource_address, find_name, class_name, table_class, first_column_to_read,
-                                    second_column_to_read, stock_exchange):
+def read_table_columns_from_webpage(websource_address, find_name, class_name, table_class, ticker_column_to_read,
+                                    name_column_to_read, stock_exchange):
     """
     read the sp500 tickers and saves it to given file
     :param find_name:
-    :param first_column_to_read: 0 for sp500, 2 for cdax
+    :param ticker_column_to_read: 0 for sp500, 2 for cdax
     :param table_class: like 'wikitable sortable' or 'wikitable sortable zebra'
     :param websource_address: like wikepedia: 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
     :return: stock data container list
@@ -336,8 +336,8 @@ def read_table_columns_from_webpage(websource_address, find_name, class_name, ta
         raise ConnectionError("Error establishing a database connection")
 
     for row in table.findAll('tr')[1:]:
-        ticker = row.findAll('td')[first_column_to_read].text
-        name = row.findAll('td')[second_column_to_read].text
+        ticker = row.findAll('td')[ticker_column_to_read].text
+        name = row.findAll('td')[name_column_to_read].text
         ticker = ticker.replace("\n", "")
         name = name.replace("\n", "")
         stock_data_container_list.append(StockDataContainer(name, ticker, stock_exchange))
@@ -400,8 +400,8 @@ def convert_backtrader_to_dataframe(data):
     while i <= 0:
         try:
 
-            lst.append([float(data[glob_stock_data_labels_dict['Open']][i]), float(data[glob_stock_data_labels_dict['High']][i]), float(data[glob_stock_data_labels_dict['Low']][i]),
-                        float(data[glob_stock_data_labels_dict['Close']][i]), float(data[glob_stock_data_labels_dict['Volume']][i])])
+            lst.append([float(data[GlobalVariables.get_stock_data_labels_dict()['Open']][i]), float(data[GlobalVariables.get_stock_data_labels_dict()['High']][i]), float(data[GlobalVariables.get_stock_data_labels_dict()['Low']][i]),
+                        float(data[GlobalVariables.get_stock_data_labels_dict()['Close']][i]), float(data[GlobalVariables.get_stock_data_labels_dict()['Volume']][i])])
 
         except:
             # nothing to do

@@ -10,14 +10,14 @@ from Signals.Signals import signal_is_volume_high_enough, signal_is52_w_high, \
 from Utils.common_utils import calc_avg_vol, calculate_stopbuy_and_stoploss
 
 # from directory UnitTests to --> root folder with: ..\\..\\
-from GUI.main_v1 import global_filepath, glob_stock_data_labels_dict
+from Utils.GlobalVariables import *
 
-test_filepath = global_filepath + 'TestData\\'
+test_filepath = GlobalVariables.get_data_files_path() + 'TestData\\'
 
 
 class MyTest(unittest.TestCase):
 
-    def test_convert(self):
+    def convert(self):
         file = test_filepath + 'Autodesk Inc..csv'
         data = pd.read_csv(file)
         print()
@@ -27,20 +27,22 @@ class MyTest(unittest.TestCase):
         print(" data = [")
         for i in range(0, len(data)):
             if i == len(data) - 1:
-                print("(\'{0}\', {1}, {2}, {3}, {4}, {5})]".format(str(data[glob_stock_data_labels_dict['Date']][i]), str(data[glob_stock_data_labels_dict['Open']][i]),
-                                                                   str(data[glob_stock_data_labels_dict['High']][i]), str(data[glob_stock_data_labels_dict['Low']][i]),
-                                                                   str(data[glob_stock_data_labels_dict['Close']][i]), str(data[glob_stock_data_labels_dict['Volume']][i])))
+                print("(\'{0}\', {1}, {2}, {3}, {4}, {5})]".format(str(data[GlobalVariables.get_stock_data_labels_dict()['Date']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Open']][i]),
+                                                                   str(data[GlobalVariables.get_stock_data_labels_dict()['High']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Low']][i]),
+                                                                   str(data[GlobalVariables.get_stock_data_labels_dict()['Close']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Volume']][i])))
             else:
                 #TODO des is desselbe wie oben nur klammer anders hinten
-                print("(\'{0}\', {1}, {2}, {3}, {4}, {5}),".format(str(data[glob_stock_data_labels_dict['Date']][i]), str(data[glob_stock_data_labels_dict['Open']][i]),
-                                                                   str(data[glob_stock_data_labels_dict['High']][i]), str(data[glob_stock_data_labels_dict['Low']][i]),
-                                                                   str(data[glob_stock_data_labels_dict['Close']][i]), str(data[glob_stock_data_labels_dict['Volume']][i])))
+                print("(\'{0}\', {1}, {2}, {3}, {4}, {5}),".format(str(data[GlobalVariables.get_stock_data_labels_dict()['Date']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Open']][i]),
+                                                                   str(data[GlobalVariables.get_stock_data_labels_dict()['High']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Low']][i]),
+                                                                   str(data[GlobalVariables.get_stock_data_labels_dict()['Close']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Volume']][i])))
 
         print ("data = pd.DataFrame.from_records(data, columns=labels)")
 
     def test_isVolumeHighEnough(self):
         # volume below 15k
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 23.6, 23.73, 23.15, 23.26, 14000),
             ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 14000),
@@ -68,7 +70,9 @@ class MyTest(unittest.TestCase):
         self.assertEqual(signal_is_volume_high_enough(df), False)
 
         # volume above 30k
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 23.6, 23.73, 23.15, 23.26, 16000),
             ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 16000),
@@ -97,7 +101,9 @@ class MyTest(unittest.TestCase):
 
     def test_is52W_High(self):
         # last val 52 w Hi: data High: curVal is 100, other 90
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 31000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 31000),
@@ -126,7 +132,9 @@ class MyTest(unittest.TestCase):
         self.assertEqual(signal_is52_w_high(data, 0.98), True)
 
         # last val < 0.98 hi: High: 100, lastval = 97
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 100, 100, 100.15, 100.26, 31000),
             ('2016-09-14', 100, 100, 22.95, 100.11, 31000),
@@ -155,7 +163,9 @@ class MyTest(unittest.TestCase):
         self.assertEqual(signal_is52_w_high(data, 0.98), False)
 
         # last val > 1.03 hi: High: 100, lastval = 104
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 100, 100, 100.15, 100.26, 31000),
             ('2016-09-14', 100, 100, 22.95, 100.11, 31000),
@@ -184,7 +194,9 @@ class MyTest(unittest.TestCase):
         self.assertEqual(signal_is52_w_high(data, 0.98), True)
 
         # last val = 99, High is 100
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 96, 100, 96.15, 96.26, 3960),
             ('2016-09-14', 96, 96, 22.95, 96.11, 3960),
@@ -215,7 +227,9 @@ class MyTest(unittest.TestCase):
     def test_t1_isVolumeRaising_withinCheckDays(self):
         # t1: minimum raising
         # h,h,h,l,h
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -245,7 +259,9 @@ class MyTest(unittest.TestCase):
 
         # h,h,l,l,h
         #file = test_filepath + 'test_isVolumeRaising_2_t1_HHLHH.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -275,7 +291,9 @@ class MyTest(unittest.TestCase):
 
         # h,h,h,h,h
         #file = test_filepath + 'test_isVolumeRaising_2_t1_HHHH.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -308,7 +326,9 @@ class MyTest(unittest.TestCase):
 
         # t1: h, lowest, l, l, h but raising
         #file = test_filepath + 'test_isVolumeRaising_2_t1_HLowestLLL.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -338,7 +358,9 @@ class MyTest(unittest.TestCase):
 
         # t1: h, l, l, l, h
         #file = test_filepath + 'test_isVolumeRaising_2_t1_HLLLH.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -369,7 +391,9 @@ class MyTest(unittest.TestCase):
     def test_t2_isLastVolumeHigherThanAvg(self):
         # t2: last 4k8, avg 4k --> below
         #file = test_filepath + 'test_t2_isLastVolumeHigherThanAvg_belowAvg4k_last3k8.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -400,7 +424,9 @@ class MyTest(unittest.TestCase):
 
         # t2: above avg 4k2
         #file = test_filepath + 'test_t2_isLastVolumeHigherThanAvg_belowAvg4k_last5k2.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -432,7 +458,9 @@ class MyTest(unittest.TestCase):
     def test_t3_is_a_few_higher_than_avg(self):
         # T3: higher than avg
         #file = test_filepath + 'test_t3_is_a_few_higher_than_avg_AreHigher.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -464,7 +492,9 @@ class MyTest(unittest.TestCase):
         # T3: LOWER than avg
         #file = test_filepath + 'test_t3_is_a_few_higher_than_avg_AreLower.csv'
 
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -497,7 +527,9 @@ class MyTest(unittest.TestCase):
         # True
         #file = test_filepath + 'test_isVolumeRaising_2_True.csv'
 
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -527,7 +559,9 @@ class MyTest(unittest.TestCase):
 
         # False t1: volume not raising
         #file = test_filepath + 'test_isVolumeRaising_2_False_T1.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -557,7 +591,9 @@ class MyTest(unittest.TestCase):
 
         # False t2: last vol not higher than avg
         #file = test_filepath + 'test_isVolumeRaising_2_False_T2.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -587,7 +623,9 @@ class MyTest(unittest.TestCase):
 
         # False t3: at least NOT a few volume higher than avg
         #file = test_filepath + 'test_isVolumeRaising_2_False_T3.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 90, 90, 100.15, 100.26, 4000),
             ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
@@ -617,7 +655,9 @@ class MyTest(unittest.TestCase):
 
     def test_calculate_stopbuy_and_stoploss(self):
         #file = test_filepath + 'test_calculate_stopbuy_and_stoploss_Ok.csv'
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
             ('2016-10-10', 23.62, 23.88, 23.55, 24.0, 44000),

@@ -6,6 +6,7 @@ import os
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.file_utils import FileUtils, read_tickers_from_file_or_web
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
+from Utils.GlobalVariables import *
 
 class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
@@ -21,7 +22,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
         thr_start = datetime.now()
         analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
-                                           filepath + 'nltk_german_classifier_data.pickle')
+                                           GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle')
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf"
         result = analysis.analyse_single_news(news)
@@ -102,7 +103,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
 
         analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
-                                           filepath + 'nltk_german_classifier_data.pickle')
+                                           GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle')
 
         news = " ANALYSE FLASH: NordLB senkt Ziel für Deutsche Bank auf 11.50 €   halten"#
         result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)

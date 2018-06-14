@@ -6,17 +6,7 @@
 import sys
 from tkinter import *
 import tkinter.ttk as ttk
-import os
 import main_v1_support
-global ROOT_DIR
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-global global_filepath
-global_filepath = ROOT_DIR + '\\DataFiles\\'
-#TODO vom dataprovider lesen und dann zuweisen (irgendeine aktie abfragen)
-global glob_stock_data_labels_dict
-glob_stock_data_labels_dict = {'High': 'high', 'Low':'low', 'Open':'open',
-                               'Close':'close', 'Volume':'volume', 'Date': 'date'}
-
 
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
@@ -123,7 +113,7 @@ class Framework:
         self.Strategy.configure(highlightcolor="black")
         self.Strategy.configure(width=1185)
 
-        self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.Strategy)
+        self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.Strategy, selectmode=MULTIPLE)
         self.Scrolledlistbox_selectStrategy.place(relx=0.01, rely=0.04
                 , relheight=0.35, relwidth=0.98)
         self.Scrolledlistbox_selectStrategy.configure(background="white")

@@ -1,11 +1,10 @@
 import os
 import unittest
 
-from pandas import DataFrame, read_csv
+from pandas import DataFrame
+from Utils.GlobalVariables import *
 
-from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from DataReading.StockDataContainer import StockDataContainer
-
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Strategies.StrategyFactory import StrategyFactory
 from Strategies.W52HighTechnicalStrategy import W52HighTechnicalStrategy
@@ -24,7 +23,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
 
         w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
 
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [('2016-09-13', 23.6, 23.73, 23.15, 23.26, 31000),
                 ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 31000),
                 ('2016-09-15', 23.15, 23.77, 23.14, 23.62, 31000),
@@ -64,7 +65,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
     def test_strat_52WHi_HiVolume(self):
         w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
 
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [('2016-09-13', 23.6, 23.73, 23.15, 23.26, 31000),
                 ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 31000),
                 ('2016-09-15', 23.15, 23.77, 23.14, 23.62, 31000),
@@ -97,7 +100,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         self.assertEqual(res.stock_name, stock_data_container.stock_name)
 
         # volume higher, but stock value under 52w high within 98%
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 23.6, 23.73, 23.15, 23.26, 31000),
             ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 31000),
@@ -131,7 +136,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         self.assertEqual(res.stock_name, stock_data_container.stock_name)
 
         # test_strat_52WHi_HiVolume_Below52WHigh
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 23.6, 23.73, 23.15, 23.26, 31000),
             ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 31000),
@@ -165,7 +172,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
         self.assertEqual(res.stock_name, stock_data_container.stock_name)
 
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 23.6, 23.73, 23.15, 23.26, 31000),
             ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 31000),
@@ -199,7 +208,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
         self.assertEqual(res is None, True)
 
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2016-09-13', 23.6, 23.73, 23.15, 23.26, 31000),
             ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 31000),
@@ -239,7 +250,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
     #        strat_52_w_hi_hi_volume("TestName1", data, 5, 3, 1.2, 1.2)
 
     def test_with_real_data(self):
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [
             ('2017-05-30', 112.800003, 113.660004, 112.260002, 113.160004, 2560300),
             ('2017-05-31', 113.400002, 113.919998, 111.5, 111.769997, 3222600),

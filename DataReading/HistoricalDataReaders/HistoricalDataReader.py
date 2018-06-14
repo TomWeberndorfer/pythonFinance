@@ -5,6 +5,7 @@ from pandas_datareader import data
 
 from DataRead_Google_Yahoo import optimize_name_for_yahoo
 from DataReading.StockDataReader import StockDataReader
+from Utils.GlobalVariables import *
 from Utils.common_utils import get_current_function_name, CommonUtils
 
 
@@ -26,6 +27,13 @@ class HistoricalDataReader(StockDataReader):
                                                                  self.weeks_delta)
 
                 stock_data_container.set_historical_stock_data(stock52_w)
+                try:
+                    curr_prize = stock52_w[GlobalVariables.get_stock_data_labels_dict()["Close"]][len(stock52_w) - 1]
+                    stock_data_container.set_stock_current_prize(curr_prize)
+
+                except Exception as e :
+                    print ("Exception: could not set curr_prize: " + str(e))
+
                 self.update_status("HistoricalDataReader:")
 
     def _get_ticker_data_with_webreader(self, ticker, stock_exchange, data_source,
@@ -38,9 +46,9 @@ class HistoricalDataReader(StockDataReader):
         :param data_source: google or yahoo
         :param reload_stockdata: true, to load from web, otherwise from temp file
         :param weeks_delta: delta from now to read the past: 52 means 52 weeks in the past
-        :return:
+        :return: a dataframe df with ticker data
         """
-
+        assert len(ticker) < 10, "ATTENTION: ticker length is long, maybe it is a name not a ticker: " + ticker
         df = []
 
         if ticker == "" or ticker == '' or len(ticker) <= 0:
@@ -55,8 +63,8 @@ class HistoricalDataReader(StockDataReader):
             return df
 
         # TODO 3: yahoo does not take en, so skip
-        if stock_exchange != '' and stock_exchange is not None and stock_exchange != "en":
-            ticker_exchange += "." + stock_exchange
+        #if stock_exchange != '' and stock_exchange is not None and stock_exchange != "en":
+            #ticker_exchange += "." + stock_exchange
 
         # TODO autmatisieren von pandas=??
         # for i in range(0, 2): #TODO 4
@@ -69,7 +77,8 @@ class HistoricalDataReader(StockDataReader):
         #            break
 
         except Exception as e:
-            sys.stderr.write(str(e))
+            #sys.stderr.write(str(e))
+            pass
                 # exception but the df is filled --> ok
 
          #       if len(df) > 0:

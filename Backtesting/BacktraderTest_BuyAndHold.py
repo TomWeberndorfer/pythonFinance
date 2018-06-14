@@ -15,7 +15,7 @@ import backtrader as bt
 
 
 # Create a Stratey
-from GUI.main_v1 import glob_stock_data_labels_dict
+from Utils.GlobalVariables import *
 
 
 class TestStrategy(bt.Strategy):
@@ -30,10 +30,10 @@ class TestStrategy(bt.Strategy):
 
     def __init__(self):
         # Keep a reference to the "close" line in the data[0] dataseries
-        self.dataclose = self.datas[0][glob_stock_data_labels_dict['Close']]
-        self.datavol = self.datas[0][glob_stock_data_labels_dict['Volume']]
-        self.datahi = self.datas[0][glob_stock_data_labels_dict['High']]
-        self.datalo = self.datas[0][glob_stock_data_labels_dict['Low']]
+        self.dataclose = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Close']]
+        self.datavol = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Volume']]
+        self.datahi = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['High']]
+        self.datalo = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Low']]
         self.buy_price = 0
 
         # To keep track of pending orders and buy price/commission
