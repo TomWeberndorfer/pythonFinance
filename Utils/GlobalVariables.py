@@ -15,8 +15,12 @@ class GlobalVariables:
 
     @staticmethod
     def get_stock_data_labels_dict():
-        # ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        #real sorting: ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
         # TODO vom dataprovider lesen und dann zuweisen (irgendeine aktie abfragen)
-        stock_data_labels_dict = {'Date': 'date', 'Open': 'open', 'High': 'high', 'Low': 'low',
-                                  'Close': 'close', 'Volume': 'volume'}
+        if 1:
+            stock_data_labels_dict = {'Date': 'date', 'Open': 'open', 'High': 'high', 'Low': 'low',
+                                      'Close': 'close', 'Volume': 'volume'}
+        else:
+            stock_data_labels_dict = {'Date': 'Date', 'Open': 'Open', 'High': 'High', 'Low': 'Low',
+                                      'Close': 'Close', 'Volume': 'Volume'}
         return stock_data_labels_dict

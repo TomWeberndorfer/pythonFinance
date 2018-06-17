@@ -6,11 +6,13 @@
 import _pickle as pickle
 from threading import Thread
 from tkinter import messagebox
+
 from MvcModel import MyModel
 from StockAnalysis import run_analysis
 from tkinter import *
 import webbrowser as wb
 import ast
+from tkinter import filedialog
 
 from Utils.GlobalVariables import *
 
@@ -29,7 +31,8 @@ class MyController:
         self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click)
         self.all_parameter_dicts_changed()
         self.available_strategies_changed()
-        self.load_parameter_from_file()
+        self.load_strategy_parameter_from_file(GlobalVariables.get_data_files_path() + "ParameterFile.pickle")
+        self.load_other_parameter_from_file(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle")
         self.other_params_changed()
 
     def on_double_click(self, event):
@@ -58,23 +61,26 @@ class MyController:
         Method to start the screening once
         :return: nothing, results are saved in the model.
         """
-        selection_values = self.model.get_strategy_selection_value()
+        try:
+            selection_values = self.model.get_strategy_selection_value()
 
-        if selection_values == "" or len(selection_values) <= 0:
-            messagebox.showerror("Selection Error", "Please select a strategy first!")
-            return
+            if selection_values == "" or len(selection_values) <= 0:
+                messagebox.showerror("Selection Error", "Please select a strategy first!")
+                return
 
-        if not self.accept_parameters_from_text():
-            return
+            if not self.accept_parameters_from_text():
+                return
 
-        self.model.set_is_thread_running(True)
-        print("Screening started...")
-        self.model.clear_result_stock_data_container_list()
-        strategy_params = self.model.get_all_parameter_dicts()
-        other_params = self.model.get_other_params()
-        results = run_analysis(selection_values, strategy_params, other_params)
-        self.model.extend_result_stock_data_container_list(results)
-        self.model.set_is_thread_running(False)
+            self.model.set_is_thread_running(True)
+            print("Screening started...")
+            self.model.clear_result_stock_data_container_list()
+            strategy_params = self.model.get_all_parameter_dicts()
+            other_params = self.model.get_other_params()
+            results = run_analysis(selection_values, strategy_params, other_params)
+            self.model.extend_result_stock_data_container_list(results)
+        except Exception as e:
+            print(str(e))
+            self.model.set_is_thread_running(False)
 
     def accept_parameters_from_text(self):
         """
@@ -107,23 +113,43 @@ class MyController:
 
         return True
 
-    def load_parameter_from_file(self):
+    def load_strategy_parameter_from_file(self, file_path):
         """
         Loads the parameters into the GUI from a given filepath and file.
+        :param file_path:
         :return: nothing
         """
         self.model.clear_all_parameter_dicts()
         self.model.clear_available_strategies_list()
-        self.model.clear_other_params()
 
         try:
-            with open(GlobalVariables.get_data_files_path() + "ParameterFile.pickle", "rb") as f:
+            with open(file_path, "rb") as f:
                 items = pickle.load(f)
                 self.model.add_to_all_parameter_dicts(items)
                 for item in items:
                     self.model.add_to_available_strategies(item)
 
             with open(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle", "rb") as f:
+                items = pickle.load(f)
+                self.model.add_to_other_params(items)
+
+        except Exception as e:
+            print(str(e))
+            return
+
+        self.model.add_to_log("Params Read")
+
+    def load_other_parameter_from_file(self, file_path):
+        """
+        Loads the parameters into the GUI from a given filepath and file.
+        :param file_path:
+        :return: nothing
+        """
+        self.model.clear_other_params()
+
+        try:
+
+            with open(file_path, "rb") as f:
                 items = pickle.load(f)
                 self.model.add_to_other_params(items)
 
@@ -141,9 +167,10 @@ class MyController:
         """
         self.model.add_to_log(log_text)
 
-    def dump_parameter_to_file(self):
+    def dump_strategy_parameter_to_file(self, file_path=GlobalVariables.get_data_files_path() + "ParameterFile.pickle"):
         """
         dumps the parameters to a global given file
+        :param file_path:
         :return:
         """
         content = self.view.Scrolledtext_params.get(1.0, END)
@@ -153,11 +180,18 @@ class MyController:
             messagebox.showerror("Parameters empty", "Please insert parameters")
         else:
             self.model.add_to_all_parameter_dicts(content_dict)
-            with open(GlobalVariables.get_data_files_path() + "ParameterFile.pickle", "wb") as f:
+            with open(file_path, "wb") as f:
                 pickle.dump(self.model.get_all_parameter_dicts(), f)
 
             self.model.add_to_log("Params Saved")
 
+    def dump_other_parameter_to_file(self,
+                                     file_path=GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle"):
+        """
+        dumps the parameters to a global given file
+        :param file_path:
+        :return:
+        """
         content_others = self.view.Scrolled_other_parameters.get(1.0, END)
         content_others_dict = ast.literal_eval(content_others)
 
@@ -165,7 +199,7 @@ class MyController:
             messagebox.showerror("Other Parameters empty", "Please insert parameters")
         else:
             self.model.add_to_other_params(content_others_dict)
-            with open(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle", "wb") as f:
+            with open(file_path, "wb") as f:
                 pickle.dump(self.model.get_other_params(), f)
 
             self.model.add_to_log("Other Params Saved")
@@ -322,7 +356,17 @@ def destroy_window():
 
 
 def save():
-    app.dump_parameter_to_file()
+    file_path = filedialog.asksaveasfilename(initialdir=GlobalVariables.get_data_files_path(),
+                                             title="Select pickle strategy parameterfile")
+
+    app.dump_strategy_parameter_to_file(file_path)
+
+
+def save_other_params():
+    file_path = filedialog.asksaveasfilename(initialdir=GlobalVariables.get_data_files_path(),
+                                             title="Select pickle other parameterfile")
+
+    app.dump_other_parameter_to_file(file_path)
 
 
 def quit():
@@ -334,7 +378,17 @@ def edit():
 
 
 def load_params():
-    app.load_parameter_from_file()
+    file_path = filedialog.askopenfilename(initialdir=GlobalVariables.get_data_files_path(),
+                                           title="Select pickle strategy parameterfile")
+
+    app.load_strategy_parameter_from_file(file_path)
+
+
+def load_other_params():
+    file_path = filedialog.askopenfilename(initialdir=GlobalVariables.get_data_files_path(),
+                                           title="Select pickle other parameterfile")
+
+    app.load_other_parameter_from_file(file_path)
 
 
 class StdoutRedirector():

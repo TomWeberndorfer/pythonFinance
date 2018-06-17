@@ -17,7 +17,7 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
     # TODO 10: only temp: for testing every time
     try:
         import os
-        os.remove(other_params['last_date_time_file'])
+        #os.remove(other_params['last_date_time_file'])
     except Exception:
         pass
 

@@ -63,8 +63,8 @@ class HistoricalDataReader(StockDataReader):
             return df
 
         # TODO 3: yahoo does not take en, so skip
-        #if stock_exchange != '' and stock_exchange is not None and stock_exchange != "en":
-            #ticker_exchange += "." + stock_exchange
+        #if stock_exchange != '' and stock_exchange is not None and stock_exchange != "en" and data_source == 'yahoo':
+        #ticker_exchange += "." + stock_exchange
 
         # TODO autmatisieren von pandas=??
         # for i in range(0, 2): #TODO 4
@@ -77,8 +77,7 @@ class HistoricalDataReader(StockDataReader):
         #            break
 
         except Exception as e:
-            #sys.stderr.write(str(e))
-            pass
+            sys.stderr.write(str(e))
                 # exception but the df is filled --> ok
 
          #       if len(df) > 0:

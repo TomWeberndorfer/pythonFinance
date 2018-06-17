@@ -15,8 +15,8 @@ stock_data_container_file_name = "stock_data_container_file.pickle"
 stock_data_container_file = filepath + stock_data_container_file_name
 date_file = filepath + 'last_date_time.csv'
 
-data_source = 'iex'
-# data_source = 'morningstar'
+#data_source = 'iex'
+data_source = 'morningstar'
 weeks_delta = 52  # one year in the past
 
 stock_list = ["DIM", "CBK", "CR"]  # "ENEL"]
@@ -32,9 +32,9 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
     def test_get_ticker_data_with_webreader(self):
         # Todo mit mehreren testen, auch ohne file --> fileinhalt mit übergeben --> dann kann ichs faken
         # --> file zugriff nicht im webreader drinnen
-        stock_data_container = StockDataContainer("BHGE", "BHGE", "en")
-        stock_data_container2 = StockDataContainer("FNTN", "FNTN", "de")
-        stock_data_container_list = [stock_data_container2]
+        stock_data_container = StockDataContainer("TGT", " TGT", "de")
+
+        stock_data_container_list = [stock_data_container]
         # stock_data_container_list = [stock_data_container, stock_data_container2]
 
         self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)

@@ -225,7 +225,7 @@ proc vTclWindow.top32 {base} {
         -menu "$top.m33" -background {#eaeaea} -highlightbackground wheat \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 1261x835+352+57
+    wm geometry $top 1261x795+352+57
     update
     # set in toplevel.wgt.
     global vTcl
@@ -253,12 +253,20 @@ proc vTclWindow.top32 {base} {
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
     $site_3_0.men34 add command \
         -activebackground {#d9d9d9} -activeforeground {#000000} \
-        -background {#ffff00} -command {#save} -font TkMenuFont \
-        -foreground {#000000} -label Save 
+        -background {#ffff00} -command {#save} -compound none \
+        -font TkMenuFont -foreground {#000000} -label {Save Strategy Params} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#load_params} -font TkMenuFont \
-        -foreground {#000000} -label {Load Parameters} 
+        -background wheat -command {#save_other_params} -compound none \
+        -font TkMenuFont -foreground {#000000} -label {Save Other Params} 
+    $site_3_0.men34 add command \
+        -activebackground {#f4bcb2} -activeforeground {#000000} \
+        -background wheat -command {#load_params} -compound none \
+        -font TkMenuFont -foreground {#000000} -label {Load Parameters} 
+    $site_3_0.men34 add command \
+        -activebackground {#f4bcb2} -activeforeground {#000000} \
+        -background wheat -command {#load_other_params} -compound none \
+        -font TkMenuFont -foreground {#000000} -label {Load Other Parameters} 
     $site_3_0.men34 add separator \
         -background {#ffff00} 
     $site_3_0.men34 add command \
@@ -266,7 +274,7 @@ proc vTclWindow.top32 {base} {
         -background {#ebebeb} -command {#quit} -compound top -font TkMenuFont \
         -foreground {#000000} -label Quit 
     $top.m33 add cascade \
-        -menu "$top.m33.men32" -background {#990000} \
+        -menu "$top.m33.men32" -background {#990000} -compound none \
         -font {-family Purisa -size 12 -weight normal -slant roman -underline 0 -overstrike 0} \
         -foreground {#ffff00} -label Edit 
     set site_3_0 $top.m33
@@ -311,8 +319,8 @@ proc vTclWindow.top32 {base} {
         -width 10 \
         -wrap none
     vTcl::widgets::ttk::scrolledtext::CreateCmd $site_3_0.scr37 \
-        -background {#d9d9d9} -height 51 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 1161 
+        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 125 
     vTcl:DefineAlias "$site_3_0.scr37" "Scrolled_other_parameters" vTcl:WidgetProc "Toplevel1" 1
 
     $site_3_0.scr37.01 configure -background white \
@@ -367,8 +375,8 @@ proc vTclWindow.top32 {base} {
     ttk::style configure Treeview.Heading -background #d9d9d9
     ttk::style configure Treeview.Heading -font TkDefaultFont
     vTcl::widgets::ttk::scrolledtreeview::CreateCmd $site_3_0.scr52 \
-        -background {#d9d9d9} -height 157 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 1160 
+        -background {#d9d9d9} -height 15 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 30 
     vTcl:DefineAlias "$site_3_0.scr52" "Scrolledtreeview1" vTcl:WidgetProc "Toplevel1" 1
     place $site_3_0.scr52 \
         -in $site_3_0 -x 10 -y 20 -width 1160 -relwidth 0 -height 157 \

@@ -3,6 +3,7 @@ import unittest
 from pandas import DataFrame
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
+from Utils.GlobalVariables import *
 
 # from directory UnitTests to --> root folder with: ..\\..\\
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -12,7 +13,9 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 class TestSimplePatternNewsStrategy(unittest.TestCase):
 
     def test_run_strategy(self):
-        labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [('2016-09-13', 90, 90, 100.15, 100.26, 4000),
                 ('2016-09-14', 90, 90, 22.95, 100.11, 4000),
                 ('2016-09-15', 90, 90, 100.14, 100.62, 4000)]
