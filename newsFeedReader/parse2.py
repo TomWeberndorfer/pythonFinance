@@ -2,15 +2,14 @@ import feedparser
 
 
 # Function to fetch the rss feed and return the parsed RSS
-def parseRSS(rss_url):
+def parse_RSS(rss_url):
     return feedparser.parse(rss_url)
 
 
 # Function grabs the rss feed headlines (titles) and returns them as a list
-def getHeadlines(rss_url):
+def get_headlines(rss_url):
     headlines = []
-
-    feed = parseRSS(rss_url)
+    feed = parse_RSS(rss_url)
     for newsitem in feed['items']:
         headlines.append(newsitem['title'])
 
@@ -25,14 +24,15 @@ newsurls = {
     #'apnews': 'http://hosted2.ap.org/atom/APDEFAULT/3d281c11a96b4ad082fe88aa0db04305',
     #'googlenews': 'https://news.google.com/news/rss/?hl=en&amp;ned=us&amp;gl=US',
     #'yahoonews': 'http://news.yahoo.com/rss/'
-    'yahooFinance': 'http://finance.yahoo.com/rss/headline?s=msft'
+    #'yahooFinance': 'http://finance.yahoo.com/rss/headline?s=msft'
+    'boerse-online': 'http://www.boerse-online.de/rss'
 
 }
 
 # Iterate over the feed urls
 for key, url in newsurls.items():
-    # Call getHeadlines() and combine the returned headlines with allheadlines
-    allheadlines.extend(getHeadlines(url))
+    # Call get_headlines() and combine the returned headlines with allheadlines
+    allheadlines.extend(get_headlines(url))
 
 # Iterate over the allheadlines list and print each headline
 for hl in allheadlines:

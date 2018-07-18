@@ -1,34 +1,65 @@
+import inspect
+from talib import abstract
 import numpy
+import os
 import talib
 import pandas as pd
 from datetime import datetime
 from datetime import timedelta
 
 from DataRead_Google_Yahoo import read_data_from_google_with_pandas
+from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
+from DataReading.StockDataContainer import StockDataContainer
 from Utils.common_utils import calc_true_range, calc_mean_true_range
 
-filepath = 'C:\\Users\\Tom\\OneDrive\\Dokumente\\Thomas\\Aktien\\testData\\'
-file = filepath + 'atr.csv'
-#stock_data = pd.read_csv(file)
-end = datetime.now()
-ago52_w = (end - timedelta(weeks=52))
-stock_data = read_data_from_google_with_pandas("AAPL", ago52_w, end)
 
-data_len = len(stock_data)
+# https://github.com/mrjbq7/ta-lib/issues/13
+import talib
+help(talib.SMA)
 
-high_value = numpy.array(stock_data.High)
-low_value = numpy.array(stock_data.Low)
-open_value = numpy.array(stock_data.Open)
-close_value = numpy.array(stock_data.Close)
 
-output = talib.CDLHAMMER(open_value, high_value, low_value, close_value)
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
+stock_data_container_file_name = "stock_data_container_file.pickle"
+stock_data_container_file = filepath + stock_data_container_file_name
+date_file = filepath + 'last_date_time.csv'
+
+stock_data_container = StockDataContainer("AAPL", "AAPL", "en")
+stock_data_container_list = [stock_data_container]
+data_source = 'iex'
+weeks_delta = 52  # one year in the past
+# TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
+data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file,
+                                   data_source, False)
+df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
+                                                 stock_data_container.stock_exchange,
+                                                 data_source, weeks_delta=52)
+
+result_sma = talib.SMA(df.close, timeperiod=30)
+#print (result_sma)
+
+#print (talib.get_functions())
+funcs = talib.get_functions()
+sma = abstract.Function('sma')
+test = inspect.signature(sma)
+t2 = inspect.getargvalues(sma)
+print (t2)
+
+# data_len = len(stock_data)
+# high_value = numpy.array(stock_data.High)
+# low_value = numpy.array(stock_data.Low)
+# open_value = numpy.array(stock_data.Open)
+# close_value = numpy.array(stock_data.Close)
+#
+# output = talib.CDLHAMMER(open_value, high_value, low_value, close_value)
+
 #print(output)
-print(numpy.where(output==100))
-print ("high_value: " + str(high_value.item(19)))
-print ("low_value: " + str(low_value.item(19)))
-print ("open_value: " + str(open_value.item(19)))
-print ("close_value: " + str(close_value.item(19)))
-print()
+# print(numpy.where(output==100))
+# print ("high_value: " + str(high_value.item(19)))
+# print ("low_value: " + str(low_value.item(19)))
+# print ("open_value: " + str(open_value.item(19)))
+# print ("close_value: " + str(close_value.item(19)))
+# print()
 
 #TODO see doc here:
 # https://cryptotrader.org/talib

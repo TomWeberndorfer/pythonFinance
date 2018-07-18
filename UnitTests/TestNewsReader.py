@@ -2,6 +2,8 @@ import os
 import unittest
 from datetime import datetime
 
+import sys
+
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.file_utils import read_tickers_from_file_or_web
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
@@ -11,7 +13,7 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
 
 
-class NewsReaderTests(unittest.TestCase):
+class TestNewsReader(unittest.TestCase):
 
     def test_sample(self):
         # TODO

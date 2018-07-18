@@ -3,6 +3,7 @@ from datetime import datetime
 
 import os
 
+from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.file_utils import FileUtils, read_tickers_from_file_or_web
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
@@ -196,4 +197,16 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         news = "senkt Ziel für auf 186 euro"
         result = analysis._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual(result is None, True)
+
+    def test_get_symbol_from_name_from_topforeignstocks(self):
+        # TODO 1:
+        name, symbol = get_symbol_from_name_from_topforeignstocks("Nestle")
+
+        name, symbol = get_symbol_from_name_from_topforeignstocks("Roche")
+        self.assertEqual(name, 'Roche Holding AG')
+        self.assertEqual(symbol, "RHHBY")
+
+        #name, symbol = get_symbol_from_name_from_topforeignstocks("Tesla")
+        #self.assertEqual(symbol, "TSLA")
+        #self.assertEqual(name, 'Tesla, Inc.')
 

@@ -15,8 +15,8 @@ stock_data_container_file_name = "stock_data_container_file.pickle"
 stock_data_container_file = filepath + stock_data_container_file_name
 date_file = filepath + 'last_date_time.csv'
 
-#data_source = 'iex'
-data_source = 'morningstar'
+data_source = 'iex'
+#data_source = 'morningstar'
 weeks_delta = 52  # one year in the past
 
 stock_list = ["DIM", "CBK", "CR"]  # "ENEL"]
@@ -29,10 +29,10 @@ for stock in stock_list:
 
 class TestGoogleHistoricalDataReader(unittest.TestCase):
 
-    def test_get_ticker_data_with_webreader(self):
+    def test_get_ticker_data_with_webreader__get_apple_data(self):
         # Todo mit mehreren testen, auch ohne file --> fileinhalt mit übergeben --> dann kann ichs faken
         # --> file zugriff nicht im webreader drinnen
-        stock_data_container = StockDataContainer("TGT", " TGT", "de")
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
 
         stock_data_container_list = [stock_data_container]
         # stock_data_container_list = [stock_data_container, stock_data_container2]
@@ -41,14 +41,14 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
 
         # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
         data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file,
-                                           data_source, False)
+                                           data_source, True)
         df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
                                                          stock_data_container.stock_exchange,
                                                          data_source, weeks_delta=52)
 
         self.assertGreater(len(df), 200)
 
-    def test_read_data_without_factory(self):
+    def test_read_data_without_factory_but_HistoricalDataReader(self):
         stock_data_container_list = []
         # Todo mit mehreren testen, auch ohne file --> fileinhalt mit übergeben --> dann kann ichs faken
         # --> file zugriff nicht im webreader drinnen
@@ -82,7 +82,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         for sd in stock_data_container_list_2:
             self.assertGreater(len(sd.historical_stock_data), 100, str(sd.stock_name))
 
-    def test_read_data(self):
+    def test_read_data_with_DataReaderFactory__HistoricalDataReader_read_apple__read_intel(self):
         stock_data_container_list = []
         apple_stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
         intel_container = StockDataContainer("Intel Corporation", "INTC", "")
@@ -110,9 +110,11 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         # TODO 11: seite geht nicht mehr
         list_with_stock_pages_to_read = [
             ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
-             'wikitable sortable', 0, 1, "en"],
-            ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
-             'tbody', 'class', 'row-hover', 2, 1, 'de']]
+             'wikitable sortable', 0, 1, "en"] ]
+
+            #,
+            #['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
+            # 'tbody', 'class', 'row-hover', 2, 1, 'de']]
         stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, True,
                                                                   list_with_stock_pages_to_read)
 
@@ -136,6 +138,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         self.assertGreater(30, failed_reads)
         print("Failed reads: " + str(failed_reads))
 
-        self.assertEqual(len(stock_data_container_list), 818)
+        #TODO deutsche gehen nicht mehr self.assertEqual(len(stock_data_container_list), 818)
+        self.assertEqual(len(stock_data_container_list), 505)
         self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
         self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)

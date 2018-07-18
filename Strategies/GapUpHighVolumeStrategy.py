@@ -17,7 +17,7 @@ class GapUpHighVolumeStrategy(Strategy):
         except Exception as e:
             sys.stderr.write("Exception:  " + str(e) + "\n")
 
-    def strat_gap_up__hi_volume(self, stock_data_container, stock_data, min_gap_factor):
+    def strat_gap_up__hi_volume(self, stock_data_container, parameter_dict):
         """
         Strategy with gap between last and open and high volume
 
@@ -27,13 +27,13 @@ class GapUpHighVolumeStrategy(Strategy):
         :return: stock to buy with {'buy', 'stock_name', 'sb', 'sl'}
         """
 
-        if stock_data_container is None or stock_data is None or min_gap_factor is None:
+        if stock_data_container is None or parameter_dict['parameter_dict'] is None:
             raise NotImplementedError
 
-        if not signal_is_volume_high_enough(stock_data):
+        if not signal_is_volume_high_enough(stock_data_container):
             return None
 
-        if not signal_gap_up(stock_data, min_gap_factor):
+        if not signal_gap_up(stock_data_container, parameter_dict['parameter_dict']):
             return None
 
         return stock_data_container

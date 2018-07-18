@@ -39,5 +39,10 @@ class StockDataContainer:
         return self.strategies
 
     def append_used_strategy(self, strategy_name):
+        """
+        Append the strategy which where used to get the result.
+        :param strategy_name: strategy name as implemented
+        :return: nothing
+        """
         self.strategies.append(strategy_name)
 
