@@ -1,7 +1,7 @@
-from Strategies.Strategy import Strategy
+from Strategies.Abstract_Strategy import Abstract_Strategy
 
 
-class HammerCandleStickStrategy (Strategy):
+class HammerCandleStickStrategy (Abstract_Strategy):
 
     def run_strategy(self):
         #TODO parameter

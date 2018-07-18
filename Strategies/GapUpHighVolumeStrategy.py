@@ -1,11 +1,11 @@
 import sys
 
 from Signals.Signals import signal_is_volume_high_enough, signal_gap_up
-from Strategies.Strategy import Strategy
+from Strategies.Abstract_Strategy import Abstract_Strategy
 from Utils.common_utils import CommonUtils, get_current_function_name
 
 
-class GapUpHighVolumeStrategy(Strategy):
+class GapUpHighVolumeStrategy(Abstract_Strategy):
 
     def _method_to_execute(self, stock_data_container):
         try:
@@ -19,7 +19,7 @@ class GapUpHighVolumeStrategy(Strategy):
 
     def strat_gap_up__hi_volume(self, stock_data_container, parameter_dict):
         """
-        Strategy with gap between last and open and high volume
+        Abstract_Strategy with gap between last and open and high volume
 
         :param stock_data_container: stock name
         :param stock_data: stock data
@@ -27,13 +27,13 @@ class GapUpHighVolumeStrategy(Strategy):
         :return: stock to buy with {'buy', 'stock_name', 'sb', 'sl'}
         """
 
-        if stock_data_container is None or parameter_dict['parameter_dict'] is None:
+        if stock_data_container is None or parameter_dict['min_gap_factor'] is None:
             raise NotImplementedError
 
-        if not signal_is_volume_high_enough(stock_data_container):
+        if not signal_is_volume_high_enough(stock_data_container.historical_stock_data):
             return None
 
-        if not signal_gap_up(stock_data_container, parameter_dict['parameter_dict']):
+        if not signal_gap_up(stock_data_container.historical_stock_data, parameter_dict['min_gap_factor']):
             return None
 
         return stock_data_container

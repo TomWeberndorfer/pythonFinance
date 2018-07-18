@@ -4,12 +4,12 @@ import sys
 from pandas_datareader import data
 
 from DataRead_Google_Yahoo import optimize_name_for_yahoo
-from DataReading.StockDataReader import StockDataReader
+from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
 from Utils.GlobalVariables import *
 from Utils.common_utils import get_current_function_name, CommonUtils
 
 
-class HistoricalDataReader(StockDataReader):
+class HistoricalDataReader(Abstract_StockDataReader):
 
     def _method_to_execute(self, stock_data_container):
         """

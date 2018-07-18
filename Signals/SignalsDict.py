@@ -1,11 +1,11 @@
 from abc import abstractmethod
 
-from Utils.SimpleMultithreading import SimpleMultithreading
+from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
 
 
-class StockSignalsList(SimpleMultithreading):
+class StockSignalsList(Abstract_SimpleMultithreading):
     def __init__(self, signals):
-        SimpleMultithreading.__init__(self)
+        Abstract_SimpleMultithreading.__init__(self)
         self.signals = signals
 
     def execute_signals(self):

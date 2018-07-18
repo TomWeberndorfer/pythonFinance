@@ -2,7 +2,7 @@ from abc import abstractmethod
 from Utils.common_utils import CommonUtils
 
 
-class SimpleMultithreading:
+class Abstract_SimpleMultithreading:
     """"
     This class implements a simple method to execute a method for every element of a list in parallel
     with pool as multithreading.

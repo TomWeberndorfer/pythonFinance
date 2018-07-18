@@ -1,16 +1,16 @@
 import inspect
 import sys
 
-from Strategies.Strategy import Strategy
-from Utils.SimpleMultithreading import SimpleMultithreading
+from Strategies.Abstract_Strategy import Abstract_Strategy
+from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
 from Utils.common_utils import CommonUtils
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
-class SimplePatternNewsStrategy(Strategy, SimpleMultithreading):
+class SimplePatternNewsStrategy(Abstract_Strategy, Abstract_SimpleMultithreading):
     def __init__(self, stock_data_container_list, parameter_dict, all_news_text_list):
-        Strategy.__init__(self, stock_data_container_list, parameter_dict)
-        SimpleMultithreading.__init__(self)
+        Abstract_Strategy.__init__(self, stock_data_container_list, parameter_dict)
+        Abstract_SimpleMultithreading.__init__(self)
         self.text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list,
                                                      self.parameter_dict['news_threshold'],
                                                      self.parameter_dict['german_tagger'])

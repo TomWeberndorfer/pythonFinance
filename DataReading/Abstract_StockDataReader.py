@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 import _pickle as pickle
 
-from Utils.SimpleMultithreading import SimpleMultithreading
+from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
 from Utils.StatusUpdate import StatusUpdate
 from Utils.common_utils import CommonUtils
 
 
-class StockDataReader(StatusUpdate, SimpleMultithreading):
+class Abstract_StockDataReader(StatusUpdate, Abstract_SimpleMultithreading):
 
     @abstractmethod
     def _method_to_execute(self, argument):
@@ -27,7 +27,7 @@ class StockDataReader(StatusUpdate, SimpleMultithreading):
             self.date_file = date_file
 
         StatusUpdate.__init__(self, len(stock_data_container_list))
-        SimpleMultithreading.__init__(self)
+        Abstract_SimpleMultithreading.__init__(self)
 
     def read_data(self):
         self.curr_data_reads = 0

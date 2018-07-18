@@ -19,11 +19,13 @@ class TestUtils(TestCase):
     #
     #     self.assertEqual(len(result), 0)
 
-    def test_is_date_today(self):
+    def test_is_date_today__not_today__today(self):
         date_time = "07.03.2018 um 23:11"
         datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
         self.assertEqual(is_date_today(datetime_object), False)
 
-        date_time = "14.03.2018 um 23:11" #TODO
-        datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
-        self.assertEqual(is_date_today(datetime_object), True)
+        test = datetime.now()
+        #TODO testen der konvertierung mittels strptime "um"
+        #date_time = "14.03.2018 um 23:11"
+        #datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
+        self.assertEqual(is_date_today(test), True)
