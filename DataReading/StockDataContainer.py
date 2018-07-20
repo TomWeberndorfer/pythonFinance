@@ -1,5 +1,7 @@
+from DataReading.Abstract_DataContainer import Abstract_DataContainer
 
-class StockDataContainer:
+
+class StockDataContainer(Abstract_DataContainer):
     def __init__(self, stock_name, stock_ticker, stock_exchange, historical_stock_data=[], stock_current_prize=0):
         self.stock_exchange = stock_exchange
         self.stock_name = stock_name
@@ -13,6 +15,10 @@ class StockDataContainer:
 
     def __eq__(self, other):
         return other.stock_name == self.stock_name
+
+    def get_names_and_values(self):
+        names_and_values_dict = {'Stockname': self.stock_name, "Ticker": self.stock_ticker, "Stock Exchange": self.stock_exchange}
+        return names_and_values_dict
 
     #@property
     def stock_exchange(self):

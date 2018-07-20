@@ -1,10 +1,10 @@
 from Strategies.GapUpHighVolumeStrategy import GapUpHighVolumeStrategy
 from Strategies.SimplePatternNewsStrategy import SimplePatternNewsStrategy
-from Strategies.Abstract_StockFactory import Abstract_StockFactory
+from Strategies.Abstract_StrategyFactory import Abstract_StrategyFactory
 from Strategies.W52HighTechnicalStrategy import W52HighTechnicalStrategy
 
 
-class StrategyFactory(Abstract_StockFactory):
+class StrategyFactory(Abstract_StrategyFactory):
     def _create_strategy(self, strategy_to_create, stock_data_container_list, parameter_list, all_news_text_list=None):
         strategy = ""
 

@@ -34,6 +34,10 @@ class MyController:
         self.load_strategy_parameter_from_file(GlobalVariables.get_data_files_path() + "ParameterFile.pickle")
         self.load_other_parameter_from_file(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle")
         self.other_params_changed()
+        init_result_table(self.view, ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Positive Value",
+                                      "Negative Value", "Current Value", "Target Price", "Original News",
+                                      "Used Strategies"])
+
 
     def on_double_click(self, event):
         try:
@@ -391,6 +395,18 @@ def load_other_params():
     app.load_other_parameter_from_file(file_path)
 
 
+def init_result_table(view, columns):
+    view.Scrolledtreeview1.configure(
+        columns=columns)
+
+    for i in range(0, len(columns)):
+        heading_num = "#" + str(i)
+        view.Scrolledtreeview1.heading(heading_num, text=columns[i], anchor="center")
+        view.Scrolledtreeview1.column(heading_num, width="200")
+        view.Scrolledtreeview1.column(heading_num, minwidth="20")
+        view.Scrolledtreeview1.column(heading_num, stretch="1")
+        view.Scrolledtreeview1.column(heading_num, anchor="w")
+
 class StdoutRedirector():
     '''A class for redirecting stdout to this Text widget.'''
 
@@ -414,9 +430,3 @@ def redirector():
     """
     import sys
     sys.stdout = StdoutRedirector()
-
-
-if __name__ == '__main__':
-    import main_v1
-
-    main_v1.vp_start_gui()
