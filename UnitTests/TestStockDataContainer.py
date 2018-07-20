@@ -28,6 +28,6 @@ class TestStockDataContainer(unittest.TestCase):
         stock_data_container_list = [apple_stock_data_container, rwe_stock_data_container]
 
         #if apple_stock_data_container in stock_data_container_list:
-        self.assertEquals(apple_stock_data_container in stock_data_container_list, True)
-        self.assertEquals(rwe_stock_data_container in stock_data_container_list, True)
-        self.assertEquals(testag_stock_data_container in stock_data_container_list, False)
+        self.assertEqual(apple_stock_data_container in stock_data_container_list, True)
+        self.assertEqual(rwe_stock_data_container in stock_data_container_list, True)
+        self.assertEqual(testag_stock_data_container in stock_data_container_list, False)

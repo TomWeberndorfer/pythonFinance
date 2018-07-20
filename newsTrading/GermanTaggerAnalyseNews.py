@@ -11,6 +11,7 @@ import nltk
 from textblob.classifiers import NaiveBayesClassifier
 
 from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
+from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataReading.NewsStockDataContainer import NewsStockDataContainer
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.common_utils import is_float
@@ -72,7 +73,8 @@ class GermanTaggerAnalyseNews:
 
                 if result_news_stock_data_container in self.stock_data_container_list:
                     idx = self.stock_data_container_list.index(result_news_stock_data_container)
-                    result_news_stock_data_container.set_historical_stock_data(self.stock_data_container_list[idx].historical_stock_data)
+                    result_news_stock_data_container.set_historical_stock_data(
+                        self.stock_data_container_list[idx].historical_stock_data)
 
                 return result_news_stock_data_container
 
@@ -84,7 +86,6 @@ class GermanTaggerAnalyseNews:
                     ' orig_news: ' + str(news_to_analyze))
 
         return None
-
 
     def __train_classifier(self):
         """
@@ -160,12 +161,12 @@ class GermanTaggerAnalyseNews:
                 enable_tags = True
             if enable_tags:
                 if tags[i][1].startswith("N"):
-                    if i > 1 and tags[i -1][1].startswith("ADJ"):
-                        noun_tags = (tags[i -1][0] + " " + tags[i][0])
+                    if i > 1 and tags[i - 1][1].startswith("ADJ"):
+                        noun_tags = (tags[i - 1][0] + " " + tags[i][0])
                         break
 
                     if tags[i][1].startswith("NE") or tags[i][1].startswith("NN"):
-                        noun_tags= (tags[i][0])
+                        noun_tags = (tags[i][0])
                         break
 
         if noun_tags is not None and len(noun_tags) > 0:
@@ -198,6 +199,10 @@ class GermanTaggerAnalyseNews:
                 if is_float(price):
                     # price_tuple: [0] --> number, [1]--> CD
                     target_price_return = float(price)
+
+            news_dec = NewsDataContainerDecorator(StockDataContainer(name_return, ticker_return, stock_exchange_return),
+                                                  target_price_return, "", single_news_to_analyze, 0)
+            return news_dec
 
             return NewsStockDataContainer(name_return, ticker_return, stock_exchange_return, target_price_return, "",
                                           single_news_to_analyze, 0)

@@ -34,6 +34,7 @@ class MyController:
         self.load_strategy_parameter_from_file(GlobalVariables.get_data_files_path() + "ParameterFile.pickle")
         self.load_other_parameter_from_file(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle")
         self.other_params_changed()
+        self.column_list = []
         init_result_table(self.view, ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Positive Value",
                                       "Negative Value", "Current Value", "Target Price", "Original News",
                                       "Used Strategies"])

@@ -49,8 +49,3 @@ if __name__ == '__main__':
     sports_luxury_car = SportsCar(LuxuryCar(BasicCar()))
     sports_luxury_car.assemble()
 
-    container = StockDataContainer("test1", "t1", "en")
-    print (str(container.get_names_and_values()))
-
-    news_dec = NewsDataContainerDecorator(container, "111", "0.9", "test news", "99")
-    print (str(news_dec.get_names_and_values()))
