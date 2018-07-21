@@ -47,7 +47,7 @@ class TestGapUpHighVolumeStrategy(unittest.TestCase):
         strat = stock_screener.prepare_strategy("GapUpHighVolumeStrategy", stock_data_container_list,
                                                        parameter_dict)
         results = strat.run_strategy()
-        self.assertEqual(results[0].stock_name, stock_data_container.stock_name)
+        self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
 
         #################
         data = [('2016-09-13', 23.6, 23.73, 23.15, 23.26, 31000),

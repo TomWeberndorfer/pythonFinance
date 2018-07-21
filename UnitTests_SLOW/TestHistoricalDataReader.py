@@ -37,13 +37,13 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         stock_data_container_list = [stock_data_container]
         # stock_data_container_list = [stock_data_container, stock_data_container2]
 
-        self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)
+        self.assertEqual(len(stock_data_container_list[0].historical_stock_data()), 0)
 
         # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
         data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file,
                                            data_source, True)
-        df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
-                                                         stock_data_container.stock_exchange,
+        df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker(),
+                                                         stock_data_container.stock_exchange(),
                                                          data_source, weeks_delta=52)
 
         self.assertGreater(len(df), 200)
@@ -57,7 +57,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         stock_data_container_list.append(apple_stock_data_container)
         stock_data_container_list.append(intel_container)
 
-        self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)
+        self.assertEqual(len(stock_data_container_list[0].historical_stock_data()), 0)
 
         # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
         data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file,
@@ -66,11 +66,11 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
 
         # the container must have at least 200 entry days for last and current year
         self.assertEqual(len(stock_data_container_list), 2)
-        self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
-        self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)
+        self.assertGreater(len(stock_data_container_list[0].historical_stock_data()), 200)
+        self.assertGreater(len(stock_data_container_list[1].historical_stock_data()), 200)
         self.assertNotEqual(
-            stock_data_container_list[1].historical_stock_data[GlobalVariables.get_stock_data_labels_dict()['High']][0],
-            stock_data_container_list[0].historical_stock_data[GlobalVariables.get_stock_data_labels_dict()['High']][0])
+            stock_data_container_list[1].historical_stock_data()[GlobalVariables.get_stock_data_labels_dict()['High']][0],
+            stock_data_container_list[0].historical_stock_data()[GlobalVariables.get_stock_data_labels_dict()['High']][0])
 
     def test_read_data_without_factory_t(self):
 
@@ -80,7 +80,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         data_reader.read_data()
 
         for sd in stock_data_container_list_2:
-            self.assertGreater(len(sd.historical_stock_data), 100, str(sd.stock_name))
+            self.assertGreater(len(sd.historical_stock_data()), 100, str(sd.get_stock_name()))
 
     def test_read_data_with_DataReaderFactory__HistoricalDataReader_read_apple__read_intel(self):
         stock_data_container_list = []
@@ -89,7 +89,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         stock_data_container_list.append(apple_stock_data_container)
         stock_data_container_list.append(intel_container)
 
-        self.assertEqual(len(stock_data_container_list[0].historical_stock_data), 0)
+        self.assertEqual(len(stock_data_container_list[0].historical_stock_data()), 0)
 
         data_storage = DataReaderFactory()
         stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list, weeks_delta,
@@ -98,8 +98,8 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         stock_data_reader.read_data()
 
         self.assertEqual(len(stock_data_container_list), 2)
-        self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
-        self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)
+        self.assertGreater(len(stock_data_container_list[0].historical_stock_data()), 200)
+        self.assertGreater(len(stock_data_container_list[1].historical_stock_data()), 200)
 
     def split_list(self, alist, wanted_parts=1):
         length = len(alist)
@@ -132,7 +132,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
 
         failed_reads = 0
         for stock_data_container in stock_data_container_list:
-            if len(stock_data_container.historical_stock_data) <= 0:
+            if len(stock_data_container.historical_stock_data()) <= 0:
                 failed_reads += 1
 
         self.assertGreater(30, failed_reads)
@@ -140,5 +140,5 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
 
         #TODO deutsche gehen nicht mehr self.assertEqual(len(stock_data_container_list), 818)
         self.assertEqual(len(stock_data_container_list), 505)
-        self.assertGreater(len(stock_data_container_list[0].historical_stock_data), 200)
-        self.assertGreater(len(stock_data_container_list[1].historical_stock_data), 200)
+        self.assertGreater(len(stock_data_container_list[0].historical_stock_data()), 200)
+        self.assertGreater(len(stock_data_container_list[1].historical_stock_data()), 200)

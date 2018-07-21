@@ -10,11 +10,10 @@ import _pickle as pickle
 import nltk
 from textblob.classifiers import NaiveBayesClassifier
 
-from DataRead_Google_Yahoo import get_symbol_from_name_from_topforeignstocks
+from DataRead_Google_Yahoo import get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks
 from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.NewsStockDataContainer import NewsStockDataContainer
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import is_float
+from Utils.common_utils import is_float, GlobalVariables
 
 
 class GermanTaggerAnalyseNews:
@@ -38,9 +37,9 @@ class GermanTaggerAnalyseNews:
 
         # TODO statt einzellisten umwandeln glei gscheid
         for data_entry in self.stock_data_container_list:
-            self.names.append(data_entry.stock_name)
-            self.tickers.append(data_entry.stock_ticker)
-            self.stock_exchanges.append(data_entry.stock_exchange)
+            self.names.append(data_entry.get_stock_name())
+            self.tickers.append(data_entry.stock_ticker())
+            self.stock_exchanges.append(data_entry.stock_exchange())
 
         if german_tagger is None or isinstance(german_tagger, str):
             with open(german_tagger, 'rb') as f:
@@ -52,6 +51,7 @@ class GermanTaggerAnalyseNews:
         """
            Analyses a news text and returns a dict with containing data, if news classification is above
            the given threshold (default =0.7)
+           :type news_to_analyze: string
            :param news_to_analyze: news text to analyze
            :return: result_news_stock_data_container
            """
@@ -59,31 +59,34 @@ class GermanTaggerAnalyseNews:
         if news_to_analyze is None:
             raise NotImplementedError
 
+        current_prize = ""
         prep_news = self.__process_news(news_to_analyze)
-
-        result_news_stock_data_container = self._identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(
-            prep_news)
-        if result_news_stock_data_container is not None and result_news_stock_data_container.stock_name != "":
+        name_ticker_exchange_target_prize = \
+            self._identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier_data_nouns(
+                prep_news)
+        if name_ticker_exchange_target_prize is not None and name_ticker_exchange_target_prize.get_stock_name() != "":
             prob_dist = self.classifier.prob_classify(prep_news)
 
             if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
                     round(prob_dist.prob("neg"), 2) > self.threshold):
 
-                result_news_stock_data_container.set_prop_dist(prob_dist)
+                container = StockDataContainer(name_ticker_exchange_target_prize.get_stock_name(),
+                                               name_ticker_exchange_target_prize.stock_ticker(),
+                                               name_ticker_exchange_target_prize.stock_exchange())
 
-                if result_news_stock_data_container in self.stock_data_container_list:
-                    idx = self.stock_data_container_list.index(result_news_stock_data_container)
-                    result_news_stock_data_container.set_historical_stock_data(
-                        self.stock_data_container_list[idx].historical_stock_data)
+                if container in self.stock_data_container_list:
+                    idx = self.stock_data_container_list.index(container)
+                    hist_data = self.stock_data_container_list[idx].historical_stock_data()
 
-                return result_news_stock_data_container
+                    if len(hist_data) > 0:
+                        container.set_historical_stock_data(hist_data)
+                        current_prize = hist_data[GlobalVariables.get_stock_data_labels_dict()["Close"]][len(hist_data) - 1]
 
-            else:
-                print(
-                    'BELOW THRESHOLD FOR ' + str(result_news_stock_data_container.stock_name) + ', ticker: ' + str(
-                        result_news_stock_data_container.stock_ticker) + ', prob_dist pos: ' + str(
-                        round(prob_dist.prob("pos"), 2)) + ', prob_dist neg: ' + str(round(prob_dist.prob("neg"), 2)) +
-                    ' orig_news: ' + str(news_to_analyze))
+                news_dec = NewsDataContainerDecorator(container,
+                                                      name_ticker_exchange_target_prize.stock_target_price(),
+                                                      prob_dist, prep_news, current_prize)
+
+                return news_dec
 
         return None
 
@@ -125,7 +128,8 @@ class GermanTaggerAnalyseNews:
         cl = NaiveBayesClassifier(train)
         return cl
 
-    def _identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self, single_news_to_analyze):
+    def _identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier_data_nouns(self,
+                                                                                                           single_news_to_analyze):
         """
         Identifies a stock name within a news and returns the name and ticker
         :param single_news_to_analyze: news text itself
@@ -187,10 +191,11 @@ class GermanTaggerAnalyseNews:
 
             except Exception as e:  # look up symbol in web instead of list
                 try:
-                    name_return, ticker_return = get_symbol_from_name_from_topforeignstocks(stock_to_check)
+                    name_return, ticker_return = get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks(
+                        stock_to_check)
 
                 except Exception as e:
-                    print("no STOCK found for news: " + str(single_news_to_analyze))
+                    print(", no STOCK found for news: " + str(single_news_to_analyze))
                     return None
 
             if len(price_tuple) > 0:
@@ -200,14 +205,14 @@ class GermanTaggerAnalyseNews:
                     # price_tuple: [0] --> number, [1]--> CD
                     target_price_return = float(price)
 
-            news_dec = NewsDataContainerDecorator(StockDataContainer(name_return, ticker_return, stock_exchange_return),
-                                                  target_price_return, "", single_news_to_analyze, 0)
-            return news_dec
+            # news_dec = NewsDataContainerDecorator(StockDataContainer(name_return, ticker_return, stock_exchange_return),
+            #                                      target_price_return, "", single_news_to_analyze, 0)
 
-            return NewsStockDataContainer(name_return, ticker_return, stock_exchange_return, target_price_return, "",
-                                          single_news_to_analyze, 0)
+            ret = StockNameTickerExchangeAndTargetPrize(name_return, ticker_return, stock_exchange_return,
+                                                        target_price_return)
+            return ret
 
-        print("no STOCK found for news: " + str(single_news_to_analyze))
+        print(", no STOCK found for news: " + str(single_news_to_analyze))
         return None
 
     def lookup_stock_abr_in_all_names(self, stock_abr):
@@ -257,3 +262,26 @@ class GermanTaggerAnalyseNews:
         news_to_analyze = news_to_analyze.replace("Ziel", "")  # TODO
 
         return news_to_analyze
+
+
+class StockNameTickerExchangeAndTargetPrize:
+    def __init__(self, stock_name, stock_ticker, stock_exchange, target_price):
+        self._stock_name = stock_name
+        self._stock_ticker = stock_ticker
+        self._target_price = target_price
+        self._stock_exchange = stock_exchange
+
+    def get_stock_name(self):
+        return self._stock_name
+
+    def stock_ticker(self):
+        return self._stock_ticker
+
+    def stock_exchange(self):
+        return self._stock_exchange
+
+    def stock_target_price(self):
+        return self._target_price
+
+    def stock_exchange(self):
+        return self._stock_exchange

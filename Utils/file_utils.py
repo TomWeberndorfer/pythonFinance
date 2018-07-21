@@ -75,7 +75,7 @@ def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, 
         # tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
         # stock_tickers_names['tickers'] += tickers
         # stock_tickers_names['names'] += names_with_symbols
-        # stock_tickers_names['stock_exchange'] += list(repeat("de", len(names_with_symbols)))
+        # stock_tickers_names['_stock_exchange'] += list(repeat("de", len(names_with_symbols)))
 
         with open(stock_data_container_file, "wb") as f:
             pickle.dump(stock_data_container_list, f)

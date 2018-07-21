@@ -32,7 +32,7 @@ weeks_delta = 52  # one year in the past
 data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file,
                                    data_source, False)
 df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
-                                                 stock_data_container.stock_exchange,
+                                                 stock_data_container._stock_exchange,
                                                  data_source, weeks_delta=52)
 
 result_sma = talib.SMA(df.close, timeperiod=30)

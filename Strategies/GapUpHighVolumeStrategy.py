@@ -9,11 +9,12 @@ class GapUpHighVolumeStrategy(Abstract_Strategy):
 
     def _method_to_execute(self, stock_data_container):
         try:
-            if len(stock_data_container.historical_stock_data) > 0:
+            if len(stock_data_container.historical_stock_data()) > 0:
                 result = self.strat_gap_up__hi_volume(stock_data_container, self.parameter_dict)
 
                 if result is not None:
                     self.result_list.append(result)
+                    result.append_used_strategy(self.__class__.__name__)
         except Exception as e:
             sys.stderr.write("Exception:  " + str(e) + "\n")
 
@@ -24,16 +25,16 @@ class GapUpHighVolumeStrategy(Abstract_Strategy):
         :param stock_data_container: stock name
         :param stock_data: stock data
         :param min_gap_factor: minimum gap up factor (ex: 1.03 = 3%)
-        :return: stock to buy with {'buy', 'stock_name', 'sb', 'sl'}
+        :return: stock to buy with {'buy', 'get_stock_name', 'sb', 'sl'}
         """
 
         if stock_data_container is None or parameter_dict['min_gap_factor'] is None:
             raise NotImplementedError
 
-        if not signal_is_volume_high_enough(stock_data_container.historical_stock_data):
+        if not signal_is_volume_high_enough(stock_data_container.historical_stock_data()):
             return None
 
-        if not signal_gap_up(stock_data_container.historical_stock_data, parameter_dict['min_gap_factor']):
+        if not signal_gap_up(stock_data_container.historical_stock_data(), parameter_dict['min_gap_factor']):
             return None
 
         return stock_data_container

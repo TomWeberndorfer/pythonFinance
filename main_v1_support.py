@@ -35,10 +35,11 @@ class MyController:
         self.load_other_parameter_from_file(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle")
         self.other_params_changed()
         self.column_list = []
+        #TODO
+        #init_result_table(self.view, [])
         init_result_table(self.view, ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Positive Value",
                                       "Negative Value", "Current Value", "Target Price", "Original News",
                                       "Used Strategies"])
-
 
     def on_double_click(self, event):
         try:
@@ -85,7 +86,8 @@ class MyController:
             self.model.extend_result_stock_data_container_list(results)
         except Exception as e:
             print(str(e))
-            self.model.set_is_thread_running(False)
+
+        self.model.set_is_thread_running(False)
 
     def accept_parameters_from_text(self):
         """
@@ -250,45 +252,54 @@ class MyController:
         TODO
         :return:
         """
-        tree = w.Scrolledtreeview1
-        tree.delete(*tree.get_children())
-        stock_data_container_list = self.model.get_result_stock_data_container_list()
 
-        recommendation_text = ""
-        pos_class = 0
-        neg_class = 0
-        for res in stock_data_container_list:
-            if res.stock_name is not None:
-                try:
-                    pos_class = round(res.prob_dist.prob("pos"), 2)
-                    neg_class = round(res.prob_dist.prob("neg"), 2)
-                    if pos_class > neg_class:
+        try:
+            tree = w.Scrolledtreeview1
+            tree.delete(*tree.get_children())
+            stock_data_container_list = self.model.get_result_stock_data_container_list()
+
+            recommendation_text = ""
+            pos_class = 0
+            neg_class = 0
+            for res in stock_data_container_list:
+                if res.get_stock_name() is not None:
+                    try:
+                        pos_class = round(res.prob_dist().prob("pos"), 2)
+                        neg_class = round(res.prob_dist().prob("neg"), 2)
+                        if pos_class > neg_class:
+                            recommendation_text = "BUY"
+                        else:
+                            recommendation_text = "SELL"
+                    # if no prop dist is given (technical strategies)
+                    except Exception as e:
                         recommendation_text = "BUY"
-                    else:
-                        recommendation_text = "SELL"
-                # if no prop dist is given (technical strategies)
+                        pos_class = ""
+                        neg_class = ""
+
+                try:
+                    str_stock_target_price = str(res.stock_target_price())
                 except Exception as e:
-                    recommendation_text = "BUY"
-                    pos_class = ""
-                    neg_class = ""
+                    str_stock_target_price = "N.A"
 
-            try:
-                str_stock_target_price = str(res.stock_target_price)
-            except:
-                str_stock_target_price = "N.A"
+                try:
+                    str_orignal_news = res.original_news()
+                except Exception as e:
+                    str_orignal_news = "N.A"
 
-            try:
-                str_orignal_news = res.orignal_news
-            except:
-                str_orignal_news = "N.A"
+                tree.insert('', 'end', text=recommendation_text, values=(res.get_stock_name(), res.stock_ticker(),
+                                                                         res.stock_exchange(), str(pos_class),
+                                                                         str(neg_class),
+                                                                         str(res.stock_current_prize()),
+                                                                         str_stock_target_price, str_orignal_news,
+                                                                         str(res.get_strategies())))
 
-            tree.insert('', 'end', text=recommendation_text, values=(res.stock_name, res.stock_ticker,
-                                                                     res.stock_exchange, str(pos_class), str(neg_class),
-                                                                     str(res.stock_current_prize),
-                                                                     str_stock_target_price, str_orignal_news,
-                                                                     res.strategies))
+                #init_result_table(self.view,list(res.get_names_and_values().keys()))
+                #tree.insert('', 'end', text=recommendation_text, values=(list(res.get_names_and_values().values())))
 
-        treeview_sort_column(tree, 'Positive Value', False)
+            treeview_sort_column(tree, 'Positive Value', False)
+
+        except Exception as e:
+            sys.stderr.write("EXCEPTION: " + str(e) + "\n")
 
     def listbox_onselect(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect()
@@ -407,6 +418,7 @@ def init_result_table(view, columns):
         view.Scrolledtreeview1.column(heading_num, minwidth="20")
         view.Scrolledtreeview1.column(heading_num, stretch="1")
         view.Scrolledtreeview1.column(heading_num, anchor="w")
+
 
 class StdoutRedirector():
     '''A class for redirecting stdout to this Text widget.'''

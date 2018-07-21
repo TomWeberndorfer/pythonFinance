@@ -17,12 +17,12 @@ class HistoricalDataReader(Abstract_StockDataReader):
         :param stock_data_container_sub_list: sub list of the whole stock data container (already split)
         :return: nothing, sublist in changed
         """
-        if stock_data_container.stock_ticker != "":
+        if stock_data_container.stock_ticker() != "":
             if stock_data_container not in self.stock_data_container_list \
-                    or len(stock_data_container.historical_stock_data) <= 0 \
+                    or len(stock_data_container.historical_stock_data()) <= 0 \
                     or self.reload_stockdata:
-                stock52_w = self._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
-                                                                 stock_data_container.stock_exchange,
+                stock52_w = self._get_ticker_data_with_webreader(stock_data_container.stock_ticker(),
+                                                                 stock_data_container.stock_exchange(),
                                                                  self.data_source,
                                                                  self.weeks_delta)
 
@@ -63,8 +63,8 @@ class HistoricalDataReader(Abstract_StockDataReader):
             return df
 
         # TODO 3: yahoo does not take en, so skip
-        #if stock_exchange != '' and stock_exchange is not None and stock_exchange != "en" and data_source == 'yahoo':
-        #ticker_exchange += "." + stock_exchange
+        #if _stock_exchange != '' and _stock_exchange is not None and _stock_exchange != "en" and data_source == 'yahoo':
+        #ticker_exchange += "." + _stock_exchange
 
         # TODO autmatisieren von pandas=??
         # for i in range(0, 2): #TODO 4

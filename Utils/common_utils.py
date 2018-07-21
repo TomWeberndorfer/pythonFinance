@@ -153,7 +153,7 @@ def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
     print("Buy this stocks: ")
     if stocks_to_buy is not None:
         if len(stocks_to_buy) == 0:
-            print("No stocks found")
+            print(", No stocks found")
         else:
             with open(file_name_and_path_stock_list, "r") as ins:
                 array = []
@@ -161,7 +161,7 @@ def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
                     array.append(line.replace('\n', ' ').replace('\r', ''))
 
                 for stb in stocks_to_buy:
-                    stock_to_buy = stb['stock_name']
+                    stock_to_buy = stb['get_stock_name']
                     sb = stb['sb']
                     sl = stb['sl']
                     found = False
@@ -452,7 +452,7 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
     """
     for stock in stocks_to_buy:
         try:
-            stock_name = stock['stock_name']
+            stock_name = stock['get_stock_name']
             stock_data = stock['data']
             plot_stock_as_candlechart_with_volume(stock_name, stock_data)
 

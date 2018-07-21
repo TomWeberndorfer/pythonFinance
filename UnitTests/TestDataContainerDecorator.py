@@ -22,3 +22,10 @@ class TestDataContainerDecorator(unittest.TestCase):
         self.assertEqual(7, len(result_news_dec))
         self.assertEqual("111", result_news_dec["Target Price"])
         self.assertEqual("test1", result_news_dec["Stockname"])
+
+    def test_NewsDataContainerDecorator_append_used_strategy(self):
+        container = StockDataContainer("test1", "t1", "en")
+        news_dec = NewsDataContainerDecorator(container, "111", "0.9", "test news", "99")
+        news_dec.append_used_strategy("TestStrategy")
+        self.assertEqual(["TestStrategy"], news_dec.get_strategies())
+

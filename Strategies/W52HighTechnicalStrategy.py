@@ -21,12 +21,11 @@ class W52HighTechnicalStrategy(Abstract_Strategy):
 
     def _method_to_execute(self, stock_data_container):
         try:
-            if len(stock_data_container.historical_stock_data) > 0:
+            if len(stock_data_container.historical_stock_data()) > 0:
                 result = self._strat_52_w_hi_hi_volume(stock_data_container, self.parameter_dict)
 
                 if result is not None:
-                    class_name = self.__class__.__name__
-                    result.append_used_strategy(class_name)
+                    result.append_used_strategy(self.__class__.__name__)
                     self.result_list.append(result)
         except Exception as e:
             sys.stderr.write("Exception:  " + str(e) + ", args: " + str(e.args) + "\n")
@@ -37,17 +36,17 @@ class W52HighTechnicalStrategy(Abstract_Strategy):
         """
         Check 52 week High, raising volume, and high enough volume
 
-        :param  stock_name: name of the stock
+        :param  get_stock_name: name of the stock
         :param  stock52_w_data: stock data
         :param  check_days: number of days to check
         :param  min_cnt: min higher days within check days
         :param min_vol_dev_fact:
         :param within52w_high_fact:: factor current data within 52 w high (ex: currVal > (Max * 0.98))
 
-        :return: stock to buy with {'buy', 'stock_name', 'sb', 'sl'}
+        :return: stock to buy with {'buy', 'get_stock_name', 'sb', 'sl'}
         """
-        if stock_data_container.stock_name is None \
-                or stock_data_container.historical_stock_data is None \
+        if stock_data_container.get_stock_name() is None \
+                or stock_data_container.historical_stock_data() is None \
                 or parameter_dict['check_days'] is None \
                 or parameter_dict['min_cnt'] is None \
                 or parameter_dict['min_vol_dev_fact'] is None \
@@ -60,14 +59,14 @@ class W52HighTechnicalStrategy(Abstract_Strategy):
         if parameter_dict['within52w_high_fact'] > 1:
             raise AttributeError("parameter within52w_high_fact must be lower than 1!")  # should above other avg volume
 
-        if not signal_is_volume_high_enough(stock_data_container.historical_stock_data):
+        if not signal_is_volume_high_enough(stock_data_container.historical_stock_data()):
             return None
 
-        if not signal_is_volume_raising(stock_data_container.historical_stock_data, parameter_dict['check_days'],
+        if not signal_is_volume_raising(stock_data_container.historical_stock_data(), parameter_dict['check_days'],
                                         parameter_dict['min_cnt'], parameter_dict['min_vol_dev_fact']):
             return None
 
-        if not signal_is52_w_high(stock_data_container.historical_stock_data, parameter_dict['within52w_high_fact']):
+        if not signal_is52_w_high(stock_data_container.historical_stock_data(), parameter_dict['within52w_high_fact']):
             return None
 
         return stock_data_container

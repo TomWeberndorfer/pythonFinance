@@ -131,7 +131,7 @@ def read_current_day_from_yahoo(stock_name):
     return []
 
 
-def get_symbol_from_name_from_topforeignstocks(name_abbr):
+def get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks(name_abbr):
     """
     TODO
     name: name to convert

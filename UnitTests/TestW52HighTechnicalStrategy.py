@@ -60,7 +60,7 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", stock_data_container_list,
                                                        w52hi_parameter_dict)
         results = w52_hi_strat.run_strategy()
-        self.assertEqual(results[0].stock_name, stock_data_container.stock_name)
+        self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
 
     def test_strat_52WHi_HiVolume(self):
         w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
@@ -97,7 +97,7 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         stock_data_container_list = [stock_data_container]
         strat = W52HighTechnicalStrategy(stock_data_container_list, w52hi_parameter_dict)
         res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
-        self.assertEqual(res.stock_name, stock_data_container.stock_name)
+        self.assertEqual(res.get_stock_name(), stock_data_container.get_stock_name())
 
         # volume higher, but stock value under 52w high within 98%
         labels = []
@@ -133,7 +133,7 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         stock_data_container_list = [stock_data_container]
         strat = W52HighTechnicalStrategy(stock_data_container_list, w52hi_parameter_dict)
         res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
-        self.assertEqual(res.stock_name, stock_data_container.stock_name)
+        self.assertEqual(res.get_stock_name(), stock_data_container.get_stock_name())
 
         # test_strat_52WHi_HiVolume_Below52WHigh
         labels = []
@@ -170,7 +170,7 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         stock_data_container_list = [stock_data_container]
         strat = W52HighTechnicalStrategy(stock_data_container_list, w52hi_parameter_dict)
         res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
-        self.assertEqual(res.stock_name, stock_data_container.stock_name)
+        self.assertEqual(res.get_stock_name(), stock_data_container.get_stock_name())
 
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
@@ -518,4 +518,4 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", stock_data_container_list,
                                                        w52hi_parameter_dict)
         results = w52_hi_strat.run_strategy()
-        self.assertEqual(results[0].stock_name, stock_data_container.stock_name)
+        self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
