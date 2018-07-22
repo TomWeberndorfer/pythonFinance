@@ -30,63 +30,63 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("pos"), 2)
+        t1 = round(result.positive_prob_dist(), 2)
         self.assertEqual("RWE AG ST O.N.", result.get_stock_name())
         self.assertEqual("RWE", result.stock_ticker())
         self.assertGreater(t1, 0.7)
 
         news = "19.03.2018 um 08:58, ANALYSE-FLASH: HSBC senkt RWE auf 'Reduce' - Ziel 18 Euro"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("neg"), 2)
+        t1 = round(result.positive_prob_dist(), 2)
         self.assertEqual(result.get_stock_name(), "RWE AG ST O.N.")
         self.assertEqual("RWE", result.stock_ticker())
-        self.assertGreater(t1, 0.7)
+        self.assertGreater(0.7, t1)
 
         news = "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("neg"), 2)
+        t1 = round(result.positive_prob_dist(), 2)
         self.assertEqual(result.get_stock_name(), "Apple Inc.")
         self.assertEqual("AAPL", result.stock_ticker())
-        self.assertGreater(t1, 0.7)
+        self.assertGreater(0.7, t1)
 
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Apple auf 118 Euro"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("neg"), 2)
+        t1 = round(result.positive_prob_dist(), 2)
         self.assertEqual(result.get_stock_name(), "Apple Inc.")
         self.assertEqual("AAPL", result.stock_ticker())
-        self.assertGreater(t1, 0.7)
+        self.assertGreater(0.7, t1)
 
         news = "05.03.2018, ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125 Euro"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("pos"), 2)
+        t1 = round(result.positive_prob_dist(), 2)
         self.assertEqual("AAPL", result.stock_ticker())
         self.assertGreater(t1, 0.7)
 
         # CDAX companies
         news = "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("neg"), 2)
-        self.assertGreater(t1, 0.7)
+        t1 = round(result.positive_prob_dist(), 2)
+        self.assertGreater(0.7, t1)
         self.assertEqual(result.get_stock_name(), "ADIDAS AG NA O.N.")
         self.assertEqual(result.stock_ticker(), "ADS")
 
         news = "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118 Euro"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("neg"), 2)
-        self.assertGreater(t1, 0.7)
+        t1 = round(result.positive_prob_dist(), 2)
+        self.assertGreater(0.7, t1)
         self.assertEqual(result.get_stock_name(), "BEIERSDORF AG O.N.")
         self.assertEqual("BEI", result.stock_ticker())
 
         news = "05.03.2018, ANALYSE-FLASH: NordLB hebt Rheinmetall auf 'Kaufen' - Ziel 125 Euro"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("pos"), 2)
+        t1 = round(result.positive_prob_dist(), 2)
         self.assertGreater(t1, 0.7)
         self.assertEqual(result.get_stock_name(), "RHEINMETALL AG")
         self.assertEqual("RHM", result.stock_ticker())
 
         news = "DZ Bank empfiehlt Sixt-Aktie nach starken Geschäftszahlen zum Kauf"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("pos"), 2)
+        t1 = round(result.positive_prob_dist(), 2)
         self.assertGreater(t1, 0.7)
 
         # should fail and return " "
@@ -234,11 +234,11 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
         news = "20.07.2018 um 08:02, ANALYSE-FLASH: Morgan Stanley hebt RWE auf \\'Overweight\\' und Ziel auf 26 Euro"
         result = analysis.analyse_single_news(news)
-        t1 = round(result.prob_dist().prob("pos"), 2)
+        t1 = round(result.positive_prob_dist(), 2)
         self.assertEqual("RWE AG ST O.N.", result.get_stock_name())
         self.assertEqual("RWE", result.stock_ticker())
         self.assertEqual("de", result.stock_exchange())
-        self.assertEqual([], result.get_strategies())
+        self.assertEqual([], result.get_recommendation_strategies())
 
         self.assertEqual(26, result.stock_target_price())
         self.assertEqual(23.5, result.stock_current_prize())

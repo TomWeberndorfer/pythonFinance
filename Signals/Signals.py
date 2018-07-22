@@ -4,7 +4,7 @@ from Utils.GlobalVariables import *
 
 #TODO from talib.func import ATR
 
-from Utils.common_utils import calc_avg_vol
+from Utils.common_utils import calc_avg_vol, print_err_message, get_current_class_and_function_name
 
 
 def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
@@ -58,8 +58,8 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
                 save_val = True
 
         except Exception as e:
-            sys.stderr.write("EXCEPTION _execute_threads: " + str(e) + "\n")
             traceback.print_exc()
+            print_err_message("", e, str(traceback.format_exc()))
 
         i -= 1
 

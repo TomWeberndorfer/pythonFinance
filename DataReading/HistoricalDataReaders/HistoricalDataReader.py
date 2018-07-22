@@ -1,12 +1,14 @@
 import _pickle as pickle
 import datetime as dt
 import sys
+import traceback
+
 from pandas_datareader import data
 
 from DataRead_Google_Yahoo import optimize_name_for_yahoo
 from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
 from Utils.GlobalVariables import *
-from Utils.common_utils import get_current_function_name, CommonUtils
+from Utils.common_utils import get_current_class_and_function_name, CommonUtils, print_err_message
 
 
 class HistoricalDataReader(Abstract_StockDataReader):
@@ -77,7 +79,7 @@ class HistoricalDataReader(Abstract_StockDataReader):
         #            break
 
         except Exception as e:
-            sys.stderr.write(str(e))
+            print_err_message("", e, str(traceback.format_exc()))
                 # exception but the df is filled --> ok
 
          #       if len(df) > 0:
@@ -88,7 +90,7 @@ class HistoricalDataReader(Abstract_StockDataReader):
             #sleep(0.1)  # Time in seconds.
 
         if len(df) <= 0:
-            sys.stderr.write("EXCEPTION reading " + get_current_function_name() + ": " + str(ticker_exchange) + "\n")
+            sys.stderr.write("EXCEPTION reading " + get_current_class_and_function_name() + ": " + str(ticker_exchange) + "\n")
             print('FAILED: Reading {}'.format(ticker_exchange))
 
         return df

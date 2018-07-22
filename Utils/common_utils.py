@@ -1,3 +1,4 @@
+import inspect
 import traceback
 from datetime import datetime
 import os
@@ -218,23 +219,41 @@ def print_news_analysis_results(stocks_to_buy):
         print("\n-------------------------\n")
         for res in stocks_to_buy:
             if res != " ":
-                print("pos: " + str(round(res['prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
-                    round(res['prob_dist'].prob("neg"), 2)) + " " + str(res))
+                print("pos: " + str(round(res['positive_prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
+                    round(res['positive_prob_dist'].prob("neg"), 2)) + " " + str(res))
     else:
         print("News analysis: no news")
 
 
-def get_current_function_name():
+def get_current_class_and_function_name():
     """
     Returns the calling function name
     :return:
-    :return: calling func name
+    :return: calling class and func name
     """
 
     current_func_name = lambda n=0: sys._getframe(n + 1).f_code.co_name
-    cf = current_func_name()  # name of this class itself
+    # cf = current_func_name()  # name of this class itself
     cf1 = current_func_name(1)  # name of calling class
-    return cf1
+    stack = inspect.stack()
+    # the_method = stack[1][0].f_code.co_name
+    try:
+        the_class = stack[1][0].f_locals["self"].__class__
+    except Exception as e:
+        return "METHOD/FUNCTION: " + str(cf1)
+
+    return str(the_class) + ", METHOD/FUNCTION: " + str(cf1)
+
+
+def print_err_message(exception_text, exception, traceback_message):
+    if exception_text is "":
+        exception_text = " -"
+
+    text = "\nEXCEPTION occurred! Exception Text:" + str(exception_text) + ", Exception: " + str(exception) + ":\n" + \
+           str(traceback_message)
+
+    sys.stderr.write(text)
+    print(text)
 
 
 def replace_wrong_stock_market(stock_name):
@@ -314,7 +333,8 @@ def read_table_columns_from_webpage_list(page_list):
     :param page_list:
     :return:
     """
-    return read_table_columns_from_webpage(page_list[0], page_list[1], page_list[2], page_list[3], page_list[4], page_list[5], page_list[6])
+    return read_table_columns_from_webpage(page_list[0], page_list[1], page_list[2], page_list[3], page_list[4],
+                                           page_list[5], page_list[6])
 
 
 def read_table_columns_from_webpage(websource_address, find_name, class_name, table_class, ticker_column_to_read,
@@ -342,7 +362,7 @@ def read_table_columns_from_webpage(websource_address, find_name, class_name, ta
         name = name.replace("\n", "")
         stock_data_container_list.append(StockDataContainer(name, ticker, stock_exchange))
 
-    print ("Tickers from " + websource_address + " read.")
+    print("Tickers from " + websource_address + " read.")
     return stock_data_container_list
 
 
@@ -400,8 +420,11 @@ def convert_backtrader_to_dataframe(data):
     while i <= 0:
         try:
 
-            lst.append([float(data[GlobalVariables.get_stock_data_labels_dict()['Open']][i]), float(data[GlobalVariables.get_stock_data_labels_dict()['High']][i]), float(data[GlobalVariables.get_stock_data_labels_dict()['Low']][i]),
-                        float(data[GlobalVariables.get_stock_data_labels_dict()['Close']][i]), float(data[GlobalVariables.get_stock_data_labels_dict()['Volume']][i])])
+            lst.append([float(data[GlobalVariables.get_stock_data_labels_dict()['Open']][i]),
+                        float(data[GlobalVariables.get_stock_data_labels_dict()['High']][i]),
+                        float(data[GlobalVariables.get_stock_data_labels_dict()['Low']][i]),
+                        float(data[GlobalVariables.get_stock_data_labels_dict()['Close']][i]),
+                        float(data[GlobalVariables.get_stock_data_labels_dict()['Volume']][i])])
 
         except:
             # nothing to do
@@ -457,8 +480,4 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
             plot_stock_as_candlechart_with_volume(stock_name, stock_data)
 
         except Exception as e:
-            sys.stderr.write("EXCEPTION _execute_threads: " + str(e) + "\n")
-            traceback.print_exc()
-
-
-
+            print_err_message("", e, str(traceback.format_exc()))

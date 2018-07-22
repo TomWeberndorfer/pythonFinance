@@ -84,7 +84,7 @@ class GermanTaggerAnalyseNews:
 
                 news_dec = NewsDataContainerDecorator(container,
                                                       name_ticker_exchange_target_prize.stock_target_price(),
-                                                      prob_dist, prep_news, current_prize)
+                                                      prob_dist.prob("pos"), prep_news, current_prize)
 
                 return news_dec
 
@@ -195,7 +195,7 @@ class GermanTaggerAnalyseNews:
                         stock_to_check)
 
                 except Exception as e:
-                    print(", no STOCK found for news: " + str(single_news_to_analyze))
+                    print(", No STOCK found for news: " + str(single_news_to_analyze)) #TODO is des a error message??
                     return None
 
             if len(price_tuple) > 0:

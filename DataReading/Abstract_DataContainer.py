@@ -7,7 +7,7 @@ class Abstract_DataContainer():
         self._stock_exchange = stock_exchange
         self._stock_name = stock_name
         self._stock_ticker = stock_ticker
-        self._strategies = []
+        self._recommendation_strategies = []
 
     def __str__(self):
         return self._stock_name + ", " + self._stock_ticker
@@ -19,20 +19,20 @@ class Abstract_DataContainer():
     def get_names_and_values(self):
         raise Exception("Abstractmethod")
 
-    #@property
+    # @property
     def stock_exchange(self):
         return self._stock_exchange
 
-    #@property
+    # @property
     def get_stock_name(self):
         return self._stock_name
 
-    #@property
+    # @property
     def stock_ticker(self):
         return self._stock_ticker
 
-    def get_strategies(self):
-        return self._strategies
+    def get_recommendation_strategies(self):
+        return self._recommendation_strategies
 
     def append_used_strategy(self, strategy_name):
         """
@@ -40,5 +40,4 @@ class Abstract_DataContainer():
         :param strategy_name: strategy name as implemented
         :return: nothing
         """
-        self.get_strategies().append(strategy_name)
-
+        self.get_recommendation_strategies().append(strategy_name)

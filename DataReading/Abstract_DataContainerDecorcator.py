@@ -22,6 +22,7 @@ class Abstract_DataContainerDecorator(Abstract_DataContainer):
         return self._shaped_data_container.stock_ticker()
 
     #TODO 11: i wills eig ned in den wrapper
-    def get_strategies(self):
-        return self._shaped_data_container.get_strategies()
+    def get_recommendation_strategies(self):
+        return self._shaped_data_container.get_recommendation_strategies()
+
 

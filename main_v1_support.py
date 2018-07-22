@@ -4,6 +4,7 @@
 # In conjunction with Tcl version 8.6
 #    Jun 03, 2018 10:50:55 AM
 import _pickle as pickle
+import traceback
 from threading import Thread
 from tkinter import messagebox
 
@@ -15,6 +16,7 @@ import ast
 from tkinter import filedialog
 
 from Utils.GlobalVariables import *
+from Utils.common_utils import get_current_class_and_function_name, print_err_message
 
 
 class MyController:
@@ -35,8 +37,8 @@ class MyController:
         self.load_other_parameter_from_file(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle")
         self.other_params_changed()
         self.column_list = []
-        #TODO
-        #init_result_table(self.view, [])
+        # TODO
+        # init_result_table(self.view, [])
         init_result_table(self.view, ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Positive Value",
                                       "Negative Value", "Current Value", "Target Price", "Original News",
                                       "Used Strategies"])
@@ -50,7 +52,7 @@ class MyController:
             url_to_open = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
             wb.open_new_tab(url_to_open + stock_name)
         except Exception as e:
-            print("Exception while opening result stock:" + str(e))
+            print_err_message("Exception while opening result stock!", e, str(traceback.format_exc()))
 
     def start_screening(self):
         """
@@ -85,7 +87,7 @@ class MyController:
             results = run_analysis(selection_values, strategy_params, other_params)
             self.model.extend_result_stock_data_container_list(results)
         except Exception as e:
-            print(str(e))
+            print_err_message("Exception while screening.", e, str(traceback.format_exc()))
 
         self.model.set_is_thread_running(False)
 
@@ -126,22 +128,17 @@ class MyController:
         :param file_path:
         :return: nothing
         """
-        self.model.clear_all_parameter_dicts()
-        self.model.clear_available_strategies_list()
-
         try:
             with open(file_path, "rb") as f:
+                self.model.clear_all_parameter_dicts()
+                self.model.clear_available_strategies_list()
                 items = pickle.load(f)
                 self.model.add_to_all_parameter_dicts(items)
                 for item in items:
                     self.model.add_to_available_strategies(item)
 
-            with open(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle", "rb") as f:
-                items = pickle.load(f)
-                self.model.add_to_other_params(items)
-
         except Exception as e:
-            print(str(e))
+            print_err_message("Exception while loading strategy parameter from file!", e, str(traceback.format_exc()))
             return
 
         self.model.add_to_log("Params Read")
@@ -152,16 +149,14 @@ class MyController:
         :param file_path:
         :return: nothing
         """
-        self.model.clear_other_params()
-
         try:
-
             with open(file_path, "rb") as f:
+                self.model.clear_other_params()
                 items = pickle.load(f)
                 self.model.add_to_other_params(items)
 
         except Exception as e:
-            print(str(e))
+            print_err_message("Exception while loading other parameter from file!", e, str(traceback.format_exc()))
             return
 
         self.model.add_to_log("Params Read")
@@ -180,17 +175,23 @@ class MyController:
         :param file_path:
         :return:
         """
-        content = self.view.Scrolledtext_params.get(1.0, END)
-        content_dict = ast.literal_eval(content)
 
-        if content_dict == {}:
-            messagebox.showerror("Parameters empty", "Please insert parameters")
-        else:
-            self.model.add_to_all_parameter_dicts(content_dict)
-            with open(file_path, "wb") as f:
-                pickle.dump(self.model.get_all_parameter_dicts(), f)
+        try:
+            content = self.view.Scrolledtext_params.get(1.0, END)
+            content_dict = ast.literal_eval(content)
 
-            self.model.add_to_log("Params Saved")
+            if content_dict == {}:
+                messagebox.showerror("Parameters empty", "Please insert parameters")
+            else:
+                self.model.add_to_all_parameter_dicts(content_dict)
+                with open(file_path, "wb") as f:
+                    pickle.dump(self.model.get_all_parameter_dicts(), f)
+
+                self.model.add_to_log("Params Saved")
+
+        except Exception as e:
+            print_err_message("Exception while dump_strategy_parameter_to_file!", e, str(traceback.format_exc()))
+            return
 
     def dump_other_parameter_to_file(self,
                                      file_path=GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle"):
@@ -199,17 +200,22 @@ class MyController:
         :param file_path:
         :return:
         """
-        content_others = self.view.Scrolled_other_parameters.get(1.0, END)
-        content_others_dict = ast.literal_eval(content_others)
+        try:
+            content_others = self.view.Scrolled_other_parameters.get(1.0, END)
+            content_others_dict = ast.literal_eval(content_others)
 
-        if content_others_dict == {}:
-            messagebox.showerror("Other Parameters empty", "Please insert parameters")
-        else:
-            self.model.add_to_other_params(content_others_dict)
-            with open(file_path, "wb") as f:
-                pickle.dump(self.model.get_other_params(), f)
+            if content_others_dict == {}:
+                messagebox.showerror("Other Parameters empty", "Please insert parameters")
+            else:
+                self.model.add_to_other_params(content_others_dict)
+                with open(file_path, "wb") as f:
+                    pickle.dump(self.model.get_other_params(), f)
 
-            self.model.add_to_log("Other Params Saved")
+                self.model.add_to_log("Other Params Saved")
+
+        except Exception as e:
+            print_err_message("Exception while dump_other_parameter_to_file!", e, str(traceback.format_exc()))
+            return
 
     # event handlers
     def quit_button_pressed(self):
@@ -259,13 +265,11 @@ class MyController:
             stock_data_container_list = self.model.get_result_stock_data_container_list()
 
             recommendation_text = ""
-            pos_class = 0
-            neg_class = 0
             for res in stock_data_container_list:
                 if res.get_stock_name() is not None:
                     try:
-                        pos_class = round(res.prob_dist().prob("pos"), 2)
-                        neg_class = round(res.prob_dist().prob("neg"), 2)
+                        pos_class = round(res.positive_prob_dist(), 2)
+                        neg_class = round(1 - res.positive_prob_dist(), 2)
                         if pos_class > neg_class:
                             recommendation_text = "BUY"
                         else:
@@ -273,33 +277,22 @@ class MyController:
                     # if no prop dist is given (technical strategies)
                     except Exception as e:
                         recommendation_text = "BUY"
-                        pos_class = ""
-                        neg_class = ""
 
-                try:
-                    str_stock_target_price = str(res.stock_target_price())
-                except Exception as e:
-                    str_stock_target_price = "N.A"
+                col_list = ["Recommendation"]
+                col_list.extend(list(res.get_names_and_values().keys()))
+                init_result_table(self.view, col_list)
 
-                try:
-                    str_orignal_news = res.original_news()
-                except Exception as e:
-                    str_orignal_news = "N.A"
+                # TODO: "Recommendation" weg
+                # tree.insert('', 'end', values=col_val)
+                tree.insert('', 'end', text=recommendation_text, values=(list(res.get_names_and_values().values())))
 
-                tree.insert('', 'end', text=recommendation_text, values=(res.get_stock_name(), res.stock_ticker(),
-                                                                         res.stock_exchange(), str(pos_class),
-                                                                         str(neg_class),
-                                                                         str(res.stock_current_prize()),
-                                                                         str_stock_target_price, str_orignal_news,
-                                                                         str(res.get_strategies())))
+            # TODO das hier
+            # treeview_sort_column(tree, "Pos. Probability Distribution", False)
+            #treeview_sort_column(tree, "Recommendation", False)
 
-                #init_result_table(self.view,list(res.get_names_and_values().keys()))
-                #tree.insert('', 'end', text=recommendation_text, values=(list(res.get_names_and_values().values())))
-
-            treeview_sort_column(tree, 'Positive Value', False)
 
         except Exception as e:
-            sys.stderr.write("EXCEPTION: " + str(e) + "\n")
+            print_err_message("", e, str(traceback.format_exc()))
 
     def listbox_onselect(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect()

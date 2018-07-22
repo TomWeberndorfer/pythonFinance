@@ -17,27 +17,6 @@ test_filepath = GlobalVariables.get_data_files_path() + 'TestData\\'
 
 class TestSignals(unittest.TestCase):
 
-    def convert(self):
-        file = test_filepath + 'Autodesk Inc..csv'
-        data = pd.read_csv(file)
-        print()
-        print()
-
-        print("labels = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']")
-        print(" data = [")
-        for i in range(0, len(data)):
-            if i == len(data) - 1:
-                print("(\'{0}\', {1}, {2}, {3}, {4}, {5})]".format(str(data[GlobalVariables.get_stock_data_labels_dict()['Date']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Open']][i]),
-                                                                   str(data[GlobalVariables.get_stock_data_labels_dict()['High']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Low']][i]),
-                                                                   str(data[GlobalVariables.get_stock_data_labels_dict()['Close']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Volume']][i])))
-            else:
-                #TODO des is desselbe wie oben nur klammer anders hinten
-                print("(\'{0}\', {1}, {2}, {3}, {4}, {5}),".format(str(data[GlobalVariables.get_stock_data_labels_dict()['Date']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Open']][i]),
-                                                                   str(data[GlobalVariables.get_stock_data_labels_dict()['High']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Low']][i]),
-                                                                   str(data[GlobalVariables.get_stock_data_labels_dict()['Close']][i]), str(data[GlobalVariables.get_stock_data_labels_dict()['Volume']][i])))
-
-        print ("data = pd.DataFrame.from_records(data, columns=labels)")
-
     def test_signal_is_volume_high_enough__volume_to_low__volume_high_enough(self):
         # volume below 15k
         labels = []

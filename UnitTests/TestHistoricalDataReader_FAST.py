@@ -81,9 +81,3 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         self.assertEqual(len(stock_data_container_list), 2)
         self.assertGreater(len(stock_data_container_list[0].historical_stock_data()), 200)
         self.assertGreater(len(stock_data_container_list[1].historical_stock_data()), 200)
-
-    def split_list(self, alist, wanted_parts=1):
-        length = len(alist)
-        return [alist[i * length // wanted_parts: (i + 1) * length // wanted_parts]
-                for i in range(wanted_parts)]
-

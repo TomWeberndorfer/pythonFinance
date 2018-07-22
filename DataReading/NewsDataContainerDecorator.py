@@ -16,15 +16,15 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
         names_and_values_dict = self._shaped_data_container.get_names_and_values()
 
         names_and_values_dict.update(
-            {"Target Price": self.stock_target_price(), "Probability Distribution": self.prob_dist(),
+            {"Target Price": self.stock_target_price(), "Pos. Probability Distribution": self.positive_prob_dist(),
              "Original News": self.original_news(), "Stock Current Prize": self.stock_current_prize()})
         return names_and_values_dict
 
     def stock_target_price(self):
         return self._stock_target_price
 
-    def prob_dist(self):
-        return self._prob_dist
+    def positive_prob_dist(self):
+        return round(self._prob_dist, 2)
 
     def original_news(self):
         return self._original_news

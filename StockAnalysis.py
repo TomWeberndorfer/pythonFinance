@@ -3,7 +3,6 @@ from datetime import datetime
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.file_utils import FileUtils, read_tickers_from_file_or_web
-from Utils.news_utils import NewsUtils
 
 
 def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params):

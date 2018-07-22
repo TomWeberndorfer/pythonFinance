@@ -7,12 +7,6 @@ class StockDataContainer(Abstract_DataContainer):
         self._historical_stock_data = historical_stock_data
         self._stock_current_prize = stock_current_prize
 
-    def __str__(self):
-        return self.get_stock_name() + ", " + self.stock_ticker()
-
-    def __eq__(self, other):
-        return other.get_stock_name() == self.get_stock_name()
-
     def get_names_and_values(self):
         names_and_values_dict = {'Stockname': self.get_stock_name(), "Ticker": self.stock_ticker(), "Stock Exchange": self.stock_exchange()}
         return names_and_values_dict

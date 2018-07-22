@@ -17,15 +17,16 @@ class TestDataContainerDecorator(unittest.TestCase):
         result_container = container.get_names_and_values()
         self.assertEqual(3, len(result_container))
 
-        news_dec = NewsDataContainerDecorator(container, "111", "0.9", "test news", "99")
+        news_dec = NewsDataContainerDecorator(container, 111, 0.9, "test news", 99)
         result_news_dec = news_dec.get_names_and_values()
         self.assertEqual(7, len(result_news_dec))
-        self.assertEqual("111", result_news_dec["Target Price"])
+        self.assertEqual(111, result_news_dec["Target Price"])
         self.assertEqual("test1", result_news_dec["Stockname"])
+        self.assertEqual(0.9, result_news_dec["Pos. Probability Distribution"])
 
     def test_NewsDataContainerDecorator_append_used_strategy(self):
         container = StockDataContainer("test1", "t1", "en")
-        news_dec = NewsDataContainerDecorator(container, "111", "0.9", "test news", "99")
+        news_dec = NewsDataContainerDecorator(container, 111, 0.9, "test news", 99)
         news_dec.append_used_strategy("TestStrategy")
-        self.assertEqual(["TestStrategy"], news_dec.get_strategies())
+        self.assertEqual(["TestStrategy"], news_dec.get_recommendation_strategies())
 

@@ -42,10 +42,10 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         apple_idx = results.index(apple_stock_data_container)
         rwe_idx = results.index(rwe_stock_data_container)
 
-        t1 = round(results[apple_idx].prob_dist().prob("neg"), 2)
+        t1 = round(results[apple_idx].positive_prob_dist(), 2)
         self.assertEqual(results[apple_idx].get_stock_name(), "Apple Inc.")
-        self.assertGreater(t1, 0.7)
+        self.assertGreater(0.7, t1)
 
-        t1 = round(results[rwe_idx].prob_dist().prob("pos"), 2)
+        t1 = round(results[rwe_idx].positive_prob_dist(), 2)
         self.assertEqual(results[rwe_idx].get_stock_name(), "RWE AG ST O.N.")
         self.assertGreater(t1, 0.7)

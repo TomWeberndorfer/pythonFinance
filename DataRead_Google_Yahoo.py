@@ -15,7 +15,7 @@ import xlrd
 import pandas as pd
 import pandas_datareader.data as web
 
-from Utils.common_utils import get_current_function_name, split_list
+from Utils.common_utils import get_current_class_and_function_name, split_list, print_err_message
 
 str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
 str2 = "&region=1&lang="
@@ -65,7 +65,8 @@ def read_data_from_google_with_pandas(stock_name, start_date, end_date, read_yah
                 try:
                     stock52_w = stock52_w.append(read_current_day_from_yahoo(stock_name))
                 except Exception as e:
-                    sys.stderr.write("Can not get stock data of stock " + stock_name + " from yahoo\n")
+                    print_err_message("Can not get stock data of stock " + stock_name + " from yahoo!", e,
+                                      str(traceback.format_exc()))
 
         if len(stock52_w) == 0:
             sys.stderr.write("Stock: " + stock_name + " does not exist on!\n")
