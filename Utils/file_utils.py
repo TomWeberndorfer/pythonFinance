@@ -2,11 +2,12 @@ import _pickle as pickle
 import os
 import os.path
 import re
+import traceback
 
 import pandas as pd
 
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import read_table_columns_from_webpage_list, CommonUtils
+from Utils.common_utils import read_table_columns_from_webpage_list, CommonUtils, print_err_message
 
 
 class FileUtils:
@@ -156,3 +157,15 @@ def check_file_exists_or_create(file, txt=""):
 
         myfile.close()
         return False
+
+
+def check_file_exists_and_delete(filename):
+    """
+    Check, if file exists and deletes it.
+    :param filename: file name + path
+    :return: -
+    """
+    if os.path.isfile(filename):
+        os.remove(filename)
+    else:  ## Show an error ##
+        print_err_message("File not found: " + filename, None, str(traceback.format_exc()))

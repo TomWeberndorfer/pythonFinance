@@ -1,16 +1,26 @@
+import traceback
+
 import bs4 as bs
 import datetime
 import requests
 
 from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
-from Utils.file_utils import replace_in_file, get_hash_from_file, check_file_exists_or_create
+from Utils.common_utils import print_err_message
+from Utils.file_utils import replace_in_file, get_hash_from_file, check_file_exists_or_create, \
+    check_file_exists_and_delete
 from Utils.news_utils import generate_hash
 from datetime import datetime
 import pandas as pd
 
 
 class TraderfoxNewsDataReader(Abstract_StockDataReader):
+    def _method_to_execute(self, argument):
+        raise NotImplementedError("Not needed because of single thread reading")
+
     def read_data(self):
+        if self.reload_stockdata:
+            check_file_exists_and_delete(self.date_file)
+
         all_news_text_list = self.__read_news_from_traderfox(self.date_file)
         return all_news_text_list
 
@@ -54,27 +64,30 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         :param date_to_check:
         :return:
         """
+        try:
+            if date_to_check is None:
+                raise NotImplementedError
 
-        if date_to_check is None:
-            raise NotImplementedError
+            if last_date == "":
+                if check_file_exists_or_create(last_date_file,
+                                               "last_check_date" + "\n01.01.2000 um 00:00"):  # no need to check, creates anyway
+                    data = pd.read_csv(last_date_file)
+                    last_date_str = str(data.last_check_date[0])
+                    last_date = datetime.strptime(last_date_str, date_time_format)
+                else:
+                    return False, ""
 
-        if last_date == "":
-            if check_file_exists_or_create(last_date_file, "last_check_date" + "\n01.01.2000 um 00:00"):  # no need to check, creates anyway
-                data = pd.read_csv(last_date_file)
-                last_date_str = str(data.last_check_date[0])
-                last_date = datetime.strptime(last_date_str, date_time_format)
-            else:
-                return False, ""
+            is_news_current = last_date < date_to_check
 
-        is_news_current = last_date < date_to_check
+            if is_news_current:
+                with open(last_date_file, "w") as myfile:
+                    myfile.write("last_check_date" + "\n")
+                    datetime_object_str = datetime.strftime(date_to_check, date_time_format)
+                    myfile.write(str(datetime_object_str) + "\n")
+                    return is_news_current, date_to_check
 
-        if is_news_current:
-            with open(last_date_file, "w") as myfile:
-                myfile.write("last_check_date" + "\n")
-                datetime_object_str = datetime.strftime(date_to_check, date_time_format)
-                myfile.write(str(datetime_object_str) + "\n")
-                return is_news_current, date_to_check
+            return is_news_current, last_date
 
-        return is_news_current, last_date
-
-
+        except Exception as e:
+            print_err_message("Can not check if date is actual.", e, str(traceback.format_exc()))
+            return True, ""

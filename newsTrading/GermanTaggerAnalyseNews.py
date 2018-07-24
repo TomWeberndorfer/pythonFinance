@@ -81,7 +81,7 @@ class GermanTaggerAnalyseNews:
 
                     if len(hist_data) > 0:
                         current_prize = hist_data[GlobalVariables.get_stock_data_labels_dict()["Close"]][len(hist_data) - 1]
-                    
+
                 news_dec = NewsDataContainerDecorator(container,
                                                       name_ticker_exchange_target_prize.stock_target_price(),
                                                       prob_dist.prob("pos"), prep_news, current_prize)

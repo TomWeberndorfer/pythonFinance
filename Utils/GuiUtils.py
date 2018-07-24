@@ -28,8 +28,9 @@ class GuiUtils:
 
         # TODO des vl gscheida lösen
         # enables all columns to sort by click on col header
-        for i in range(len(values_to_insert)):
-            GuiUtils.treeview_sort_column(tree, i, True)
+        # for i in range(len(values_to_insert)):
+        #    GuiUtils.treeview_sort_column(tree, i, True)
+        GuiUtils.treeview_sort_column(tree, 1, True)
 
     @staticmethod
     def treeview_sort_column(tv, col, reverse):
