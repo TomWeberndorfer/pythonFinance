@@ -8,7 +8,13 @@ class StockDataContainer(Abstract_DataContainer):
         self._stock_current_prize = stock_current_prize
 
     def get_names_and_values(self):
-        names_and_values_dict = {'Stockname': self.get_stock_name(), "Ticker": self.stock_ticker(), "Stock Exchange": self.stock_exchange()}
+        """
+        Method to return the names and values as dictionary to insert in a treeview or else.
+        :return: a dict with names as keys and values, Ex: {'Stockname': "Apple Inc"}
+        """
+        names_and_values_dict = {'StrategyAndRecommendation': self.get_recommendation_strategies(),
+                                 'Stockname': self.get_stock_name(), "Ticker": self.stock_ticker(),
+                                 "Exchange": self.stock_exchange()}
         return names_and_values_dict
 
     def historical_stock_data(self):

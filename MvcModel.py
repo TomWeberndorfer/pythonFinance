@@ -1,37 +1,36 @@
-
-
-class MyModel:
-    def __init__(self, vc):
-        self.vc = vc
-        self.available_strategies = []  # TODO ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy"]
-
-        ##-----------------
-        #stock_data_container_file_name = "stock_data_container_file.pickle"
-        #stock_data_container_file = GlobalVariables.get_data_files_path() + stock_data_container_file_name
-        #last_date_time_file = GlobalVariables.get_data_files_path() + "last_date_time.csv"
-        #data_source = 'iex'
-        #weeks_delta = 52  # one year in the past
-        ## TODO 11: seite geht nicht mehr
-        #list_with_stock_pages_to_read = [
-        #    ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
-        #     'wikitable sortable', 0, 1, 'en']]  # ,
-        # ['http://topforeignstocks.com/stock-lists/the'
-        # '-list-of-listed-companies-in-germany/',
-        # 'tbody', 'class', 'row-hover', 1, 2, 'de']]
-        #self.other_params = {'stock_data_container_file': stock_data_container_file, 'weeks_delta': weeks_delta,
-        #                'data_source': data_source, 'last_date_time_file': last_date_time_file,
-        #                'list_with_stock_pages_to_read': list_with_stock_pages_to_read}
-
+class MvcModel:
+    def __init__(self, view_controller):
+        """
+        Init the mvc model with given controller
+        :param view_controller: controller
+        """
+        self.vc = view_controller
+        self.available_strategies = []
         self.other_params = {}
         self.all_parameter_dicts = {}
-        #w52hi_parameter_dict = {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
-        #parameter_dict = {'news_threshold': 0.7,
-        #                  'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle'}
-        # self.all_parameter_dicts = {'W52HighTechnicalStrategy': w52hi_parameter_dict, "SimplePatternNewsStrategy": parameter_dict}
         self.log_text = []
         self.strategy_selection_value = []
         self.result_stock_data_container_list = []
         self.is_thread_running = False
+        self._column_list = []
+
+    def get_column_list(self):
+        return self._column_list
+
+    def update_column_list(self, columns_to_add):
+        """
+        Adds columns to the column list, if not already there, does not add redundant entries.
+        :param columns_to_add: list with columns to add
+        :return: Returns True, if list is updated / a new entry is appended
+        """
+        is_updated = False
+        for col in columns_to_add:
+            if col not in self._column_list:
+                self._column_list.append(col)
+                self._column_list = list(dict.fromkeys(self._column_list))
+                is_updated = True
+
+        return is_updated
 
     def get_is_thread_running(self):
         return self.is_thread_running

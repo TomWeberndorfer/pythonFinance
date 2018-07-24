@@ -238,7 +238,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         self.assertEqual("RWE AG ST O.N.", result.get_stock_name())
         self.assertEqual("RWE", result.stock_ticker())
         self.assertEqual("de", result.stock_exchange())
-        self.assertEqual([], result.get_recommendation_strategies())
+        self.assertEqual({}, result.get_recommendation_strategies())
 
         self.assertEqual(26, result.stock_target_price())
         self.assertEqual(23.5, result.stock_current_prize())

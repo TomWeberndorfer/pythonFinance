@@ -15,7 +15,7 @@ class GapUpHighVolumeStrategy(Abstract_Strategy):
 
                 if result is not None:
                     self.result_list.append(result)
-                    result.append_used_strategy(self.__class__.__name__)
+                    result.updated_used_strategy_and_recommendation(self.__class__.__name__, "BUY")
         except Exception as e:
             print_err_message("", e, str(traceback.format_exc()))
 

@@ -54,14 +54,15 @@ class HistoricalDataReader(Abstract_StockDataReader):
         df = []
 
         if ticker == "" or ticker == '' or len(ticker) <= 0:
-            sys.stderr.write("EXCEPTION reading because ticker is empty")
+            sys.stderr.write()
+            print_err_message("EXCEPTION reading because ticker is empty", None, str(traceback.format_exc()))
             return df
 
         #TODO 11 ticker = optimize_name_for_yahoo(ticker)  # TODO nicht nur für yahoo
         ticker_exchange = ticker
 
         if ticker_exchange == "" or ticker_exchange == '' or len(ticker_exchange) <= 0:
-            sys.stderr.write("EXCEPTION reading because ticker is empty")
+            print_err_message("EXCEPTION reading because ticker is empty", None, str(traceback.format_exc()))
             return df
 
         # TODO 3: yahoo does not take en, so skip
@@ -90,7 +91,7 @@ class HistoricalDataReader(Abstract_StockDataReader):
             #sleep(0.1)  # Time in seconds.
 
         if len(df) <= 0:
-            sys.stderr.write("EXCEPTION reading " + get_current_class_and_function_name() + ": " + str(ticker_exchange) + "\n")
-            print('FAILED: Reading {}'.format(ticker_exchange))
+            print_err_message("EXCEPTION reading because ticker is empty, " +
+                              'FAILED: Reading {}'.format(ticker_exchange), None, str(traceback.format_exc()))
 
         return df

@@ -35,19 +35,24 @@ class TestStockDataContainer(unittest.TestCase):
     def test_StockDataContainer_get_names_and_values__stockname_test1__ticker_t1__exchange_en(self):
         container = StockDataContainer("test1", "t1", "en")
         result_container = container.get_names_and_values()
-        self.assertEqual(3, len(result_container))
+        self.assertEqual(4, len(result_container))
+        self.assertEqual({}, result_container["StrategyAndRecommendation"])
         self.assertEqual("t1", result_container["Ticker"])
         self.assertEqual("test1", result_container["Stockname"])
-        self.assertEqual("en", result_container["Stock Exchange"])
+        self.assertEqual("en", result_container["Exchange"])
 
     def test_StockDataContainer__str__stockname_test1__ticker_t1__exchange_en(self):
         container = StockDataContainer("test1", "t1", "en")
         self.assertEqual("test1, t1", str(container))
 
-    def test_NewsDataContainerDecorator_append_used_strategy__stockname_test1__ticker_t1__exchange_en(self):
+    def test_NewsDataContainerDecorator_updated_used_strategy_and_recommendation__stockname_test1__ticker_t1__exchange_en(
+            self):
         container = StockDataContainer("test1", "t1", "en")
-        container.append_used_strategy("TestStrategy")
-        self.assertEqual(["TestStrategy"], container.get_recommendation_strategies())
+        container.updated_used_strategy_and_recommendation("TestStrategy", "BUY")
+        self.assertEqual("BUY", container.get_recommendation_strategies()["TestStrategy"])
+
+        container.updated_used_strategy_and_recommendation("TestStrategy_2", "SELL")
+        self.assertEqual("SELL", container.get_recommendation_strategies()["TestStrategy_2"])
 
     def test_StockDataContainer__historical_stock_data(self):
         container = StockDataContainer("test1", "t1", "en")

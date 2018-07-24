@@ -69,7 +69,7 @@ def read_data_from_google_with_pandas(stock_name, start_date, end_date, read_yah
                                       str(traceback.format_exc()))
 
         if len(stock52_w) == 0:
-            sys.stderr.write("Stock: " + stock_name + " does not exist on!\n")
+            print_err_message("Stock: " + stock_name + " does not exist on!\n", e, str(traceback.format_exc()))
 
     return stock52_w
 

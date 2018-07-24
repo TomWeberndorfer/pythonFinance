@@ -8,7 +8,7 @@ import traceback
 from threading import Thread
 from tkinter import messagebox
 
-from MvcModel import MyModel
+from MvcModel import MvcModel
 from StockAnalysis import run_analysis
 from tkinter import *
 import webbrowser as wb
@@ -16,7 +16,8 @@ import ast
 from tkinter import filedialog
 
 from Utils.GlobalVariables import *
-from Utils.common_utils import get_current_class_and_function_name, print_err_message
+from Utils.GuiUtils import GuiUtils
+from Utils.common_utils import print_err_message
 
 
 class MyController:
@@ -24,10 +25,10 @@ class MyController:
     Classs for the controlling of mvc design with gui
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, view):
         self.parent = parent
-        self.model = MyModel(self)  # initializes the model
-        self.view = w  # initializes the view
+        self.model = MvcModel(self)  # initializes the model
+        self.view = view  # initializes the view
         self.view.ButtonRunStrategy.config(command=self.start_screening)
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect)
         self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click)
@@ -36,14 +37,15 @@ class MyController:
         self.load_strategy_parameter_from_file(GlobalVariables.get_data_files_path() + "ParameterFile.pickle")
         self.load_other_parameter_from_file(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle")
         self.other_params_changed()
-        self.column_list = []
-        # TODO
-        # init_result_table(self.view, [])
-        init_result_table(self.view, ["Recommendation", "Stockname", "Ticker", "Stock Exchange", "Positive Value",
-                                      "Negative Value", "Current Value", "Target Price", "Original News",
-                                      "Used Strategies"])
+        # self.model.update_column_list(["Rank"]) #TODO rank irgendwo anders realisieren
+        init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
 
     def on_double_click(self, event):
+        """
+        TODO beschreiben und fixe url weg
+        :param event:
+        :return:
+        """
         try:
             cur_selection = self.view.Scrolledtreeview1.selection()[0]
             cur_stock = self.view.Scrolledtreeview1.item(cur_selection)
@@ -51,6 +53,8 @@ class MyController:
             stock_name = cur_stock['values'][0]  # 0 --> name is first
             url_to_open = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
             wb.open_new_tab(url_to_open + stock_name)
+        except IndexError as e:
+            pass  # nothing to do for index error (may clicked at header)
         except Exception as e:
             print_err_message("Exception while opening result stock!", e, str(traceback.format_exc()))
 
@@ -85,6 +89,8 @@ class MyController:
             strategy_params = self.model.get_all_parameter_dicts()
             other_params = self.model.get_other_params()
             results = run_analysis(selection_values, strategy_params, other_params)
+
+            # TODO            Testen ob des jetzt nu normale sachen ausspuckt
             self.model.extend_result_stock_data_container_list(results)
         except Exception as e:
             print_err_message("Exception while screening.", e, str(traceback.format_exc()))
@@ -255,44 +261,28 @@ class MyController:
 
     def result_stock_data_container_list_changed(self):
         """
-        TODO
-        :return:
+        Update the columns and data of the view, of stock data container list changed.
+        Additionally, it adds the not already available columns to the MvcModel and fill not available columns with dummy.
+        :return: -
         """
 
-        try:
-            tree = w.Scrolledtreeview1
-            tree.delete(*tree.get_children())
-            stock_data_container_list = self.model.get_result_stock_data_container_list()
+        tree = w.Scrolledtreeview1
+        tree.delete(*tree.get_children())
+        stock_data_container_list = self.model.get_result_stock_data_container_list()
 
-            recommendation_text = ""
-            for res in stock_data_container_list:
-                if res.get_stock_name() is not None:
-                    try:
-                        pos_class = round(res.positive_prob_dist(), 2)
-                        neg_class = round(1 - res.positive_prob_dist(), 2)
-                        if pos_class > neg_class:
-                            recommendation_text = "BUY"
-                        else:
-                            recommendation_text = "SELL"
-                    # if no prop dist is given (technical strategies)
-                    except Exception as e:
-                        recommendation_text = "BUY"
+        for result_container in stock_data_container_list:
+            try:
+                is_updated = self.model.update_column_list(result_container.get_names_and_values().keys())
 
-                col_list = ["Recommendation"]
-                col_list.extend(list(res.get_names_and_values().keys()))
-                init_result_table(self.view, col_list)
+                if is_updated:
+                    init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
 
-                # TODO: "Recommendation" weg
-                # tree.insert('', 'end', values=col_val)
-                tree.insert('', 'end', text=recommendation_text, values=(list(res.get_names_and_values().values())))
+                GuiUtils.insert_into_treeview(self.view.Scrolledtreeview1, self.model.get_column_list(),
+                                              result_container.get_names_and_values(), result_container.get_rank())
 
-            # TODO das hier
-            # treeview_sort_column(tree, "Pos. Probability Distribution", False)
-            #treeview_sort_column(tree, "Recommendation", False)
-
-
-        except Exception as e:
-            print_err_message("", e, str(traceback.format_exc()))
+            except Exception as e:
+                print_err_message("", e, str(traceback.format_exc()))
+                continue
 
     def listbox_onselect(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect()
@@ -315,12 +305,16 @@ class MyController:
         :param end: END tag
         :return: nothing
         """
-        if delete:
-            element.delete(start, end)
-        if text is not None and len(text) > 0:
-            element.insert(end, text)
+        try:
+            if delete:
+                element.delete(start, end)
+            if text is not None and len(text) > 0:
+                element.insert(end, text)
 
-        element.see("end")
+            element.see("end")
+        except Exception as e:
+            print_err_message("can not insert text into gui!", e,
+                              str(traceback.format_exc()))
 
     def set_status(self, str_status):
         if str_status is not "" and len(str_status) > 1:
@@ -332,29 +326,10 @@ def init(top, gui, *args, **kwargs):
     w = gui
     top_level = top
     root = top
-    app = MyController(root)
+    app = MyController(root, w)
     redirector()
 
-
-# todo ins gui utils
-def treeview_sort_column(tv, col, reverse):
-    """
-    https://stackoverflow.com/questions/1966929/tk-treeview-column-sort
-    :param tv:
-    :param col:
-    :param reverse:
-    :return:
-    """
-    l = [(tv.set(k, col), k) for k in tv.get_children('')]
-    try:
-        l.sort(key=lambda t: int(t[0]), reverse=reverse)
-    except ValueError:
-        l.sort(reverse=reverse)
-
-    for index, (val, k) in enumerate(l):
-        tv.move(k, '', index)
-
-    tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))
+    return app
 
 
 def destroy_window():
@@ -400,17 +375,24 @@ def load_other_params():
     app.load_other_parameter_from_file(file_path)
 
 
-def init_result_table(view, columns):
-    view.Scrolledtreeview1.configure(
-        columns=columns)
+def init_result_table(tree_view, columns):
+    if columns is not None and len(columns) > 0:
 
-    for i in range(0, len(columns)):
-        heading_num = "#" + str(i)
-        view.Scrolledtreeview1.heading(heading_num, text=columns[i], anchor="center")
-        view.Scrolledtreeview1.column(heading_num, width="200")
-        view.Scrolledtreeview1.column(heading_num, minwidth="20")
-        view.Scrolledtreeview1.column(heading_num, stretch="1")
-        view.Scrolledtreeview1.column(heading_num, anchor="w")
+        col_2 = ["Rank"]
+        col_2.extend(columns)
+        tree_view.configure(columns=col_2)
+
+        for i in range(0, len(col_2)):
+            heading_num = "#" + str(i)
+            tree_view.heading(heading_num, text=col_2[i], anchor="center")
+
+            if len(col_2[i]) > 8:  # TODO begründen / kommentieren
+                tree_view.column(heading_num, width="200")
+            else:
+                tree_view.column(heading_num, width="100")
+            tree_view.column(heading_num, minwidth="20")
+            tree_view.column(heading_num, stretch="1")
+            tree_view.column(heading_num, anchor="w")
 
 
 class StdoutRedirector():

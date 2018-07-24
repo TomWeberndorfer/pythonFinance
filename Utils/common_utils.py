@@ -246,10 +246,13 @@ def get_current_class_and_function_name():
 
 
 def print_err_message(exception_text, exception, traceback_message):
-    if exception_text is "":
+    if exception_text is None or exception_text is "":
         exception_text = " -"
 
-    text = "\nEXCEPTION occurred! Exception Text:" + str(exception_text) + ", Exception: " + str(exception) + ":\n" + \
+    if exception is None or exception is "":
+        exception = " -"
+
+    text = "\nEXCEPTION occurred! Exception Text:" + str(exception_text) + "\nException: " + str(exception) + ":\n" + \
            str(traceback_message)
 
     sys.stderr.write(text)

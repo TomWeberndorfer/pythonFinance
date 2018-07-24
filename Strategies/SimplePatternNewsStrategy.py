@@ -32,8 +32,13 @@ class SimplePatternNewsStrategy(Abstract_Strategy, Abstract_SimpleMultithreading
         try:
             result = self.text_analysis.analyse_single_news(news_text)
             if result is not None:
-               result.append_used_strategy(self.__class__.__name__)
-               self.result_list.append(result)
+                ppd = result.positive_prob_dist()
+                if ppd >= 0.5:
+                    rec = "BUY"
+                else:
+                    rec = "SELL"
+                result.updated_used_strategy_and_recommendation(self.__class__.__name__, rec)
+                self.result_list.append(result)
         except Exception as e:
             print_err_message("For news text: " + str(news_text), e, str(traceback.format_exc()))
 
