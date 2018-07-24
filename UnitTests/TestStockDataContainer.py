@@ -2,6 +2,7 @@ import os
 import unittest
 from pandas import DataFrame
 from DataReading.StockDataContainer import StockDataContainer
+from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
 
 # from directory UnitTests to --> root folder with: ..\\..\\
@@ -53,6 +54,55 @@ class TestStockDataContainer(unittest.TestCase):
 
         container.updated_used_strategy_and_recommendation("TestStrategy_2", "SELL")
         self.assertEqual("SELL", container.get_recommendation_strategies()["TestStrategy_2"])
+
+    def test_StockDataContainer_run_and_fill_with__W52HighTechnicalStrategy_BUY__and_SimplePatternNewsStrategy_BUY(
+            self):
+        w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
+
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
+                ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
+                ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
+                ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
+                ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
+                ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+                ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
+                ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
+                ('2016-10-12', 23.16, 26, 23.11, 23.18, 46000)]
+
+        df = DataFrame.from_records(data, columns=labels)
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container.set_historical_stock_data(df)
+        stock_data_container_list = [stock_data_container]
+        ##################################################
+        # 52 w strategy
+        stock_screener = StrategyFactory()
+        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", stock_data_container_list,
+                                                       w52hi_parameter_dict)
+        # results = w52_hi_strat.run_strategy()
+        w52_hi_strat.run_strategy()
+        self.assertGreater(len(stock_data_container_list), 0)
+        self.assertEqual("BUY",
+                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"])
+        # stock_data_container_list = results
+
+        ##############################
+        # SimplePatternNewsStrategy
+        parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
+        all_news_text_list = ["ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Outperform' wieder auf, BUY"]
+
+        stock_screener = StrategyFactory()
+        news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
+                                                        stock_data_container_list, parameter_dict, all_news_text_list)
+
+        news_strategy.run_strategy()
+        self.assertEqual(stock_data_container_list[0].get_stock_name(), "Apple Inc.")
+        self.assertEqual("BUY",
+                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"])
+        self.assertEqual("BUY",
+                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"])
 
     def test_StockDataContainer__historical_stock_data(self):
         container = StockDataContainer("test1", "t1", "en")

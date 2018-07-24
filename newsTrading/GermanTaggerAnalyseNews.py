@@ -77,11 +77,11 @@ class GermanTaggerAnalyseNews:
                 if container in self.stock_data_container_list:
                     idx = self.stock_data_container_list.index(container)
                     hist_data = self.stock_data_container_list[idx].historical_stock_data()
+                    container = self.stock_data_container_list[idx]
 
                     if len(hist_data) > 0:
-                        container.set_historical_stock_data(hist_data)
                         current_prize = hist_data[GlobalVariables.get_stock_data_labels_dict()["Close"]][len(hist_data) - 1]
-
+                    
                 news_dec = NewsDataContainerDecorator(container,
                                                       name_ticker_exchange_target_prize.stock_target_price(),
                                                       prob_dist.prob("pos"), prep_news, current_prize)
@@ -195,7 +195,8 @@ class GermanTaggerAnalyseNews:
                         stock_to_check)
 
                 except Exception as e:
-                    print(", No STOCK found for news: " + str(single_news_to_analyze)) #TODO is des a error message??
+                    print(", No STOCK found for news: " + str(single_news_to_analyze))
+
                     return None
 
             if len(price_tuple) > 0:
@@ -215,17 +216,22 @@ class GermanTaggerAnalyseNews:
         print(", no STOCK found for news: " + str(single_news_to_analyze))
         return None
 
-    def lookup_stock_abr_in_all_names(self, stock_abr):
+    # TODO all_names mit übergeben
+    def lookup_stock_abr_in_all_names(self, stock_abr, all_names=[]):
         """
         Look up the stock abbreviation in the stock list with names
         :param stock_abr: abbreviation
+        :param all_names: all stock names list
         :return: name or " "
         """
-        result = [i for i in self.names if i.lower().startswith(stock_abr.lower())]
+        if all_names is None or len(all_names) < 1:
+            all_names = self.names
+
+        result = [i for i in all_names if i.lower().startswith(stock_abr.lower())]
 
         if result:
             name_to_find = str(result[0])  # TODO wieso [0]
-            if name_to_find in self.names:  # TODO: check if this if is necessary
+            if name_to_find in all_names:  # TODO: check if this if is necessary
                 return name_to_find
 
         raise AttributeError("Stock abbr not found: " + str(stock_abr))

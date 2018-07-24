@@ -90,7 +90,6 @@ class MyController:
             other_params = self.model.get_other_params()
             results = run_analysis(selection_values, strategy_params, other_params)
 
-            # TODO            Testen ob des jetzt nu normale sachen ausspuckt
             self.model.extend_result_stock_data_container_list(results)
         except Exception as e:
             print_err_message("Exception while screening.", e, str(traceback.format_exc()))
