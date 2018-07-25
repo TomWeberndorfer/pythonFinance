@@ -1,10 +1,9 @@
 import inspect
-import sys
 import traceback
 
+from Utils.Logger_Instance import logger
 from Strategies.Abstract_Strategy import Abstract_Strategy
 from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
-from Utils.common_utils import CommonUtils, get_current_class_and_function_name, print_err_message
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
@@ -40,7 +39,7 @@ class SimplePatternNewsStrategy(Abstract_Strategy, Abstract_SimpleMultithreading
                 result.updated_used_strategy_and_recommendation(self.__class__.__name__, rec)
                 self.result_list.append(result)
         except Exception as e:
-            print_err_message("For news text: " + str(news_text), e, str(traceback.format_exc()))
+            logger.error("For news text: " + str(news_text) + ": " + str(e) + "\n" + str(traceback.format_exc()))
 
         self.update_status("SimplePatternNewsStrategy:")
 

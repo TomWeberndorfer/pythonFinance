@@ -1,21 +1,8 @@
-import datetime as dt
-import os
-import sys
-import threading
-import traceback
 import json
 
-import urllib3
-from numpy import unicode
-from pandas import DataFrame
-from pandas_datareader import data, data
-#TODO from yahoo_finance import Share
+# TODO from yahoo_finance import Share
 import googlefinance.client as google_client
-import xlrd
-import pandas as pd
-import pandas_datareader.data as web
-
-from Utils.common_utils import get_current_class_and_function_name, split_list, print_err_message
+import urllib3
 
 str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
 str2 = "&region=1&lang="
@@ -35,102 +22,6 @@ def read_data_from_google_with_client(stock_name, interval="86400", period="1M")
     # get price data (return pandas dataframe)
     df = google_client.get_price_data(param)
     return df
-
-
-def read_data_from_google_with_pandas(stock_name, start_date, end_date, read_yahoo_today=False):
-    """
-    read data from google server
-    :param read_yahoo_today:
-    :param stock_name: stock name
-    :param start_date: start date and time
-    :param end_date: end date and time
-    :return: stock data
-    """
-
-    if stock_name is None or start_date is None or end_date is None:
-        raise NotImplementedError
-
-    try:
-        stock52_w = data.DataReader(stock_name, "google", start_date.strftime("%Y-%m-%d"),
-                                    end_date.strftime("%Y-%m-%d"))
-
-    except:
-        # Try with another stock market ETR
-        stock52_w = data.DataReader("ETR:" + stock_name, "google", start_date.strftime("%Y-%m-%d"),
-                                    end_date.strftime("%Y-%m-%d"))
-
-        # TODO data of today contains less volume because not finished
-        if read_yahoo_today:
-            if len(stock52_w) > 0:
-                try:
-                    stock52_w = stock52_w.append(read_current_day_from_yahoo(stock_name))
-                except Exception as e:
-                    print_err_message("Can not get stock data of stock " + stock_name + " from yahoo!", e,
-                                      str(traceback.format_exc()))
-
-        if len(stock52_w) == 0:
-            print_err_message("Stock: " + stock_name + " does not exist on!\n", e, str(traceback.format_exc()))
-
-    return stock52_w
-
-
-def read_data_from_yahoo(stock_name, start_date, end_date):
-    if stock_name is None or start_date is None or end_date is None:
-        raise NotImplementedError
-
-    # see also:
-    #  https: // github.com / lukaszbanasiak / yahoo - finance
-    #  https://pypi.python.org/pypi/yahoo-finance
-
-    # yahoo = Share('APPL')
-    # print(yahoo.get_avg_daily_volume())
-    # print(yahoo.get_open())
-    # print (yahoo.get_historical('2014-04-25', '2014-04-29'))
-
-    from pandas_datareader import data as pdr
-    import fix_yahoo_finance as yf
-    yf.pdr_override()  # <== that's all it takes :-)
-    data = pdr.get_data_yahoo(stock_name, start=start_date, end=end_date)
-
-    return data
-
-
-def read_current_day_from_yahoo(stock_name):
-    if stock_name is None:
-        raise NotImplementedError
-
-    # TODO google does not provide data from today, workarround: add yahoo data manually:
-    #  maybe try this: https://pypi.python.org/pypi/googlefinance.client
-    stock_name = optimize_name_for_yahoo(stock_name)
-    cols = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
-    lst = []
-    stock_markets_to_try = ["", ".DE", ".VI"]
-    for stock_market in stock_markets_to_try:
-
-        try:
-            yahoo = Share(stock_name + stock_market)
-            currDate = (yahoo.get_trade_datetime())[0:10]
-            lst.append([currDate, float(yahoo.get_price()), float(yahoo.get_days_high()), float(yahoo.get_days_low()),
-                        float(yahoo.get_price()),
-                        float(yahoo.get_volume())])
-            break
-
-        except:
-            # nothing to do
-            no = []
-
-    df1 = DataFrame(lst, columns=cols)
-    df1.index.name = 'Date'
-    # df1.set_index([str(currDate)])
-    df1 = df1.set_index(['Date'])
-    return df1
-
-    # stock52_w.loc[len(stock52_w)]=[yahoo.get_price(),yahoo.get_days_high(),yahoo.get_days_low(),yahoo.get_price(),yahoo.get_volume()]
-    # stock52_w.iloc[len(stock52_w) - 1].name = datetime.utcnow()
-    # print("name: " + str(stock52_w.index.name))
-
-    return []
-
 
 def get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks(name_abbr):
     """

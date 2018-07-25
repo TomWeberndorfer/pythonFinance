@@ -14,6 +14,7 @@ from DataRead_Google_Yahoo import get_symbol_and_real_name_from_abbrev_name_from
 from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.common_utils import is_float, GlobalVariables
+from Utils.Logger_Instance import logger
 
 
 class GermanTaggerAnalyseNews:
@@ -31,13 +32,13 @@ class GermanTaggerAnalyseNews:
         self.threshold = threshold
         self.stopwords = nltk.corpus.stopwords.words('german')
         self.stock_data_container_list = stock_data_container_list
-        self.names = []
+        self._names = []
         self.tickers = []
         self.stock_exchanges = []
 
         # TODO statt einzellisten umwandeln glei gscheid
         for data_entry in self.stock_data_container_list:
-            self.names.append(data_entry.get_stock_name())
+            self._names.append(data_entry.get_stock_name())
             self.tickers.append(data_entry.stock_ticker())
             self.stock_exchanges.append(data_entry.stock_exchange())
 
@@ -184,8 +185,8 @@ class GermanTaggerAnalyseNews:
 
             try:
                 name_to_find = self.lookup_stock_abr_in_all_names(stock_to_check)
-                idx = self.names.index(name_to_find)
-                name_return = self.names[idx]
+                idx = self._names.index(name_to_find)
+                name_return = self._names[idx]
                 ticker_return = self.tickers[idx]
                 stock_exchange_return = self.stock_exchanges[idx]
 
@@ -195,7 +196,7 @@ class GermanTaggerAnalyseNews:
                         stock_to_check)
 
                 except Exception as e:
-                    print(", No STOCK found for news: " + str(single_news_to_analyze))
+                    (", No STOCK found for news: " + str(single_news_to_analyze))
 
                     return None
 
@@ -213,19 +214,18 @@ class GermanTaggerAnalyseNews:
                                                         target_price_return)
             return ret
 
-        print(", no STOCK found for news: " + str(single_news_to_analyze))
+        logger.info("No STOCK found for news: " + str(single_news_to_analyze))
         return None
 
-    # TODO all_names mit übergeben
     def lookup_stock_abr_in_all_names(self, stock_abr, all_names=[]):
         """
-        Look up the stock abbreviation in the stock list with names
+        Look up the stock abbreviation in the stock list with _names
         :param stock_abr: abbreviation
-        :param all_names: all stock names list
+        :param all_names: all stock _names list
         :return: name or " "
         """
         if all_names is None or len(all_names) < 1:
-            all_names = self.names
+            all_names = self._names
 
         result = [i for i in all_names if i.lower().startswith(stock_abr.lower())]
 

@@ -11,9 +11,9 @@ class Abstract_DataContainerDecorator(Abstract_DataContainer):
     @abstractmethod
     def get_names_and_values(self):
         """
-        Method to return the names and values as dictionary to insert in a treeview or else.
+        Method to return the _names and values as dictionary to insert in a treeview or else.
         Should also return the data from the wrapped shaped data container
-        :return: a dict with names as keys and values, Ex: {'Stockname': "Apple Inc"}
+        :return: a dict with _names as keys and values, Ex: {'Stockname': "Apple Inc"}
         """
         self._shaped_data_container.get_names_and_values()
 

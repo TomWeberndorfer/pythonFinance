@@ -1,16 +1,11 @@
-import inspect
-import os
-import sys
-import threading
 import traceback
-from datetime import datetime, timedelta
 
+from Utils.Logger_Instance import logger
 from Signals.Signals import signal_is_volume_high_enough, signal_is_volume_raising, signal_is52_w_high
 from Strategies.Abstract_Strategy import Abstract_Strategy
-from Utils.common_utils import split_list, print_stocks_to_buy, calculate_stopbuy_and_stoploss, \
-    get_current_class_and_function_name, CommonUtils, print_err_message
+
+
 # from Utils.file_utils import read_tickers_from_file_or_web, append_to_file
-from Utils.file_utils import FileUtils
 
 
 # TODO parameter aus self statt da oben --> parameter_dict.news_threshold
@@ -28,7 +23,7 @@ class W52HighTechnicalStrategy(Abstract_Strategy):
                     result.updated_used_strategy_and_recommendation(self.__class__.__name__, "BUY")
                     self.result_list.append(result)
         except Exception as e:
-            print_err_message("", e, str(traceback.format_exc()))
+            logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
 
         self.update_status("W52HighTechnicalStrategy:")
 

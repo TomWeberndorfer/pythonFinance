@@ -6,8 +6,7 @@ from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 from Utils.file_utils import read_tickers_from_file_or_web
-import pandas_datareader.data as web
-import datetime
+from Utils.Logger_Instance import logger
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
@@ -136,7 +135,7 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
                 failed_reads += 1
 
         self.assertGreater(30, failed_reads)
-        print("Failed reads: " + str(failed_reads))
+        logger.info("Failed reads: " + str(failed_reads))
 
         #TODO deutsche gehen nicht mehr self.assertEqual(len(stock_data_container_list), 818)
         self.assertEqual(len(stock_data_container_list), 505)

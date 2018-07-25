@@ -1,15 +1,12 @@
 import unittest
 from datetime import datetime
 
-import os
-
 from pandas import DataFrame
 
 from DataRead_Google_Yahoo import get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks
 from DataReading.StockDataContainer import StockDataContainer
-from Utils.file_utils import FileUtils, read_tickers_from_file_or_web
-from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 from Utils.GlobalVariables import *
+from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
 class TestGermanTaggerAnalyseNews(unittest.TestCase):
@@ -98,8 +95,8 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         result = analysis.analyse_single_news(news)
         self.assertEqual(True, result is None)
 
-        txt = "\n\nRuntime : " + str(datetime.now() - thr_start)
-        print(txt)
+        runtime = "\n\nRuntime : " + str(datetime.now() - thr_start)
+        print(str(runtime))
 
     def test_identify_stock_and_price_from_news_nltk_german_classifier_data_nouns(self):
         stock_data_container_list = [StockDataContainer("RWE AG ST O.N.", "RWE", "de"),
@@ -186,7 +183,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
         self.assertEqual("de", result.stock_exchange())
         self.assertEqual(89, result.stock_target_price())
 
-        # not in stock list --> read stock tickers and names from webservice
+        # not in stock list --> read stock tickers and _names from webservice
         news = "Goldman belässt Roche auf conviction buy list"
         result = analysis._identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier_data_nouns(news)
         self.assertEqual('Roche Holding AG', result.get_stock_name())

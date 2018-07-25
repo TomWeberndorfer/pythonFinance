@@ -1,16 +1,15 @@
+import datetime
 import traceback
+from datetime import datetime
 
 import bs4 as bs
-import datetime
+import pandas as pd
 import requests
 
 from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
-from Utils.common_utils import print_err_message
-from Utils.file_utils import replace_in_file, get_hash_from_file, check_file_exists_or_create, \
+from Utils.Logger_Instance import logger
+from Utils.file_utils import check_file_exists_or_create, \
     check_file_exists_and_delete
-from Utils.news_utils import generate_hash
-from datetime import datetime
-import pandas as pd
 
 
 class TraderfoxNewsDataReader(Abstract_StockDataReader):
@@ -89,5 +88,5 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
             return is_news_current, last_date
 
         except Exception as e:
-            print_err_message("Can not check if date is actual.", e, str(traceback.format_exc()))
+            logger.error("Exception Can not check if date is actual.: " + str(e) + "\n" + str(traceback.format_exc()))
             return True, ""

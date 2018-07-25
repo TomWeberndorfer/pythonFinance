@@ -2,8 +2,6 @@ import os
 import unittest
 from datetime import datetime
 
-import sys
-
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.file_utils import read_tickers_from_file_or_web
 from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
@@ -51,7 +49,7 @@ class TestNewsReader(unittest.TestCase):
         news = read_news_from_traderfox(test_file)
 
         txt = "\n\nRuntime test_read_from_traderfox_performance: " + str(datetime.now() - thr_start)
-        print(txt)
+        print(str(txt))
         self.assertGreater(len(news), 0)
 
     def test_lookup_stock_abr_in_all_names(self):

@@ -1,14 +1,11 @@
 import os
 import unittest
 
-from pandas import DataFrame, read_csv
+from pandas import DataFrame
 
-from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from DataReading.StockDataContainer import StockDataContainer
-
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Strategies.StrategyFactory import StrategyFactory
-from Strategies.W52HighTechnicalStrategy import W52HighTechnicalStrategy
 from Utils.GlobalVariables import GlobalVariables
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

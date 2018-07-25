@@ -1,17 +1,11 @@
-import os
 import unittest
-from pandas import DataFrame
 
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataReading.StockDataContainer import StockDataContainer
 from GUI.main_v1 import ScrolledTreeView, LabelFrame
-from MvcModel import MvcModel
-from Utils.GuiUtils import GuiUtils
 from Utils.GlobalVariables import *
+from Utils.GuiUtils import GuiUtils
 
 # from directory UnitTests to --> root folder with: ..\\..\\
-from main_v1_support import MyController
-
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
 

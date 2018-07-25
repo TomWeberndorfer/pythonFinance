@@ -1,6 +1,6 @@
 import traceback
 
-from Utils.common_utils import print_err_message
+from Utils.Logger_Instance import logger
 
 
 class GuiUtils:
@@ -54,5 +54,4 @@ class GuiUtils:
             tv.heading(col, command=lambda: GuiUtils.treeview_sort_column(tv, col, not reverse))
 
         except Exception as e:
-            print_err_message("Could not sort the given treeview!", e,
-                              str(traceback.format_exc()))
+            logger.error("Exception Could not sort the given treeview: " + str(e) + "\n" + str(traceback.format_exc()))

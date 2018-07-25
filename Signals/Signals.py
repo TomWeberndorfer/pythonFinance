@@ -1,10 +1,11 @@
-import sys
 import traceback
+
+from Utils.Logger_Instance import logger
 from Utils.GlobalVariables import *
+from Utils.common_utils import calc_avg_vol
 
-#TODO from talib.func import ATR
 
-from Utils.common_utils import calc_avg_vol, print_err_message, get_current_class_and_function_name
+# TODO from talib.func import ATR
 
 
 def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
@@ -58,8 +59,7 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
                 save_val = True
 
         except Exception as e:
-            traceback.print_exc()
-            print_err_message("", e, str(traceback.format_exc()))
+            logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
 
         i -= 1
 

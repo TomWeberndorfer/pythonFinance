@@ -5,7 +5,6 @@ from matplotlib import style
 
 style.use('ggplot')
 
-from DataRead_Google_Yahoo import read_data_from_google_with_pandas
 
 from Utils.common_utils import plot_stock_as_candlechart_with_volume
 

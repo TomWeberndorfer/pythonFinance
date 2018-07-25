@@ -4,10 +4,15 @@
 # In conjunction with Tcl version 8.6
 #    Jun 03, 2018 10:50:55 AM
 import _pickle as pickle
+import queue
+import tkinter as tk
 import traceback
 from threading import Thread
 from tkinter import messagebox
+import logging
+from tkinter.scrolledtext import ScrolledText
 
+from Utils.Logger_Instance import logger
 from MvcModel import MvcModel
 from StockAnalysis import run_analysis
 from tkinter import *
@@ -17,7 +22,6 @@ from tkinter import filedialog
 
 from Utils.GlobalVariables import *
 from Utils.GuiUtils import GuiUtils
-from Utils.common_utils import print_err_message
 
 
 class MyController:
@@ -39,6 +43,7 @@ class MyController:
         self.other_params_changed()
         # self.model.update_column_list(["Rank"]) #TODO rank irgendwo anders realisieren
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
+        self.console = ConsoleUi(self.view.Labelframe2)
 
     def on_double_click(self, event):
         """
@@ -56,14 +61,13 @@ class MyController:
         except IndexError as e:
             pass  # nothing to do for index error (may clicked at header)
         except Exception as e:
-            print_err_message("Exception while opening result stock!", e, str(traceback.format_exc()))
+            logger.error("Exception while opening result stock: " + str(e) + "\n" + str(traceback.format_exc()))
 
     def start_screening(self):
         """
         start the screening thread for NON blocking GUI.
         :return: nothing
         """
-
         if not self.model.get_is_thread_running():
             thread = Thread(target=self.screening)
             thread.start()
@@ -84,7 +88,7 @@ class MyController:
                 return
 
             self.model.set_is_thread_running(True)
-            print("Screening started...")
+            logger.info("Screening started...")
             self.model.clear_result_stock_data_container_list()
             strategy_params = self.model.get_all_parameter_dicts()
             other_params = self.model.get_other_params()
@@ -92,7 +96,7 @@ class MyController:
 
             self.model.extend_result_stock_data_container_list(results)
         except Exception as e:
-            print_err_message("Exception while screening.", e, str(traceback.format_exc()))
+            logger.error("Exception while screening: " + str(e) + "\n" + str(traceback.format_exc()))
 
         self.model.set_is_thread_running(False)
 
@@ -143,10 +147,11 @@ class MyController:
                     self.model.add_to_available_strategies(item)
 
         except Exception as e:
-            print_err_message("Exception while loading strategy parameter from file!", e, str(traceback.format_exc()))
+            logger.error(
+                "Exception while loading strategy parameter from file: " + str(e) + "\n" + str(traceback.format_exc()))
             return
 
-        self.model.add_to_log("Params Read")
+            logger.info("Strategy Parameters Read")
 
     def load_other_parameter_from_file(self, file_path):
         """
@@ -161,18 +166,11 @@ class MyController:
                 self.model.add_to_other_params(items)
 
         except Exception as e:
-            print_err_message("Exception while loading other parameter from file!", e, str(traceback.format_exc()))
+            logger.error(
+                "Exception while loading other parameter from file: " + str(e) + "\n" + str(traceback.format_exc()))
             return
 
-        self.model.add_to_log("Params Read")
-
-    def insert_log(self, log_text):
-        """
-        Insert log text into the model.
-        :param log_text:
-        :return: -
-        """
-        self.model.add_to_log(log_text)
+            logger.info("Other Parameters Read")
 
     def dump_strategy_parameter_to_file(self, file_path=GlobalVariables.get_data_files_path() + "ParameterFile.pickle"):
         """
@@ -192,10 +190,11 @@ class MyController:
                 with open(file_path, "wb") as f:
                     pickle.dump(self.model.get_all_parameter_dicts(), f)
 
-                self.model.add_to_log("Params Saved")
+                    logger.info("Params Saved")
 
         except Exception as e:
-            print_err_message("Exception while dump_strategy_parameter_to_file!", e, str(traceback.format_exc()))
+            logger.error(
+                "Exception while dump_strategy_parameter_to_file: " + str(e) + "\n" + str(traceback.format_exc()))
             return
 
     def dump_other_parameter_to_file(self,
@@ -216,10 +215,10 @@ class MyController:
                 with open(file_path, "wb") as f:
                     pickle.dump(self.model.get_other_params(), f)
 
-                self.model.add_to_log("Other Params Saved")
+                logger.info("Other Params Saved")
 
         except Exception as e:
-            print_err_message("Exception while dump_other_parameter_to_file!", e, str(traceback.format_exc()))
+            logger.error("Exception while dump_other_parameter_to_file: " + str(e) + "\n" + str(traceback.format_exc()))
             return
 
     # event handlers
@@ -229,26 +228,19 @@ class MyController:
     def all_parameter_dicts_changed(self):
         w.Scrolledtext_params.delete(1.0, END)
         parameters = self.model.get_all_parameter_dicts()
-        self.insert_text_into_gui(w.Scrolledtext_params, str(parameters))
+        insert_text_into_gui(w.Scrolledtext_params, str(parameters))
 
     def other_params_changed(self):
         w.Scrolled_other_parameters.delete(1.0, END)
         parameters = self.model.get_other_params()
-        self.insert_text_into_gui(w.Scrolled_other_parameters, str(parameters))
-
-    def log_changed_delegate(self):
-        self.insert_text_into_gui(w.Scrolledtext_log, "", delete=True)
-        logs = self.model.get_log()
-        for log in logs:
-            self.insert_text_into_gui(w.Scrolledtext_log, log)
-            self.insert_text_into_gui(w.Scrolledtext_log, "\n")
+        insert_text_into_gui(w.Scrolled_other_parameters, str(parameters))
 
     def available_strategies_changed(self):
-        self.insert_text_into_gui(w.Scrolledlistbox_selectStrategy, "", delete=True, start=0)
+        insert_text_into_gui(w.Scrolledlistbox_selectStrategy, "", delete=True, start=0)
         # model internally chages and needs to signal a change
         available_strategies_list = self.model.getList()
         for available_strategy in available_strategies_list:
-            self.insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
+            insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
 
     def is_thread_running_changed(self):
         if self.model.get_is_thread_running():
@@ -280,7 +272,7 @@ class MyController:
                                               result_container.get_names_and_values(), result_container.get_rank())
 
             except Exception as e:
-                print_err_message("", e, str(traceback.format_exc()))
+                logger.error("Exception: " + str(e) + "\n" + str(traceback.format_exc()))
                 continue
 
     def listbox_onselect(self, evt):
@@ -291,42 +283,18 @@ class MyController:
         except Exception as e:
             selected_text_list = []
 
-        print("You selected items: " + str(selected_text_list))
+        logger.info("You selected items: " + str(selected_text_list))
         self.model.set_strategy_selection_value(selected_text_list)
-
-    def insert_text_into_gui(self, element, text, delete=False, start=1.0, end=END):
-        """
-        optionally deletes the given element and optionally insert text into given element.
-        :param element: element to insert into (ex: Scrolledtext)
-        :param text: text to insert
-        :param delete: true, if delete content first
-        :param start: start case, ex.: 1.0 or 0
-        :param end: END tag
-        :return: nothing
-        """
-        try:
-            if delete:
-                element.delete(start, end)
-            if text is not None and len(text) > 0:
-                element.insert(end, text)
-
-            element.see("end")
-        except Exception as e:
-            print_err_message("can not insert text into gui!", e,
-                              str(traceback.format_exc()))
-
-    def set_status(self, str_status):
-        if str_status is not "" and len(str_status) > 1:
-            w.TLabel_status['text'] = str_status
 
 
 def init(top, gui, *args, **kwargs):
+    logging.basicConfig(level=logging.DEBUG)
     global w, top_level, root, app
     w = gui
     top_level = top
     root = top
     app = MyController(root, w)
-    redirector()
+    # todo redirector()
 
     return app
 
@@ -394,26 +362,85 @@ def init_result_table(tree_view, columns):
             tree_view.column(heading_num, anchor="w")
 
 
-class StdoutRedirector():
-    '''A class for redirecting stdout to this Text widget.'''
-
-    def write(self, str):
-        # TODO
-        if 'status_update ' in str:
-            app.insert_text_into_gui(w.Scrolledtext_log, str)
-            app.set_status(str)
-        else:
-            app.insert_text_into_gui(w.Scrolledtext_log, str)
-            app.set_status(str)
-
-    def flush(self):
-        pass
-
-
-def redirector():
+def insert_text_into_gui(element, text, delete=False, start=1.0, end=END):
     """
-    redirects print(..) --> log text
-    :return:
+    optionally deletes the given element and optionally insert text into given element.
+    :param element: element to insert into (ex: Scrolledtext)
+    :param text: text to insert
+    :param delete: true, if delete content first
+    :param start: start case, ex.: 1.0 or 0
+    :param end: END tag
+    :return: nothing
     """
-    import sys
-    sys.stdout = StdoutRedirector()
+    try:
+        if delete:
+            element.delete(start, end)
+        if text is not None and len(text) > 0:
+            element.insert(end, text)
+
+        element.see("end")
+    except Exception as e:
+        logger.error("Can not insert text into gui: " + str(e) + "\n" + str(traceback.format_exc()))
+
+
+class ConsoleUi:
+    """Poll messages from a logging queue and display them in a scrolled text widget"""
+
+    def __init__(self, frame):
+        self.frame = frame
+
+        # Create a ScrolledText wdiget
+        self.scrolled_text = ScrolledText(frame, state='normal', height=5)
+        self.scrolled_text.place(relx=0.01, rely=0.01, relheight=0.9, relwidth=0.98)
+        self.scrolled_text.configure(wrap=NONE)
+        self.scrolled_text.configure(font='TkFixedFont')
+        self.scrolled_text.tag_config('INFO', foreground='black')
+        self.scrolled_text.tag_config('DEBUG', foreground='gray')
+        self.scrolled_text.tag_config('WARNING', foreground='orange')
+        self.scrolled_text.tag_config('ERROR', foreground='red')
+        self.scrolled_text.tag_config('CRITICAL', foreground='red', underline=1)
+        # Create a logging handler using a queue
+        self.log_queue = queue.Queue()
+        self.queue_handler = QueueHandler(self.log_queue)
+        formatter = logging.Formatter('%(asctime)s: %(message)s')
+        self.queue_handler.setFormatter(formatter)
+        logger.addHandler(self.queue_handler)
+        # Start polling messages from the queue
+        self.frame.after(100, self.poll_log_queue)
+
+    def display(self, record):
+        msg = self.queue_handler.format(record)
+        self.scrolled_text.configure(state='normal')
+        self.scrolled_text.insert(tk.END, msg + '\n', record.levelname)
+        self.scrolled_text.configure(state='disabled')
+        # Autoscroll to the bottom
+        self.scrolled_text.yview(tk.END)
+
+    def poll_log_queue(self):
+        # Check every 100ms if there is a new message in the queue to display
+        while True:
+            try:
+                record = self.log_queue.get(block=False)
+            except queue.Empty:
+                break
+            else:
+                self.display(record)
+        self.frame.after(100, self.poll_log_queue)
+
+
+class QueueHandler(logging.Handler):
+    """Class to send logging records to a queue
+    It can be used from different threads
+    The ConsoleUi class polls this queue to display records in a ScrolledText widget
+    """
+
+    # Example from Moshe Kaplan: https://gist.github.com/moshekaplan/c425f861de7bbf28ef06
+    # (https://stackoverflow.com/questions/13318742/python-logging-to-tkinter-text-widget) is not thread safe!
+    # See https://stackoverflow.com/questions/43909849/tkinter-python-crashes-on-new-thread-trying-to-log-on-main-thread
+
+    def __init__(self, log_queue):
+        super().__init__()
+        self.log_queue = log_queue
+
+    def emit(self, record):
+        self.log_queue.put(record)

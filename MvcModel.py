@@ -8,7 +8,6 @@ class MvcModel:
         self.available_strategies = []
         self.other_params = {}
         self.all_parameter_dicts = {}
-        self.log_text = []
         self.strategy_selection_value = []
         self.result_stock_data_container_list = []
         self.is_thread_running = False
@@ -107,13 +106,3 @@ class MvcModel:
     def clear_available_strategies_list(self):
         self.available_strategies = []
         self.list_changed()
-
-    def add_to_log(self, log_text):
-        self.log_text.append(log_text)
-        self.log_changed()
-
-    def log_changed(self):
-        self.vc.log_changed_delegate()
-
-    def get_log(self):
-        return self.log_text

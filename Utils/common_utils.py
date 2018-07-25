@@ -1,10 +1,10 @@
 import inspect
+import platform
+import smtplib
+import sys
 import traceback
 from datetime import datetime
-import os
-import platform
-import sys
-import smtplib
+from multiprocessing.dummy import Pool as ThreadPool
 
 import bs4 as bs
 import numpy
@@ -12,8 +12,8 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.plotly as py
 import requests
-from multiprocessing.dummy import Pool as ThreadPool
 
+import Utils.Logger_Instance
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 
@@ -151,10 +151,10 @@ def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
     url_3 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
     tabs_for_print = "                       "
 
-    print("Buy this stocks: ")
+    Utils.Logger_Instance.logger.info("Buy this stocks: ")
     if stocks_to_buy is not None:
         if len(stocks_to_buy) == 0:
-            print(", No stocks found")
+            Utils.Logger_Instance.logger.info("No stocks found.")
         else:
             with open(file_name_and_path_stock_list, "r") as ins:
                 array = []
@@ -189,7 +189,7 @@ def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
                     to_print_file = to_print_cmd
                     to_print_cmd += "; SB: " + str(sb) + '; SL: ' + str(sl) + "; strat: " + str(
                         strategy_name) + tabs_for_print + url + tabs_for_print + url2
-                    print(to_print_cmd)
+                    Utils.Logger_Instance.logger.info(to_print_cmd)
                     # replace . with , for excel csv
                     to_print_file += ";" + str(sb).replace('.', ',') + ';' + str(sl).replace('.', ',') + ";" + str(
                         strategy_name) + ";" + str(params) + ";" + url + ";" + url2
@@ -210,19 +210,20 @@ def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
 
                     # write to file for backtesting and tracking
 
-    print("INFO: runtime with " + num_of_threads + " Threads and " +
-          str(program_end_time - program_start_time))
+                    Utils.Logger_Instance.logger.info("Runtime with " + num_of_threads + " Threads and " +
+                                                      str(program_end_time - program_start_time))
 
 
 def print_news_analysis_results(stocks_to_buy):
     if stocks_to_buy is not None and len(stocks_to_buy) > 0:
-        print("\n-------------------------\n")
+        Utils.Logger_Instance.logger.info("\n-------------------------\n")
         for res in stocks_to_buy:
             if res != " ":
-                print("pos: " + str(round(res['positive_prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
+                Utils.Logger_Instance.logger.info(
+                    "pos: " + str(round(res['positive_prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
                     round(res['positive_prob_dist'].prob("neg"), 2)) + " " + str(res))
     else:
-        print("News analysis: no news")
+        Utils.Logger_Instance.logger.info("News analysis: no news")
 
 
 def get_current_class_and_function_name():
@@ -243,20 +244,6 @@ def get_current_class_and_function_name():
         return "METHOD/FUNCTION: " + str(cf1)
 
     return str(the_class) + ", METHOD/FUNCTION: " + str(cf1)
-
-
-def print_err_message(exception_text, exception, traceback_message):
-    if exception_text is None or exception_text is "":
-        exception_text = " -"
-
-    if exception is None or exception is "":
-        exception = " -"
-
-    text = "\nEXCEPTION occurred! Exception Text:" + str(exception_text) + "\nException: " + str(exception) + ":\n" + \
-           str(traceback_message)
-
-    sys.stderr.write(text)
-    print(text)
 
 
 def replace_wrong_stock_market(stock_name):
@@ -365,7 +352,7 @@ def read_table_columns_from_webpage(websource_address, find_name, class_name, ta
         name = name.replace("\n", "")
         stock_data_container_list.append(StockDataContainer(name, ticker, stock_exchange))
 
-    print("Tickers from " + websource_address + " read.")
+        Utils.Logger_Instance.logger.info("Tickers from " + websource_address + " read.")
     return stock_data_container_list
 
 
@@ -470,7 +457,7 @@ def is_float(n):
 
 def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
     """
-    plots alist with stock names
+    plots alist with stock _names
     :param stocks_to_buy:
     :param start_date:
     :param end_date:
@@ -483,4 +470,4 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
             plot_stock_as_candlechart_with_volume(stock_name, stock_data)
 
         except Exception as e:
-            print_err_message("", e, str(traceback.format_exc()))
+            GUI.logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))

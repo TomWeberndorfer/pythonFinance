@@ -1,13 +1,11 @@
-import _pickle as pickle
-import os
 import os.path
-import re
 import traceback
-
+import _pickle as pickle
 import pandas as pd
 
-from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import read_table_columns_from_webpage_list, CommonUtils, print_err_message
+import Utils.Logger_Instance
+from Utils.common_utils import read_table_columns_from_webpage_list, CommonUtils
+import main_v1_support
 
 
 class FileUtils:
@@ -52,7 +50,7 @@ def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, 
     stock_data_container_list = []
 
     if not os.path.exists(stock_data_container_file) or reload_file:
-        print("Start reading tickers...")
+        Utils.Logger_Instance.logger.info("Start reading tickers...")
 
         pool = CommonUtils.get_threading_pool()
         result_list = pool.map(read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
@@ -75,7 +73,7 @@ def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, 
         # all_exchanges += list(repeat("de", len(all_names)))
         # tickers, names_with_symbols = __get_symbols_from_names (all_names, all_exchanges)
         # stock_tickers_names['tickers'] += tickers
-        # stock_tickers_names['names'] += names_with_symbols
+        # stock_tickers_names['_names'] += names_with_symbols
         # stock_tickers_names['_stock_exchange'] += list(repeat("de", len(names_with_symbols)))
 
         with open(stock_data_container_file, "wb") as f:
@@ -103,7 +101,7 @@ def replace_in_file(file, pattern, subst):
     file_handle.close()
 
     # Use RE package to allow for replacement (also allowing for (multiline) REGEX)
-    file_string = (re.sub(pattern, subst, file_string))
+    file_string = (main_v1_support.re.sub(pattern, subst, file_string))
 
     # Write contents to file.
     # Using mode 'w' truncates the file.
@@ -148,7 +146,7 @@ def check_file_exists_or_create(file, txt=""):
     if os.path.exists(file):
         return True
     else:
-        print("\nFile " + file + " did not exist! Was created for you!\n\n")
+        Utils.Logger_Instance.logger.info("\nFile " + file + " did not exist! Was created for you!")
 
         with open(file, "a") as myfile:
             if txt != "":
@@ -168,4 +166,4 @@ def check_file_exists_and_delete(filename):
     if os.path.isfile(filename):
         os.remove(filename)
     else:  ## Show an error ##
-        print_err_message("File not found: " + filename, None, str(traceback.format_exc()))
+        Utils.logger.info("File not found: " + str(filename))

@@ -1,8 +1,10 @@
 import os
 from datetime import datetime
+
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.file_utils import FileUtils, read_tickers_from_file_or_web
+from Utils.Logger_Instance import logger
 
 
 def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params):
@@ -34,7 +36,7 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
             readers[name] = data_storage.prepare(reader_type, stock_data_container_list, other_params['weeks_delta'],
                                                  other_params['stock_data_container_file'], other_params['data_source'],
                                                  other_params['reload_stock_data'], date_file)
-            print("data_reader " + name + " initialised.\n")
+            logger.info("data_reader " + name + " initialised.")
             # only add, if not added by another strategy reader --> avoid duplications
             try:
                 if reader_results[name] is None:
@@ -42,7 +44,7 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
             except Exception:
                 reader_results[name] = readers[name].read_data()
 
-            print("data_reader " + name + " read data.\n")
+                logger.info("data_reader " + name + " read data.")
 
     # selected strategies
     analysed_stocks = []
@@ -64,5 +66,6 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
         strategy_result = strategy.run_strategy()
         analysed_stocks.extend(strategy_result)
 
-    print("Runtime check at " + str(datetime.now()) + " and duration: " + str(datetime.now() - thr_start) + " seconds.")
+        logger.info("Runtime check at " + str(datetime.now()) + " and duration: " + str(
+            datetime.now() - thr_start) + " seconds.")
     return analysed_stocks

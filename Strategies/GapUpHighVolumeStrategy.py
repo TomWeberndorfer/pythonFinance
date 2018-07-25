@@ -1,9 +1,8 @@
-import sys
 import traceback
 
+from Utils.Logger_Instance import logger
 from Signals.Signals import signal_is_volume_high_enough, signal_gap_up
 from Strategies.Abstract_Strategy import Abstract_Strategy
-from Utils.common_utils import CommonUtils, get_current_class_and_function_name, print_err_message
 
 
 class GapUpHighVolumeStrategy(Abstract_Strategy):
@@ -17,7 +16,7 @@ class GapUpHighVolumeStrategy(Abstract_Strategy):
                     self.result_list.append(result)
                     result.updated_used_strategy_and_recommendation(self.__class__.__name__, "BUY")
         except Exception as e:
-            print_err_message("", e, str(traceback.format_exc()))
+            logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
 
     def strat_gap_up__hi_volume(self, stock_data_container, parameter_dict):
         """

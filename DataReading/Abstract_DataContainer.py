@@ -24,8 +24,8 @@ class Abstract_DataContainer:
     @abstractmethod
     def get_names_and_values(self):
         """
-        Method to return the names and values as dictionary to insert in a treeview or else.
-        :return: a dict with names as keys and values, Ex: {'Stockname': "Apple Inc"}
+        Method to return the _names and values as dictionary to insert in a treeview or else.
+        :return: a dict with _names as keys and values, Ex: {'Stockname': "Apple Inc"}
         """
         raise Exception("Abstractmethod")
 

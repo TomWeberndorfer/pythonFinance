@@ -2,31 +2,23 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 # import datetime  # For datetime objects
-import os.path  # To manage paths
-import sys  # To find out the script name (in argv[0])
 import traceback
 from datetime import datetime
-from datetime import timedelta
-
 from os import listdir
 from os.path import isfile, join
 
 # Import the backtrader platform
 import backtrader as bt
 
+from Utils.Logger_Instance import logger
+from Utils.GlobalVariables import *
+from Utils.common_utils import convert_backtrader_to_dataframe
+
 ####################################
 # https://www.backtrader.com/docu/indautoref.html
 #
 ####################################
-
 # Create a Stratey
-from pandas import DataFrame
-
-from Utils.GlobalVariables import *
-from Signals import signal_is_volume_raising_within_check_days
-from Strategies import strat_52_w_hi_hi_volume
-from Utils.common_utils import convert_backtrader_to_dataframe, calc_avg_vol, print_err_message, \
-    get_current_class_and_function_name
 
 program_start_time = datetime.now()
 
@@ -185,7 +177,7 @@ def get_data_feed(file_path):
         return o_idx, h_idx, l_idx, c_idx, v_idx
 
     except Exception as e:
-        print_err_message("Can not get data feed index!", e, str(traceback.format_exc()))
+        logger.error("Can not get data feed index: " + str(e) + "\n" + str(traceback.format_exc()))
         return
 
 

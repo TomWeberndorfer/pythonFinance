@@ -410,9 +410,9 @@ class TestSignals(unittest.TestCase):
 
     # def test_read_current_day_from_yahoo(self):
     #
-    #     names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
+    #     _names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
     #
-    #     for name in names:
+    #     for name in _names:
     #         data = read_current_day_from_yahoo(name)
     #         self.assertEqual(len(data), 1)
     #
@@ -428,9 +428,9 @@ class TestSignals(unittest.TestCase):
     #     # TODO liefert immer 1 jahr
     #
     # def test_read_data_from_google_with_client(self):
-    #     names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
+    #     _names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
     #
-    #     for name in names:
+    #     for name in _names:
     #         res = read_data_from_google_with_client(name)
     #         print()
 

@@ -1,14 +1,11 @@
-import _pickle as pickle
 import datetime as dt
-import sys
 import traceback
 
 from pandas_datareader import data
 
-from DataRead_Google_Yahoo import optimize_name_for_yahoo
 from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
+from Utils.Logger_Instance import logger
 from Utils.GlobalVariables import *
-from Utils.common_utils import get_current_class_and_function_name, CommonUtils, print_err_message
 
 
 class HistoricalDataReader(Abstract_StockDataReader):
@@ -34,7 +31,9 @@ class HistoricalDataReader(Abstract_StockDataReader):
                     stock_data_container.set_stock_current_prize(curr_prize)
 
                 except Exception as e :
-                    print ("Exception: could not set curr_prize: " + str(e))
+                    logger.error(
+                        "Could not set curr_prize of stock " + stock_data_container.get_stock_name() + " " + str(
+                            e) + "\n" + str(traceback.format_exc()))
 
                 self.update_status("HistoricalDataReader:")
 
@@ -54,15 +53,14 @@ class HistoricalDataReader(Abstract_StockDataReader):
         df = []
 
         if ticker == "" or ticker == '' or len(ticker) <= 0:
-            sys.stderr.write()
-            print_err_message("EXCEPTION reading because ticker is empty", None, str(traceback.format_exc()))
+            logger.error("EXCEPTION reading because ticker is empty")
             return df
 
         #TODO 11 ticker = optimize_name_for_yahoo(ticker)  # TODO nicht nur für yahoo
         ticker_exchange = ticker
 
         if ticker_exchange == "" or ticker_exchange == '' or len(ticker_exchange) <= 0:
-            print_err_message("EXCEPTION reading because ticker is empty", None, str(traceback.format_exc()))
+            logger.error("EXCEPTION reading because ticker is empty (2)")
             return df
 
         # TODO 3: yahoo does not take en, so skip
@@ -80,7 +78,7 @@ class HistoricalDataReader(Abstract_StockDataReader):
         #            break
 
         except Exception as e:
-            print_err_message("", e, str(traceback.format_exc()))
+            logger.error(str(e) + "\n" + str(traceback.format_exc()))
                 # exception but the df is filled --> ok
 
          #       if len(df) > 0:
@@ -91,7 +89,8 @@ class HistoricalDataReader(Abstract_StockDataReader):
             #sleep(0.1)  # Time in seconds.
 
         if len(df) <= 0:
-            print_err_message("EXCEPTION reading because ticker is empty, " +
-                              'FAILED: Reading {}'.format(ticker_exchange), None, str(traceback.format_exc()))
+            logger.error("EXCEPTION reading because ticker is empty, " +
+                         'FAILED: Reading {}'.format(ticker_exchange) + " " + str(e) + "\n" + str(
+                traceback.format_exc()))
 
         return df

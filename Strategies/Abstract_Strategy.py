@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
 from Utils.StatusUpdate import StatusUpdate
-from Utils.common_utils import CommonUtils
+from Utils.Logger_Instance import logger
 
 
 class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
@@ -25,7 +25,7 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         if len(self.stock_data_container_list) > 0:
             self.map_list(self.stock_data_container_list)
 
-        print(str(the_class) + " finished.")
+            logger.info(str(the_class) + " finished.")
         return self.result_list
 
     @abstractmethod

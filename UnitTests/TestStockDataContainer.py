@@ -1,12 +1,12 @@
-import os
 import unittest
+
 from pandas import DataFrame
+
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
 
 # from directory UnitTests to --> root folder with: ..\\..\\
-from Utils.common_utils import get_current_class_and_function_name, print_err_message
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
