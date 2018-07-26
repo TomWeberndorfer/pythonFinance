@@ -98,7 +98,7 @@ class Framework:
                 activebackground="#f4bcb2",
                 activeforeground="#000000",
                 background="wheat",
-                command=main_v1_support.load_params,
+            command=main_v1_support.load_strategy_parameters,
                 font="TkMenuFont",
                 foreground="#000000",
                 label="Load Parameters")

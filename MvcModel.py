@@ -7,7 +7,7 @@ class MvcModel:
         self.vc = view_controller
         self.available_strategies = []
         self.other_params = {}
-        self.all_parameter_dicts = {}
+        self.strategy_parameter_dicts = {}
         self.strategy_selection_value = []
         self.result_stock_data_container_list = []
         self.is_thread_running = False
@@ -56,21 +56,21 @@ class MvcModel:
         return self.strategy_selection_value
 
     # Delegates-- Model would call this on internal change
-    def all_parameter_dicts_changed(self):
-        self.vc.all_parameter_dicts_changed()
+    def strategy_parameter_dicts_changed(self):
+        self.vc.strategy_parameter_dicts_changed()
 
     # setters and getters
-    def get_all_parameter_dicts(self):
-        return self.all_parameter_dicts
+    def get_strategy_parameter_dicts(self):
+        return self.strategy_parameter_dicts
 
-    def add_to_all_parameter_dicts(self, items):
+    def add_to_strategy_parameter_dicts(self, items):
         for key, value in items.items():
-            self.all_parameter_dicts.update({key: value})
-        self.all_parameter_dicts_changed()
+            self.strategy_parameter_dicts.update({key: value})
+        self.strategy_parameter_dicts_changed()
 
-    def clear_all_parameter_dicts(self):
-        self.all_parameter_dicts = {}
-        self.all_parameter_dicts_changed()
+    def clear_strategy_parameter_dicts(self):
+        self.strategy_parameter_dicts = {}
+        self.strategy_parameter_dicts_changed()
 
     # Delegates-- Model would call this on internal change
     def other_params_changed(self):
