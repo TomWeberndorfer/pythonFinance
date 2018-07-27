@@ -3,7 +3,6 @@ from datetime import datetime
 
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
 from Strategies.StrategyFactory import StrategyFactory
-from Utils.file_utils import FileUtils, read_tickers_from_file_or_web
 from Utils.Logger_Instance import logger
 
 
@@ -16,6 +15,7 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
     :return: analysed_stocks list
     """
     # TODO 10: only temp: for testing every time
+    from Utils.file_utils import read_tickers_from_file_or_web
     try:
         import os
         #os.remove(other_params['last_date_time_file'])
@@ -43,7 +43,6 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
                     raise Exception
             except Exception:
                 reader_results[name] = readers[name].read_data()
-
                 logger.info("data_reader " + name + " read data.")
 
     # selected strategies

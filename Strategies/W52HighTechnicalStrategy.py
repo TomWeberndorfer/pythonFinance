@@ -20,7 +20,8 @@ class W52HighTechnicalStrategy(Abstract_Strategy):
                 result = self._strat_52_w_hi_hi_volume(stock_data_container, self.parameter_dict)
 
                 if result is not None:
-                    result.updated_used_strategy_and_recommendation(self.__class__.__name__, "BUY")
+                    result.update_used_strategy_and_recommendation(self.__class__.__name__, "BUY")
+
                     self.result_list.append(result)
         except Exception as e:
             logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))

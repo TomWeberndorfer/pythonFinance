@@ -37,10 +37,15 @@ class TestStrategy(bt.Strategy):
 
     def __init__(self):
         # Keep a reference to the "close" line in the data[0] dataseries
-        self.dataclose = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Close']]
-        self.datavol = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Volume']]
-        self.datahi = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['High']]
-        self.datalo = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Low']]
+        # self.dataclose = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Close']]
+        # self.datavol = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Volume']]
+        # self.datahi = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['High']]
+        # self.datalo = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Low']]
+
+        self.dataclose = self.datas[0].close
+        self.datavol = self.datas[0].volume
+        self.datahi = self.datas[0].high
+        self.datalo = self.datas[0].low
 
 
         self.buy_price = 0
@@ -115,7 +120,7 @@ class TestStrategy(bt.Strategy):
 
         df1 = convert_backtrader_to_dataframe(self.datas[0])
 
-        res = strat_52_w_hi_hi_volume(self.params.stockname, df1, 5, 3, 1.2, 0.98)
+        # res = strat_52_w_hi_hi_volume(self.params.stockname, df1, 5, 3, 1.2, 0.98)
 
         # if self.order:
         # return
@@ -124,26 +129,26 @@ class TestStrategy(bt.Strategy):
         # Check if we are in the market
         if not self.position:
 
-            if res['buy']:
-                # if raise_cnt < 3:
-                self.buy_price = self.dataclose[0]
-                self.log('BUY CREATE, %.2f' % self.dataclose[0])
-                # Keep track of the created order to avoid a 2nd order
-                # self.order = self.buy()
-                self.buyCnt = round((cerebro.broker.cash / self.dataclose[0] / 10))  # TODO
-                # self.buyCnt = round((cerebro.broker.cash / self.dataclose[0]))-10  # TODO
-                self.buy(size=self.buyCnt)
-                # elf.order_target_percent(target = 0.5)
+            # if res['buy']:
+            #     # if raise_cnt < 3:
+            #     self.buy_price = self.dataclose[0]
+            #     self.log('BUY CREATE, %.2f' % self.dataclose[0])
+            #     # Keep track of the created order to avoid a 2nd order
+            #     # self.order = self.buy()
+            #     self.buyCnt = round((cerebro.broker.cash / self.dataclose[0] / 10))  # TODO
+            #     # self.buyCnt = round((cerebro.broker.cash / self.dataclose[0]))-10  # TODO
+            #     self.buy(size=self.buyCnt)
+            #     # elf.order_target_percent(target = 0.5)
 
                 # --------------------------------------------------
                 # Not yet ... we MIGHT BUY if ...
-                # if self.dataclose[0] > self.sma[0]:
+            if self.dataclose[0] > 1:
                 #
                 #     # BUY, BUY, BUY!!! (with all possible default parameters)
-                #     self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                self.log('BUY CREATE, %.2f' % self.dataclose[0])
                 #
                 #     # Keep track of the created order to avoid a 2nd order
-                #     self.order = self.buy()
+                self.order = self.buy()
         # ------------------------------------------------------------
         else:
 

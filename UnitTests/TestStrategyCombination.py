@@ -4,6 +4,7 @@ from pandas import DataFrame
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
+from datetime import datetime
 
 # from directory UnitTests to --> root folder with: ..\\..\\
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -50,9 +51,13 @@ class TestStrategyCombination(unittest.TestCase):
 
         self.assertEqual(stock_data_container_list[0].get_stock_name(), "Apple Inc.")
         self.assertEqual("BUY",
-                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"])
+                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][0])
+        self.assertAlmostEqual(str(datetime.now()),
+                               stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][
+                                   1])
+
         self.assertEqual("SELL",
-                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"])
+                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"][0])
 
         self.assertEqual("BUY",
-                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"])
+                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"][0])

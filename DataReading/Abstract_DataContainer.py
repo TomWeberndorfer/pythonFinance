@@ -1,3 +1,4 @@
+from datetime import datetime
 from abc import abstractmethod
 
 
@@ -47,10 +48,11 @@ class Abstract_DataContainer:
     def get_recommendation_strategies(self):
         return self._strategy_and_recommendation
 
-    def updated_used_strategy_and_recommendation(self, strategy_name, recommendation_text):
+    def update_used_strategy_and_recommendation(self, strategy_name, recommendation_text):
         """
         Append the strategy which where used to get the result.
+        :param recommendation_text: text to insert (BUY / SELL)
         :param strategy_name: strategy name as implemented
         :return: nothing
         """
-        self.get_recommendation_strategies().update({strategy_name: recommendation_text})
+        self.get_recommendation_strategies().update({strategy_name: [recommendation_text, str(datetime.now())]})

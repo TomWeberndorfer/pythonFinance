@@ -352,7 +352,7 @@ def read_table_columns_from_webpage(websource_address, find_name, class_name, ta
         name = name.replace("\n", "")
         stock_data_container_list.append(StockDataContainer(name, ticker, stock_exchange))
 
-        Utils.Logger_Instance.logger.info("Tickers from " + websource_address + " read.")
+    Utils.Logger_Instance.logger.info("Tickers from " + websource_address + " read.")
     return stock_data_container_list
 
 
@@ -399,26 +399,30 @@ def creation_date(path_to_file):
 
 def convert_backtrader_to_dataframe(data):
     """
-    TODO
-    :param data:
-    :return:
+    Convert the backtrader data to the dataframe data.
+    :param data: backtrader data
+    :return: pandas data frame
     """
-    cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+    cols = []
+    for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+        cols.append(value)
     lst = []
+    cols = ['open', 'high', 'low', 'close', 'volume']
 
+    # the data starts at [0] with the current value
+    # and goes negative for older values
     i = - len(data.open) + 1
     while i <= 0:
         try:
-
-            lst.append([float(data[GlobalVariables.get_stock_data_labels_dict()['Open']][i]),
-                        float(data[GlobalVariables.get_stock_data_labels_dict()['High']][i]),
-                        float(data[GlobalVariables.get_stock_data_labels_dict()['Low']][i]),
-                        float(data[GlobalVariables.get_stock_data_labels_dict()['Close']][i]),
-                        float(data[GlobalVariables.get_stock_data_labels_dict()['Volume']][i])])
-
-        except:
+            lst.append([
+                # data.datetime[i],
+                float(data.open[i]),
+                float(data.high[i]),
+                float(data.low[i]),
+                float(data.close[i]),
+                float(data.volume[i])])
+        except Exception as e:
             # nothing to do
-            no = []
             break
         i += 1
 
@@ -427,20 +431,21 @@ def convert_backtrader_to_dataframe(data):
     return df1
 
 
-def is_date_today(date_to_check):
+def is_date_today(date_to_check, date_time_format="%d.%m.%Y"):
     """
-    TODO
-    :param date_to_check:
-    :return:
+    Checks, if the given date is the current date (today)
+    :param date_to_check: date to check in given format
+    :param date_time_format: date time format to convert
+    :return: True, if today
     """
     if date_to_check is None:
         raise NotImplementedError
 
-    today_date_str = datetime.now().strftime("%d.%m.%Y")
-    today_date = datetime.strptime(today_date_str, "%d.%m.%Y")
+    today_date_str = datetime.now().strftime(date_time_format)
+    today_date = datetime.strptime(today_date_str, date_time_format)
 
-    date_to_check_str = date_to_check.strftime("%d.%m.%Y")
-    date_to_check_today = datetime.strptime(date_to_check_str, "%d.%m.%Y")
+    date_to_check_str = date_to_check.strftime(date_time_format)
+    date_to_check_today = datetime.strptime(date_to_check_str, date_time_format)
 
     is_today = today_date == date_to_check_today
     return is_today
@@ -470,4 +475,4 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
             plot_stock_as_candlechart_with_volume(stock_name, stock_data)
 
         except Exception as e:
-            GUI.logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
+            Utils.logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))

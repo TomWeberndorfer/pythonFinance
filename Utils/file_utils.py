@@ -1,4 +1,5 @@
 import os.path
+import re
 import traceback
 import _pickle as pickle
 import pandas as pd
@@ -11,23 +12,33 @@ import main_v1_support
 class FileUtils:
 
     @staticmethod
-    def append_to_file(txt, file_with_path):
+    def append_to_file(text, file_with_path, insert_only_new_content=False):
         """
         appends the given text to the file + path
-        :param txt: text to append
+        :param insert_only_new_content: only insert the text, if it is not already in there
+        :param text: text to append
         :param file_with_path: file name + path
         :return: none
         """
-        if txt is None or file_with_path is None:
+        if text is None or file_with_path is None:
             raise NotImplementedError
 
         check_file_exists_or_create(file_with_path)  # no need to check, creates anyway
 
+        if insert_only_new_content:
+            with open(file_with_path, 'r') as myfile:
+                file_content = myfile.read()
+                if re.search(str(text), file_content):
+                    myfile.close()
+                    return False
+
         with open(file_with_path, "a") as myfile:
-            myfile.write(str(txt) + "\n")
+            myfile.write(str(text) + "\n")
             myfile.write("")
 
         myfile.close()
+
+        return True
 
 
 def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, list_with_stock_pages_to_read=[]):

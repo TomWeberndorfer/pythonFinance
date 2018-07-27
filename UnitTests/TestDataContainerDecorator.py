@@ -1,6 +1,7 @@
 import os
 import unittest
 from pandas import DataFrame
+from datetime import datetime
 
 from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataReading.StockDataContainer import StockDataContainer
@@ -25,11 +26,35 @@ class TestDataContainerDecorator(unittest.TestCase):
         self.assertEqual("test1", result_news_dec["Stockname"])
         self.assertEqual(0.9, result_news_dec["Pos. Probability Distribution"])
 
-    def test_NewsDataContainerDecorator_updated_used_strategy_and_recommendation(self):
+    def test_NewsDataContainerDecorator_update_used_strategy_and_recommendation(self):
         container = StockDataContainer("test1", "t1", "en")
         news_dec = NewsDataContainerDecorator(container, 111, 0.9, "test news", 99)
-        news_dec.updated_used_strategy_and_recommendation("TestStrategy", "BUY")
-        self.assertEqual({"TestStrategy": "BUY"}, news_dec.get_recommendation_strategies())
+        news_dec.update_used_strategy_and_recommendation("TestStrategy", "BUY")
+        res_dict = news_dec.get_recommendation_strategies()
+        self.assertEqual(1, len(res_dict))
 
-        news_dec.updated_used_strategy_and_recommendation("TestStrategy_2", "SELL")
-        self.assertEqual({"TestStrategy": "BUY", "TestStrategy_2": "SELL"}, news_dec.get_recommendation_strategies())
+        rec_and_datetime = res_dict["TestStrategy"]
+        self.assertEqual(2, len(rec_and_datetime))
+        rec = rec_and_datetime[0]
+        dt = rec_and_datetime[1]
+        self.assertEqual("BUY", rec)
+        self.assertAlmostEqual(str(datetime.now()), dt)
+
+        news_dec.update_used_strategy_and_recommendation("TestStrategy_2", "SELL")
+
+        res_dict = news_dec.get_recommendation_strategies()
+        self.assertEqual(2, len(res_dict))
+
+        rec_and_datetime = res_dict["TestStrategy"]
+        self.assertEqual(2, len(rec_and_datetime))
+        rec = rec_and_datetime[0]
+        dt = rec_and_datetime[1]
+        self.assertEqual("BUY", rec)
+        self.assertAlmostEqual(str(datetime.now()), dt)
+
+        rec_and_datetime = res_dict["TestStrategy_2"]
+        self.assertEqual(2, len(rec_and_datetime))
+        rec = rec_and_datetime[0]
+        dt = rec_and_datetime[1]
+        self.assertEqual("SELL", rec)
+        self.assertAlmostEqual(str(datetime.now()), dt)

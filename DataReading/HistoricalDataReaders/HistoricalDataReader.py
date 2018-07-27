@@ -90,7 +90,6 @@ class HistoricalDataReader(Abstract_StockDataReader):
 
         if len(df) <= 0:
             logger.error("EXCEPTION reading because ticker is empty, " +
-                         'FAILED: Reading {}'.format(ticker_exchange) + " " + str(e) + "\n" + str(
-                traceback.format_exc()))
+                         'FAILED: Reading {}'.format(ticker_exchange))
 
         return df

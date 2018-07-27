@@ -3,8 +3,8 @@ import pandas as pd
 from datetime import datetime
 
 from Utils.common_utils import send_email, is_date_today
-from Utils.file_utils import check_file_exists_or_create
-
+from Utils.file_utils import check_file_exists_or_create, FileUtils
+from Utils.GlobalVariables import *
 
 class TestUtils(TestCase):
 
@@ -29,3 +29,14 @@ class TestUtils(TestCase):
         #date_time = "14.03.2018 um 23:11"
         #datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
         self.assertEqual(is_date_today(test), True)
+
+    def test_write_backtrader(self):
+        filename = GlobalVariables.get_data_files_path() + "TestData\\NewsForBacktesting.txt"
+        text = "25.07.2018 um 08:41, ANALYSE-FLASH: Berenberg hebt Ziel für Adidas auf 207 Euro - 'Hold'"
+        self.assertFalse(FileUtils.append_to_file(text, filename, True))
+
+        text = str(datetime.now()) + ", Test Eintrag"
+        self.assertTrue(FileUtils.append_to_file(text, filename, True))
+
+        text = "16.07.2018 um 8:51, Test Eintrag"
+        self.assertTrue(FileUtils.append_to_file(text, filename, False))

@@ -315,13 +315,12 @@ class MyController:
 
 
 def init(top, gui, *args, **kwargs):
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     global w, top_level, root, app
     w = gui
     top_level = top
     root = top
     app = MyController(root, w)
-    # todo redirector()
 
     return app
 

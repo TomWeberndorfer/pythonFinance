@@ -36,7 +36,7 @@ class SimplePatternNewsStrategy(Abstract_Strategy, Abstract_SimpleMultithreading
                     rec = "BUY"
                 else:
                     rec = "SELL"
-                result.updated_used_strategy_and_recommendation(self.__class__.__name__, rec)
+                result.update_used_strategy_and_recommendation(self.__class__.__name__, rec)
                 self.result_list.append(result)
         except Exception as e:
             logger.error("For news text: " + str(news_text) + ": " + str(e) + "\n" + str(traceback.format_exc()))

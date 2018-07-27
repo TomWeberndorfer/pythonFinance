@@ -1,7 +1,8 @@
 import unittest
-
+from time import sleep
+from dateutil import parser
 from pandas import DataFrame
-
+from datetime import datetime, timedelta
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
@@ -46,14 +47,29 @@ class TestStockDataContainer(unittest.TestCase):
         container = StockDataContainer("test1", "t1", "en")
         self.assertEqual("test1, t1", str(container))
 
-    def test_NewsDataContainerDecorator_updated_used_strategy_and_recommendation__stockname_test1__ticker_t1__exchange_en(
+    def test_NewsDataContainerDecorator_update_used_strategy_and_recommendation__stockname_test1__ticker_t1__exchange_en(
             self):
         container = StockDataContainer("test1", "t1", "en")
-        container.updated_used_strategy_and_recommendation("TestStrategy", "BUY")
-        self.assertEqual("BUY", container.get_recommendation_strategies()["TestStrategy"])
+        container.update_used_strategy_and_recommendation("TestStrategy", "BUY")
+        self.assertEqual("BUY", container.get_recommendation_strategies()["TestStrategy"][0])
+        dt = parser.parse(container.get_recommendation_strategies()["TestStrategy"][1])
+        elapsed = datetime.now() - dt
+        self.assertGreater(timedelta(seconds=0.01), elapsed)
+        sleep(0.05)
 
-        container.updated_used_strategy_and_recommendation("TestStrategy_2", "SELL")
-        self.assertEqual("SELL", container.get_recommendation_strategies()["TestStrategy_2"])
+        container.update_used_strategy_and_recommendation("TestStrategy_2", "SELL")
+        self.assertEqual("SELL", container.get_recommendation_strategies()["TestStrategy_2"][0])
+        dt = parser.parse(container.get_recommendation_strategies()["TestStrategy_2"][1])
+        elapsed = datetime.now() - dt
+        self.assertGreater(timedelta(seconds=0.01), elapsed)
+
+        container.update_used_strategy_and_recommendation("TestStrategy_3", "SELL")
+        self.assertEqual("SELL", container.get_recommendation_strategies()["TestStrategy_3"][0])
+
+        dt = parser.parse(container.get_recommendation_strategies()["TestStrategy_3"][1])
+        sleep(0.05)
+        elapsed = datetime.now() - dt
+        self.assertGreater(elapsed, timedelta(seconds=0.01))
 
     def test_StockDataContainer_run_and_fill_with__W52HighTechnicalStrategy_BUY__and_SimplePatternNewsStrategy_BUY(
             self):
@@ -85,7 +101,10 @@ class TestStockDataContainer(unittest.TestCase):
         w52_hi_strat.run_strategy()
         self.assertGreater(len(stock_data_container_list), 0)
         self.assertEqual("BUY",
-                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"])
+                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][0])
+        self.assertAlmostEqual(str(datetime.now()),
+                               stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][
+                                   1])
         # stock_data_container_list = results
 
         ##############################
@@ -100,9 +119,9 @@ class TestStockDataContainer(unittest.TestCase):
         news_strategy.run_strategy()
         self.assertEqual(stock_data_container_list[0].get_stock_name(), "Apple Inc.")
         self.assertEqual("BUY",
-                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"])
+                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][0])
         self.assertEqual("BUY",
-                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"])
+                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"][0])
 
     def test_StockDataContainer__historical_stock_data(self):
         container = StockDataContainer("test1", "t1", "en")

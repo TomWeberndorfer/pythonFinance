@@ -7,9 +7,8 @@ import pandas as pd
 import requests
 
 from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
+from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
-from Utils.file_utils import check_file_exists_or_create, \
-    check_file_exists_and_delete
 
 
 class TraderfoxNewsDataReader(Abstract_StockDataReader):
@@ -17,10 +16,12 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         raise NotImplementedError("Not needed because of single thread reading")
 
     def read_data(self):
+        from Utils.file_utils import check_file_exists_and_delete
         if self.reload_stockdata:
             check_file_exists_and_delete(self.date_file)
 
         all_news_text_list = self.__read_news_from_traderfox(self.date_file)
+
         return all_news_text_list
 
     def __read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):
@@ -30,6 +31,8 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         :param date_file: file for last check date
         :return: news as list
         """
+        from Utils.file_utils import FileUtils
+
         # TODO enable for enhanced info
         # url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
         url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-5/"
@@ -50,6 +53,9 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
             if is_a_new_news:
                 article_text = (str(elm.h2.get_text(strip=True)))  # h2 --> article head line
                 news_text = date_time.replace(',', '.') + ", " + article_text.replace(',', '.')
+                # TODO irgendwann wegdoa
+                FileUtils.append_to_file(news_text, GlobalVariables.get_data_files_path() + "NewsForBacktesting.txt",
+                                         True)
                 all_news.append(news_text)
 
         return all_news
@@ -63,6 +69,7 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         :param date_to_check:
         :return:
         """
+        from Utils.file_utils import check_file_exists_or_create
         try:
             if date_to_check is None:
                 raise NotImplementedError
