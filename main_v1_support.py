@@ -242,8 +242,6 @@ class MyController:
                                              "Please choose a valid other parameters file!")
                     pickle.dump(other_params, f)
 
-                logger.info("Other Params Saved")
-
         except Exception as e:
             logger.error("Exception while dump_other_parameter_to_file: " + str(e) + "\n" + str(traceback.format_exc()))
             return

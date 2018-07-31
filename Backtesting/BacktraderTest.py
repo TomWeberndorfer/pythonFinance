@@ -1,218 +1,172 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
-import datetime  # For datetime objects
-import os.path  # To manage paths
-import sys  # To find out the script name (in argv[0])
-
-# Import the backtrader platform
 import backtrader as bt
-
-####################################
-# https://www.backtrader.com/docu/indautoref.html
-#
-####################################
-
-
-# Create a Stratey
-from pandas import DataFrame
-
-from Utils.GlobalVariables import *
-from Signals import signal_is_volume_raising_within_check_days
-from Strategies import strat_52_w_hi_hi_volume
-from Utils.common_utils import convert_backtrader_to_dataframe, calc_avg_vol
+from datetime import datetime
 
 
 class TestStrategy(bt.Strategy):
-    params = (
-        ('skipdays', 14),  # skips days to calculate 52week high
-        #('skipdays', 250),  #skips days to calculate 52week high
-        ('stockname', "GOOG")
-    )
-
-    def log(self, txt, dt=None):
-        ''' Logging function fot this strategy'''
-        dt = dt or self.datas[0].datetime.date(0)
-        print('%s, %s' % (dt.isoformat(), txt))
+    params = (('percents', 0.9),)  # Float: 1 == 100%
 
     def __init__(self):
-        # Keep a reference to the "close" line in the data[0] dataseries
-        self.dataclose = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Close']]
-        self.datavol = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Volume']]
-        self.datahi = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['High']]
-        self.datalo = self.datas[0][GlobalVariables.get_stock_data_labels_dict()['Low']]
-        self.buy_price = 0
-
-        # To keep track of pending orders and buy price/commission
-        self.order = None
-        self.buyprice = None
-        self.buycomm = None
-
-        # Add a MovingAverageSimple indicator
-        #self.sma = bt.indicators.SimpleMovingAverage(
-            #self.datas[0], period=self.params.maperiod)
-
-        self.highest_high = 0 # max (self.datahi)
-        self.buyCnt = 0
-        self.buyNotAnymore = False
-
-        # Indicators for the plotting show
-
-        # bt.indicators.ExponentialMovingAverage(self.datas[0], period=25)
-        # bt.indicators.WeightedMovingAverage(self.datas[0], period=25,
-        #                                     subplot=True)
-        # bt.indicators.StochasticSlow(self.datas[0])
-        # bt.indicators.MACDHisto(self.datas[0])
-        # rsi = bt.indicators.RSI(self.datas[0])
-        # bt.indicators.SmoothedMovingAverage(rsi, period=10)
-        # bt.indicators.ATR(self.datas[0], plot=False)
-
-
-    def notify_order(self, order):
-        if order.status in [order.Submitted, order.Accepted]:
-            # Buy/Sell order submitted/accepted to/by broker - Nothing to do
-            return
-
-        # Check if an order has been completed
-        # Attention: broker could reject order if not enougth cash
-        if order.status in [order.Completed]:
-            if order.isbuy():
-                self.log(
-                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                    (order.executed.price,
-                     order.executed.value,
-                     order.executed.comm))
-
-                self.buyprice = order.executed.price
-                self.buycomm = order.executed.comm
-            else:  # Sell
-                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                         (order.executed.price,
-                          order.executed.value,
-                          order.executed.comm))
-
-            self.bar_executed = len(self)
-
-        elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            self.log('Order Canceled/Margin/Rejected')
-
-        # Write down: no pending order
-        self.order = None
-
-    def notify_trade(self, trade):
-        if not trade.isclosed:
-            return
-
-        self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
-                 (trade.pnl, trade.pnlcomm))
+        self.rsi = bt.indicators.RSI_SMA(self.data.close, period=21)
 
     def next(self):
-
-        #TODO des gscheid machen, nur skip damit man nicht bei der ersten bar anfängt
-        #if self.params.skipdays > len(self.dataclose):
-            #return
-
-        df1 = convert_backtrader_to_dataframe(self.datas[0])
-
-        res = strat_52_w_hi_hi_volume (self.params.stockname, df1, 5,3, 1.2, 0.98)
-
-        # Check if an order is pending ... if yes, we cannot send a 2nd one
-        if self.order:
-            return
-
-
-        # Check if we are in the market
+        date = self.data.datetime.date()
+        long_stop = self.data.close[0] - 50  # Will not be hit
+        short_stop = self.data.close[0] + 50  # Will not be hit
         if not self.position:
-
-            if res['buy']:
-                # if raise_cnt < 3:
-                        self.buy_price = self.dataclose[0]
-                        self.log('BUY CREATE, %.2f' % self.dataclose[0])
-                        # Keep track of the created order to avoid a 2nd order
-                        #self.order = self.buy()
-                        self.buyCnt = round((cerebro.broker.cash / self.dataclose[0]/10))  # TODO
-                        #self.buyCnt = round((cerebro.broker.cash / self.dataclose[0]))-10  # TODO
-                        self.buy(size = self.buyCnt)
-                        #elf.order_target_percent(target = 0.5)
-
-        #--------------------------------------------------
-            # Not yet ... we MIGHT BUY if ...
-            # if self.dataclose[0] > self.sma[0]:
-            #
-            #     # BUY, BUY, BUY!!! (with all possible default parameters)
-            #     self.log('BUY CREATE, %.2f' % self.dataclose[0])
-            #
-            #     # Keep track of the created order to avoid a 2nd order
-            #     self.order = self.buy()
-        #------------------------------------------------------------
+            if date == datetime(2018, 1, 11).date():
+                # Price closes at $100 and following opens at $100
+                # Base test no gapping
+                buy_ord = self.order_target_percent(target=self.p.percents)
+                buy_ord.addinfo(name="Long Market Entry")
+                stop_size = buy_ord.size - abs(self.position.size)
+                self.sl_ord = self.sell(size=stop_size, exectype=bt.Order.Stop, price=long_stop)
+                self.sl_ord.addinfo(name='Long Stop Loss')
+            elif date == datetime(2019, 1, 6).date():
+                # Price closes at $100 and following opens at $150
+                # Start of first position reversing test
+                # Still flat at the moment
+                buy_ord = self.order_target_percent(target=self.p.percents)
+                buy_ord.addinfo(name="Long Market Entry")
+                stop_size = buy_ord.size - abs(self.position.size)
+                self.sl_ord = self.sell(size=stop_size, exectype=bt.Order.Stop, price=long_stop)
+                self.sl_ord.addinfo(name='Long Stop Loss')
         else:
+            # NOTE oco=self.sl_ord is needed to cancel stop losses already in the market
+            if date == datetime(2018, 1, 25).date():
+                # Price Closes at $140 and following opens at $140
+                # Close Tests first - $40 Dollar Profit
+                cls_ord = self.close(oco=self.sl_ord)
+                cls_ord.addinfo(name="Close Market Order")
+            elif date == datetime(2019, 1, 11).date():
+                # Price closes at $190 and following opens at $190
+                # First Position to Reverse
+                # We are selling from net longself. Desired position size
+                # Is now net short.
+                sell_ord = self.order_target_percent(target=-self.p.percents, oco=self.sl_ord)
+                sell_ord.addinfo(name="Short Market Entry")
+                stop_size = abs(sell_ord.size) - abs(self.position.size)
+                self.sl_ord = self.buy(size=stop_size, exectype=bt.Order.Stop, price=short_stop)
+                self.sl_ord.addinfo(name='Short Stop Loss')
+            elif date == datetime(2019, 1, 16).date():
+                # We are already net short
+                # Price closes at $150 and following opens at $150
+                # NOTE oco=self.sl_ord is needed to cancel the stop loss already in the market
+                # First buy to actually reverse a sell
+                buy_ord = self.order_target_percent(target=self.p.percents, oco=self.sl_ord)
+                buy_ord.addinfo(name="Long Market Entry")
+                stop_size = buy_ord.size - abs(self.position.size)
+                self.sl_ord = self.sell(size=stop_size, exectype=bt.Order.Stop, price=long_stop)
+                self.sl_ord.addinfo(name='Long Stop Loss')
+            elif date == datetime(2019, 1, 21).date():
+                # Price closes at $190 and following opens at $190
+                # Close to finish
+                cls_ord = self.close(oco=self.sl_ord)
+                cls_ord.addinfo(name="Close Market Order")
 
-            cur_val = self.datalo[0]
-            if cur_val > self.buy_price:
-                self.buy_price = cur_val
+    def notify_order(self, order):
+        date = self.data.datetime.datetime().date()
 
-            if (cur_val < self.buy_price *0.96):
-                # SELL, SELL, SELL!!! (with all possible default parameters)
-                self.log('SELL CREATE, %.2f' % self.dataclose[0])
+        if order.status == order.Accepted:
+            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            print('{} Order Accepted'.format(order.info['name']))
+            print('{}, Status {}: Ref: {}, Size: {}, Price: {}'.format(
+                date,
+                order.status,
+                order.ref,
+                order.size,
+                'NA' if not order.price else round(order.price, 5)
+            ))
 
-                # Keep track of the created order to avoid a 2nd order
-                self.order = self.sell(size = self.buyCnt)
-                #self.order_target_percent(target=-0.5)
+        if order.status == order.Completed:
+            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            print('{} Order Completed'.format(order.info['name']))
+            print('{}, Status {}: Ref: {}, Size: {}, Price: {}'.format(
+                date,
+                order.status,
+                order.ref,
+                order.size,
+                'NA' if not order.price else round(order.price, 5)
+            ))
+            print('Created: {} Price: {} Size: {}'.format(bt.num2date(order.created.dt), order.created.price,
+                                                          order.created.size))
+            print('-' * 80)
+
+        if order.status == order.Canceled:
+            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            print('{} Order Canceled'.format(order.info['name']))
+            print('{}, Status {}: Ref: {}, Size: {}, Price: {}'.format(
+                date,
+                order.status,
+                order.ref,
+                order.size,
+                'NA' if not order.price else round(order.price, 5)
+            ))
+
+        if order.status == order.Rejected:
+            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            print('WARNING! {} Order Rejected'.format(order.info['name']))
+            print('{}, Status {}: Ref: {}, Size: {}, Price: {}'.format(
+                date,
+                order.status,
+                order.ref,
+                order.size,
+                'NA' if not order.price else round(order.price, 5)
+            ))
+            print('-' * 80)
+
+    def notify_trade(self, trade):
+        date = self.data.datetime.datetime()
+        if trade.isclosed:
+            print('-' * 32, ' NOTIFY TRADE ', '-' * 32)
+            print('{}, Close Price: {}, Profit, Gross {}, Net {}'.format(
+                date,
+                trade.price,
+                round(trade.pnl, 2),
+                round(trade.pnlcomm, 2)))
+            print('-' * 80)
 
 
+startcash = 10000
 
+# Create an instance of cerebro
+cerebro = bt.Cerebro()
 
-if __name__ == '__main__':
-    # Create a cerebro entity
-    cerebro = bt.Cerebro()
+# Add our strategy
+cerebro.addstrategy(TestStrategy)
 
+# Create a Data Feed
+data = bt.feeds.GenericCSVData(
+    timeframe=bt.TimeFrame.Days,
+    compression=1,
+    dataname='C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\TestData.csv',
+    nullvalue=0.0,
+    dtformat=('%m/%d/%Y'),
+    datetime=0,
+    time=-1,
+    high=2,
+    low=3,
+    open=1,
+    close=4,
+    volume=-1,
+    openinterest=-1  # -1 means not used
+)
 
-    modpath = os.path.dirname(os.path.abspath(sys.argv[0]))
-    datapath = os.path.join(modpath, '../../datas/GOOG.csv')
-    datapath2 = os.path.join(modpath, '../../datas/KMX.csv')
+# Add the data
+cerebro.adddata(data)
 
-    data = bt.feeds.YahooFinanceCSVData(
-        dataname=datapath,
-        # Do not pass values before this date
-        #fromdate=datetime.datetime(2016, 1, 2),
-        # Do not pass values before this date
-        #todate=datetime.datetime(2018, 1, 2),
-        # Do not pass values after this date
-        reverse=False)
+# Set our desired cash start
+cerebro.broker.setcash(startcash)
 
-    # Add the Data Feed to Cerebro
-    cerebro.adddata(data)
+# Run over everything
+cerebro.run()
 
-    data = bt.feeds.YahooFinanceCSVData(
-        dataname=datapath2,
-        # Do not pass values before this date
-        # fromdate=datetime.datetime(2016, 1, 2),
-        # Do not pass values before this date
-        # todate=datetime.datetime(2018, 1, 2),
-        # Do not pass values after this date
-        reverse=False)
+# Get final portfolio Value
+portvalue = cerebro.broker.getvalue()
+pnl = portvalue - startcash
 
-    # Add the Data Feed to Cerebro
-    cerebro.adddata(data)
+# Print out the final result
+print('Final Portfolio Value: ${}'.format(portvalue))
+print('P/L: ${}'.format(pnl))
+# Finally plot the end results
 
-    # Set our desired cash start
-    cerebro.broker.setcash(50000.0)
-
-    # Add a FixedSize sizer according to the stake
-    #cerebro.addsizer(bt.sizers.FixedSize, stake=10)
-
-    # Set the commission
-    cerebro.broker.setcommission(commission=0.001)
-
-    # Print out the starting conditions
-    print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
-
-    cerebro.addstrategy(TestStrategy)
-    # Run over everything
-    cerebro.run()
-
-    # Print out the final result
-    print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
-
-    # Plot the result
-    #cerebro.plot(style='candlestick', barup='green', bardown='red')
+cerebro.plot(style='candlestick')

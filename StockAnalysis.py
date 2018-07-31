@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
+from RiskManagement.RiskModelFactory import RiskModelFactory
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.Logger_Instance import logger
 
@@ -14,18 +15,14 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
     :param other_params: dict with needed parameters
     :return: analysed_stocks list
     """
-    # TODO 10: only temp: for testing every time
+    # TODO anders machen, ned hier importieren
     from Utils.file_utils import read_tickers_from_file_or_web
-    try:
-        import os
-        #os.remove(other_params['last_date_time_file'])
-    except Exception:
-        pass
 
     thr_start = datetime.now()
     stock_data_container_list = read_tickers_from_file_or_web(other_params['stock_data_container_file'], other_params['reload_ticker'],
                                                               other_params['list_with_stock_pages_to_read'])
     reader_results = {}
+    reader_names = {}
     readers = {}
     for selected_strat in selected_strategies_list:
         for data_reader in strategy_parameter_dict[selected_strat]['data_readers']:
@@ -43,7 +40,8 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
                     raise Exception
             except Exception:
                 reader_results[name] = readers[name].read_data()
-                logger.info("data_reader " + name + " read data.")
+
+            logger.info("data_reader " + name + " read data.")
 
     # selected strategies
     analysed_stocks = []
@@ -67,4 +65,14 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
 
         logger.info("Runtime check at " + str(datetime.now()) + " and duration: " + str(
             datetime.now() - thr_start) + " seconds.")
+
+    # risk model
+    # TODO mehrere risk model --> liste oder dict
+    risk_model = other_params['RiskModel']
+    rm_name = risk_model['Name']
+    rm_parameters = risk_model['Parameters']
+    rm_factory = RiskModelFactory()
+    fsr = rm_factory.prepare(rm_name, analysed_stocks, rm_parameters)
+    fsr.determine_risk()
+
     return analysed_stocks

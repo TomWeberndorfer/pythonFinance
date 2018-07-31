@@ -30,7 +30,7 @@ class TestUtils(TestCase):
         #datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
         self.assertEqual(is_date_today(test), True)
 
-    def test_write_backtrader(self):
+    def test_append_to_file__only_new_entries__all_entries(self):
         filename = GlobalVariables.get_data_files_path() + "TestData\\NewsForBacktesting.txt"
         text = "25.07.2018 um 08:41, ANALYSE-FLASH: Berenberg hebt Ziel für Adidas auf 207 Euro - 'Hold'"
         self.assertFalse(FileUtils.append_to_file(text, filename, True))

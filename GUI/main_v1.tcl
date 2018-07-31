@@ -261,7 +261,7 @@ proc vTclWindow.top32 {base} {
         -font TkMenuFont -foreground {#000000} -label {Save Other Params} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#load_params} -compound none \
+        -background wheat -command {#load_strategy_parameters} -compound none \
         -font TkMenuFont -foreground {#000000} -label {Load Parameters} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \

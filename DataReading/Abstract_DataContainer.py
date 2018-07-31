@@ -15,6 +15,10 @@ class Abstract_DataContainer:
         self._stock_name = stock_name
         self._stock_ticker = stock_ticker
         self._strategy_and_recommendation = {}
+        self._stop_buy = 0
+        self._stop_loss = 0
+        self._position_size = 0
+        self._risk_model = ''
 
     def __str__(self):
         return self._stock_name + ", " + self._stock_ticker
@@ -56,3 +60,27 @@ class Abstract_DataContainer:
         :return: nothing
         """
         self.get_recommendation_strategies().update({strategy_name: [recommendation_text, str(datetime.now())]})
+
+    def set_stop_buy(self, sb):
+        self._stop_buy = sb
+
+    def get_stop_buy(self):
+        return self._stop_buy
+
+    def set_stop_loss(self, sl):
+        self._stop_loss = sl
+
+    def get_stop_loss(self):
+        return self._stop_loss
+
+    def set_position_size(self, size):
+        self._position_size = size
+
+    def get_position_size(self):
+        return self._position_size
+
+    def get_risk_model(self):
+        return self._risk_model
+
+    def set_risk_model(self, risk_model):
+        self._risk_model = str(risk_model)

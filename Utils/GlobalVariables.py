@@ -17,6 +17,7 @@ class GlobalVariables:
     def get_stock_data_labels_dict(uppercase=False):
         #real sorting: ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
         # TODO vom dataprovider lesen und dann zuweisen (irgendeine aktie abfragen)
+        # TODO dataprovider als übergabeparameter
         if uppercase is False:
             stock_data_labels_dict = {'Date': 'date', 'Open': 'open', 'High': 'high', 'Low': 'low',
                                       'Close': 'close', 'Volume': 'volume'}

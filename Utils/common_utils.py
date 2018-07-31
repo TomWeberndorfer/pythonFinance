@@ -8,10 +8,12 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 import bs4 as bs
 import numpy
+import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.plotly as py
 import requests
+from scipy.stats import norm
 
 import Utils.Logger_Instance
 from DataReading.StockDataContainer import StockDataContainer
@@ -121,9 +123,11 @@ def split_list(list_to_split, size):
     return list_of_lists
 
 
-def calculate_stopbuy_and_stoploss(stock_data):
+def calculate_stopbuy_and_stoploss(stock_data, stop_buy_limit_percent=1.005, stop_loss_limit_percent=0.97):
     """
     calculates stop buy and stop loss values
+    :param stop_loss_limit_percent: stop loss 3% lower than stop buy
+    :param stop_buy_limit_percent: stop buy 0,5% higher than last val
     :param stock_data: 52w stock data
     :return: stop buy and stop loss: {'sb':sb, 'sl': sl}
     """
@@ -131,12 +135,15 @@ def calculate_stopbuy_and_stoploss(stock_data):
     if stock_data is None:
         raise NotImplementedError
 
+    if len(stock_data) <= 0:
+        return {'stop_buy': 'NaN', 'stop_loss': 'NaN'}
+
     # values should be calc with max (real 52wHigh)
     highest_high = stock_data[GlobalVariables.get_stock_data_labels_dict()['High']].max()
-    sb = highest_high * 1.005  # stop buy 0,5% higher than last val
-    sl = sb * 0.97  # stop loss 3% lower than stop buy
+    sb = highest_high * stop_buy_limit_percent  # stop buy 0,5% higher than last val
+    sl = sb * stop_loss_limit_percent  # stop loss 3% lower than stop buy
 
-    return {'sb': sb, 'sl': sl}
+    return {'stop_buy': sb, 'stop_loss': sl}
 
 
 def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
@@ -476,3 +483,23 @@ def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):
 
         except Exception as e:
             Utils.logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
+
+
+def value_at_risk(df_close, portfolio_value, conv=0.99):
+    per_change = df_close.pct_change()
+    mu = np.mean(per_change)
+    sigma = np.std(per_change)
+
+    var = var_cov_var(portfolio_value, conv, mu, sigma)
+    return var
+
+
+def var_cov_var(P, c, mu, sigma):
+    """
+    Variance-Covariance calculation of daily Value-at-Risk
+    using confidence level c, with mean of returns mu
+    and standard deviation of returns sigma, on a portfolio
+    of value P.
+    """
+    alpha = norm.ppf(1 - c, mu, sigma)
+    return P - P * (alpha + 1)

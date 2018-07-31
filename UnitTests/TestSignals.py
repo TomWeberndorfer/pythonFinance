@@ -395,12 +395,12 @@ class TestSignals(unittest.TestCase):
         data = pd.DataFrame.from_records(data, columns=labels)
         res = calculate_stopbuy_and_stoploss(data)
         # previous calculation with latest value should now be false
-        self.assertEqual(np.math.isclose(res['sb'], 23.6175, abs_tol=0.001), False)  # =23,5*1.005
-        self.assertEqual(np.math.isclose(res['sl'], 22.9089, abs_tol=0.001), False)  # =23,5*1.005*0.97
+        self.assertEqual(np.math.isclose(res['stop_buy'], 23.6175, abs_tol=0.001), False)  # =23,5*1.005
+        self.assertEqual(np.math.isclose(res['stop_loss'], 22.9089, abs_tol=0.001), False)  # =23,5*1.005*0.97
 
         # real calculation with real 52 w high value
-        self.assertEqual(np.math.isclose(res['sb'], 30.15, abs_tol=0.001), True)  # =30*1.005
-        self.assertEqual(np.math.isclose(res['sl'], 29.2455, abs_tol=0.001), True)  # =30*1.005*0.97
+        self.assertEqual(np.math.isclose(res['stop_buy'], 30.15, abs_tol=0.001), True)  # =30*1.005
+        self.assertEqual(np.math.isclose(res['stop_loss'], 29.2455, abs_tol=0.001), True)  # =30*1.005*0.97
 
         # TODO using coverage: http://pymbook.readthedocs.io/en/latest/testing.html
         # https://blog.jetbrains.com/pycharm/2015/06/feature-spotlight-python-code-coverage-with-pycharm/

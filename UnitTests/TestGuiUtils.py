@@ -23,7 +23,7 @@ class TestGuiUtils(unittest.TestCase):
         for child in scrolled_treeview1.get_children():
             result_values.extend(scrolled_treeview1.item(child)["values"])
 
-        self.assertEqual(["{}", "test1", "t1", "en"], result_values)
+        self.assertEqual(["{}", "test1", "t1", "en", 0, 0, 0, ''], result_values)
 
         # ---------
         container = StockDataContainer("test1", "t1", "en")
@@ -37,7 +37,7 @@ class TestGuiUtils(unittest.TestCase):
         for child in scrolled_treeview1.get_children():
             result_values.extend(scrolled_treeview1.item(child)["values"])
 
-        self.assertEqual(["{}", "test1", "t1", "en"], result_values)
+        self.assertEqual(['{}', 'test1', 't1', 'en', 0, 0, 0, ''], result_values)
 
         # --------
         container = StockDataContainer("test1", "t1", "en")
@@ -51,7 +51,7 @@ class TestGuiUtils(unittest.TestCase):
         for child in scrolled_treeview1.get_children():
             result_values.extend(scrolled_treeview1.item(child)["values"])
 
-        self.assertEqual(["{}", "test1", "t1", "en", "-"], result_values)
+        self.assertEqual(['{}', 'test1', 't1', 'en', '-', 0, 0, 0, ''], result_values)
 
     def test_insert_into_treeview__two_stocks(self):
         self.Labelframe1 = LabelFrame()
@@ -69,4 +69,5 @@ class TestGuiUtils(unittest.TestCase):
         for child in scrolled_treeview1.get_children():
             result_values.extend(scrolled_treeview1.item(child)["values"])
 
-        self.assertEqual(["{}", "test1", "t1", "en", "{}", "test2", "t2", "de"], result_values)
+        self.assertEqual(['{}', 'test1', 't1', 'en', 0, 0, 0, '', '{}', 'test2', 't2', 'de', 0, 0, 0, ''],
+                         result_values)

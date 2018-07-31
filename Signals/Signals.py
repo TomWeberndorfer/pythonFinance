@@ -186,13 +186,15 @@ def signal_is_volume_raising(data, check_days, min_cnt, min_vol_dev_fact):
     return True
 
 
-def signal_is52_w_high(stock, within52w_high_fact):
+def signal_is52_w_high(stock, within52w_high_fact=0.97):
     """
         Check 52 week High
 
         Args:
             stock: stock data
             within52w_high_fact: factor current data within 52 w high (ex: currVal > (Max * 0.98))
+                                This is important when the maximum value is not the close value.
+                                Therefore, highest value is taken for the maximum, and current value is not 52w high.
 
         Returns:
             True, if 52 week high
@@ -220,7 +222,7 @@ def signal_is52_w_high(stock, within52w_high_fact):
 
     else:
         hi_minus_limit = highest_high * within52w_high_fact
-        if cur_val > hi_minus_limit:
+        if cur_val >= hi_minus_limit:
             return True
         else:
             return False
