@@ -12,7 +12,8 @@ class StockDataContainer(Abstract_DataContainer):
         Method to return the _names and values as dictionary to insert in a treeview or else.
         :return: a dict with _names as keys and values, Ex: {'Stockname': "Apple Inc"}
         """
-        names_and_values_dict = {'StrategyAndRecommendation': self.get_recommendation_strategies(),
+        names_and_values_dict = {'Rank': self.get_rank(),
+                                 'StrategyAndRecommendation': self.get_recommendation_strategies(),
                                  'Stockname': self.get_stock_name(), "Ticker": self.stock_ticker(),
                                  "Exchange": self.stock_exchange(), 'StopBuy': self.get_stop_buy(),
                                  'StopLoss': self.get_stop_loss(), 'PositionSize': self.get_position_size(),

@@ -294,7 +294,7 @@ class MyController:
                     init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
 
                 GuiUtils.insert_into_treeview(self.view.Scrolledtreeview1, self.model.get_column_list(),
-                                              result_container.get_names_and_values(), result_container.get_rank())
+                                              result_container.get_names_and_values(), "Stock")
 
             except Exception as e:
                 logger.error("Exception: " + str(e) + "\n" + str(traceback.format_exc()))
@@ -373,7 +373,7 @@ def load_other_params():
 def init_result_table(tree_view, columns):
     if columns is not None and len(columns) > 0:
 
-        col_2 = ["Rank"]
+        col_2 = ["Item"]
         col_2.extend(columns)
         tree_view.configure(columns=col_2)
 

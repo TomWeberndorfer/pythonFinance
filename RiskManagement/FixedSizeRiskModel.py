@@ -19,17 +19,17 @@ class FixedSizeRiskModel(Abstract_RiskModel):
         sl = res['stop_loss']
         sb = res['stop_buy']
         # cut the comma value to avoid position size above the fixes size maximum
-        if sb is not 'NaN':
+        if sb is not 0:
             num_of_pos_to_buy = int(self._parameter_dict["FixedPositionSize"] / sb)
             stock_data_container.set_position_size(num_of_pos_to_buy)
             stock_data_container.set_stop_buy(round(sb, 2))
         else:
-            stock_data_container.set_position_size('NaN')
-            stock_data_container.set_stop_buy('NaN')
+            stock_data_container.set_position_size(0)
+            stock_data_container.set_stop_buy(0)
 
-        if sl is not 'NaN':
+        if sl is not 0:
             stock_data_container.set_stop_loss(round(sl, 2))
         else:
-            stock_data_container.set_stop_loss('NaN')
+            stock_data_container.set_stop_loss(0)
 
         stock_data_container.set_risk_model("FixedSizeRiskModel")

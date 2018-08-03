@@ -17,6 +17,8 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
 
     def get_names_and_values(self):
         names_and_values_dict = self._shaped_data_container.get_names_and_values()
+        # update because of enhanced additional calculation
+        names_and_values_dict['Rank'] = self.get_rank()
 
         names_and_values_dict.update(
             {"Target Price": self.stock_target_price(), "Stock Current Prize": self.stock_current_prize(),

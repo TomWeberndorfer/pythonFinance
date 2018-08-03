@@ -26,14 +26,12 @@ class GuiUtils:
 
         tree.insert('', 'end', text=tree_text, values=values_to_insert)
 
-        # TODO des vl gscheida lösen
         # enables all columns to sort by click on col header
-        # for i in range(len(values_to_insert)):
-        #    GuiUtils.treeview_sort_column(tree, i, True)
-        GuiUtils.treeview_sort_column(tree, 'Rank', True)
+        for i in range(len(values_to_insert)):
+            GuiUtils.treeview_add_header_sort_column(tree, i, True)
 
     @staticmethod
-    def treeview_sort_column(tv, col, reverse):
+    def _treeview_sort_column(tv, col, reverse):
         """
         https://stackoverflow.com/questions/1966929/tk-treeview-column-sort
         :param tv: tree view to sort
@@ -51,7 +49,24 @@ class GuiUtils:
             for index, (val, k) in enumerate(l):
                 tv.move(k, '', index)
 
-            tv.heading(col, command=lambda: GuiUtils.treeview_sort_column(tv, col, not reverse))
+            tv.heading(col, command=lambda: GuiUtils._treeview_sort_column(tv, col, not reverse))
+
+        except Exception as e:
+            logger.error("Exception Could not sort the given treeview: " + str(e) + "\n" + str(traceback.format_exc()))
+
+    @staticmethod
+    def treeview_add_header_sort_column(tv, col, reverse):
+        """
+        Adds a sort function to header
+        https://stackoverflow.com/questions/1966929/tk-treeview-column-sort
+        :param tv: tree view to sort
+        :param col: column index to sort
+        :param reverse:  True: reverse sort
+        :return: -
+        """
+        try:
+            l = [(tv.set(k, col), k) for k in tv.get_children('')]
+            tv.heading(col, command=lambda: GuiUtils._treeview_sort_column(tv, col, not reverse))
 
         except Exception as e:
             logger.error("Exception Could not sort the given treeview: " + str(e) + "\n" + str(traceback.format_exc()))

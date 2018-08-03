@@ -136,7 +136,7 @@ def calculate_stopbuy_and_stoploss(stock_data, stop_buy_limit_percent=1.005, sto
         raise NotImplementedError
 
     if len(stock_data) <= 0:
-        return {'stop_buy': 'NaN', 'stop_loss': 'NaN'}
+        return {'stop_buy': 0, 'stop_loss': 0}
 
     # values should be calc with max (real 52wHigh)
     highest_high = stock_data[GlobalVariables.get_stock_data_labels_dict()['High']].max()
