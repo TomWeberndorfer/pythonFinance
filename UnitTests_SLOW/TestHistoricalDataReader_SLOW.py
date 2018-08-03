@@ -39,8 +39,10 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         self.assertEqual(len(stock_data_container_list[0].historical_stock_data()), 0)
 
         # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
-        data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file,
-                                           data_source, True)
+        strategy_parameter_dict = {'Name': 'HistoricalDataReader',
+                                   'parameter_dict': {'weeks_delta': 52, 'data_source': 'iex'}}
+        data_reader = HistoricalDataReader(stock_data_container_list, stock_data_container_file,
+                                           True, strategy_parameter_dict)
         df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker(),
                                                          stock_data_container.stock_exchange(),
                                                          data_source, weeks_delta=52)
@@ -57,10 +59,10 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         stock_data_container_list.append(intel_container)
 
         self.assertEqual(len(stock_data_container_list[0].historical_stock_data()), 0)
-
+        strategy_parameter_dict = {'Name': 'HistoricalDataReader', 'weeks_delta': 52, 'data_source': 'iex'}
         # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
-        data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file,
-                                           data_source, False)
+        data_reader = HistoricalDataReader(stock_data_container_list, stock_data_container_file,
+                                           False, strategy_parameter_dict)
         data_reader.read_data()
 
         # the container must have at least 200 entry days for last and current year
@@ -74,8 +76,10 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
     def test_read_data_without_factory_t(self):
 
         # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
-        data_reader = HistoricalDataReader(stock_data_container_list_2, weeks_delta, stock_data_container_file,
-                                           data_source, True)
+        strategy_parameter_dict = {'Name': 'HistoricalDataReader',
+                                   'parameter_dict': {'weeks_delta': 52, 'data_source': 'iex'}}
+        data_reader = HistoricalDataReader(stock_data_container_list_2, stock_data_container_file,
+                                           True, strategy_parameter_dict)
         data_reader.read_data()
 
         for sd in stock_data_container_list_2:
@@ -89,11 +93,10 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         stock_data_container_list.append(intel_container)
 
         self.assertEqual(len(stock_data_container_list[0].historical_stock_data()), 0)
-
+        strategy_parameter_dict = {'Name': 'HistoricalDataReader', 'weeks_delta': 52, 'data_source': 'iex'}
         data_storage = DataReaderFactory()
-        stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list, weeks_delta,
-                                                 stock_data_container_file, data_source,
-                                                 True, date_file)
+        stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list,
+                                                 stock_data_container_file, True, strategy_parameter_dict)
         stock_data_reader.read_data()
 
         self.assertEqual(len(stock_data_container_list), 2)
@@ -124,9 +127,9 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         # TODO eventuell als return statt als call by reference: stock_data_container_list = data_storage.read_data("HistoricalDataReader", stock_data_container_list, weeks_delta, GlobalVariables.get_data_files_path() + 'stock_dfs')
         # TODO relead data
         data_storage = DataReaderFactory()
-        stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list, weeks_delta,
-                                                 stock_data_container_file, data_source,
-                                                 True, date_file)
+        strategy_parameter_dict = {'Name': 'HistoricalDataReader', 'weeks_delta': 52, 'data_source': 'iex'}
+        stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list,
+                                                 stock_data_container_file, True, strategy_parameter_dict)
         stock_data_reader.read_data()
 
         failed_reads = 0

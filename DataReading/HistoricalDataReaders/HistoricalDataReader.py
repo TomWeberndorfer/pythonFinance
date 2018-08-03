@@ -3,7 +3,7 @@ import traceback
 
 from pandas_datareader import data
 
-from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
+from DataReading.Abstract_DataReader import Abstract_StockDataReader
 from Utils.Logger_Instance import logger
 from Utils.GlobalVariables import *
 
@@ -22,15 +22,17 @@ class HistoricalDataReader(Abstract_StockDataReader):
                     or self.reload_stockdata:
                 stock52_w = self._get_ticker_data_with_webreader(stock_data_container.stock_ticker(),
                                                                  stock_data_container.stock_exchange(),
-                                                                 self.data_source,
-                                                                 self.weeks_delta)
+                                                                 self._parameter_dict['data_source'],
+                                                                 self._parameter_dict['weeks_delta'])
 
                 stock_data_container.set_historical_stock_data(stock52_w)
                 try:
-                    curr_prize = stock52_w[GlobalVariables.get_stock_data_labels_dict()["Close"]][len(stock52_w) - 1]
-                    stock_data_container.set_stock_current_prize(curr_prize)
+                    if stock52_w is not None and len(stock52_w) > 0:
+                        curr_prize = stock52_w[GlobalVariables.get_stock_data_labels_dict()["Close"]][
+                            len(stock52_w) - 1]
+                        stock_data_container.set_stock_current_prize(curr_prize)
 
-                except Exception as e :
+                except Exception as e:
                     logger.error(
                         "Could not set curr_prize of stock " + stock_data_container.get_stock_name() + " " + str(
                             e) + "\n" + str(traceback.format_exc()))
@@ -49,14 +51,14 @@ class HistoricalDataReader(Abstract_StockDataReader):
         :param weeks_delta: delta from now to read the past: 52 means 52 weeks in the past
         :return: a dataframe df with ticker data
         """
-        assert len(ticker) < 10, "ATTENTION: ticker length is long, maybe it is a name not a ticker: " + ticker
+        assert len(ticker) < 15, "ATTENTION: ticker length is long, maybe it is a name not a ticker: " + ticker
         df = []
 
         if ticker == "" or ticker == '' or len(ticker) <= 0:
             logger.error("EXCEPTION reading because ticker is empty")
             return df
 
-        #TODO 11 ticker = optimize_name_for_yahoo(ticker)  # TODO nicht nur für yahoo
+        # TODO 11 ticker = optimize_name_for_yahoo(ticker)  # TODO nicht nur für yahoo
         ticker_exchange = ticker
 
         if ticker_exchange == "" or ticker_exchange == '' or len(ticker_exchange) <= 0:
@@ -64,8 +66,8 @@ class HistoricalDataReader(Abstract_StockDataReader):
             return df
 
         # TODO 3: yahoo does not take en, so skip
-        #if _stock_exchange != '' and _stock_exchange is not None and _stock_exchange != "en" and data_source == 'yahoo':
-        #ticker_exchange += "." + _stock_exchange
+        # if _stock_exchange != '' and _stock_exchange is not None and _stock_exchange != "en" and data_source == 'yahoo':
+        # ticker_exchange += "." + _stock_exchange
 
         # TODO autmatisieren von pandas=??
         # for i in range(0, 2): #TODO 4
@@ -77,19 +79,21 @@ class HistoricalDataReader(Abstract_StockDataReader):
         #        if len(df) > 0:
         #            break
 
+        except KeyError as ke:
+            logger.error("No Stock data read for: " + str(ticker_exchange))
         except Exception as e:
             logger.error(str(e) + "\n" + str(traceback.format_exc()))
-                # exception but the df is filled --> ok
+            # exception but the df is filled --> ok
 
-         #       if len(df) > 0:
-         #           break
+        #       if len(df) > 0:
+        #           break
 
-            # TODO performance: wird dann langsam
-            # from time import sleep
-            #sleep(0.1)  # Time in seconds.
+        # TODO performance: wird dann langsam
+        # from time import sleep
+        # sleep(0.1)  # Time in seconds.
 
         if len(df) <= 0:
-            logger.error("EXCEPTION reading because ticker is empty, " +
+            logger.error("EXCEPTION reading because data is empty, " +
                          'FAILED: Reading {}'.format(ticker_exchange))
 
         return df

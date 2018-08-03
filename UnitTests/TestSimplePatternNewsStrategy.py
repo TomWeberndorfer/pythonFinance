@@ -1,6 +1,8 @@
 import os
 import unittest
 from pandas import DataFrame
+
+from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
@@ -22,25 +24,28 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
 
         df = DataFrame.from_records(data, columns=labels)
 
-        apple_stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
-        apple_stock_data_container.set_historical_stock_data(df)
+        aapl = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", "en"), 0, 0,
+                                          "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf", 0)
+        rwe = NewsDataContainerDecorator(StockDataContainer("RWE AG ST O.N.", "RWE", ""), 0, 0,
+                                         "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf", 0)
+        aapl.set_historical_stock_data(df)
+        rwe.set_historical_stock_data(df)
+
         rwe_stock_data_container = StockDataContainer("RWE AG ST O.N.", "RWE", "")
         rwe_stock_data_container.set_historical_stock_data(df)
-        stock_data_container_list = [apple_stock_data_container, rwe_stock_data_container]
+        stock_data_container_list = [aapl, rwe]
 
         parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
-        all_news_text_list = ["ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
-                              "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf"]
 
         stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list, parameter_dict, all_news_text_list)
+                                                        stock_data_container_list, parameter_dict)
 
         results = news_strategy.run_strategy()
 
         self.assertEqual(results[0] in stock_data_container_list, True)
-        apple_idx = results.index(apple_stock_data_container)
-        rwe_idx = results.index(rwe_stock_data_container)
+        apple_idx = results.index(aapl)
+        rwe_idx = results.index(rwe)
 
         t1 = round(results[apple_idx].positive_prob_dist(), 2)
         self.assertEqual(results[apple_idx].get_stock_name(), "Apple Inc.")
@@ -60,21 +65,25 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
 
         df = DataFrame.from_records(data, columns=labels)
 
-        apple_stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        apple_stock_data_container = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
+                                                                "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
+                                                                0)
+        apple_stock_data_container2 = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
+                                                                 "ANALYSE-FLASH: Sparkasse nimmt Apple mit Buy wieder auf",
+                                                                 0)
+
         apple_stock_data_container.set_historical_stock_data(df)
-        rwe_stock_data_container = StockDataContainer("RWE AG ST O.N.", "RWE", "")
+        apple_stock_data_container2.set_historical_stock_data(df)
+        rwe_stock_data_container = NewsDataContainerDecorator(StockDataContainer("RWE AG ST O.N.", "RWE", ""), 0, 0,
+                                                              "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf",
+                                                              0)
         rwe_stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [apple_stock_data_container, rwe_stock_data_container]
 
         parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
-        all_news_text_list = ["ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
-                              "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf",
-                              "ANALYSE-FLASH: Sparkasse nimmt Apple mit Buy wieder auf"]
-
         stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list, parameter_dict,
-                                                        all_news_text_list)
+                                                        stock_data_container_list, parameter_dict)
 
         results = news_strategy.run_strategy()
 

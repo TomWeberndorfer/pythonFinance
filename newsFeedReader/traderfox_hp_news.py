@@ -8,38 +8,6 @@ from datetime import datetime
 import pandas as pd
 
 
-def read_news_from_traderfox(date_file, date_time_format="%d.%m.%Y um %H:%M"):
-    """
-    read news from traderfox home page with dpa-afx-compact news
-    :param date_time_format: news datetime format
-    :param date_file: file for last check date
-    :return: news as list
-    """
-    # TODO for enhanced
-    # url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
-    url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-5/"
-    resp = requests.get(url)
-    soup = bs.BeautifulSoup(resp.text, 'lxml')
-    # article --> h2 --> a href for news text, article --> footer for date
-    all_articles = soup.find_all("article")
-
-    # ex: #news = "27.02. 10:41 dpa-AFX: ANALYSE-FLASH: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro"
-    all_news = []
-    last_date = ""
-    for elm in all_articles:
-        date_time = (str(elm.footer.span.get_text()))  # date and Time
-        date_time = date_time.rsplit(' Uhr')[0] #TODO: split because of datetime format
-        datetime_object = datetime.strptime(date_time, date_time_format)
-        is_a_new_news, last_date = is_date_actual(datetime_object, date_file, last_date)
-
-        if is_a_new_news:
-            article_text = (str(elm.h2.get_text(strip=True)))  # h2 --> article head line
-            news_text = date_time.replace(',', '.') + ", " + article_text.replace(',', '.')
-            all_news.append(news_text)
-
-    return all_news
-
-
 def is_date_actual(date_to_check, last_date_file="", last_date="", date_time_format="%d.%m.%Y um %H:%M"):
     """
 

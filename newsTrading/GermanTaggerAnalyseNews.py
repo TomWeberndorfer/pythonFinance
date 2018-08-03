@@ -18,14 +18,14 @@ from Utils.Logger_Instance import logger
 
 
 class GermanTaggerAnalyseNews:
-    def __init__(self, stock_data_container_list, threshold, german_tagger):
+    def __init__(self, stock_data_container_list, threshold=None, german_tagger=None):
         """
         Init for german tagger class
         :param stock_data_container_list: list with data of stocks as list with class or subclass of StockDataContainer
         :param threshold: classifier threshold to recognize
         :param german_tagger: can be none, and will be loaded otherwise
         """
-        if stock_data_container_list is None or not isinstance(stock_data_container_list[0], StockDataContainer):
+        if stock_data_container_list is None:  # TODO: or not isinstance(stock_data_container_list[0], StockDataContainer):
             raise NotImplementedError("stock_data_container_list is used wrong")
 
         self.classifier = self.__train_classifier()
@@ -48,48 +48,27 @@ class GermanTaggerAnalyseNews:
         else:
             self.german_tagger = german_tagger
 
-    def analyse_single_news(self, news_to_analyze):
+    def analyse_single_news(self, stock_data_container):
         """
            Analyses a news text and returns a dict with containing data, if news classification is above
            the given threshold (default =0.7)
            :type news_to_analyze: string
-           :param news_to_analyze: news text to analyze
+           :param stock_data_container: container with news text to analyze
            :return: result_news_stock_data_container
            """
 
-        if news_to_analyze is None:
+        if stock_data_container is None:
             raise NotImplementedError
 
-        current_prize = ""
-        prep_news = self.__process_news(news_to_analyze)
-        name_ticker_exchange_target_prize = \
-            self._identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier_data_nouns(
-                prep_news)
-        if name_ticker_exchange_target_prize is not None and name_ticker_exchange_target_prize.get_stock_name() != "":
-            prob_dist = self.classifier.prob_classify(prep_news)
+        try:
+            if stock_data_container.original_news() is not None:
+                prob_dist = self.classifier.prob_classify(stock_data_container.original_news())
+                stock_data_container.set_prop_dist(prob_dist.prob("pos"))
+        except AttributeError:
+            # handle missing key
+            return None
 
-            if (round(prob_dist.prob("pos"), 2) > self.threshold) or (
-                    round(prob_dist.prob("neg"), 2) > self.threshold):
-
-                container = StockDataContainer(name_ticker_exchange_target_prize.get_stock_name(),
-                                               name_ticker_exchange_target_prize.stock_ticker(),
-                                               name_ticker_exchange_target_prize.stock_exchange())
-
-                if container in self.stock_data_container_list:
-                    idx = self.stock_data_container_list.index(container)
-                    hist_data = self.stock_data_container_list[idx].historical_stock_data()
-                    container = self.stock_data_container_list[idx]
-
-                    if len(hist_data) > 0:
-                        current_prize = hist_data[GlobalVariables.get_stock_data_labels_dict()["Close"]][len(hist_data) - 1]
-
-                news_dec = NewsDataContainerDecorator(container,
-                                                      name_ticker_exchange_target_prize.stock_target_price(),
-                                                      prob_dist.prob("pos"), prep_news, current_prize)
-
-                return news_dec
-
-        return None
+        return stock_data_container
 
     def __train_classifier(self):
         """
@@ -111,6 +90,7 @@ class GermanTaggerAnalyseNews:
             ('empfiehlt', 'pos'),
             ('outperform', 'pos'),
             ('overweight', 'pos'),
+            ('Outperform', 'pos'),
 
             # ('', 'pos'),
             # ('', 'neg')
@@ -129,8 +109,8 @@ class GermanTaggerAnalyseNews:
         cl = NaiveBayesClassifier(train)
         return cl
 
-    def _identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier_data_nouns(self,
-                                                                                                           single_news_to_analyze):
+    def identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier(self,
+                                                                                               single_news_to_analyze):
         """
         Identifies a stock name within a news and returns the name and ticker
         :param single_news_to_analyze: news text itself
@@ -141,7 +121,7 @@ class GermanTaggerAnalyseNews:
         if single_news_to_analyze is None:
             raise NotImplementedError
 
-        preprocessed_news = self.__process_news(single_news_to_analyze)
+        preprocessed_news = self.optimize_text_for_german_tagger(single_news_to_analyze)
 
         # TODO: http://dsspace.wzb.eu/pyug/text_proc_feature_extraction/
         tokens = nltk.word_tokenize(preprocessed_news, language="german")
@@ -250,7 +230,7 @@ class GermanTaggerAnalyseNews:
 
         return parts
 
-    def __process_news(self, news_to_analyze):
+    def optimize_text_for_german_tagger(self, news_to_analyze):
         """
         Preprocess news for text analysis
         :param news_to_analyze: original news

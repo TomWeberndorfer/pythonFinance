@@ -30,7 +30,7 @@ class GuiUtils:
         # enables all columns to sort by click on col header
         # for i in range(len(values_to_insert)):
         #    GuiUtils.treeview_sort_column(tree, i, True)
-        GuiUtils.treeview_sort_column(tree, 1, True)
+        GuiUtils.treeview_sort_column(tree, 'Rank', True)
 
     @staticmethod
     def treeview_sort_column(tv, col, reverse):

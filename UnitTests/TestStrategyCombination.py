@@ -1,11 +1,13 @@
 import os
 import unittest
 from pandas import DataFrame
+
+from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from dateutil import parser
 # from directory UnitTests to --> root folder with: ..\\..\\
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
@@ -14,6 +16,8 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 class TestStrategyCombination(unittest.TestCase):
 
     def test_run_strategy_with_two_news_for_one_stock(self):
+        name_idx = 0
+        datetime_idx = 1
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)
@@ -29,21 +33,23 @@ class TestStrategyCombination(unittest.TestCase):
 
         df = DataFrame.from_records(data, columns=labels)
 
-        apple_stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        apple_stock_data_container = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
+                                                                "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
+                                                                0)
+        apple_stock_data_container_2 = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
+                                                                  "ANALYSE-FLASH: Sparkasse hebt Apple auf 'Buy' und Ziel auf 97 Euro",
+                                                                  0)
         apple_stock_data_container.set_historical_stock_data(df)
-        stock_data_container_list = [apple_stock_data_container]
+        apple_stock_data_container_2.set_historical_stock_data(df)
+        stock_data_container_list = [apple_stock_data_container, apple_stock_data_container_2]
 
         w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
         parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
-        all_news_text_list = ["ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
-                              "ANALYSE-FLASH: Sparkasse hebt Apple auf 'Buy' und Ziel auf 97 Euro"]
-
         stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list, parameter_dict,
-                                                        all_news_text_list)
+                                                        stock_data_container_list, parameter_dict)
 
-        test = news_strategy.run_strategy()
+        news_strategy.run_strategy()
 
         w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", stock_data_container_list,
                                                        w52hi_parameter_dict)
@@ -51,13 +57,18 @@ class TestStrategyCombination(unittest.TestCase):
 
         self.assertEqual(stock_data_container_list[0].get_stock_name(), "Apple Inc.")
         self.assertEqual("BUY",
-                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][0])
-        self.assertAlmostEqual(str(datetime.now()),
-                               stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][
-                                   1])
+                         stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][
+                             name_idx])
+
+        dt = parser.parse(
+            stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][datetime_idx])
+        elapsed = datetime.now() - dt
+        self.assertGreater(timedelta(seconds=0.1), elapsed)
 
         self.assertEqual("SELL",
-                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"][0])
+                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"][
+                             name_idx])
 
         self.assertEqual("BUY",
-                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"][0])
+                         stock_data_container_list[0].get_recommendation_strategies()["SimplePatternNewsStrategy"][
+                             name_idx])

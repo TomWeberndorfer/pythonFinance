@@ -4,9 +4,9 @@ import traceback
 import _pickle as pickle
 import pandas as pd
 
-import Utils.Logger_Instance
 from Utils.common_utils import read_table_columns_from_webpage_list, CommonUtils
 import main_v1_support
+from Utils.Logger_Instance import logger
 
 
 class FileUtils:
@@ -41,6 +41,40 @@ class FileUtils:
         return True
 
 
+def read_tickers_and_data_from_file(stock_data_container_file):
+    stock_data_container_list = []
+    if os.path.exists(stock_data_container_file):
+        logger.info("Start reading tickers from file...")
+
+        with open(stock_data_container_file, "rb") as f:
+            stock_data_container_list += pickle.load(f)
+
+    return stock_data_container_list
+
+
+def read_tickers_from_web(stock_data_container_file, list_with_stock_pages_to_read=[]):
+    """
+       Read the gives list of stock pages
+        :param list_with_stock_pages_to_read:
+        :param stock_data_container_file:
+       :return: stock_data_container_list
+    """
+
+    stock_data_container_list = []
+    logger.info("Start reading tickers from web...")
+
+    pool = CommonUtils.get_threading_pool()
+    result_list = pool.map(read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
+
+    for result in result_list:
+        stock_data_container_list.extend(result)
+
+    with open(stock_data_container_file, "wb") as f:
+        pickle.dump(stock_data_container_list, f)
+
+    return stock_data_container_list
+
+
 def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, list_with_stock_pages_to_read=[]):
     """
         TODO
@@ -61,7 +95,7 @@ def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, 
     stock_data_container_list = []
 
     if not os.path.exists(stock_data_container_file) or reload_file:
-        Utils.Logger_Instance.logger.info("Start reading tickers...")
+        logger.info("Start reading tickers...")
 
         pool = CommonUtils.get_threading_pool()
         result_list = pool.map(read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
@@ -157,7 +191,7 @@ def check_file_exists_or_create(file, txt=""):
     if os.path.exists(file):
         return True
     else:
-        Utils.Logger_Instance.logger.info("\nFile " + file + " did not exist! Was created for you!")
+        logger.info("\nFile " + file + " did not exist! Was created for you!")
 
         with open(file, "a") as myfile:
             if txt != "":
@@ -177,4 +211,4 @@ def check_file_exists_and_delete(filename):
     if os.path.isfile(filename):
         os.remove(filename)
     else:  ## Show an error ##
-        Utils.logger.info("File not found: " + str(filename))
+        logger.info("File not found: " + str(filename))

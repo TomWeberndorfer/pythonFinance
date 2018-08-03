@@ -3,9 +3,12 @@ import re
 import unittest
 from datetime import datetime
 
+from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
+from DataReading.NewsStockDataReaders.TraderfoxNewsDataReader import TraderfoxNewsDataReader
+
 from DataReading.StockDataContainer import StockDataContainer
 from Utils.file_utils import read_tickers_from_file_or_web, FileUtils
-from newsFeedReader.traderfox_hp_news import read_news_from_traderfox, is_date_actual
+from newsFeedReader.traderfox_hp_news import is_date_actual
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 from Utils.GlobalVariables import *
 import pandas as pd
@@ -31,52 +34,25 @@ class TestNewsReader(unittest.TestCase):
 
         with open(test_file, "w") as myfile:
             myfile.write("last_check_date" + "\n")
-            myfile.write("08.03.2018 um 02:17" + "\n")
+            myfile.write("01.01.2018 um 02:17" + "\n")
 
-        news = read_news_from_traderfox(test_file)
-        self.assertGreater(len(news), 0)
+        stock_data_container_list = []
+        data_storage = DataReaderFactory()
+        reader_type = 'TraderfoxNewsDataReader'
+        data_reader_params = {'Name': 'TraderfoxNewsDataReader', 'last_date_time_file': test_file,
+                              'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                              'reload_data': True, 'ticker_needed': False}
+
+        reader = data_storage.prepare(reader_type, stock_data_container_list,
+                                      False,
+                                      data_reader_params)
+        reader.read_data()
+        self.assertGreater(len(stock_data_container_list), 0)
 
         # should not read again
-        news = read_news_from_traderfox(test_file)
-        self.assertEqual(0, len(news))  # no news should be read
-
-    def test_read_from_traderfox_performance(self):
-        test_file = filepath + "last_date_time.csv"
-
-        with open(test_file, "w") as myfile:
-            myfile.write("last_check_date" + "\n")
-            myfile.write("08.03.2018 um 02:17" + "\n")
-
-        thr_start = datetime.now()
-        news = read_news_from_traderfox(test_file)
-
-        txt = "\n\nRuntime test_read_from_traderfox_performance: " + str(datetime.now() - thr_start)
-        print(str(txt))
-        self.assertGreater(len(news), 0)
-
-    def test_lookup_stock_abr_in_all_names(self):
-        stock_data_container_list = [StockDataContainer("RWE AG ST O.N.", "RWE", "de"),
-                                     StockDataContainer("RHEINMETALL AG", "RHM", "de"),
-                                     StockDataContainer("BEIERSDORF AG O.N.", "BEI", "de"),
-                                     StockDataContainer("ADIDAS AG NA O.N.", "ADS", "de"),
-                                     StockDataContainer("Apple Inc.", "AAPL", "en"),
-                                     StockDataContainer("BET-AT-HOME.COM AG O.N.", "ACX", "de"),
-                                     StockDataContainer("Roche Holding AG", "RHHBY", ""),
-                                     StockDataContainer("LOrealfuture", "LORFK8.EX", "")]
-
-        analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
-                                           filepath + 'nltk_german_classifier_data.pickle')
-
-        result = analysis.lookup_stock_abr_in_all_names("Rheinmetall")
-        self.assertEqual(result, "RHEINMETALL AG")
-
-        result = analysis.lookup_stock_abr_in_all_names("Beiersdorf")
-        self.assertEqual(result, "BEIERSDORF AG O.N.")
-
-        result = analysis.lookup_stock_abr_in_all_names("Adidas")
-        self.assertEqual(result, "ADIDAS AG NA O.N.")
-
-        self.assertRaises(AttributeError, analysis.lookup_stock_abr_in_all_names, "XCERET")
+        stock_data_container_list = []
+        reader.read_data()
+        self.assertEqual(len(stock_data_container_list), 0)
 
     def test_date_check(self):
         last_date_time_str = "07.03.2018 um 03:11"

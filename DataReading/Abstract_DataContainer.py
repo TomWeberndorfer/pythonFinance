@@ -35,7 +35,13 @@ class Abstract_DataContainer:
         raise Exception("Abstractmethod")
 
     def get_rank(self):
-        return len(self.get_recommendation_strategies())
+        rank = 0
+        for strat in self.get_recommendation_strategies():
+            if self.get_recommendation_strategies()[strat][0] is "BUY":
+                rank = rank + 1
+            else:
+                rank = rank - 1
+        return rank
 
     # @property
     def stock_exchange(self):

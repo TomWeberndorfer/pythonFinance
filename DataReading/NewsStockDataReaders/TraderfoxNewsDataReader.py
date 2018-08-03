@@ -6,9 +6,12 @@ import bs4 as bs
 import pandas as pd
 import requests
 
-from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
+from DataReading.Abstract_DataReader import Abstract_StockDataReader
+from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
+from DataReading.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
+from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
 class TraderfoxNewsDataReader(Abstract_StockDataReader):
@@ -18,11 +21,12 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
     def read_data(self):
         from Utils.file_utils import check_file_exists_and_delete
         if self.reload_stockdata:
-            check_file_exists_and_delete(self.date_file)
+            check_file_exists_and_delete(self._parameter_dict['last_date_time_file'])
 
-        all_news_text_list = self.__read_news_from_traderfox(self.date_file)
+        self.__read_news_from_traderfox(self._parameter_dict['last_date_time_file'])
 
-        return all_news_text_list
+        # TODO returnen
+        # return all_news_text_list
 
     def __read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):
         """
@@ -41,6 +45,9 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         # article --> h2 --> a href for news text, article --> footer for date
         all_articles = soup.find_all("article")
 
+        text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list, None,
+                                                self._parameter_dict['german_tagger'])
+
         # ex: #news = "27.02. 10:41 dpa-AFX: ANALYSE-FLASH: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro"
         all_news = []
         last_date = ""
@@ -58,7 +65,30 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
                                          True)
                 all_news.append(news_text)
 
-        return all_news
+                prep_news = text_analysis.optimize_text_for_german_tagger(news_text)
+                name_ticker_exchange_target_prize = \
+                    text_analysis.identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier(
+                        prep_news)
+                if name_ticker_exchange_target_prize is not None and name_ticker_exchange_target_prize.get_stock_name() != "":
+                    container = StockDataContainer(name_ticker_exchange_target_prize.get_stock_name(),
+                                                   name_ticker_exchange_target_prize.stock_ticker(),
+                                                   name_ticker_exchange_target_prize.stock_exchange())
+
+                    if container in self.stock_data_container_list:
+                        idx = self.stock_data_container_list.index(container)
+                        container_2 = self.stock_data_container_list[idx]
+                        if isinstance(container_2, StockDataContainer):
+                            container = container_2
+                            self.stock_data_container_list.remove(container_2)
+
+                    news_dec = NewsDataContainerDecorator(container,
+                                                          name_ticker_exchange_target_prize.stock_target_price(),
+                                                          0, prep_news, 0)
+
+                    self.stock_data_container_list.append(news_dec)
+
+        # TODO mal was returnen
+        # return all_news
 
     def __is_date_actual(self, date_to_check, last_date_file="", last_date="", date_time_format="%d.%m.%Y um %H:%M"):
         """

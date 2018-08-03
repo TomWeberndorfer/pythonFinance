@@ -56,3 +56,9 @@ class Abstract_DataContainerDecorator(Abstract_DataContainer):
 
     def set_risk_model(self, risk_model):
         self._shaped_data_container._risk_model = str(risk_model)
+
+    def set_historical_stock_data(self, historical_stock_data_df):
+        self._shaped_data_container.set_historical_stock_data(historical_stock_data_df)
+
+    def get_historical_stock_data(self):
+        return self._shaped_data_container.get_historical_stock_data()

@@ -7,13 +7,16 @@ from DataReading.NewsStockDataReaders.TraderfoxNewsDataReader import TraderfoxNe
 # https://sourcemaking.com/design_patterns/factory_method
 class DataReaderFactory(Abstract_ReaderFactory):
 
-    def _create_data_storage(self, storage_to_create, stock_data_container_list, weeks_delta, stock_data_container_file, data_source, reload_stockdata, date_file):
-        if storage_to_create in "TraderfoxNewsDataReader":
-            storage = TraderfoxNewsDataReader(stock_data_container_list, weeks_delta, stock_data_container_file, data_source, reload_stockdata, date_file)
+    def _create_data_storage(self, reader_to_create, stock_data_container_list,
+                             reload_stockdata, parameter_dict):
+        if reader_to_create in "TraderfoxNewsDataReader":
+            reader = TraderfoxNewsDataReader(stock_data_container_list,
+                                             reload_stockdata, parameter_dict)
 
-        elif storage_to_create in "HistoricalDataReader":
-            storage = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file, data_source, reload_stockdata, date_file)
+        elif reader_to_create in "HistoricalDataReader":
+            reader = HistoricalDataReader(stock_data_container_list,
+                                          reload_stockdata, parameter_dict)
         else:
             raise NotImplementedError
 
-        return storage
+        return reader

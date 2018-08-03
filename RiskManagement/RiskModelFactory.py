@@ -1,7 +1,3 @@
-from DataReading.Abstract_ReaderFactory import Abstract_ReaderFactory
-from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
-from DataReading.NewsStockDataReaders.TraderfoxNewsDataReader import TraderfoxNewsDataReader
-
 # todo umstellen auf abstract factory
 # https://sourcemaking.com/design_patterns/factory_method
 from RiskManagement.Abstract_RiskModelFactory import Abstract_RiskModelFactory

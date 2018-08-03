@@ -61,6 +61,8 @@ def get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks(name_abbr):
                 first_stock = result_set[0]
                 found_name = first_stock['name']
                 found_symbol = first_stock['symbol']
+                if "." in found_symbol:
+                    found_symbol = found_symbol.split(".")[0]
                 return found_name, found_symbol
 
         except Exception as e:

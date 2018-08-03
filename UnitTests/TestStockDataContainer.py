@@ -3,6 +3,8 @@ from time import sleep
 from dateutil import parser
 from pandas import DataFrame
 from datetime import datetime, timedelta
+
+from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
@@ -89,7 +91,9 @@ class TestStockDataContainer(unittest.TestCase):
                 ('2016-10-12', 23.16, 26, 23.11, 23.18, 46000)]
 
         df = DataFrame.from_records(data, columns=labels)
-        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
+                                                          "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Outperform' wieder auf, BUY",
+                                                          0)
         stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [stock_data_container]
         ##################################################
@@ -102,19 +106,19 @@ class TestStockDataContainer(unittest.TestCase):
         self.assertGreater(len(stock_data_container_list), 0)
         self.assertEqual("BUY",
                          stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][0])
-        self.assertAlmostEqual(str(datetime.now()),
-                               stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][
-                                   1])
+
+        dt = parser.parse(stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][1])
+        elapsed = datetime.now() - dt
+        self.assertGreater(timedelta(seconds=0.01), elapsed)
         # stock_data_container_list = results
 
         ##############################
         # SimplePatternNewsStrategy
         parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
-        all_news_text_list = ["ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Outperform' wieder auf, BUY"]
 
         stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list, parameter_dict, all_news_text_list)
+                                                        stock_data_container_list, parameter_dict)
 
         news_strategy.run_strategy()
         self.assertEqual(stock_data_container_list[0].get_stock_name(), "Apple Inc.")

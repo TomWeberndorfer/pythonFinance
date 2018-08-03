@@ -12,12 +12,16 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
         self._original_news = original_news
         self._stock_current_prize = stock_current_prize
 
+    def __str__(self):
+        return self._shaped_data_container.__str__()
+
     def get_names_and_values(self):
         names_and_values_dict = self._shaped_data_container.get_names_and_values()
 
         names_and_values_dict.update(
-            {"Target Price": self.stock_target_price(), "Pos. Probability Distribution": self.positive_prob_dist(),
-             "Original News": self.original_news(), "Stock Current Prize": self.stock_current_prize()})
+            {"Target Price": self.stock_target_price(), "Stock Current Prize": self.stock_current_prize(),
+             "Pos. Probability Distribution": self.positive_prob_dist(),
+             "Original News": self.original_news()})
         return names_and_values_dict
 
     def stock_target_price(self):
@@ -32,8 +36,31 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
     def stock_current_prize(self):
         return self._stock_current_prize
 
+    def set_stock_current_prize(self, stock_current_prize):
+        self._stock_current_prize = stock_current_prize
+
     def set_prop_dist(self, prob_dist):
+        """
+        Set Propability distribution
+        :param prob_dist: positive pro dist value as number
+        :return:
+        """
         self._prob_dist = prob_dist
 
     def set_stock_target_price(self, stock_target_price):
         self._stock_target_price = stock_target_price
+
+    def get_rank(self):
+        base_rank = self._shaped_data_container.get_rank()
+        additional_rank = 0
+        try:
+            if self.positive_prob_dist() > 0.5:
+                pos_rank = round(self.positive_prob_dist() * 2, 0)
+                add_rank = additional_rank + pos_rank
+            else:
+                t1 = 1 - self.positive_prob_dist()
+                neg_rank = round(t1 * 2, 0)
+                add_rank = additional_rank - neg_rank
+        except Exception as e:
+            pass
+        return base_rank + add_rank

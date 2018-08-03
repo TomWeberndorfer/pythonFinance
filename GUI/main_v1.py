@@ -167,7 +167,7 @@ class Framework:
         self.Scrolledtext_params.configure(selectbackground="#c4c4c4")
         self.Scrolledtext_params.configure(selectforeground="black")
         self.Scrolledtext_params.configure(width=10)
-        self.Scrolledtext_params.configure(wrap=NONE)
+        self.Scrolledtext_params.configure(wrap=WORD)
 
         self.Scrolled_other_parameters = ScrolledText(self.Strategy)
         self.Scrolled_other_parameters.place(relx=0.01, rely=0.76, relheight=0.19
@@ -182,7 +182,7 @@ class Framework:
         self.Scrolled_other_parameters.configure(selectbackground="#c4c4c4")
         self.Scrolled_other_parameters.configure(selectforeground="black")
         self.Scrolled_other_parameters.configure(width=10)
-        self.Scrolled_other_parameters.configure(wrap=NONE)
+        self.Scrolled_other_parameters.configure(wrap=WORD)
 
         self.Frame2 = Frame(top)
         self.Frame2.place(relx=0.01, rely=0.59, relheight=0.11, relwidth=0.98)
