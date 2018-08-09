@@ -200,7 +200,7 @@ def print_stocks_to_buy(stocks_to_buy, program_start_time, program_end_time,
                     # replace . with , for excel csv
                     to_print_file += ";" + str(sb).replace('.', ',') + ';' + str(sl).replace('.', ',') + ";" + str(
                         strategy_name) + ";" + str(params) + ";" + url + ";" + url2
-                    # TODO append_to_file(str(now.strftime("%Y-%m-%d %H:%M")) + "; " + to_print_file,
+                    # TODO append_textline_to_file(str(now.strftime("%Y-%m-%d %H:%M")) + "; " + to_print_file,
                     #               file_name_and_path_stocks_to_buy)
 
                     # url_1 = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="

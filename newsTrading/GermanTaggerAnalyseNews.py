@@ -91,19 +91,25 @@ class GermanTaggerAnalyseNews:
             ('outperform', 'pos'),
             ('overweight', 'pos'),
             ('Outperform', 'pos'),
+            ('outperform', 'pos'),
 
             # ('', 'pos'),
             # ('', 'neg')
             ('Share Down', 'neg'),
             ('Target Price Lower', 'neg'),
-            ('Stock Down', 'neg'),
+            ('down', 'neg'),
+            ('Down', 'neg'),
             ('lose', 'neg'),
             ('senkt', 'neg'),
             ('belässt', 'neg'),
             ('Sell', 'neg'),
+            ('sell', 'neg'),
             ('underperform', 'neg'),
+            ('Underperform', 'neg'),
             ('neutral', 'neg'),
+            ('Neutral', 'neg'),
             ('reduce', 'neg'),
+            ('Reduce', 'neg'),
         ]
 
         cl = NaiveBayesClassifier(train)

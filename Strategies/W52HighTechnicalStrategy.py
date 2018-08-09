@@ -5,7 +5,7 @@ from Signals.Signals import signal_is_volume_high_enough, signal_is_volume_raisi
 from Strategies.Abstract_Strategy import Abstract_Strategy
 
 
-# from Utils.file_utils import read_tickers_from_file_or_web, append_to_file
+# from Utils.file_utils import read_tickers_from_file_or_web, append_textline_to_file
 
 
 # TODO parameter aus self statt da oben --> parameter_dict.news_threshold

@@ -61,8 +61,9 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
                 article_text = (str(elm.h2.get_text(strip=True)))  # h2 --> article head line
                 news_text = date_time.replace(',', '.') + ", " + article_text.replace(',', '.')
                 # TODO irgendwann wegdoa
-                FileUtils.append_to_file(news_text, GlobalVariables.get_data_files_path() + "NewsForBacktesting.txt",
-                                         True)
+                FileUtils.append_textline_to_file(news_text,
+                                                  GlobalVariables.get_data_files_path() + "NewsForBacktesting.txt",
+                                                  True)
                 all_news.append(news_text)
 
                 prep_news = text_analysis.optimize_text_for_german_tagger(news_text)

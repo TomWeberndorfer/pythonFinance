@@ -22,6 +22,7 @@ from tkinter import filedialog
 
 from Utils.GlobalVariables import *
 from Utils.GuiUtils import GuiUtils
+from Utils.file_utils import FileUtils
 
 
 class MyController:
@@ -55,7 +56,8 @@ class MyController:
             cur_selection = self.view.Scrolledtreeview1.selection()[0]
             cur_stock = self.view.Scrolledtreeview1.item(cur_selection)
 
-            stock_name = cur_stock['values'][0]  # 0 --> name is first
+            # TODO je nachj container unterschiedlich 2 --> name is first
+            stock_name = cur_stock['values'][2]
             url_to_open = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
             wb.open_new_tab(url_to_open + stock_name)
         except IndexError as e:
@@ -178,20 +180,22 @@ class MyController:
                 "Exception while loading other parameter from file: " + str(e) + "\n" + str(traceback.format_exc()))
             return
 
-    def dump_strategy_parameter_to_file(self, file_path=GlobalVariables.get_data_files_path() + "ParameterFile.pickle"):
+    def dump_strategy_parameter_to_file(self, file_path=GlobalVariables.get_data_files_path() + "ParameterFile.pickle",
+                                        content=""):
         """
         dumps the parameters to a global given file
-        :param file_path:
-        :return:
+        :param content: the content to dump as string
+        :param file_path: file path + name to dump to
+        :return: -
         """
 
         try:
-            content = self.view.Scrolledtext_params.get(1.0, END)
             strat_dict = ast.literal_eval(content)
 
             if strat_dict == {}:
                 messagebox.showerror("Parameters empty", "Please insert parameters")
             else:
+                self.model.clear_strategy_parameter_dicts()
                 self.model.add_to_strategy_parameter_dicts(strat_dict)
                 with open(file_path, "wb") as f:
                     strat_params = self.model.get_strategy_parameter_dicts()
@@ -213,19 +217,21 @@ class MyController:
             return
 
     def dump_other_parameter_to_file(self,
-                                     file_path=GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle"):
+                                     file_path=GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle",
+                                     content_others=""):
         """
         dumps the parameters to a global given file
-        :param file_path:
-        :return:
+        :param content_others: the content to dump as string
+        :param file_path: file path + name to dump to
+        :return: -
         """
         try:
-            content_others = self.view.Scrolled_other_parameters.get(1.0, END)
             content_others_dict = ast.literal_eval(content_others)
 
             if content_others_dict == {}:
                 messagebox.showerror("Other Parameters empty", "Please insert parameters")
             else:
+                self.model.clear_other_params()
                 self.model.add_to_other_params(content_others_dict)
                 with open(file_path, "wb") as f:
                     other_params = self.model.get_other_params()
@@ -240,7 +246,6 @@ class MyController:
                     else:
                         messagebox.showerror("Other parameter file is not valid!",
                                              "Please choose a valid other parameters file!")
-                    pickle.dump(other_params, f)
 
         except Exception as e:
             logger.error("Exception while dump_other_parameter_to_file: " + str(e) + "\n" + str(traceback.format_exc()))
@@ -296,6 +301,18 @@ class MyController:
                 GuiUtils.insert_into_treeview(self.view.Scrolledtreeview1, self.model.get_column_list(),
                                               result_container.get_names_and_values(), "Stock")
 
+                # append all columns to file --> new layout leads to new line with header
+                FileUtils.append_text_list_to_file(self.model.get_column_list(),
+                                                   GlobalVariables.get_data_files_path() + "ScreeningResults.csv",
+                                                   True, ",")
+
+                values = result_container.get_names_and_values().values()
+                text = ','.join(str(e) for e in values)
+
+                FileUtils.append_textline_to_file(text,
+                                                  GlobalVariables.get_data_files_path() + "ScreeningResults.csv",
+                                                  True)
+
             except Exception as e:
                 logger.error("Exception: " + str(e) + "\n" + str(traceback.format_exc()))
                 continue
@@ -335,7 +352,8 @@ def save():
                                              title="Select pickle strategy parameterfile",
                                              filetypes=[("Pickle Dumps", "*.pickle")], defaultextension='.pickle')
 
-    app.dump_strategy_parameter_to_file(file_path)
+    content = w.Scrolledtext_params.get(1.0, END)
+    app.dump_strategy_parameter_to_file(file_path, content)
 
 
 def save_other_params():
@@ -343,7 +361,8 @@ def save_other_params():
                                              filetypes=[("Pickle Dumps", "*.pickle")], defaultextension='.pickle',
                                              title="Select pickle other parameterfile")
 
-    app.dump_other_parameter_to_file(file_path)
+    content_others = w.Scrolled_other_parameters.get(1.0, END)
+    app.dump_other_parameter_to_file(file_path, content_others)
 
 
 def quit():

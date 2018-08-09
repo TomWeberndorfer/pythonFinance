@@ -6,7 +6,7 @@ class MvcModel:
         """
         self.vc = view_controller
         self.available_strategies = []
-        self.other_params = {}
+        self._other_params = {}
         self.strategy_parameter_dicts = {}
         self.strategy_selection_value = []
         self.result_stock_data_container_list = []
@@ -77,15 +77,15 @@ class MvcModel:
         self.vc.other_params_changed()
 
     def get_other_params(self):
-        return self.other_params
+        return self._other_params
 
     def add_to_other_params(self, items):
         for key, value in items.items():
-            self.other_params.update({key: value})
+            self._other_params.update({key: value})
         self.other_params_changed()
 
     def clear_other_params(self):
-        self.other_params = {}
+        self._other_params = {}
         self.other_params_changed()
 
 

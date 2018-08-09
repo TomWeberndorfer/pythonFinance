@@ -5,20 +5,19 @@ import _pickle as pickle
 import pandas as pd
 
 from Utils.common_utils import read_table_columns_from_webpage_list, CommonUtils
-import main_v1_support
 from Utils.Logger_Instance import logger
 
 
 class FileUtils:
 
     @staticmethod
-    def append_to_file(text, file_with_path, insert_only_new_content=False):
+    def append_textline_to_file(text, file_with_path, insert_only_new_content=False):
         """
         appends the given text to the file + path
         :param insert_only_new_content: only insert the text, if it is not already in there
         :param text: text to append
         :param file_with_path: file name + path
-        :return: none
+        :return: True, if line not already in file
         """
         if text is None or file_with_path is None:
             raise NotImplementedError
@@ -28,17 +27,54 @@ class FileUtils:
         if insert_only_new_content:
             with open(file_with_path, 'r') as myfile:
                 file_content = myfile.read()
-                if re.search(str(text), file_content):
+                if str(text) in file_content:
                     myfile.close()
                     return False
 
         with open(file_with_path, "a") as myfile:
             myfile.write(str(text) + "\n")
-            myfile.write("")
 
         myfile.close()
 
         return True
+
+    @staticmethod
+    def append_text_list_to_file(text_list, file_with_path, insert_only_new_content=False, separator="\n"):
+        """
+        appends the given text to the file + path
+        :param insert_only_new_content: only insert the text, if it is not already in there
+        :param text_list: list with text to append
+        :param file_with_path: file name + path
+        :param separator: separator between to text entries
+        :return: True, if at least one line not already in file
+        """
+        if text_list is None or file_with_path is None:
+            raise NotImplementedError
+
+        check_file_exists_or_create(file_with_path)  # no need to check, creates anyway
+        new_content = False
+        text_to_append = []
+
+        if insert_only_new_content:
+            with open(file_with_path, 'r') as myfile:
+                file_content = myfile.read()
+                for text in text_list:
+                    if str(text) in file_content:
+                        pass
+                    else:
+                        text_to_append.append(str(text))
+                        new_content = True
+        else:
+            text_to_append = text_list
+            new_content = True
+
+        with open(file_with_path, "a") as myfile:
+            for text in text_to_append:
+                if text_to_append.index(text) == len(text_to_append) - 1:
+                    myfile.write(str(text) + "\n")
+                else:
+                    myfile.write(str(text) + separator)
+        return new_content
 
 
 def read_tickers_and_data_from_file(stock_data_container_file):
@@ -146,7 +182,7 @@ def replace_in_file(file, pattern, subst):
     file_handle.close()
 
     # Use RE package to allow for replacement (also allowing for (multiline) REGEX)
-    file_string = (main_v1_support.re.sub(pattern, subst, file_string))
+    file_string = (re.sub(pattern, subst, file_string))
 
     # Write contents to file.
     # Using mode 'w' truncates the file.
@@ -171,13 +207,13 @@ def get_hash_from_file(file, url):
         try:
             last_id = str(test[url][0])
         except Exception:
-            FileUtils.append_to_file(url + "," + str(0), file)
+            FileUtils.append_textline_to_file(url + "," + str(0), file)
 
         return last_id
 
     else:
-        FileUtils.append_to_file("url,hash", file)
-        FileUtils.append_to_file(url + "," + str(0), file)
+        FileUtils.append_textline_to_file("url,hash", file)
+        FileUtils.append_textline_to_file(url + "," + str(0), file)
         return str(0)
 
 
