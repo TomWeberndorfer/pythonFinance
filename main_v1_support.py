@@ -11,7 +11,9 @@ from threading import Thread
 from tkinter import messagebox
 import logging
 from tkinter.scrolledtext import ScrolledText
+from tkinter.ttk import Labelframe
 
+from GUI.ScrollableFrame import ScrollableFrame
 from Utils.Logger_Instance import logger
 from MvcModel import MvcModel
 from StockAnalysis import run_analysis
@@ -37,12 +39,9 @@ class MyController:
         self.view.ButtonRunStrategy.config(command=self.start_screening)
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect)
         self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click)
-        self.strategy_parameter_dicts_changed()
         self.available_strategies_changed()
-        self.load_strategy_parameter_from_file(GlobalVariables.get_data_files_path() + "ParameterFile.pickle")
         self.load_other_parameter_from_file(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle")
         self.other_params_changed()
-        # self.model.update_column_list(["Rank"]) #TODO rank irgendwo anders realisieren
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
         self.console = ConsoleUi(self.view.Labelframe2)
 
@@ -92,9 +91,8 @@ class MyController:
             self.model.set_is_thread_running(True)
             logger.info("Screening started...")
             self.model.clear_result_stock_data_container_list()
-            strategy_params = self.model.get_strategy_parameter_dicts()
             other_params = self.model.get_other_params()
-            results = run_analysis(selection_values, strategy_params, other_params)
+            results = run_analysis(selection_values, other_params['Strategies'], other_params['OtherParameters'])
 
             self.model.extend_result_stock_data_container_list(results)
         except Exception as e:
@@ -108,55 +106,23 @@ class MyController:
         :return: True, if parameters are valid and updated.
         """
         try:
-            content = self.view.Scrolledtext_params.get(1.0, END)
-            content_dict = ast.literal_eval(content)
-            content_others = self.view.Scrolled_other_parameters.get(1.0, END)
-            content_others_dict = ast.literal_eval(content_others)
+            # TODO content_others = self.view.Scrolled_other_parameters.get(1.0, END)
+            at_objects = w.scrollable_frame_parameters.form.at_objects
+            content_others = w.scrollable_frame_parameters.form.get_parameters(at_objects)
+            # content_others_dict = ast.literal_eval(content_others)
 
-            if content_dict == {}:
+            if content_others == {}:
                 messagebox.showerror("Parameters empty", "Please insert parameters")
                 return False
 
-            if content_others_dict == {}:
-                messagebox.showerror("Other Parameters empty", "Please insert parameters")
-                return False
-
-            self.model.clear_strategy_parameter_dicts()
-            self.model.add_to_strategy_parameter_dicts(content_dict)
-
             self.model.clear_other_params()
-            self.model.add_to_other_params(content_others_dict)
+            self.model.add_to_other_params(content_others)
 
         except Exception as e:
             messagebox.showerror("Parameters not valid", "Please insert valid parameters: " + str(e))
             return False
 
         return True
-
-    def load_strategy_parameter_from_file(self, file_path):
-        """
-        Loads the parameters into the GUI from a given filepath and file.
-        :param file_path:
-        :return: nothing
-        """
-        try:
-            with open(file_path, "rb") as f:
-                items = pickle.load(f)
-                if isinstance(items, dict) and 'Strategies' in items.keys() and len(items['Strategies']) > 0:
-                    self.model.clear_strategy_parameter_dicts()
-                    self.model.clear_available_strategies_list()
-                    self.model.add_to_strategy_parameter_dicts(items['Strategies'])
-                    for item in items['Strategies']:
-                        self.model.add_to_available_strategies(item)
-                    logger.info("Strategy Parameters Read")
-                else:
-                    messagebox.showerror("Strategy parameter file is not valid!",
-                                         "Please choose a valid strategy parameters file!")
-
-        except Exception as e:
-            logger.error(
-                "Exception while loading strategy parameter from file: " + str(e) + "\n" + str(traceback.format_exc()))
-            return
 
     def load_other_parameter_from_file(self, file_path):
         """
@@ -167,53 +133,21 @@ class MyController:
         try:
             with open(file_path, "rb") as f:
                 items = pickle.load(f)
-                if isinstance(items, dict) and 'OtherParameters' in items.keys() and len(items['OtherParameters']) > 0:
+                if isinstance(items, dict) and 'OtherParameters' in items.keys() and len(
+                        items['OtherParameters']) > 0 and 'Strategies' in items.keys() and len(items['Strategies']) > 0:
                     self.model.clear_other_params()
-                    self.model.add_to_other_params(items['OtherParameters'])
-                    logger.info("Other Parameters Read")
+                    self.model.add_to_other_params(items)
+                    for item in items['Strategies']:
+                        self.model.add_to_available_strategies(item)
+                    logger.info("Parameters Read")
+
                 else:
-                    messagebox.showerror("Other parameter file is not valid!",
-                                         "Please choose a valid other parameters file!")
+                    messagebox.showerror("Parameter file is not valid!",
+                                         "Please choose a valid parameters file!")
 
         except Exception as e:
             logger.error(
                 "Exception while loading other parameter from file: " + str(e) + "\n" + str(traceback.format_exc()))
-            return
-
-    def dump_strategy_parameter_to_file(self, file_path=GlobalVariables.get_data_files_path() + "ParameterFile.pickle",
-                                        content=""):
-        """
-        dumps the parameters to a global given file
-        :param content: the content to dump as string
-        :param file_path: file path + name to dump to
-        :return: -
-        """
-
-        try:
-            strat_dict = ast.literal_eval(content)
-
-            if strat_dict == {}:
-                messagebox.showerror("Parameters empty", "Please insert parameters")
-            else:
-                self.model.clear_strategy_parameter_dicts()
-                self.model.add_to_strategy_parameter_dicts(strat_dict)
-                with open(file_path, "wb") as f:
-                    strat_params = self.model.get_strategy_parameter_dicts()
-                    content_dict = {'Strategies': strat_params}
-
-                    if isinstance(strat_params, dict) \
-                            and 'Strategies' in content_dict.keys() \
-                            and len(content_dict['Strategies']) > 0:
-
-                        pickle.dump(content_dict, f)
-                        logger.info("Strategy Params Saved")
-                    else:
-                        messagebox.showerror("Strategy parameter file is not valid!",
-                                             "Please choose a valid strategy parameters file!")
-
-        except Exception as e:
-            logger.error(
-                "Exception while dump_strategy_parameter_to_file: " + str(e) + "\n" + str(traceback.format_exc()))
             return
 
     def dump_other_parameter_to_file(self,
@@ -226,26 +160,29 @@ class MyController:
         :return: -
         """
         try:
-            content_others_dict = ast.literal_eval(content_others)
+            if isinstance(content_others, str):
+                content_others_dict = ast.literal_eval(content_others)
+            else:
+                content_others_dict = content_others
 
             if content_others_dict == {}:
-                messagebox.showerror("Other Parameters empty", "Please insert parameters")
+                messagebox.showerror("Parameters empty", "Please insert parameters")
             else:
                 self.model.clear_other_params()
                 self.model.add_to_other_params(content_others_dict)
                 with open(file_path, "wb") as f:
-                    other_params = self.model.get_other_params()
-                    params_dict = {'OtherParameters': other_params}
+                    params_dict = self.model.get_other_params()
 
                     if isinstance(params_dict, dict) \
                             and 'OtherParameters' in params_dict.keys() \
-                            and len(params_dict['OtherParameters']) > 0:
+                            and len(params_dict['OtherParameters']) > 0 and 'Strategies' in params_dict.keys() \
+                            and len(params_dict['Strategies']) > 0:
 
                         pickle.dump(params_dict, f)
-                        logger.info("Other Params Saved")
+                        logger.info("Parameters Saved")
                     else:
-                        messagebox.showerror("Other parameter file is not valid!",
-                                             "Please choose a valid other parameters file!")
+                        messagebox.showerror("Parameter file is not valid!",
+                                             "Please choose a valid parameters file!")
 
         except Exception as e:
             logger.error("Exception while dump_other_parameter_to_file: " + str(e) + "\n" + str(traceback.format_exc()))
@@ -255,15 +192,22 @@ class MyController:
     def quit_button_pressed(self):
         self.parent.destroy()
 
-    def strategy_parameter_dicts_changed(self):
-        w.Scrolledtext_params.delete(1.0, END)
-        parameters = self.model.get_strategy_parameter_dicts()
-        insert_text_into_gui(w.Scrolledtext_params, str(parameters))
-
     def other_params_changed(self):
-        w.Scrolled_other_parameters.delete(1.0, END)
+        # TODO gui changes
+        # w.Scrolled_other_parameters.delete(1.0, END)
         parameters = self.model.get_other_params()
-        insert_text_into_gui(w.Scrolled_other_parameters, str(parameters))
+        # insert_text_into_gui(w.Scrolled_other_parameters, str(parameters))
+        try:
+            w.TPanedwindow2_p2_parameters.destroy()
+        except Exception as e:
+            pass
+        w.TPanedwindow2_p2_parameters = Labelframe(text='Parameters')
+        w.TPanedwindow2.add(w.TPanedwindow2_p2_parameters)
+        w.scrollable_frame_parameters = ScrollableFrame(w.TPanedwindow2_p2_parameters)
+        w.scrollable_frame_parameters.populateFormParameters(parameters)
+        # TODO weg:
+        # at_objects = w.scrollable_frame_parameters.form.at_objects
+        # my_col_2, my_row, all_txt = w.scrollable_frame_parameters.form.rec_objects(at_objects, 0, 0)
 
     def available_strategies_changed(self):
         insert_text_into_gui(w.Scrolledlistbox_selectStrategy, "", delete=True, start=0)
@@ -330,6 +274,7 @@ class MyController:
 
 
 def init(top, gui, *args, **kwargs):
+    # TODO loglevel logging level
     logging.basicConfig(level=logging.INFO)
     global w, top_level, root, app
     w = gui
@@ -347,22 +292,15 @@ def destroy_window():
     top_level = None
 
 
-def save():
-    file_path = filedialog.asksaveasfilename(initialdir=GlobalVariables.get_data_files_path(),
-                                             title="Select pickle strategy parameterfile",
-                                             filetypes=[("Pickle Dumps", "*.pickle")], defaultextension='.pickle')
-
-    content = w.Scrolledtext_params.get(1.0, END)
-    app.dump_strategy_parameter_to_file(file_path, content)
-
-
 def save_other_params():
     file_path = filedialog.asksaveasfilename(initialdir=GlobalVariables.get_data_files_path(),
                                              filetypes=[("Pickle Dumps", "*.pickle")], defaultextension='.pickle',
                                              title="Select pickle other parameterfile")
 
-    content_others = w.Scrolled_other_parameters.get(1.0, END)
-    app.dump_other_parameter_to_file(file_path, content_others)
+    at_objects = w.scrollable_frame_parameters.form.at_objects
+    all_txt = w.scrollable_frame_parameters.form.get_parameters(at_objects)
+
+    app.dump_other_parameter_to_file(file_path, all_txt)
 
 
 def quit():
@@ -371,15 +309,6 @@ def quit():
 
 def edit():
     pass
-
-
-def load_strategy_parameters():
-    file_path = filedialog.askopenfilename(initialdir=GlobalVariables.get_data_files_path(),
-                                           title="Select pickle strategy parameterfile",
-                                           filetypes=[("Pickle Dumps", "*.pickle")], defaultextension='.pickle')
-
-    app.load_strategy_parameter_from_file(file_path)
-
 
 def load_other_params():
     file_path = filedialog.askopenfilename(initialdir=GlobalVariables.get_data_files_path(),
@@ -438,7 +367,7 @@ class ConsoleUi:
 
         # Create a ScrolledText wdiget
         self.scrolled_text = ScrolledText(frame, state='normal', height=5)
-        self.scrolled_text.place(relx=0.01, rely=0.01, relheight=0.9, relwidth=0.98)
+        self.scrolled_text.place(relx=0.01, rely=0.01, relheight=0.97, relwidth=0.98)
         self.scrolled_text.configure(wrap=NONE)
         self.scrolled_text.configure(font='TkFixedFont')
         self.scrolled_text.tag_config('INFO', foreground='black')

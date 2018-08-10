@@ -34,21 +34,6 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 
 
 class TestControllerAndGui(unittest.TestCase):
-    def test_dump_and_load_strategy_parameter_to_file(self):
-        global val, w, root
-        root = Tk()
-        top = Framework(root)
-        controller = main_v1_support.init(root, top)
-
-        strat_param_file = GlobalVariables.get_data_files_path() + '\\TestData\\ParameterFile_test_dump_and_load_strat_params.pickle'
-        check_file_exists_and_delete(strat_param_file)
-
-        content = "{'Test': 2, 'Var2': False}"
-        controller.dump_strategy_parameter_to_file(strat_param_file, content)
-
-        controller.load_strategy_parameter_from_file(strat_param_file)
-        self.assertEqual(ast.literal_eval(content), controller.model.get_strategy_parameter_dicts())
-
     def test_dump_and_load_other_parameter_to_file(self):
         global val, w, root
         root = Tk()

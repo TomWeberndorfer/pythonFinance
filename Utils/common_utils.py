@@ -338,6 +338,8 @@ def read_table_columns_from_webpage(websource_address, find_name, class_name, ta
                                     name_column_to_read, stock_exchange):
     """
     read the sp500 tickers and saves it to given file
+    :param stock_exchange:
+    :param name_column_to_read:
     :param find_name:
     :param ticker_column_to_read: 0 for sp500, 2 for cdax
     :param table_class: like 'wikitable sortable' or 'wikitable sortable zebra'
@@ -465,6 +467,16 @@ def is_float(n):
         return False
     else:
         return True
+
+
+def is_int(n):
+    try:
+        float_n = float(n)
+        int_n = int(float_n)
+    except ValueError:
+        return False
+    else:
+        return float_n == int_n
 
 
 def plot_stocks_to_buy_as_candlechart_with_volume(stocks_to_buy):

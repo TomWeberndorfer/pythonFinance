@@ -18,6 +18,8 @@ class Abstract_DataContainer:
         self._stop_buy = 0
         self._stop_loss = 0
         self._position_size = 0
+
+        # TODO does it make sense more than 1 risk model?
         self._risk_model = ''
 
     def __str__(self):

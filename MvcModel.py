@@ -55,22 +55,6 @@ class MvcModel:
     def get_strategy_selection_value(self):
         return self.strategy_selection_value
 
-    # Delegates-- Model would call this on internal change
-    def strategy_parameter_dicts_changed(self):
-        self.vc.strategy_parameter_dicts_changed()
-
-    # setters and getters
-    def get_strategy_parameter_dicts(self):
-        return self.strategy_parameter_dicts
-
-    def add_to_strategy_parameter_dicts(self, items):
-        for key, value in items.items():
-            self.strategy_parameter_dicts.update({key: value})
-        self.strategy_parameter_dicts_changed()
-
-    def clear_strategy_parameter_dicts(self):
-        self.strategy_parameter_dicts = {}
-        self.strategy_parameter_dicts_changed()
 
     # Delegates-- Model would call this on internal change
     def other_params_changed(self):
@@ -80,6 +64,7 @@ class MvcModel:
         return self._other_params
 
     def add_to_other_params(self, items):
+        assert (isinstance(items, dict))
         for key, value in items.items():
             self._other_params.update({key: value})
         self.other_params_changed()

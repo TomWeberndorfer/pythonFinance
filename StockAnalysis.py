@@ -35,12 +35,12 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
 
     # risk model
     # TODO mehrere risk model --> liste oder dict
-    risk_model = other_params['RiskModel']
-    rm_name = risk_model['Name']
-    rm_parameters = risk_model['Parameters']
-    rm_factory = RiskModelFactory()
-    fsr = rm_factory.prepare(rm_name, analysed_stocks, rm_parameters)
-    fsr.determine_risk()
+    risk_models = other_params['RiskModels']
+    for rm_name in risk_models.keys():
+        rm_parameters = risk_models[rm_name]
+        rm_factory = RiskModelFactory()
+        fsr = rm_factory.prepare(rm_name, analysed_stocks, rm_parameters)
+        fsr.determine_risk()
 
     logger.info("Runtime at " + str(datetime.now()) + " for run analysis and duration: " + str(
         datetime.now() - thr_start) + " seconds.")
@@ -52,9 +52,10 @@ def _read_data(selected_strategies_list, strategy_parameter_dict, other_params, 
     reader_results = {}
     readers = {}
     for selected_strat in selected_strategies_list:
-        for data_reader_params in strategy_parameter_dict[selected_strat]['data_readers']:
+        for data_reader in strategy_parameter_dict[selected_strat]['data_readers']:
+            data_reader_params = strategy_parameter_dict[selected_strat]['data_readers'][data_reader]
             data_storage = DataReaderFactory()
-            reader_type = data_reader_params['Name']
+            reader_type = data_reader
 
             # TODO anders machen, ned hier importieren
             from Utils.file_utils import read_tickers_from_web, read_tickers_and_data_from_file

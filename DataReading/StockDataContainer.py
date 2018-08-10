@@ -17,7 +17,7 @@ class StockDataContainer(Abstract_DataContainer):
                                  'Stockname': self.get_stock_name(), "Ticker": self.stock_ticker(),
                                  "Exchange": self.stock_exchange(), 'StopBuy': self.get_stop_buy(),
                                  'StopLoss': self.get_stop_loss(), 'PositionSize': self.get_position_size(),
-                                 'RiskModel': self.get_risk_model()}
+                                 'RiskModels': self.get_risk_model()}
         return names_and_values_dict
 
     def historical_stock_data(self):

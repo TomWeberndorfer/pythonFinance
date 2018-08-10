@@ -29,10 +29,6 @@ proc vTcl:project:info {} {
     }
     set site_3_0 $base.m33
     set site_3_0 $base.m33
-    set site_3_0 $base.fra37
-    set site_4_0 $site_3_0.scr38
-    set site_4_0 $site_3_0.scr41
-    set site_4_0 $site_3_0.scr37
     set site_3_0 $base.fra39
     set site_3_0 $base.lab37
     set site_4_0 $site_3_0.scr52
@@ -189,6 +185,11 @@ proc vTcl:project:info {} {
              -anchor w
     set site_3_0 $base.lab40
     set site_4_0 $site_3_0.scr41
+    set site_4_0 .top32.tPa42.p1 
+    set site_4_0 $site_4_0
+    set site_5_0 $site_4_0.scr43
+    set site_4_1 .top32.tPa42.p2 
+    set site_4_0 $site_4_1
     namespace eval ::widgets_bindings {
         set tagslist _TopLevel
     }
@@ -225,7 +226,7 @@ proc vTclWindow.top32 {base} {
         -menu "$top.m33" -background {#eaeaea} -highlightbackground wheat \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 1261x795+352+57
+    wm geometry $top 1294x903+312+47
     update
     # set in toplevel.wgt.
     global vTcl
@@ -237,9 +238,6 @@ proc vTclWindow.top32 {base} {
     wm deiconify $top
     wm title $top "Framework"
     vTcl:DefineAlias "$top" "Toplevel1" vTcl:Toplevel:WidgetProc "" 1
-    ttk::style configure Menu -background wheat
-    ttk::style configure Menu -foreground #000000
-    ttk::style configure Menu -font TkDefaultFont
     menu $top.m33 \
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
@@ -253,20 +251,20 @@ proc vTclWindow.top32 {base} {
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
     $site_3_0.men34 add command \
         -activebackground {#d9d9d9} -activeforeground {#000000} \
-        -background {#ffff00} -command {#save} -compound none \
-        -font TkMenuFont -foreground {#000000} -label {Save Strategy Params} 
+        -background {#ffff00} -command {#save} -font TkMenuFont \
+        -foreground {#000000} -label {Save Strategy Params} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#save_other_params} -compound none \
-        -font TkMenuFont -foreground {#000000} -label {Save Other Params} 
+        -background wheat -command {#save_other_params} -font TkMenuFont \
+        -foreground {#000000} -label {Save Other Params} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#load_strategy_parameters} -compound none \
+        -background wheat -command {#load_strategy_parameters} \
         -font TkMenuFont -foreground {#000000} -label {Load Parameters} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#load_other_params} -compound none \
-        -font TkMenuFont -foreground {#000000} -label {Load Other Parameters} 
+        -background wheat -command {#load_other_params} -font TkMenuFont \
+        -foreground {#000000} -label {Load Other Parameters} 
     $site_3_0.men34 add separator \
         -background {#ffff00} 
     $site_3_0.men34 add command \
@@ -274,76 +272,13 @@ proc vTclWindow.top32 {base} {
         -background {#ebebeb} -command {#quit} -compound top -font TkMenuFont \
         -foreground {#000000} -label Quit 
     $top.m33 add cascade \
-        -menu "$top.m33.men32" -background {#990000} -compound none \
+        -menu "$top.m33.men32" -background {#990000} \
         -font {-family Purisa -size 12 -weight normal -slant roman -underline 0 -overstrike 0} \
         -foreground {#ffff00} -label Edit 
     set site_3_0 $top.m33
     menu $site_3_0.men32 \
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
-    frame $top.fra37 \
-        -borderwidth 2 -relief groove -background {#c0c0c0} -height 275 \
-        -highlightbackground {#d9d9d9} -highlightcolor black -width 1185 
-    vTcl:DefineAlias "$top.fra37" "Strategy" vTcl:WidgetProc "Toplevel1" 1
-    set site_3_0 $top.fra37
-    vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_3_0.scr38 \
-        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 125 
-    vTcl:DefineAlias "$site_3_0.scr38" "Scrolledlistbox_selectStrategy" vTcl:WidgetProc "Toplevel1" 1
-
-    $site_3_0.scr38.01 configure -background white \
-        -disabledforeground #a3a3a3 \
-        -font TkFixedFont \
-        -foreground black \
-        -height 3 \
-        -highlightbackground #d9d9d9 \
-        -highlightcolor wheat \
-        -selectbackground #c4c4c4 \
-        -selectforeground black \
-        -width 10
-    vTcl::widgets::ttk::scrolledtext::CreateCmd $site_3_0.scr41 \
-        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 125 
-    vTcl:DefineAlias "$site_3_0.scr41" "Scrolledtext_params" vTcl:WidgetProc "Toplevel1" 1
-
-    $site_3_0.scr41.01 configure -background white \
-        -font TkTextFont \
-        -foreground black \
-        -height 3 \
-        -highlightbackground wheat \
-        -highlightcolor black \
-        -insertbackground black \
-        -insertborderwidth 3 \
-        -selectbackground #c4c4c4 \
-        -selectforeground black \
-        -width 10 \
-        -wrap none
-    vTcl::widgets::ttk::scrolledtext::CreateCmd $site_3_0.scr37 \
-        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 125 
-    vTcl:DefineAlias "$site_3_0.scr37" "Scrolled_other_parameters" vTcl:WidgetProc "Toplevel1" 1
-
-    $site_3_0.scr37.01 configure -background white \
-        -font TkTextFont \
-        -foreground black \
-        -height 3 \
-        -highlightbackground wheat \
-        -highlightcolor black \
-        -insertbackground black \
-        -insertborderwidth 3 \
-        -selectbackground #c4c4c4 \
-        -selectforeground black \
-        -width 10 \
-        -wrap none
-    place $site_3_0.scr38 \
-        -in $site_3_0 -x 10 -y 10 -width 1161 -relwidth 0 -height 95 \
-        -relheight 0 -anchor nw -bordermode ignore 
-    place $site_3_0.scr41 \
-        -in $site_3_0 -x 10 -y 110 -width 1161 -relwidth 0 -height 91 \
-        -relheight 0 -anchor nw -bordermode ignore 
-    place $site_3_0.scr37 \
-        -in $site_3_0 -x 10 -y 210 -width 1161 -relwidth 0 -height 51 \
-        -relheight 0 -anchor nw -bordermode ignore 
     frame $top.fra39 \
         -borderwidth 2 -relief groove -background {#ebebeb} -height 85 \
         -highlightbackground {#d9d9d9} -highlightcolor black -width 1175 
@@ -404,28 +339,76 @@ proc vTclWindow.top32 {base} {
         -width 10 \
         -wrap none
     place $site_3_0.scr41 \
-        -in $site_3_0 -x 10 -y 30 -width 1161 -relwidth 0 -height 141 \
+        -in $site_3_0 -x 10 -y 20 -width 1161 -relwidth 0 -height 141 \
         -relheight 0 -anchor nw -bordermode ignore 
-    ttk::label $top.tLa37 \
-        -background wheat -foreground {#000000} -relief flat -text Status 
-    vTcl:DefineAlias "$top.tLa37" "TLabel_status" vTcl:WidgetProc "Toplevel1" 1
+    ttk::style configure TPanedwindow -background wheat
+    ttk::style configure TPanedwindow.Label -background wheat
+    ttk::style configure TPanedwindow.Label -foreground #000000
+    ttk::style configure TPanedwindow.Label -font TkDefaultFont
+    ttk::panedwindow $top.tPa42 \
+        -width 200 -height 200 
+    vTcl:DefineAlias "$top.tPa42" "TPanedwindow2" vTcl:WidgetProc "Toplevel1" 1
+    ttk::style configure TLabelframe.Label -background wheat
+    ttk::style configure TLabelframe.Label -foreground #000000
+    ttk::style configure TLabelframe.Label -font TkDefaultFont
+    ttk::style configure TLabelframe -background wheat
+    ttk::labelframe $top.tPa42.p1 \
+        -text {Pane 1} -width 200 -height 75 
+    vTcl:DefineAlias "$top.tPa42.p1" "TPanedwindow2_p1" vTcl:WidgetProc "Toplevel1" 1
+    set site_4_0 $top.tPa42.p1
+    vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_4_0.scr43 \
+        -background {#d9d9d9} -height 55 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 1031 
+    vTcl:DefineAlias "$site_4_0.scr43" "Scrolledlistbox_selectStrategy" vTcl:WidgetProc "Toplevel1" 1
+
+    $site_4_0.scr43.01 configure -background white \
+        -disabledforeground #a3a3a3 \
+        -font TkFixedFont \
+        -foreground black \
+        -height 3 \
+        -highlightbackground #d9d9d9 \
+        -highlightcolor wheat \
+        -selectbackground #c4c4c4 \
+        -selectforeground black \
+        -width 10
+    place $site_4_0.scr43 \
+        -in $site_4_0 -x 10 -y 20 -width 1031 -relwidth 0 -height 55 \
+        -relheight 0 -anchor nw -bordermode ignore 
+    $top.tPa42 add $top.tPa42.p1 
+        
+    ttk::style configure TLabelframe.Label -background wheat
+    ttk::style configure TLabelframe.Label -foreground #000000
+    ttk::style configure TLabelframe.Label -font TkDefaultFont
+    ttk::style configure TLabelframe -background wheat
+    ttk::labelframe $top.tPa42.p2 \
+        -text {Pane 2} -width 200 -height 125 
+    vTcl:DefineAlias "$top.tPa42.p2" "TPanedwindow2_p2" vTcl:WidgetProc "Toplevel1" 1
+    set site_4_1 $top.tPa42.p2
+    ttk::style configure TLabelframe.Label -background wheat
+    ttk::style configure TLabelframe.Label -foreground #000000
+    ttk::style configure TLabelframe.Label -font TkDefaultFont
+    ttk::style configure TLabelframe -background wheat
+    ttk::labelframe $site_4_1.tLa44 \
+        -text Tlabelframe3 -width 150 -height 75 
+    vTcl:DefineAlias "$site_4_1.tLa44" "TPanedwindow2_p3" vTcl:WidgetProc "Toplevel1" 1
+    place $site_4_1.tLa44 \
+        -in $site_4_1 -x 20 -y 60 -anchor nw -bordermode ignore 
+    $top.tPa42 add $top.tPa42.p2 
+        
     ###################
     # SETTING GEOMETRY
     ###################
-    place $top.fra37 \
-        -in $top -x 10 -y 0 -width 1185 -relwidth 0 -height 275 -relheight 0 \
-        -anchor nw -bordermode ignore 
     place $top.fra39 \
-        -in $top -x 10 -y 470 -width 1175 -relwidth 0 -height 85 -relheight 0 \
+        -in $top -x 10 -y 600 -width 1175 -relwidth 0 -height 85 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab37 \
-        -in $top -x 10 -y 280 -width 1180 -relwidth 0 -height 185 \
+        -in $top -x 10 -y 400 -width 1180 -relwidth 0 -height 185 \
         -relheight 0 -anchor nw -bordermode ignore 
     place $top.lab40 \
-        -in $top -x 10 -y 620 -width 1180 -relwidth 0 -height 185 \
+        -in $top -x 10 -y 700 -width 1180 -relwidth 0 -height 185 \
         -relheight 0 -anchor nw -bordermode ignore 
-    place $top.tLa37 \
-        -in $top -x 10 -y 560 -width 1176 -relwidth 0 -height 49 -relheight 0 \
+    place $top.tPa42 \
+        -in $top -x 10 -y 10 -width 1250 -relwidth 0 -height 670 -relheight 0 \
         -anchor nw -bordermode ignore 
 
     vTcl:FireEvent $base <<Ready>>

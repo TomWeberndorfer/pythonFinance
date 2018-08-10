@@ -51,7 +51,7 @@ class HistoricalDataReader(Abstract_StockDataReader):
         :param weeks_delta: delta from now to read the past: 52 means 52 weeks in the past
         :return: a dataframe df with ticker data
         """
-        assert len(ticker) < 15, "ATTENTION: ticker length is long, maybe it is a name not a ticker: " + ticker
+        assert len(ticker) < 17, "ATTENTION: ticker length is long, maybe it is a name not a ticker: " + ticker
         df = []
 
         if ticker == "" or ticker == '' or len(ticker) <= 0:

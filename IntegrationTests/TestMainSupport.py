@@ -41,8 +41,6 @@ class TestMainSupport(unittest.TestCase):
 
         controller.load_other_parameter_from_file(
             GlobalVariables.get_data_files_path() + '\\TestData\\OtherParameterFile_DO_NOT_RELOAD.pickle')
-        controller.load_strategy_parameter_from_file(
-            GlobalVariables.get_data_files_path() + '\\TestData\\ParameterFile_test_strategy_w52.pickle')
         controller.model.set_strategy_selection_value(['W52HighTechnicalStrategy'])
         root.mainloop()
 
