@@ -55,7 +55,6 @@ class MvcModel:
     def get_strategy_selection_value(self):
         return self.strategy_selection_value
 
-
     # Delegates-- Model would call this on internal change
     def other_params_changed(self):
         self.vc.other_params_changed()
@@ -73,21 +72,20 @@ class MvcModel:
         self._other_params = {}
         self.other_params_changed()
 
-
     # Delegates-- Model would call this on internal change
-    def list_changed(self):
+    def strategy_list_changed(self):
         self.vc.available_strategies_changed()
 
     # setters and getters
-    def getList(self):
+    def get_available_strategies(self):
         return self.available_strategies
 
     def add_to_available_strategies(self, item):
         myList = self.available_strategies
         myList.append(item)
         self.available_strategies = myList
-        self.list_changed()
+        self.strategy_list_changed()
 
     def clear_available_strategies_list(self):
         self.available_strategies = []
-        self.list_changed()
+        self.strategy_list_changed()

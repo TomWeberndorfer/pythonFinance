@@ -7,7 +7,7 @@ from Utils.GlobalVariables import *
 # from directory UnitTests to --> root folder with: ..\\..\\
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
-from GUI.main_v1 import vp_start_gui, Framework
+from GUI.main_v1 import vp_start_gui, Framework, create_Framework
 from MvcModel import MvcModel
 from Utils.GlobalVariables import *
 from Utils.file_utils import check_file_exists_and_delete
@@ -51,14 +51,7 @@ class TestMvcModel(unittest.TestCase):
         self.assertEqual(cols, model.get_column_list())
 
     def test_add_to_other_params(self):
-        global val, w, root
         root = Tk()
-        top = Framework(root)
-        controller = main_v1_support.init(root, top)
-
-        strat_param_file = GlobalVariables.get_data_files_path() + '\\TestData\\OtherParameterFile_test_add_to_other_params.pickle'
-        check_file_exists_and_delete(strat_param_file)
-
         strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
                                                                  'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
                                                                  'data_readers': {'TraderfoxNewsDataReader':
@@ -92,20 +85,16 @@ class TestMvcModel(unittest.TestCase):
 
         params = {'Strategies': strategy_parameter_dict, 'OtherParameters': other_params}
 
-        controller.dump_other_parameter_to_file(strat_param_file, params)
-        controller.load_other_parameter_from_file(strat_param_file)
-
-        sf = ScrollableFrame(controller.view.TPanedwindow2_p2_parameters)
+        sf = ScrollableFrame(root)
         sf.populateFormParameters(params)
         form = sf.form
         at = form.at
         at_objects = form.at_objects
 
-        my_col_2, my_row, all_txt = form.rec_objects(at_objects, 0, 0)
+        my_col_2, my_row, all_txt = form._read_objects_as_dict_recursive(at_objects, 0, 0)
 
-        self.assertEqual(params, controller.model.get_other_params())
         self.assertEqual(params, at)
         self.assertEqual(params, all_txt)
 
-        my_col_2, my_row, all_txt = form.rec_objects(at_objects, 0, 0)
+        all_txt = form.get_parameters(at_objects)
         self.assertEqual(params, all_txt)

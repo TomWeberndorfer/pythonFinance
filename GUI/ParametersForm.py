@@ -9,20 +9,27 @@ from Utils.common_utils import is_float, is_int
 
 class ParametersForm:
 
-    def __init__(self, frame, params):
+    def __init__(self, frame, params_dict):
+        """
+        Initialises the parameter form with labels for every dict key and entry for every dict value of the params dict.
+        :param frame: Frame to insert form.
+        :param params_dict: Dictionary with parameters to create a form.
+        """
         self.frame = frame
         self.var_list = []
         self.my_col = 0
         self.my_row = 0
         self.at = {}
         self.at_objects = {}
-        self.first_params = params
+        self.first_params = params_dict
 
-        my_col_2, my_row2, at, ao = self.rec(params, self.my_col, self.my_row)
+        my_col_2, my_row2, at, ao = self._create_parameter_labels_and_entries_recursive(params_dict, self.my_col,
+                                                                                        self.my_row)
         self.at = at
         self.at_objects = ao
 
-        assert at == params
+        # parameters dict goes in must the same as created from form gui
+        assert at == params_dict
 
     def find_in_grid(self, row, column):
         for children in self.frame.children.values():
@@ -32,7 +39,14 @@ class ParametersForm:
                 return children
         return None
 
-    def rec(self, params, my_col, my_row):
+    def _create_parameter_labels_and_entries_recursive(self, params, my_col, my_row):
+        """
+        Method creates a form with labels and entries recursive.
+        :param params:
+        :param my_col: column to start in a grid
+        :param my_row: row to start in a grid
+        :return: the current column, current row, all text recreated from params as dict and all objects created as dict
+        """
         my_col_2 = my_col
         all_txt = {}
         all_objects = {}
@@ -42,30 +56,16 @@ class ParametersForm:
                 my_col_2 = my_col
                 my_row = my_row + 1
                 txt_var = key
-                # ttk.Label(self.frame, textvariable=txt_var).grid(column=my_col, row=my_row, sticky=W)
-                # ttk.Label(self.frame, text=txt_var).grid(column=my_col, row=my_row, sticky=W)
                 tklab = ttk.Label(self.frame, text=txt_var)
                 tklab.grid(column=my_col, row=my_row, sticky=W)
-                # ttk.Label(self.frame, textvariable=self.testvar2).grid(column=my_col, row=my_row, sticky=W)
                 my_col_2 = my_col_2 + 1
 
-                my_col_2, my_row, txt, obj = self.rec(params[key], my_col_2, my_row)
+                my_col_2, my_row, txt, obj = self._create_parameter_labels_and_entries_recursive(params[key], my_col_2,
+                                                                                                 my_row)
                 all_txt.update({txt_var: txt})
                 all_objects.update({tklab: obj})
         else:
-            # TODO
-            # if isinstance(params, list):
-            #     for entry in params:
-            #         ttk.Label(self.frame, text=str(entry) + ": ").grid(column=my_col, row=my_row, sticky=W)
-            #         my_col, my_row = self.rec(entry, my_col, my_row)
-            #         my_row = my_row + 1
-            # else:
-            # ttk.Label(self.frame, text=str(params) + ": ").grid(column=my_col, row=my_row, sticky=W)
-            # ttk.Entry(self.frame, textvariable="test23", width=25).grid(column=my_col, row=my_row,
-            #                                                            sticky=(W, E))
-
-            # tktxt = tk.Entry(self.frame, textvariable=self.testvar)
-            tktxt = tk.Entry(self.frame)
+            tktxt = tk.Entry(self.frame, width=40)
             tktxt.grid(column=my_col, row=my_row, sticky=(W, E))
             tktxt.insert(tk.END, str(params))
 
@@ -75,7 +75,14 @@ class ParametersForm:
 
         return my_col_2, my_row, all_txt, all_objects
 
-    def rec_objects(self, params, my_col, my_row):
+    def _read_objects_as_dict_recursive(self, params, my_col, my_row):
+        """
+        Reads the objects from params and returns the parameters as dictionary.
+        :param params:
+        :param my_col:
+        :param my_row:
+        :return:
+        """
         my_col_2 = my_col
         all_txt = {}
 
@@ -86,7 +93,7 @@ class ParametersForm:
                 txt_var = key["text"]
                 my_col_2 = my_col_2 + 1
 
-                my_col_2, my_row, txt = self.rec_objects(params[key], my_col_2, my_row)
+                my_col_2, my_row, txt = self._read_objects_as_dict_recursive(params[key], my_col_2, my_row)
                 all_txt.update({txt_var: txt})
         else:
             txt_entry = params.get()
@@ -108,6 +115,13 @@ class ParametersForm:
 
         return my_col_2, my_row, all_txt
 
-    def get_parameters(self, at_objects, x=0, y=0):
-        my_col_2, my_row, all_txt = self.rec_objects(at_objects, x, y)
+    def get_parameters(self, at_objects, col=0, row=0):
+        """
+        Get the parameters from the parameters form as parameter dictionary.
+        :param at_objects:
+        :param col: column to start
+        :param row: row to start
+        :return: parameter dict of the parameter form (labels and entries)
+        """
+        my_col_2, my_row, all_txt = self._read_objects_as_dict_recursive(at_objects, col, row)
         return all_txt

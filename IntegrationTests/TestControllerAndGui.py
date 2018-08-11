@@ -14,6 +14,7 @@ from Utils.GlobalVariables import *
 from threading import Thread
 import ast
 from Utils.file_utils import check_file_exists_and_delete
+from Strategies.StrategyFactory import StrategyFactory
 
 try:
     from Tkinter import *
@@ -46,5 +47,7 @@ class TestControllerAndGui(unittest.TestCase):
         content = "{'Test': 2, 'Var2': False}"
         controller.dump_other_parameter_to_file(strat_param_file, content)
 
+        req_params = StrategyFactory.get_required_parameters_with_default_parameters()
+
         controller.load_other_parameter_from_file(strat_param_file)
-        self.assertEqual(ast.literal_eval(content), controller.model.get_other_params())
+        self.assertEqual(ast.literal_eval(content), controller.model.get_other_params(), req_params)

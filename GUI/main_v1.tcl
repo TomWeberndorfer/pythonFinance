@@ -29,167 +29,30 @@ proc vTcl:project:info {} {
     }
     set site_3_0 $base.m33
     set site_3_0 $base.m33
-    set site_3_0 $base.fra39
-    set site_3_0 $base.lab37
-    set site_4_0 $site_3_0.scr52
+    set site_4_0 .top32.tNo39.t0 
+    set site_4_0 $site_4_0
+    set site_5_0 $site_4_0.scr38
 
     #Updating ttreeview attributes
-    .top32.lab37.scr52.01 configure\
-        -columns  "Recommendation, Stockname, Ticker, Stock Exchange, Positive Zuordnung, Negative Zuordnung, current value, target price, orig News"\
+    .top32.tNo39.t0.scr38.01 configure\
         -height  4
 
     #heading options.
-    .top32.lab37.scr52.01 heading Recommendation, \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading Stockname, \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading Ticker, \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading Stock \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading Exchange, \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading Positive \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading Zuordnung, \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading Negative \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading Zuordnung, \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading current \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading value, \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading target \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading price, \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading orig \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading News \
-             -anchor center
-    #heading options.
-    .top32.lab37.scr52.01 heading #0 \
+    .top32.tNo39.t0.scr38.01 heading #0 \
              -text "Tree" \
              -anchor center
     #column options.
-    .top32.lab37.scr52.01 column Recommendation, \
-             -width 200 \
+    .top32.tNo39.t0.scr38.01 column #0 \
+             -width 616 \
              -minwidth 20 \
              -stretch 1 \
              -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column Stockname, \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column Ticker, \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column Stock \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column Exchange, \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column Positive \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column Zuordnung, \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column Negative \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column Zuordnung, \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column current \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column value, \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column target \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column price, \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column orig \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column News \
-             -width 200 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    #column options.
-    .top32.lab37.scr52.01 column #0 \
-             -width 555 \
-             -minwidth 20 \
-             -stretch 1 \
-             -anchor w
-    set site_3_0 $base.lab40
-    set site_4_0 $site_3_0.scr41
-    set site_4_0 .top32.tPa42.p1 
-    set site_4_0 $site_4_0
-    set site_5_0 $site_4_0.scr43
-    set site_4_1 .top32.tPa42.p2 
+    set site_4_1 .top32.tNo39.t1 
     set site_4_0 $site_4_1
+    set site_6_0 .top32.tNo39.t1.tPa42.p1 
+    set site_6_0 $site_6_0
+    set site_7_0 $site_6_0.scr45
+    set site_6_1 .top32.tNo39.t1.tPa42.p2 
     namespace eval ::widgets_bindings {
         set tagslist _TopLevel
     }
@@ -226,7 +89,7 @@ proc vTclWindow.top32 {base} {
         -menu "$top.m33" -background {#eaeaea} -highlightbackground wheat \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 1294x903+312+47
+    wm geometry $top 1294x764+297+53
     update
     # set in toplevel.wgt.
     global vTcl
@@ -250,17 +113,9 @@ proc vTclWindow.top32 {base} {
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
     $site_3_0.men34 add command \
-        -activebackground {#d9d9d9} -activeforeground {#000000} \
-        -background {#ffff00} -command {#save} -font TkMenuFont \
-        -foreground {#000000} -label {Save Strategy Params} 
-    $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
         -background wheat -command {#save_other_params} -font TkMenuFont \
         -foreground {#000000} -label {Save Other Params} 
-    $site_3_0.men34 add command \
-        -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#load_strategy_parameters} \
-        -font TkMenuFont -foreground {#000000} -label {Load Parameters} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
         -background wheat -command {#load_other_params} -font TkMenuFont \
@@ -279,89 +134,78 @@ proc vTclWindow.top32 {base} {
     menu $site_3_0.men32 \
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
-    frame $top.fra39 \
-        -borderwidth 2 -relief groove -background {#ebebeb} -height 85 \
-        -highlightbackground {#d9d9d9} -highlightcolor black -width 1175 
-    vTcl:DefineAlias "$top.fra39" "Frame2" vTcl:WidgetProc "Toplevel1" 1
-    set site_3_0 $top.fra39
-    button $site_3_0.but40 \
-        -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -disabledforeground {#a3a3a3} -foreground {#000000} \
-        -highlightbackground wheat -highlightcolor black -pady 0 \
-        -text {Run Screening Once} 
-    vTcl:DefineAlias "$site_3_0.but40" "ButtonRunStrategy" vTcl:WidgetProc "Toplevel1" 1
-    button $site_3_0.but42 \
-        -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -disabledforeground {#a3a3a3} -foreground {#000000} \
-        -highlightbackground wheat -highlightcolor black -pady 0 \
-        -text {Run Strategy Repetitive} 
-    vTcl:DefineAlias "$site_3_0.but42" "ButtonRunStrategyRepetitive" vTcl:WidgetProc "Toplevel1" 1
-    place $site_3_0.but40 \
-        -in $site_3_0 -x 20 -y 20 -width 142 -relwidth 0 -height 44 \
-        -relheight 0 -anchor nw -bordermode ignore 
-    place $site_3_0.but42 \
-        -in $site_3_0 -x 190 -y 20 -width 137 -relwidth 0 -height 44 \
-        -relheight 0 -anchor nw -bordermode ignore 
-    labelframe $top.lab37 \
-        -foreground black -text Results -background {#dadada} -height 185 \
-        -highlightbackground {#d9d9d9} -highlightcolor black -width 1180 
-    vTcl:DefineAlias "$top.lab37" "Labelframe1" vTcl:WidgetProc "Toplevel1" 1
-    set site_3_0 $top.lab37
+    ttk::style configure TNotebook -background wheat
+    ttk::style configure TNotebook.Tab -background wheat
+    ttk::style configure TNotebook.Tab -foreground #000000
+    ttk::style configure TNotebook.Tab -font TkDefaultFont
+    ttk::style map TNotebook.Tab -background [list disabled wheat selected #d9d9d9]
+    ttk::notebook $top.tNo39 \
+        -width 1281 -height 504 -takefocus {} 
+    vTcl:DefineAlias "$top.tNo39" "TNotebook2" vTcl:WidgetProc "Toplevel1" 1
+    frame $top.tNo39.t0 \
+        -background {#edf8fe} -highlightbackground {#d9d9d9} \
+        -highlightcolor black 
+    vTcl:DefineAlias "$top.tNo39.t0" "TNotebook2_t1_page_res" vTcl:WidgetProc "Toplevel1" 1
+    $top.tNo39 add .top32.tNo39.t0 \
+        -padding 0 -sticky nsew -state normal -text Run -image {} \
+        -compound none -underline -1 
+    set site_4_0  $top.tNo39.t0
     ttk::style configure Treeview.Heading -background #d9d9d9
     ttk::style configure Treeview.Heading -font TkDefaultFont
-    vTcl::widgets::ttk::scrolledtreeview::CreateCmd $site_3_0.scr52 \
+    vTcl::widgets::ttk::scrolledtreeview::CreateCmd $site_4_0.scr38 \
         -background {#d9d9d9} -height 15 -highlightbackground {#d9d9d9} \
         -highlightcolor black -width 30 
-    vTcl:DefineAlias "$site_3_0.scr52" "Scrolledtreeview1" vTcl:WidgetProc "Toplevel1" 1
-    place $site_3_0.scr52 \
-        -in $site_3_0 -x 10 -y 20 -width 1160 -relwidth 0 -height 157 \
-        -relheight 0 -anchor nw -bordermode ignore 
-    labelframe $top.lab40 \
-        -foreground black -text Logging -background wheat -height 185 \
-        -highlightbackground {#d9d9d9} -highlightcolor black -width 1180 
-    vTcl:DefineAlias "$top.lab40" "Labelframe2" vTcl:WidgetProc "Toplevel1" 1
-    set site_3_0 $top.lab40
-    vTcl::widgets::ttk::scrolledtext::CreateCmd $site_3_0.scr41 \
-        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 125 
-    vTcl:DefineAlias "$site_3_0.scr41" "Scrolledtext_log" vTcl:WidgetProc "Toplevel1" 1
-
-    $site_3_0.scr41.01 configure -background white \
-        -font TkTextFont \
-        -foreground black \
-        -height 3 \
-        -highlightbackground wheat \
-        -highlightcolor black \
-        -insertbackground black \
-        -insertborderwidth 3 \
-        -selectbackground #c4c4c4 \
-        -selectforeground black \
-        -width 10 \
-        -wrap none
-    place $site_3_0.scr41 \
-        -in $site_3_0 -x 10 -y 20 -width 1161 -relwidth 0 -height 141 \
-        -relheight 0 -anchor nw -bordermode ignore 
+    vTcl:DefineAlias "$site_4_0.scr38" "Scrolledtreeview1" vTcl:WidgetProc "Toplevel1" 1
+    button $site_4_0.but39 \
+        -activebackground {#f4bcb2} -activeforeground {#000000} \
+        -background {#d5eaff} -disabledforeground {#a3a3a3} \
+        -foreground {#000000} -highlightbackground wheat \
+        -highlightcolor black -pady 0 -text {Run Screening Once} 
+    vTcl:DefineAlias "$site_4_0.but39" "ButtonRunStrategy" vTcl:WidgetProc "Toplevel1" 1
+    button $site_4_0.but40 \
+        -activebackground {#f4bcb2} -activeforeground {#000000} \
+        -background {#d5eaff} -disabledforeground {#a3a3a3} \
+        -foreground {#000000} -highlightbackground wheat \
+        -highlightcolor black -pady 0 -text {Run Strategy Repetitive} 
+    vTcl:DefineAlias "$site_4_0.but40" "ButtonRunStrategyRepetitive" vTcl:WidgetProc "Toplevel1" 1
+    place $site_4_0.scr38 \
+        -in $site_4_0 -x 3 -y 3 -relwidth 0.98 -relheight 0.85 -anchor nw \
+        -bordermode ignore 
+    place $site_4_0.but39 \
+        -in $site_4_0 -x 130 -y 420 -width 142 -height 44 -anchor nw \
+        -bordermode ignore 
+    place $site_4_0.but40 \
+        -in $site_4_0 -x 350 -y 420 -width 142 -height 44 -anchor nw \
+        -bordermode ignore 
+    frame $top.tNo39.t1 \
+        -background {#effbff} -highlightbackground {#d9d9d9} \
+        -highlightcolor black 
+    vTcl:DefineAlias "$top.tNo39.t1" "TNotebook2_t2_page_config" vTcl:WidgetProc "Toplevel1" 1
+    $top.tNo39 add .top32.tNo39.t1 \
+        -padding 0 -sticky nsew -state normal -text Configuration -image {} \
+        -compound none -underline -1 
+    set site_4_1  $top.tNo39.t1
     ttk::style configure TPanedwindow -background wheat
     ttk::style configure TPanedwindow.Label -background wheat
     ttk::style configure TPanedwindow.Label -foreground #000000
     ttk::style configure TPanedwindow.Label -font TkDefaultFont
-    ttk::panedwindow $top.tPa42 \
-        -width 200 -height 200 
-    vTcl:DefineAlias "$top.tPa42" "TPanedwindow2" vTcl:WidgetProc "Toplevel1" 1
+    ttk::panedwindow $site_4_1.tPa42 \
+        -orient horizontal -width 200 -height 200 
+    vTcl:DefineAlias "$site_4_1.tPa42" "TPanedwindow2" vTcl:WidgetProc "Toplevel1" 1
     ttk::style configure TLabelframe.Label -background wheat
     ttk::style configure TLabelframe.Label -foreground #000000
     ttk::style configure TLabelframe.Label -font TkDefaultFont
     ttk::style configure TLabelframe -background wheat
-    ttk::labelframe $top.tPa42.p1 \
-        -text {Pane 1} -width 200 -height 75 
-    vTcl:DefineAlias "$top.tPa42.p1" "TPanedwindow2_p1" vTcl:WidgetProc "Toplevel1" 1
-    set site_4_0 $top.tPa42.p1
-    vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_4_0.scr43 \
-        -background {#d9d9d9} -height 55 -highlightbackground {#d9d9d9} \
-        -highlightcolor black -width 1031 
-    vTcl:DefineAlias "$site_4_0.scr43" "Scrolledlistbox_selectStrategy" vTcl:WidgetProc "Toplevel1" 1
+    ttk::labelframe $site_4_1.tPa42.p1 \
+        -text {Strategy Selection} -width -788 -height 200 
+    vTcl:DefineAlias "$site_4_1.tPa42.p1" "TPanedwindow2_p1_strat_selection" vTcl:WidgetProc "Toplevel1" 1
+    set site_6_0 $site_4_1.tPa42.p1
+    vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_6_0.scr45 \
+        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 125 
+    vTcl:DefineAlias "$site_6_0.scr45" "Scrolledlistbox_selectStrategy" vTcl:WidgetProc "Toplevel1" 1
 
-    $site_4_0.scr43.01 configure -background white \
+    $site_6_0.scr45.01 configure -background white \
         -disabledforeground #a3a3a3 \
         -font TkFixedFont \
         -foreground black \
@@ -371,45 +215,37 @@ proc vTclWindow.top32 {base} {
         -selectbackground #c4c4c4 \
         -selectforeground black \
         -width 10
-    place $site_4_0.scr43 \
-        -in $site_4_0 -x 10 -y 20 -width 1031 -relwidth 0 -height 55 \
-        -relheight 0 -anchor nw -bordermode ignore 
-    $top.tPa42 add $top.tPa42.p1 
+    place $site_6_0.scr45 \
+        -in $site_6_0 -x 3 -y 3 -relwidth 0.98 -relheight 0.97 -anchor nw \
+        -bordermode ignore 
+    $site_4_1.tPa42 add $site_4_1.tPa42.p1 
         
     ttk::style configure TLabelframe.Label -background wheat
     ttk::style configure TLabelframe.Label -foreground #000000
     ttk::style configure TLabelframe.Label -font TkDefaultFont
     ttk::style configure TLabelframe -background wheat
-    ttk::labelframe $top.tPa42.p2 \
-        -text {Pane 2} -width 200 -height 125 
-    vTcl:DefineAlias "$top.tPa42.p2" "TPanedwindow2_p2" vTcl:WidgetProc "Toplevel1" 1
-    set site_4_1 $top.tPa42.p2
-    ttk::style configure TLabelframe.Label -background wheat
-    ttk::style configure TLabelframe.Label -foreground #000000
-    ttk::style configure TLabelframe.Label -font TkDefaultFont
-    ttk::style configure TLabelframe -background wheat
-    ttk::labelframe $site_4_1.tLa44 \
-        -text Tlabelframe3 -width 150 -height 75 
-    vTcl:DefineAlias "$site_4_1.tLa44" "TPanedwindow2_p3" vTcl:WidgetProc "Toplevel1" 1
-    place $site_4_1.tLa44 \
-        -in $site_4_1 -x 20 -y 60 -anchor nw -bordermode ignore 
-    $top.tPa42 add $top.tPa42.p2 
+    ttk::labelframe $site_4_1.tPa42.p2 \
+        -text Parameters -width 988 -height 200 
+    vTcl:DefineAlias "$site_4_1.tPa42.p2" "TPanedwindow2_p2_parameters" vTcl:WidgetProc "Toplevel1" 1
+    set site_6_1 $site_4_1.tPa42.p2
+    $site_4_1.tPa42 add $site_4_1.tPa42.p2 
         
+    place $site_4_1.tPa42 \
+        -in $site_4_1 -x 3 -y 3 -relwidth 0.99 -relheight 0.99 -anchor nw \
+        -bordermode ignore 
+    labelframe $top.lab37 \
+        -foreground black -text Logging -background {#effbff} -height 75 \
+        -highlightbackground {#d9d9d9} -highlightcolor black -width 150 
+    vTcl:DefineAlias "$top.lab37" "Labelframe2" vTcl:WidgetProc "Toplevel1" 1
     ###################
     # SETTING GEOMETRY
     ###################
-    place $top.fra39 \
-        -in $top -x 10 -y 600 -width 1175 -relwidth 0 -height 85 -relheight 0 \
+    place $top.tNo39 \
+        -in $top -x 0 -y 0 -width 1281 -relwidth 0 -height 504 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab37 \
-        -in $top -x 10 -y 400 -width 1180 -relwidth 0 -height 185 \
-        -relheight 0 -anchor nw -bordermode ignore 
-    place $top.lab40 \
-        -in $top -x 10 -y 700 -width 1180 -relwidth 0 -height 185 \
-        -relheight 0 -anchor nw -bordermode ignore 
-    place $top.tPa42 \
-        -in $top -x 10 -y 10 -width 1250 -relwidth 0 -height 670 -relheight 0 \
-        -anchor nw -bordermode ignore 
+        -in $top -x 9 -y 510 -relwidth 0.99 -relheight 0.32 -anchor nw \
+        -bordermode ignore 
 
     vTcl:FireEvent $base <<Ready>>
 }

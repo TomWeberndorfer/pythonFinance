@@ -5,13 +5,6 @@ from Signals.Signals import signal_is_volume_high_enough, signal_is_volume_raisi
 from Strategies.Abstract_Strategy import Abstract_Strategy
 
 
-# from Utils.file_utils import read_tickers_from_file_or_web, append_textline_to_file
-
-
-# TODO parameter aus self statt da oben --> parameter_dict.news_threshold
-# news_threshold = 0.5
-##########################
-
 class W52HighTechnicalStrategy(Abstract_Strategy):
 
     def _method_to_execute(self, stock_data_container):
@@ -66,3 +59,20 @@ class W52HighTechnicalStrategy(Abstract_Strategy):
             return None
 
         return stock_data_container
+
+    @staticmethod
+    def get_required_parameters_with_default_parameters():
+        strategy_parameter_dict = \
+            {'W52HighTechnicalStrategy':
+                 {'check_days': 7,
+                  'min_cnt': 3,
+                  'min_vol_dev_fact': 1.2,
+                  'within52w_high_fact': 0.98,
+                  'data_readers': {'HistoricalDataReader': {
+                      'weeks_delta': 52,
+                      'data_source': 'iex',
+                      'reload_data': False,
+                      'ticker_needed': True}}}
+
+             }
+        return strategy_parameter_dict

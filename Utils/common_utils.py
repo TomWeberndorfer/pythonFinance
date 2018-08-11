@@ -89,7 +89,6 @@ def send_email(from_addr, to_addr_list, cc_addr_list, subject, message, login, p
     server.quit()
     return problems
 
-
 def calc_avg_vol(stock_data):
     """
     Calculates the average volume of stock data except the days to skip from end.
@@ -515,3 +514,23 @@ def var_cov_var(P, c, mu, sigma):
     """
     alpha = norm.ppf(1 - c, mu, sigma)
     return P - P * (alpha + 1)
+
+
+def have_dicts_same_shape(d1, d2):
+    """
+    Check if dicts have the same shape, which means same nested structure and keys.
+    :param d1: dict 1
+    :param d2: dict 2
+    :return: True, if shape is sanme
+    """
+    if isinstance(d1, dict):
+        if isinstance(d2, dict):
+            # then we have shapes to check
+            return (d1.keys() == d2.keys() and
+                    # so the keys are all the same
+                    all(have_dicts_same_shape(d1[k], d2[k]) for k in d1.keys()))
+            # thus all values will be tested in the same way.
+        else:
+            return False  # d1 is a dict, but d2 isn't
+    else:
+        return not isinstance(d2, dict)  # if d2 is a dict, False, else True.

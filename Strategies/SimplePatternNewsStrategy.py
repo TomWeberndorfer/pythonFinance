@@ -7,24 +7,12 @@ from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
-class SimplePatternNewsStrategy(Abstract_Strategy, Abstract_SimpleMultithreading):
+class SimplePatternNewsStrategy(Abstract_Strategy):
     def __init__(self, stock_data_container_list, parameter_dict):
         Abstract_Strategy.__init__(self, stock_data_container_list, parameter_dict)
-        Abstract_SimpleMultithreading.__init__(self)
         self.text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list,
                                                      self.parameter_dict['news_threshold'],
                                                      self.parameter_dict['german_tagger'])
-
-    def run_strategy(self):
-        stack = inspect.stack()
-        #the_class = stack[1][0].f_locals["self"].__class__  # get the inherited class name
-        #TODO anders updaten
-        self.max_data_reads = len(self.stock_data_container_list)
-        if len(self.stock_data_container_list) > 0:
-            self.map_list(self.stock_data_container_list)
-
-        #print(str(the_class) + " finished.")
-        return self.result_list
 
     def _method_to_execute(self, stock_data_container):
         try:
@@ -43,5 +31,20 @@ class SimplePatternNewsStrategy(Abstract_Strategy, Abstract_SimpleMultithreading
 
         self.update_status("SimplePatternNewsStrategy:")
 
-
-
+    @staticmethod
+    def get_required_parameters_with_default_parameters():
+        strategy_parameter_dict = \
+            {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
+                                           'german_tagger': 'C:\\temp\\nltk_german_classifier_data.pickle',
+                                           'data_readers': {'TraderfoxNewsDataReader':
+                                               {
+                                                   'last_date_time_file': 'C:\\temp\\last_date_time.csv',
+                                                   'german_tagger': 'C:\\temp\\nltk_german_classifier_data.pickle',
+                                                   'reload_data': True,
+                                                   'ticker_needed': False},
+                                               'HistoricalDataReader':
+                                                   {'weeks_delta': 52,
+                                                    'data_source': 'iex',
+                                                    'reload_data': True,
+                                                    'ticker_needed': False}}}}
+        return strategy_parameter_dict

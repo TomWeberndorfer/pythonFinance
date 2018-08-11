@@ -36,3 +36,12 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         :return: should return the result or add it to the list and return nothing
         """
         raise Exception("Abstractmethod")
+
+    @staticmethod
+    @abstractmethod
+    def get_required_parameters_with_default_parameters():
+        """
+        Return a dict with required strategy parameters and default parameter values.
+        :return: dict with required values and default parameters
+        """
+        raise Exception("Abstractmethod")

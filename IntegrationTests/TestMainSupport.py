@@ -12,6 +12,7 @@ from MvcModel import MvcModel
 from Utils.GuiUtils import GuiUtils
 from Utils.GlobalVariables import *
 from threading import Thread
+from Strategies.StrategyFactory import StrategyFactory
 
 try:
     from Tkinter import *
@@ -39,8 +40,10 @@ class TestMainSupport(unittest.TestCase):
         top = Framework(root)
         controller = main_v1_support.init(root, top)
 
+        req_params = StrategyFactory.get_required_parameters_with_default_parameters()
+
         controller.load_other_parameter_from_file(
-            GlobalVariables.get_data_files_path() + '\\TestData\\OtherParameterFile_DO_NOT_RELOAD.pickle')
+            GlobalVariables.get_data_files_path() + '\\TestData\\OtherParameterFile_DO_NOT_RELOAD.pickle', req_params)
         controller.model.set_strategy_selection_value(['W52HighTechnicalStrategy'])
         root.mainloop()
 

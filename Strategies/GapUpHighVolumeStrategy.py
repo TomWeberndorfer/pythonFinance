@@ -7,6 +7,10 @@ from Strategies.Abstract_Strategy import Abstract_Strategy
 
 class GapUpHighVolumeStrategy(Abstract_Strategy):
 
+    @staticmethod
+    def get_required_parameters_with_default_parameters():
+        raise NotImplementedError
+
     def _method_to_execute(self, stock_data_container):
         try:
             if len(stock_data_container.historical_stock_data()) > 0:
