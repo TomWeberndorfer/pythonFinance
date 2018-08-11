@@ -14,20 +14,9 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 
 class TestStrategyFactory(unittest.TestCase):
 
-    def test_StockDataContainer_get_required_parameters_with_default_parameters(self):
-        req_params = StrategyFactory.get_required_parameters_with_default_parameters()
-
-        w52_params = W52HighTechnicalStrategy.get_required_parameters_with_default_parameters()
-        simple_news_params = SimplePatternNewsStrategy.get_required_parameters_with_default_parameters()
-
-        params_dict = {}
-        params_dict.update(w52_params)
-        params_dict.update(simple_news_params)
-
-        self.assertEqual(params_dict, req_params)
-
     def test_data_in_dict(self):
-        strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
+        stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
+        all_strategy_parameters_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
                                                                  'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
                                                                  'data_readers': {'TraderfoxNewsDataReader':
                                                                      {
@@ -51,9 +40,17 @@ class TestStrategyFactory(unittest.TestCase):
                                             'reload_data': False,
                                             'ticker_needed': True}}}
                                    }
+        other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
+            'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
+                      'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
+                      'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
+                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+
+        all_strategy_parameters_dict = {'Strategies': all_strategy_parameters_dict}
+        all_strategy_parameters_dict.update({"OtherParameters": other_params})
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 
-        self.assertTrue(have_dicts_same_shape(req_params, strategy_parameter_dict))
+        self.assertTrue(have_dicts_same_shape(req_params, all_strategy_parameters_dict))
 
         # key "news" instead of "news_threshold"
         corrupted_strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news': 0.7,
@@ -97,3 +94,31 @@ class TestStrategyFactory(unittest.TestCase):
                                            }
 
         self.assertFalse(have_dicts_same_shape(req_params, missing_strategy_parameter_dict))
+
+    def test_partial_data_in_dict(self):
+        stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
+        req_params = StrategyFactory.get_required_parameters_with_default_parameters()
+
+        missing_strategy_parameter_dict = {'W52HighTechnicalStrategy':
+                                               {'check_days': 7,
+                                                'min_cnt': 3,
+                                                'min_vol_dev_fact': 1.2,
+                                                'within52w_high_fact': 0.98,
+                                                'data_readers': {'HistoricalDataReader': {
+                                                    'weeks_delta': 52,
+                                                    'data_source': 'iex',
+                                                    'reload_data': False,
+                                                    'ticker_needed': True}}}
+                                           }
+
+        other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
+            'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
+                      'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
+                      'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
+                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+
+        all_strategy_parameters_dict = {'Strategies': missing_strategy_parameter_dict}
+        all_strategy_parameters_dict.update({"OtherParameters": other_params})
+
+        self.assertFalse(have_dicts_same_shape(req_params['Strategies']['W52HighTechnicalStrategy'],
+                                               missing_strategy_parameter_dict))

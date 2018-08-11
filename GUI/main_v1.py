@@ -177,7 +177,8 @@ class Framework:
         self.TPanedwindow2.add(self.TPanedwindow2_p2_parameters)
         self.__funcid0 = self.TPanedwindow2.bind('<Map>', self.__adjust_sash0)
 
-        self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.TPanedwindow2_p1_strat_selection)
+        self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.TPanedwindow2_p1_strat_selection,
+                                                              selectmode=MULTIPLE)
         self.Scrolledlistbox_selectStrategy.place(relx=0.0, rely=0.01
                                                   , relheight=0.97, relwidth=0.98)
         self.Scrolledlistbox_selectStrategy.configure(background="white")

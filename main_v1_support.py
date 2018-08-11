@@ -25,7 +25,7 @@ from tkinter import filedialog
 
 from Utils.GlobalVariables import *
 from Utils.GuiUtils import GuiUtils
-from Utils.common_utils import have_dicts_same_shape
+from Utils.common_utils import have_dicts_same_shape, delete_keys_from_dict, update_dict
 from Utils.file_utils import FileUtils
 
 
@@ -40,19 +40,16 @@ class MyController:
         self.view = view  # initializes the view
         self.view.ButtonRunStrategy.config(command=self.start_screening)
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect)
-        self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click)
-        self.available_strategies_changed()
+        self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click_Scrolledtreeview1)
 
-        req_params = StrategyFactory.get_required_parameters_with_default_parameters()
-        self.load_other_parameter_from_file(GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle",
-                                            req_params)
         self.other_params_changed()
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
         self.console = ConsoleUi(self.view.Labelframe2)
 
-    def on_double_click(self, event):
+    def on_double_click_Scrolledtreeview1(self, event):
         """
-        TODO beschreiben und fixe url weg
+        On double click event for scrolledtreeview1,
+        opens a finance web page
         :param event:
         :return:
         """
@@ -90,8 +87,13 @@ class MyController:
                 messagebox.showerror("Selection Error", "Please select a strategy first!")
                 return
 
-            if not self.accept_parameters_from_text():
-                return
+            req_params = StrategyFactory.get_required_parameters_with_default_parameters()
+            at_objects = w.scrollable_frame_parameters.form.at_objects
+            content_others = w.scrollable_frame_parameters.form.get_parameters(at_objects)
+
+            if not self.accept_parameters_from_text(content_others, req_params):
+                messagebox.showerror("Parameter file is not valid!",
+                                     "Please choose a valid parameters file!")
 
             self.model.set_is_thread_running(True)
             logger.info("Screening started...")
@@ -105,24 +107,29 @@ class MyController:
 
         self.model.set_is_thread_running(False)
 
-    def accept_parameters_from_text(self):
+    def accept_parameters_from_text(self, params_dict, required_parameters):
         """
-        Method to accept the changes in the scrolled text for the parameters.
+        Method to accept the changes in the scrolled text for the parameters,
+         if the shape and keys of parameters dict is same as required parameters dict.
         :return: True, if parameters are valid and updated.
         """
         try:
-            at_objects = w.scrollable_frame_parameters.form.at_objects
-            content_others = w.scrollable_frame_parameters.form.get_parameters(at_objects)
-
-            if content_others == {}:
-                messagebox.showerror("Parameters empty", "Please insert parameters")
+            if isinstance(params_dict, dict) \
+                    and 'OtherParameters' in params_dict.keys() and len(params_dict['OtherParameters']) > 0 \
+                    and 'Strategies' in params_dict.keys() and len(params_dict['Strategies']) > 0 and \
+                    have_dicts_same_shape(required_parameters, params_dict):
+                self.model.clear_other_params()
+                self.model.add_to_other_params(params_dict)
+                self.model.clear_available_strategies_list()
+                for item in params_dict['Strategies']:
+                    self.model.add_to_available_strategies(item)
+                logger.info("Parameters Read")
+            else:
+                logger.error("Parameters faulty, Please insert correct parameters!")
                 return False
 
-            self.model.clear_other_params()
-            self.model.add_to_other_params(content_others)
-
         except Exception as e:
-            messagebox.showerror("Parameters not valid", "Please insert valid parameters: " + str(e))
+            logger.error("Exception while opening result stock: " + str(e) + "\n" + str(traceback.format_exc()))
             return False
 
         return True
@@ -137,66 +144,40 @@ class MyController:
         try:
             with open(file_path, "rb") as f:
                 items = pickle.load(f)
-                if isinstance(items, dict) \
-                        and 'OtherParameters' in items.keys() and len(items['OtherParameters']) > 0 \
-                        and 'Strategies' in items.keys() and len(items['Strategies']) > 0 and \
-                        have_dicts_same_shape(required_parameters, items['Strategies']):
+                if not self.accept_parameters_from_text(items, required_parameters):
+                    override_params = messagebox.askyesno("Parameter file is not valid!",
+                                                          "Do you want to CREATE a new file with default parameters?")
 
-                    self.model.clear_other_params()
-                    self.model.add_to_other_params(items)
-                    self.model.clear_available_strategies_list()
-                    for item in items['Strategies']:
-                        self.model.add_to_available_strategies(item)
-                    logger.info("Parameters Read")
-
-                else:
-                    messagebox.showerror("Parameter file is not valid!",
-                                         "Please choose a valid parameters file, with this data format:\n"
-                                         + str(required_parameters) + "\n\n" + "Selected format is: \n"
-                                         + str(items['Strategies']))
+                    if override_params:
+                        self.model.clear_other_params()
+                        self.model.add_to_other_params(required_parameters)
+                        self.model.clear_available_strategies_list()
+                        for item in required_parameters['Strategies']:
+                            self.model.add_to_available_strategies(item)
 
         except Exception as e:
+            messagebox.showerror("Parameter file is not valid!",
+                                 "Please choose a valid parameters file:" + str(e) + "\n" + str(traceback.format_exc()))
             logger.error(
                 "Exception while loading other parameter from file: " + str(e) + "\n" + str(traceback.format_exc()))
             return
 
-    def dump_other_parameter_to_file(self,
-                                     file_path=GlobalVariables.get_data_files_path() + "OtherParameterFile.pickle",
-                                     content_others=""):
+    def dump_other_parameter_to_file(self, file_path, params_dict, required_parameters=None):
         """
-        dumps the parameters to a global given file
-        :param content_others: the content to dump as string
+        Dumps the parameters to the given file, if the parameters shape is equal to required parameters.
+        :param required_parameters: required parameters dict (shape is important for check)
+        :param params_dict: the content to dump as string
         :param file_path: file path + name to dump to
         :return: -
         """
-        try:
-            if isinstance(content_others, str):
-                content_others_dict = ast.literal_eval(content_others)
-            else:
-                content_others_dict = content_others
 
-            if content_others_dict == {}:
-                messagebox.showerror("Parameters empty", "Please insert parameters")
-            else:
-                self.model.clear_other_params()
-                self.model.add_to_other_params(content_others_dict)
-                with open(file_path, "wb") as f:
-                    params_dict = self.model.get_other_params()
-
-                    if isinstance(params_dict, dict) \
-                            and 'OtherParameters' in params_dict.keys() \
-                            and len(params_dict['OtherParameters']) > 0 and 'Strategies' in params_dict.keys() \
-                            and len(params_dict['Strategies']) > 0:
-
-                        pickle.dump(params_dict, f)
-                        logger.info("Parameters Saved")
-                    else:
-                        messagebox.showerror("Parameter file is not valid!",
-                                             "Please choose a valid parameters file!")
-
-        except Exception as e:
-            logger.error("Exception while dump_other_parameter_to_file: " + str(e) + "\n" + str(traceback.format_exc()))
-            return
+        if required_parameters is None or self.accept_parameters_from_text(params_dict, required_parameters):
+            with open(file_path, "wb") as f:
+                pickle.dump(params_dict, f)
+                logger.info("Parameters Saved")
+        else:
+            messagebox.showerror("Parameter file is not valid!",
+                                 "Please choose a valid parameters file!")
 
     # event handlers
     def quit_button_pressed(self):
@@ -278,14 +259,12 @@ class MyController:
 
 
 def init(top, gui, *args, **kwargs):
-    # TODO loglevel logging level
     logging.basicConfig(level=logging.INFO)
     global w, top_level, root, app
     w = gui
     top_level = top
     root = top
     app = MyController(root, w)
-
     return app
 
 
@@ -303,8 +282,9 @@ def save_other_params():
 
     at_objects = w.scrollable_frame_parameters.form.at_objects
     all_txt = w.scrollable_frame_parameters.form.get_parameters(at_objects)
+    req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 
-    app.dump_other_parameter_to_file(file_path, all_txt)
+    app.dump_other_parameter_to_file(file_path, all_txt, req_params)
 
 
 def quit():

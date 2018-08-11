@@ -89,6 +89,7 @@ def send_email(from_addr, to_addr_list, cc_addr_list, subject, message, login, p
     server.quit()
     return problems
 
+
 def calc_avg_vol(stock_data):
     """
     Calculates the average volume of stock data except the days to skip from end.
@@ -227,7 +228,7 @@ def print_news_analysis_results(stocks_to_buy):
             if res != " ":
                 Utils.Logger_Instance.logger.info(
                     "pos: " + str(round(res['positive_prob_dist'].prob("pos"), 2)) + " ,neg: " + str(
-                    round(res['positive_prob_dist'].prob("neg"), 2)) + " " + str(res))
+                        round(res['positive_prob_dist'].prob("neg"), 2)) + " " + str(res))
     else:
         Utils.Logger_Instance.logger.info("News analysis: no news")
 
@@ -534,3 +535,36 @@ def have_dicts_same_shape(d1, d2):
             return False  # d1 is a dict, but d2 isn't
     else:
         return not isinstance(d2, dict)  # if d2 is a dict, False, else True.
+
+
+def delete_keys_from_dict(dict_del, lst_keys):
+    """
+    Deletes the keys from dict, even if nested and returns the new dict
+    https://stackoverflow.com/questions/3405715/elegant-way-to-remove-fields-from-nested-dictionaries
+    :param dict_del: dict to delete from
+    :param lst_keys: list with keys to delete
+    :return: new dict
+    """
+    from boltons.iterutils import remap
+    drop_keys = lambda path, key, value: key not in lst_keys
+    clean = remap(dict_del, visit=drop_keys)
+    return clean
+
+    # for k in lst_keys:
+    #     try:
+    #         del dict_del[k]
+    #     except KeyError:
+    #         pass
+    # for v in dict_del.values():
+    #     if isinstance(v, dict):
+    #         delete_keys_from_dict(v, lst_keys)
+    #
+    # return dict_del
+
+
+def update_dict(a, b):
+    for key in b:
+        if not key in a or type(a[key]) != dict or type(b[key]) != dict:
+            a[key] = b[key]
+        else:
+            update_dict(a[key], b[key])
