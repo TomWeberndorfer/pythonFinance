@@ -1,6 +1,6 @@
 import inspect
 import traceback
-
+from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
 from Strategies.Abstract_Strategy import Abstract_Strategy
 from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
@@ -33,13 +33,15 @@ class SimplePatternNewsStrategy(Abstract_Strategy):
 
     @staticmethod
     def get_required_parameters_with_default_parameters():
+
+        data_file_path = GlobalVariables.get_data_files_path()
         strategy_parameter_dict = \
             {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
-                                           'german_tagger': 'C:\\temp\\nltk_german_classifier_data.pickle',
+                                           'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                            'data_readers': {'TraderfoxNewsDataReader':
                                                {
-                                                   'last_date_time_file': 'C:\\temp\\last_date_time.csv',
-                                                   'german_tagger': 'C:\\temp\\nltk_german_classifier_data.pickle',
+                                                   'last_date_time_file': data_file_path + 'last_date_time.csv',
+                                                   'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                    'reload_data': True,
                                                    'ticker_needed': False},
                                                'HistoricalDataReader':

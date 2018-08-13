@@ -32,9 +32,9 @@ class TestStockAnalysis(unittest.TestCase):
                         'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
 
         # from Utils.file_utils import read_tickers_from_file_or_web
-        # stock_data_container_list = read_tickers_from_file_or_web(_other_params['stock_data_container_file'],
+        # stock_data_container_list = read_tickers_from_file_or_web(_analysis_parameters['stock_data_container_file'],
         #                                                          False,
-        #                                                          _other_params['list_with_stock_pages_to_read'])
+        #                                                          _analysis_parameters['list_with_stock_pages_to_read'])
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)

@@ -10,8 +10,8 @@ class GlobalVariables:
 
     @staticmethod
     def get_data_files_path():
-        filepath = GlobalVariables.get_root_dir() + '\\DataFiles\\'
-        return filepath
+        data_file_path = GlobalVariables.get_root_dir() + '\\DataFiles\\'
+        return data_file_path
 
     @staticmethod
     def get_stock_data_labels_dict(uppercase=False):

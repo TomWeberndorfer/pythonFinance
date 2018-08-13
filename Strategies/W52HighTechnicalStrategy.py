@@ -3,7 +3,7 @@ import traceback
 from Utils.Logger_Instance import logger
 from Signals.Signals import signal_is_volume_high_enough, signal_is_volume_raising, signal_is52_w_high
 from Strategies.Abstract_Strategy import Abstract_Strategy
-
+from Utils.GlobalVariables import *
 
 class W52HighTechnicalStrategy(Abstract_Strategy):
 

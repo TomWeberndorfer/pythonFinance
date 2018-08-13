@@ -83,7 +83,7 @@ class Framework:
                 activebackground="#f4bcb2",
                 activeforeground="#000000",
             background="#effbff",
-                command=main_v1_support.save_other_params,
+            command=main_v1_support.save_analysis_parameters,
                 font="TkMenuFont",
                 foreground="#000000",
                 label="Save Other Params")
@@ -91,7 +91,7 @@ class Framework:
                 activebackground="#f4bcb2",
                 activeforeground="#000000",
             background="#effbff",
-                command=main_v1_support.load_other_params,
+            command=main_v1_support.load_analysis_parameters,
                 font="TkMenuFont",
                 foreground="#000000",
                 label="Load Other Parameters")

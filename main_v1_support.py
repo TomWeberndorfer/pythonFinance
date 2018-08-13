@@ -42,7 +42,7 @@ class MyController:
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect)
         self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click_Scrolledtreeview1)
 
-        self.other_params_changed()
+        self.analysis_parameters_changed()
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
         self.console = ConsoleUi(self.view.Labelframe2)
 
@@ -98,8 +98,8 @@ class MyController:
             self.model.set_is_thread_running(True)
             logger.info("Screening started...")
             self.model.clear_result_stock_data_container_list()
-            other_params = self.model.get_other_params()
-            results = run_analysis(selection_values, other_params['Strategies'], other_params['OtherParameters'])
+            analysis_params = self.model.get_analysis_parameters()
+            results = run_analysis(selection_values, analysis_params['Strategies'], analysis_params['OtherParameters'])
 
             self.model.extend_result_stock_data_container_list(results)
         except Exception as e:
@@ -118,8 +118,8 @@ class MyController:
                     and 'OtherParameters' in params_dict.keys() and len(params_dict['OtherParameters']) > 0 \
                     and 'Strategies' in params_dict.keys() and len(params_dict['Strategies']) > 0 and \
                     have_dicts_same_shape(required_parameters, params_dict):
-                self.model.clear_other_params()
-                self.model.add_to_other_params(params_dict)
+                self.model.clear_analysis_parameters()
+                self.model.update_analysis_parameters_dict(params_dict)
                 self.model.clear_available_strategies_list()
                 for item in params_dict['Strategies']:
                     self.model.add_to_available_strategies(item)
@@ -134,7 +134,7 @@ class MyController:
 
         return True
 
-    def load_other_parameter_from_file(self, file_path, required_parameters):
+    def load_analysis_parameters_from_file(self, file_path, required_parameters):
         """
         Loads the parameters into the GUI from a given filepath and file.
         :param required_parameters: a dict with all required parameters, must be all in file
@@ -149,8 +149,8 @@ class MyController:
                                                           "Do you want to CREATE a new file with default parameters?")
 
                     if override_params:
-                        self.model.clear_other_params()
-                        self.model.add_to_other_params(required_parameters)
+                        self.model.clear_analysis_parameters()
+                        self.model.update_analysis_parameters_dict(required_parameters)
                         self.model.clear_available_strategies_list()
                         for item in required_parameters['Strategies']:
                             self.model.add_to_available_strategies(item)
@@ -162,7 +162,7 @@ class MyController:
                 "Exception while loading other parameter from file: " + str(e) + "\n" + str(traceback.format_exc()))
             return
 
-    def dump_other_parameter_to_file(self, file_path, params_dict, required_parameters=None):
+    def dump_analysis_parameters_to_file(self, file_path, params_dict, required_parameters=None):
         """
         Dumps the parameters to the given file, if the parameters shape is equal to required parameters.
         :param required_parameters: required parameters dict (shape is important for check)
@@ -183,8 +183,8 @@ class MyController:
     def quit_button_pressed(self):
         self.parent.destroy()
 
-    def other_params_changed(self):
-        parameters = self.model.get_other_params()
+    def analysis_parameters_changed(self):
+        parameters = self.model.get_analysis_parameters()
         try:
             w.TPanedwindow2_p2_parameters.destroy()
         except Exception as e:
@@ -275,16 +275,16 @@ def destroy_window():
     top_level = None
 
 
-def save_other_params():
+def save_analysis_parameters():
     file_path = filedialog.asksaveasfilename(initialdir=GlobalVariables.get_data_files_path(),
                                              filetypes=[("Pickle Dumps", "*.pickle")], defaultextension='.pickle',
-                                             title="Select pickle other parameterfile")
+                                             title="Select pickle parameterfile")
 
     at_objects = w.scrollable_frame_parameters.form.at_objects
     all_txt = w.scrollable_frame_parameters.form.get_parameters(at_objects)
     req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 
-    app.dump_other_parameter_to_file(file_path, all_txt, req_params)
+    app.dump_analysis_parameters_to_file(file_path, all_txt, req_params)
 
 
 def quit():
@@ -295,13 +295,13 @@ def edit():
     pass
 
 
-def load_other_params():
+def load_analysis_parameters():
     file_path = filedialog.askopenfilename(initialdir=GlobalVariables.get_data_files_path(),
-                                           title="Select pickle other parameterfile",
+                                           title="Select pickle parameterfile",
                                            filetypes=[("Pickle Dumps", "*.pickle")], defaultextension='.pickle')
 
     req_params = StrategyFactory.get_required_parameters_with_default_parameters()
-    app.load_other_parameter_from_file(file_path, req_params)
+    app.load_analysis_parameters_from_file(file_path, req_params)
 
 
 def init_result_table(tree_view, columns):
@@ -320,7 +320,6 @@ def init_result_table(tree_view, columns):
             else:
                 tree_view.column(heading_num, width="100")
             tree_view.column(heading_num, minwidth="20")
-            tree_view.column(heading_num, stretch="1")
             tree_view.column(heading_num, anchor="w")
 
 

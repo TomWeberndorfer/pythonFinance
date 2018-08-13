@@ -6,7 +6,7 @@ class MvcModel:
         """
         self.vc = view_controller
         self.available_strategies = []
-        self._other_params = {}
+        self._analysis_parameters = {}
         self.strategy_parameter_dicts = {}
         self.strategy_selection_value = []
         self.result_stock_data_container_list = []
@@ -56,21 +56,21 @@ class MvcModel:
         return self.strategy_selection_value
 
     # Delegates-- Model would call this on internal change
-    def other_params_changed(self):
-        self.vc.other_params_changed()
+    def analysis_parameters_changed(self):
+        self.vc.analysis_parameters_changed()
 
-    def get_other_params(self):
-        return self._other_params
+    def get_analysis_parameters(self):
+        return self._analysis_parameters
 
-    def add_to_other_params(self, items):
+    def update_analysis_parameters_dict(self, items):
         assert (isinstance(items, dict))
         for key, value in items.items():
-            self._other_params.update({key: value})
-        self.other_params_changed()
+            self._analysis_parameters.update({key: value})
+        self.analysis_parameters_changed()
 
-    def clear_other_params(self):
-        self._other_params = {}
-        self.other_params_changed()
+    def clear_analysis_parameters(self):
+        self._analysis_parameters = {}
+        self.analysis_parameters_changed()
 
     # Delegates-- Model would call this on internal change
     def strategy_list_changed(self):

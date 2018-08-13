@@ -114,11 +114,11 @@ proc vTclWindow.top32 {base} {
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#save_other_params} -font TkMenuFont \
+        -background wheat -command {#save_analysis_parameters} -font TkMenuFont \
         -foreground {#000000} -label {Save Other Params} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#load_other_params} -font TkMenuFont \
+        -background wheat -command {#load_analysis_parameters} -font TkMenuFont \
         -foreground {#000000} -label {Load Other Parameters} 
     $site_3_0.men34 add separator \
         -background {#ffff00} 

@@ -42,7 +42,7 @@ class TestMainSupport(unittest.TestCase):
 
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 
-        controller.load_other_parameter_from_file(
+        controller.load_analysis_parameters_from_file(
             GlobalVariables.get_data_files_path() + '\\TestData\\OtherParameterFile_DO_NOT_RELOAD.pickle', req_params)
         controller.model.set_strategy_selection_value(['W52HighTechnicalStrategy'])
         root.mainloop()

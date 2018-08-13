@@ -77,10 +77,10 @@ class TestControllerAndGui(unittest.TestCase):
 
         params = {'Strategies': strategy_parameter_dict, 'OtherParameters': other_params}
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
-        controller.dump_other_parameter_to_file(strat_param_file, params, req_params)
+        controller.dump_analysis_parameters_to_file(strat_param_file, params, req_params)
 
-        controller.load_other_parameter_from_file(strat_param_file, req_params)
-        self.assertEqual(ast.literal_eval(params), controller.model.get_other_params(), req_params)
+        controller.load_analysis_parameters_from_file(strat_param_file, req_params)
+        self.assertEqual(ast.literal_eval(params), controller.model.get_analysis_parameters(), req_params)
 
     def test_dump_params(self):
         global val, w, root
@@ -118,5 +118,5 @@ class TestControllerAndGui(unittest.TestCase):
         with open(strat_param_file, "wb") as f:
             pickle.dump(params, f)
 
-        # controller.load_other_parameter_from_file(strat_param_file, req_params)
-        # self.assertEqual(ast.literal_eval(params), controller.model.get_other_params(), req_params)
+        # controller.load_analysis_parameters_from_file(strat_param_file, req_params)
+        # self.assertEqual(ast.literal_eval(params), controller.model.get_analysis_parameters(), req_params)
