@@ -4,9 +4,9 @@
 set vTcl(timestamp) ""
 
 
-set vTcl(actual_gui_bg) wheat
+set vTcl(actual_gui_bg) #effbff
 set vTcl(actual_gui_fg) #000000
-set vTcl(actual_gui_menu_bg) wheat
+set vTcl(actual_gui_menu_bg) #effbff
 set vTcl(actual_gui_menu_fg) #000000
 set vTcl(complement_color) #b2c9f4
 set vTcl(analog_color_p) #eaf4b2
@@ -53,6 +53,14 @@ proc vTcl:project:info {} {
     set site_6_0 $site_6_0
     set site_7_0 $site_6_0.scr45
     set site_6_1 .top32.tNo39.t1.tPa42.p2 
+    set site_4_2 .top32.tNo39.pg0 
+    set site_4_0 $site_4_2
+    set site_6_0 .top32.tNo39.pg0.tPa38.p1 
+    set site_6_0 $site_6_0
+    set site_7_0 $site_6_0.scr39
+    set site_6_1 .top32.tNo39.pg0.tPa38.p2 
+    set site_6_0 $site_6_1
+    set site_7_0 $site_6_0.scr40
     namespace eval ::widgets_bindings {
         set tagslist _TopLevel
     }
@@ -86,10 +94,10 @@ proc vTclWindow.top32 {base} {
     # CREATING WIDGETS
     ###################
     vTcl::widgets::core::toplevel::createCmd $top -class Toplevel \
-        -menu "$top.m33" -background {#eaeaea} -highlightbackground wheat \
+        -menu "$top.m33" -background {#eaeaea} -highlightbackground {#d5eaff} \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 1294x764+297+53
+    wm geometry $top 1300x880+292+0
     update
     # set in toplevel.wgt.
     global vTcl
@@ -99,7 +107,7 @@ proc vTclWindow.top32 {base} {
     wm overrideredirect $top 0
     wm resizable $top 1 1
     wm deiconify $top
-    wm title $top "Framework"
+    wm title $top "ASTA_Framework"
     vTcl:DefineAlias "$top" "Toplevel1" vTcl:Toplevel:WidgetProc "" 1
     menu $top.m33 \
         -activebackground {#f9f9f9} -activeforeground black \
@@ -114,12 +122,13 @@ proc vTclWindow.top32 {base} {
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#save_analysis_parameters} -font TkMenuFont \
-        -foreground {#000000} -label {Save Other Params} 
+        -background {#effbff} -command {#save_analysis_parameters} \
+        -font TkMenuFont -foreground {#000000} -label {Save Analysis Params} 
     $site_3_0.men34 add command \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
-        -background wheat -command {#load_analysis_parameters} -font TkMenuFont \
-        -foreground {#000000} -label {Load Other Parameters} 
+        -background {#effbff} -command {#load_analysis_parameters} \
+        -font TkMenuFont -foreground {#000000} \
+        -label {Load Analysis Parameters} 
     $site_3_0.men34 add separator \
         -background {#ffff00} 
     $site_3_0.men34 add command \
@@ -134,13 +143,13 @@ proc vTclWindow.top32 {base} {
     menu $site_3_0.men32 \
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
-    ttk::style configure TNotebook -background wheat
-    ttk::style configure TNotebook.Tab -background wheat
+    ttk::style configure TNotebook -background #effbff
+    ttk::style configure TNotebook.Tab -background #effbff
     ttk::style configure TNotebook.Tab -foreground #000000
     ttk::style configure TNotebook.Tab -font TkDefaultFont
-    ttk::style map TNotebook.Tab -background [list disabled wheat selected #d9d9d9]
+    ttk::style map TNotebook.Tab -background [list disabled #effbff selected #d9d9d9]
     ttk::notebook $top.tNo39 \
-        -width 1281 -height 504 -takefocus {} 
+        -width 1281 -height 634 -takefocus {} 
     vTcl:DefineAlias "$top.tNo39" "TNotebook2" vTcl:WidgetProc "Toplevel1" 1
     frame $top.tNo39.t0 \
         -background {#edf8fe} -highlightbackground {#d9d9d9} \
@@ -159,24 +168,24 @@ proc vTclWindow.top32 {base} {
     button $site_4_0.but39 \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
         -background {#d5eaff} -disabledforeground {#a3a3a3} \
-        -foreground {#000000} -highlightbackground wheat \
+        -foreground {#000000} -highlightbackground {#effbff} \
         -highlightcolor black -pady 0 -text {Run Screening Once} 
     vTcl:DefineAlias "$site_4_0.but39" "ButtonRunStrategy" vTcl:WidgetProc "Toplevel1" 1
     button $site_4_0.but40 \
         -activebackground {#f4bcb2} -activeforeground {#000000} \
         -background {#d5eaff} -disabledforeground {#a3a3a3} \
-        -foreground {#000000} -highlightbackground wheat \
+        -foreground {#000000} -highlightbackground {#effbff} \
         -highlightcolor black -pady 0 -text {Run Strategy Repetitive} 
     vTcl:DefineAlias "$site_4_0.but40" "ButtonRunStrategyRepetitive" vTcl:WidgetProc "Toplevel1" 1
     place $site_4_0.scr38 \
-        -in $site_4_0 -x 3 -y 3 -relwidth 0.98 -relheight 0.85 -anchor nw \
+        -in $site_4_0 -x 10 -y 10 -relwidth 0.97 -relheight 0.85 -anchor nw \
         -bordermode ignore 
     place $site_4_0.but39 \
-        -in $site_4_0 -x 130 -y 420 -width 142 -height 44 -anchor nw \
-        -bordermode ignore 
+        -in $site_4_0 -x 0 -relx 0.1 -y 0 -rely 0.9 -width 142 -height 44 \
+        -anchor nw -bordermode ignore 
     place $site_4_0.but40 \
-        -in $site_4_0 -x 350 -y 420 -width 142 -height 44 -anchor nw \
-        -bordermode ignore 
+        -in $site_4_0 -x 0 -relx 0.25 -y 0 -rely 0.9 -width 142 -height 44 \
+        -anchor nw -bordermode ignore 
     frame $top.tNo39.t1 \
         -background {#effbff} -highlightbackground {#d9d9d9} \
         -highlightcolor black 
@@ -185,19 +194,19 @@ proc vTclWindow.top32 {base} {
         -padding 0 -sticky nsew -state normal -text Configuration -image {} \
         -compound none -underline -1 
     set site_4_1  $top.tNo39.t1
-    ttk::style configure TPanedwindow -background wheat
-    ttk::style configure TPanedwindow.Label -background wheat
+    ttk::style configure TPanedwindow -background #effbff
+    ttk::style configure TPanedwindow.Label -background #effbff
     ttk::style configure TPanedwindow.Label -foreground #000000
     ttk::style configure TPanedwindow.Label -font TkDefaultFont
     ttk::panedwindow $site_4_1.tPa42 \
         -orient horizontal -width 200 -height 200 
     vTcl:DefineAlias "$site_4_1.tPa42" "TPanedwindow2" vTcl:WidgetProc "Toplevel1" 1
-    ttk::style configure TLabelframe.Label -background wheat
+    ttk::style configure TLabelframe.Label -background #effbff
     ttk::style configure TLabelframe.Label -foreground #000000
     ttk::style configure TLabelframe.Label -font TkDefaultFont
-    ttk::style configure TLabelframe -background wheat
+    ttk::style configure TLabelframe -background #effbff
     ttk::labelframe $site_4_1.tPa42.p1 \
-        -text {Strategy Selection} -width -788 -height 200 
+        -text {Strategy Selection} -width -798 -height 200 
     vTcl:DefineAlias "$site_4_1.tPa42.p1" "TPanedwindow2_p1_strat_selection" vTcl:WidgetProc "Toplevel1" 1
     set site_6_0 $site_4_1.tPa42.p1
     vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_6_0.scr45 \
@@ -211,27 +220,119 @@ proc vTclWindow.top32 {base} {
         -foreground black \
         -height 3 \
         -highlightbackground #d9d9d9 \
-        -highlightcolor wheat \
+        -highlightcolor #effbff \
         -selectbackground #c4c4c4 \
         -selectforeground black \
         -width 10
     place $site_6_0.scr45 \
-        -in $site_6_0 -x 3 -y 3 -relwidth 0.98 -relheight 0.97 -anchor nw \
+        -in $site_6_0 -x 3 -y 20 -relwidth 0.96 -relheight 0.95 -anchor nw \
         -bordermode ignore 
     $site_4_1.tPa42 add $site_4_1.tPa42.p1 
         
-    ttk::style configure TLabelframe.Label -background wheat
+    ttk::style configure TLabelframe.Label -background #effbff
     ttk::style configure TLabelframe.Label -foreground #000000
     ttk::style configure TLabelframe.Label -font TkDefaultFont
-    ttk::style configure TLabelframe -background wheat
+    ttk::style configure TLabelframe -background #effbff
     ttk::labelframe $site_4_1.tPa42.p2 \
-        -text Parameters -width 988 -height 200 
+        -text Parameters -width 998 -height 200 
     vTcl:DefineAlias "$site_4_1.tPa42.p2" "TPanedwindow2_p2_parameters" vTcl:WidgetProc "Toplevel1" 1
     set site_6_1 $site_4_1.tPa42.p2
     $site_4_1.tPa42 add $site_4_1.tPa42.p2 
         
     place $site_4_1.tPa42 \
         -in $site_4_1 -x 3 -y 3 -relwidth 0.99 -relheight 0.99 -anchor nw \
+        -bordermode ignore 
+    frame $top.tNo39.pg0 \
+        -background {#d9d9d9} -highlightbackground {#d9d9d9} \
+        -highlightcolor black 
+    vTcl:DefineAlias "$top.tNo39.pg0" "TNotebook2_t2" vTcl:WidgetProc "Toplevel1" 1
+    $top.tNo39 add .top32.tNo39.pg0 \
+        -padding 0 -sticky nsew -state normal -text Backtesting -image {} \
+        -compound none -underline -1 
+    set site_4_2  $top.tNo39.pg0
+    button $site_4_2.but40 \
+        -activebackground {#f4bcb2} -activeforeground {#000000} \
+        -background {#d5eaff} -disabledforeground {#a3a3a3} \
+        -foreground {#000000} -highlightbackground {#effbff} \
+        -highlightcolor black -pady 0 -text {Open Results in new window} 
+    vTcl:DefineAlias "$site_4_2.but40" "b_open_results_new_wd" vTcl:WidgetProc "Toplevel1" 1
+    button $site_4_2.but41 \
+        -activebackground {#f4bcb2} -activeforeground {#000000} \
+        -background {#d5eaff} -disabledforeground {#a3a3a3} \
+        -foreground {#000000} -highlightbackground {#effbff} \
+        -highlightcolor black -pady 0 -text {Run backtest} 
+    vTcl:DefineAlias "$site_4_2.but41" "b_run_backtest" vTcl:WidgetProc "Toplevel1" 1
+    ttk::style configure TPanedwindow -background #effbff
+    ttk::style configure TPanedwindow.Label -background #effbff
+    ttk::style configure TPanedwindow.Label -foreground #000000
+    ttk::style configure TPanedwindow.Label -font TkDefaultFont
+    ttk::panedwindow $site_4_2.tPa38 \
+        -orient horizontal -width 200 -height 200 
+    vTcl:DefineAlias "$site_4_2.tPa38" "TPanedwindow1" vTcl:WidgetProc "Toplevel1" 1
+    ttk::style configure TLabelframe.Label -background #effbff
+    ttk::style configure TLabelframe.Label -foreground #000000
+    ttk::style configure TLabelframe.Label -font TkDefaultFont
+    ttk::style configure TLabelframe -background #effbff
+    ttk::labelframe $site_4_2.tPa38.p1 \
+        -text {Stock Selection for Backtest} -width -785 -height 200 
+    vTcl:DefineAlias "$site_4_2.tPa38.p1" "TPanedwindow1_p1_bt_stocks" vTcl:WidgetProc "Toplevel1" 1
+    set site_6_0 $site_4_2.tPa38.p1
+    vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_6_0.scr39 \
+        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 125 
+    vTcl:DefineAlias "$site_6_0.scr39" "sl_bt_select_stocks" vTcl:WidgetProc "Toplevel1" 1
+
+    $site_6_0.scr39.01 configure -background white \
+        -disabledforeground #a3a3a3 \
+        -font TkFixedFont \
+        -foreground black \
+        -height 3 \
+        -highlightbackground #d9d9d9 \
+        -highlightcolor #effbff \
+        -selectbackground #c4c4c4 \
+        -selectforeground black \
+        -width 10
+    place $site_6_0.scr39 \
+        -in $site_6_0 -x 10 -y 20 -relwidth 0.95 -relheight 0.93 -anchor nw \
+        -bordermode ignore 
+    $site_4_2.tPa38 add $site_4_2.tPa38.p1 
+        
+    ttk::style configure TLabelframe.Label -background #effbff
+    ttk::style configure TLabelframe.Label -foreground #000000
+    ttk::style configure TLabelframe.Label -font TkDefaultFont
+    ttk::style configure TLabelframe -background #effbff
+    ttk::labelframe $site_4_2.tPa38.p2 \
+        -text {Backtrading Analysis Selection} -width 985 -height 200 
+    vTcl:DefineAlias "$site_4_2.tPa38.p2" "TPanedwindow1_p2_analysis" vTcl:WidgetProc "Toplevel1" 1
+    set site_6_1 $site_4_2.tPa38.p2
+    vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_6_1.scr40 \
+        -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
+        -highlightcolor black -width 125 
+    vTcl:DefineAlias "$site_6_1.scr40" "Scrolledlistbox3" vTcl:WidgetProc "Toplevel1" 1
+
+    $site_6_1.scr40.01 configure -background white \
+        -disabledforeground #a3a3a3 \
+        -font TkFixedFont \
+        -foreground black \
+        -height 3 \
+        -highlightbackground #d9d9d9 \
+        -highlightcolor #effbff \
+        -selectbackground #c4c4c4 \
+        -selectforeground black \
+        -width 10
+    place $site_6_1.scr40 \
+        -in $site_6_1 -x 10 -y 20 -relwidth 0.3 -relheight 0.93 -anchor nw \
+        -bordermode ignore 
+    $site_4_2.tPa38 add $site_4_2.tPa38.p2 
+        
+    place $site_4_2.but40 \
+        -in $site_4_2 -x 0 -relx 0.1 -y 0 -rely 0.9 -width 170 -height 44 \
+        -anchor nw -bordermode ignore 
+    place $site_4_2.but41 \
+        -in $site_4_2 -x 0 -relx 0.25 -y 0 -rely 0.9 -width 130 -height 44 \
+        -anchor nw -bordermode ignore 
+    place $site_4_2.tPa38 \
+        -in $site_4_2 -x 3 -y 3 -relwidth 0.98 -relheight 0.85 -anchor nw \
         -bordermode ignore 
     labelframe $top.lab37 \
         -foreground black -text Logging -background {#effbff} -height 75 \
@@ -241,10 +342,10 @@ proc vTclWindow.top32 {base} {
     # SETTING GEOMETRY
     ###################
     place $top.tNo39 \
-        -in $top -x 0 -y 0 -width 1281 -relwidth 0 -height 504 -relheight 0 \
+        -in $top -x 0 -y 0 -width 1281 -relwidth 0 -height 634 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab37 \
-        -in $top -x 9 -y 510 -relwidth 0.99 -relheight 0.32 -anchor nw \
+        -in $top -x 9 -y 630 -relwidth 0.97 -relheight 0.28 -anchor nw \
         -bordermode ignore 
 
     vTcl:FireEvent $base <<Ready>>

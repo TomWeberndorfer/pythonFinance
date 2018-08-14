@@ -423,15 +423,15 @@ class TestSignals(unittest.TestCase):
     #     end = datetime.now()
     #     ago52_w = (end - timedelta(weeks=52))
     #     ago2_w = (end - timedelta(weeks=2))
-    #     res = read_data_from_google_with_pandas("ADBE", ago52_w, end) # 2017-09-21
-    #     res = read_data_from_google_with_pandas("ADBE", ago52_w, end)  # 2017-09-210
+    #     backtest_result = read_data_from_google_with_pandas("ADBE", ago52_w, end) # 2017-09-21
+    #     backtest_result = read_data_from_google_with_pandas("ADBE", ago52_w, end)  # 2017-09-210
     #     # TODO liefert immer 1 jahr
     #
     # def test_read_data_from_google_with_client(self):
     #     _names = ["ads", "ETR:GFT", "ETR:GFT", "AAPL", "AMZN"]
     #
     #     for name in _names:
-    #         res = read_data_from_google_with_client(name)
+    #         backtest_result = read_data_from_google_with_client(name)
     #         print()
 
 
