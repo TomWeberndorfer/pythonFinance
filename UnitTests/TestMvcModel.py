@@ -1,16 +1,12 @@
 import unittest
 
-import main_v1_support
 from GUI.ScrollableFrame import ScrollableFrame
 from Utils.GlobalVariables import *
 
 # from directory UnitTests to --> root folder with: ..\\..\\
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
-from GUI.main_v1 import vp_start_gui, Framework, create_Framework
 from MvcModel import MvcModel
-from Utils.GlobalVariables import *
-from Utils.file_utils import check_file_exists_and_delete
 
 try:
     from Tkinter import *
@@ -29,7 +25,7 @@ except ImportError:
 
 class TestMvcModel(unittest.TestCase):
     def test_update_column_list__add_several_columns__add_redundant_columns(self):
-        model = MvcModel(None)
+        model = MvcModel()
         self.assertEqual([], model.get_column_list())
 
         columns_to_add = ['StrategyAndRecommendation', 'Stockname']

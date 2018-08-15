@@ -7,7 +7,7 @@ from pandas import DataFrame
 import main_v1_support
 from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataReading.StockDataContainer import StockDataContainer
-from GUI.main_v1 import ScrolledTreeView, LabelFrame, vp_start_gui, Framework
+from GUI.main_v1 import ScrolledTreeView, LabelFrame, vp_start_gui
 from MvcModel import MvcModel
 from Utils.GuiUtils import GuiUtils
 from Utils.GlobalVariables import *
@@ -44,10 +44,10 @@ class TestMainSupport(unittest.TestCase):
 
         controller.load_analysis_parameters_from_file(
             GlobalVariables.get_data_files_path() + '\\TestData\\OtherParameterFile_DO_NOT_RELOAD.pickle', req_params)
-        controller.model.set_strategy_selection_values(['W52HighTechnicalStrategy'])
+        controller.model.strategy_selection_values.set(['W52HighTechnicalStrategy'])
         root.mainloop()
 
-        result_container = controller.model.get_result_stock_data_container_list()
+        result_container = controller.model.result_stock_data_container_list.get()
 
         print(str(result_container))
         self.assertEqual(3, len(result_container))

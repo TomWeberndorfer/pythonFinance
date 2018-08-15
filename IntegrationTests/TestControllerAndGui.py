@@ -80,7 +80,7 @@ class TestControllerAndGui(unittest.TestCase):
         controller.dump_analysis_parameters_to_file(strat_param_file, params, req_params)
 
         controller.load_analysis_parameters_from_file(strat_param_file, req_params)
-        self.assertEqual(ast.literal_eval(params), controller.model.get_analysis_parameters(), req_params)
+        self.assertEqual(ast.literal_eval(params), controller.model.analysis_parameters.get(), req_params)
 
     def test_dump_params(self):
         global val, w, root

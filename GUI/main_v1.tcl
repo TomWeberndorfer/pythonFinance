@@ -97,7 +97,7 @@ proc vTclWindow.top32 {base} {
         -menu "$top.m33" -background {#eaeaea} -highlightbackground {#d5eaff} \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 1300x880+292+0
+    wm geometry $top 1300x820+15+7
     update
     # set in toplevel.wgt.
     global vTcl
@@ -109,6 +109,9 @@ proc vTclWindow.top32 {base} {
     wm deiconify $top
     wm title $top "ASTA_Framework"
     vTcl:DefineAlias "$top" "Toplevel1" vTcl:Toplevel:WidgetProc "" 1
+    ttk::style configure Menu -background #effbff
+    ttk::style configure Menu -foreground #000000
+    ttk::style configure Menu -font TkDefaultFont
     menu $top.m33 \
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#ff0000} -font TkMenuFont -foreground black -tearoff 0 
@@ -132,8 +135,15 @@ proc vTclWindow.top32 {base} {
     $site_3_0.men34 add separator \
         -background {#ffff00} 
     $site_3_0.men34 add command \
+        -activebackground {#f4bcb2} -activeforeground {#000000} \
+        -background {#effbff} -command {#load_backtesting_stocks} \
+        -font TkMenuFont -foreground {#000000} \
+        -label {Load Backtesting Stocks} 
+    $site_3_0.men34 add separator \
+        -background {#effbff} 
+    $site_3_0.men34 add command \
         -activebackground {#d9d9d9} -activeforeground {#000000} \
-        -background {#ebebeb} -command {#quit} -compound top -font TkMenuFont \
+        -background {#ebebeb} -command {#quit} -font TkMenuFont \
         -foreground {#000000} -label Quit 
     $top.m33 add cascade \
         -menu "$top.m33.men32" -background {#990000} \
@@ -206,7 +216,7 @@ proc vTclWindow.top32 {base} {
     ttk::style configure TLabelframe.Label -font TkDefaultFont
     ttk::style configure TLabelframe -background #effbff
     ttk::labelframe $site_4_1.tPa42.p1 \
-        -text {Strategy Selection} -width -798 -height 200 
+        -text {Strategy Selection} -width -758 -height 200 
     vTcl:DefineAlias "$site_4_1.tPa42.p1" "TPanedwindow2_p1_strat_selection" vTcl:WidgetProc "Toplevel1" 1
     set site_6_0 $site_4_1.tPa42.p1
     vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_6_0.scr45 \
@@ -234,7 +244,7 @@ proc vTclWindow.top32 {base} {
     ttk::style configure TLabelframe.Label -font TkDefaultFont
     ttk::style configure TLabelframe -background #effbff
     ttk::labelframe $site_4_1.tPa42.p2 \
-        -text Parameters -width 998 -height 200 
+        -text Parameters -width 958 -height 200 
     vTcl:DefineAlias "$site_4_1.tPa42.p2" "TPanedwindow2_p2_parameters" vTcl:WidgetProc "Toplevel1" 1
     set site_6_1 $site_4_1.tPa42.p2
     $site_4_1.tPa42 add $site_4_1.tPa42.p2 
@@ -274,7 +284,7 @@ proc vTclWindow.top32 {base} {
     ttk::style configure TLabelframe.Label -font TkDefaultFont
     ttk::style configure TLabelframe -background #effbff
     ttk::labelframe $site_4_2.tPa38.p1 \
-        -text {Stock Selection for Backtest} -width -785 -height 200 
+        -text {Stock Selection for Backtest} -width -745 -height 200 
     vTcl:DefineAlias "$site_4_2.tPa38.p1" "TPanedwindow1_p1_bt_stocks" vTcl:WidgetProc "Toplevel1" 1
     set site_6_0 $site_4_2.tPa38.p1
     vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_6_0.scr39 \
@@ -302,13 +312,13 @@ proc vTclWindow.top32 {base} {
     ttk::style configure TLabelframe.Label -font TkDefaultFont
     ttk::style configure TLabelframe -background #effbff
     ttk::labelframe $site_4_2.tPa38.p2 \
-        -text {Backtrading Analysis Selection} -width 985 -height 200 
+        -text {Backtrading Analysis Selection} -width 945 -height 200 
     vTcl:DefineAlias "$site_4_2.tPa38.p2" "TPanedwindow1_p2_analysis" vTcl:WidgetProc "Toplevel1" 1
     set site_6_1 $site_4_2.tPa38.p2
     vTcl::widgets::ttk::scrolledlistbox::CreateCmd $site_6_1.scr40 \
         -background {#d9d9d9} -height 75 -highlightbackground {#d9d9d9} \
         -highlightcolor black -width 125 
-    vTcl:DefineAlias "$site_6_1.scr40" "Scrolledlistbox3" vTcl:WidgetProc "Toplevel1" 1
+    vTcl:DefineAlias "$site_6_1.scr40" "sb_select_analyzers" vTcl:WidgetProc "Toplevel1" 1
 
     $site_6_1.scr40.01 configure -background white \
         -disabledforeground #a3a3a3 \

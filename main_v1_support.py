@@ -36,18 +36,29 @@ class MyController:
 
     def __init__(self, parent, view):
         self.parent = parent
-        self.model = MvcModel(self)  # initializes the model
+        self.model = MvcModel()  # initializes the model
         self.view = view  # initializes the view
         self.view.ButtonRunStrategy.config(command=self.start_screening)
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect_select_strategy)
         self.view.sl_bt_select_stocks.bind('<<ListboxSelect>>', self.listbox_onselect_select_backtesting_stocks)
-        self.view.Scrolledlistbox3.bind('<<ListboxSelect>>', self.listbox_onselect_select_backtesting_analyzers)
+        self.view.sb_select_analyzers.bind('<<ListboxSelect>>', self.listbox_onselect_select_backtesting_analyzers)
         self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click_Scrolledtreeview1)
         self.view.b_run_backtest.config(command=self.start_backtesting)
 
         self.analysis_parameters_changed()
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
         self.console = ConsoleUi(self.view.Labelframe2)
+
+        # add the listeners to mvc model
+        # TODO welches event??
+        # self.model.backtesting_stocks_list.add_event_listeners()
+        # self.model.strategy_selection_values.add_event_listeners()
+        # self.model.backtesting_analyzers_list.add_event_listeners()
+
+        self.model.result_stock_data_container_list.add_event_listeners(self.result_stock_data_container_list_changed)
+        self.model.is_thread_running.add_event_listeners(self.is_thread_running_changed)
+        self.model.available_strategies_list.add_event_listeners(self.available_strategies_changed)
+        self.model.analysis_parameters.add_event_listeners(self.analysis_parameters_changed)
 
     def on_double_click_Scrolledtreeview1(self, event):
         """
@@ -74,7 +85,7 @@ class MyController:
         Start the screening thread for NON blocking GUI.
         :return: nothing
         """
-        if not self.model.get_is_thread_running():
+        if not self.model.is_thread_running.get():
             thread = Thread(target=self.screening)
             thread.start()
 
@@ -83,7 +94,7 @@ class MyController:
         Start the backtesting thread for NON blocking GUI.
         :return: nothing
         """
-        if not self.model.get_is_thread_running():
+        if not self.model.is_thread_running.get():
             thread = Thread(target=self.backtesting)
             thread.start()
 
@@ -93,7 +104,7 @@ class MyController:
         :return: nothing, results are saved in the model.
         """
         try:
-            selection_values = self.model.get_strategy_selection_values()
+            selection_values = self.model.strategy_selection_values.get()
 
             if selection_values == "" or len(selection_values) <= 0:
                 messagebox.showerror("Selection Error", "Please select a strategy first!")
@@ -107,17 +118,17 @@ class MyController:
                 messagebox.showerror("Parameter file is not valid!",
                                      "Please choose a valid parameters file!")
 
-            self.model.set_is_thread_running(True)
+            self.model.is_thread_running.set(True)
             logger.info("Screening started...")
-            self.model.clear_result_stock_data_container_list()
-            analysis_params = self.model.get_analysis_parameters()
+            self.model.result_stock_data_container_list.clear()
+            analysis_params = self.model.analysis_parameters.get()
             results = run_analysis(selection_values, analysis_params['Strategies'], analysis_params['OtherParameters'])
 
-            self.model.extend_result_stock_data_container_list(results)
+            self.model.result_stock_data_container_list.extend(results)
         except Exception as e:
             logger.error("Exception while screening: " + str(e) + "\n" + str(traceback.format_exc()))
 
-        self.model.set_is_thread_running(False)
+        self.model.is_thread_running.set(False)
 
     def backtesting(self):
         """
@@ -125,9 +136,9 @@ class MyController:
         :return: nothing, results are saved in the model.
         """
         try:
-            strategy_selections = self.model.get_strategy_selection_values()
-            backtesting_analyzers = self.model.get_backtesting_analyzers_list()
-            backtesting_stocks = self.model.get_backtesting_stocks_list()
+            strategy_selections = self.model.strategy_selection_values.get()
+            backtesting_analyzers = self.model.backtesting_analyzers_list.get()
+            backtesting_stocks = self.model.backtesting_stocks_list.get()
 
             if strategy_selections == "" or len(strategy_selections) <= 0:
                 messagebox.showerror("Selection Error", "Please select strategies to run in backtesting first!")
@@ -153,18 +164,18 @@ class MyController:
                 messagebox.showerror("Parameter file is not valid!",
                                      "Please choose a valid parameters file!")
 
-            self.model.set_is_thread_running(True)
+            self.model.is_thread_running.set(True)
             logger.info("Screening started...")
-            self.model.clear_result_stock_data_container_list()
-            analysis_params = self.model.get_analysis_parameters()
+            self.model.result_stock_data_container_list.clear()
+            analysis_params = self.model.analysis_parameters.get()
             results = run_analysis(strategy_selections, analysis_params['Strategies'],
                                    analysis_params['OtherParameters'])
 
-            self.model.extend_result_stock_data_container_list(results)
+            self.model.result_stock_data_container_list.extend(results)
         except Exception as e:
             logger.error("Exception while screening: " + str(e) + "\n" + str(traceback.format_exc()))
 
-        self.model.set_is_thread_running(False)
+        self.model.is_thread_running.set(False)
 
     def accept_parameters_from_text(self, params_dict, required_parameters):
         """
@@ -177,11 +188,11 @@ class MyController:
                     and 'OtherParameters' in params_dict.keys() and len(params_dict['OtherParameters']) > 0 \
                     and 'Strategies' in params_dict.keys() and len(params_dict['Strategies']) > 0 and \
                     have_dicts_same_shape(required_parameters, params_dict):
-                self.model.clear_analysis_parameters()
-                self.model.update_analysis_parameters_dict(params_dict)
-                self.model.clear_available_strategies_list()
+                self.model.analysis_parameters.clear()
+                self.model.analysis_parameters.update(params_dict)
+                self.model.available_strategies_list.clear()
                 for item in params_dict['Strategies']:
-                    self.model.add_to_available_strategies(item)
+                    self.model.available_strategies_list.append(item)
                 logger.info("Parameters Read")
             else:
                 logger.error("Parameters faulty, Please insert correct parameters!")
@@ -208,11 +219,11 @@ class MyController:
                                                           "Do you want to CREATE a new file with default parameters?")
 
                     if override_params:
-                        self.model.clear_analysis_parameters()
-                        self.model.update_analysis_parameters_dict(required_parameters)
-                        self.model.clear_available_strategies_list()
+                        self.model.analysis_parameters.clear()
+                        self.model.analysis_parameters.update(required_parameters)
+                        self.model.available_strategies_list.clear()
                         for item in required_parameters['Strategies']:
-                            self.model.add_to_available_strategies(item)
+                            self.model.available_strategies_list.append(item)
 
         except Exception as e:
             messagebox.showerror("Parameter file is not valid!",
@@ -243,7 +254,7 @@ class MyController:
         self.parent.destroy()
 
     def analysis_parameters_changed(self):
-        parameters = self.model.get_analysis_parameters()
+        parameters = self.model.analysis_parameters.get()
         try:
             w.TPanedwindow2_p2_parameters.destroy()
         except Exception as e:
@@ -256,12 +267,12 @@ class MyController:
     def available_strategies_changed(self):
         insert_text_into_gui(w.Scrolledlistbox_selectStrategy, "", delete=True, start=0)
         # model internally chages and needs to signal a change
-        available_strategies_list = self.model.get_available_strategies()
+        available_strategies_list = self.model.available_strategies_list.get()
         for available_strategy in available_strategies_list:
             insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
 
     def is_thread_running_changed(self):
-        if self.model.get_is_thread_running():
+        if self.model.is_thread_running.get():
             w.ButtonRunStrategyRepetitive['state'] = 'disabled'
             w.ButtonRunStrategy['state'] = 'disabled'
         else:
@@ -274,10 +285,9 @@ class MyController:
         Additionally, it adds the not already available columns to the MvcModel and fill not available columns with dummy.
         :return: -
         """
-
         tree = w.Scrolledtreeview1
         tree.delete(*tree.get_children())
-        stock_data_container_list = self.model.get_result_stock_data_container_list()
+        stock_data_container_list = self.model.result_stock_data_container_list.get()
 
         for result_container in stock_data_container_list:
             try:
@@ -289,14 +299,50 @@ class MyController:
                 GuiUtils.insert_into_treeview(self.view.Scrolledtreeview1, self.model.get_column_list(),
                                               result_container.get_names_and_values(), "Stock")
 
-                # append all columns to file --> new layout leads to new line with header
+                # append all COLUMNS to file --> new layout leads to new line with header
                 FileUtils.append_text_list_to_file(self.model.get_column_list(),
                                                    GlobalVariables.get_data_files_path() + "ScreeningResults.csv",
                                                    True, ",")
 
+                # append VALUES to file
                 values = result_container.get_names_and_values().values()
                 text = ','.join(str(e) for e in values)
+                FileUtils.append_textline_to_file(text,
+                                                  GlobalVariables.get_data_files_path() + "ScreeningResults.csv",
+                                                  True)
 
+            except Exception as e:
+                logger.error("Exception: " + str(e) + "\n" + str(traceback.format_exc()))
+                continue
+
+    def backtesting_stocks_list_changed(self):
+        """
+        Update the columns and data of the view, of stock data container list changed.
+        Additionally, it adds the not already available columns to the MvcModel and fill not available columns with dummy.
+        :return: -
+        """
+        tree = w.Scrolledtreeview1
+        tree.delete(*tree.get_children())
+        stock_data_container_list = self.model.result_stock_data_container_list.get()
+
+        for result_container in stock_data_container_list:
+            try:
+                is_updated = self.model.update_column_list(result_container.get_names_and_values().keys())
+
+                if is_updated:
+                    init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
+
+                GuiUtils.insert_into_treeview(self.view.Scrolledtreeview1, self.model.get_column_list(),
+                                              result_container.get_names_and_values(), "Stock")
+
+                # append all COLUMNS to file --> new layout leads to new line with header
+                FileUtils.append_text_list_to_file(self.model.get_column_list(),
+                                                   GlobalVariables.get_data_files_path() + "ScreeningResults.csv",
+                                                   True, ",")
+
+                # append VALUES to file
+                values = result_container.get_names_and_values().values()
+                text = ','.join(str(e) for e in values)
                 FileUtils.append_textline_to_file(text,
                                                   GlobalVariables.get_data_files_path() + "ScreeningResults.csv",
                                                   True)
@@ -308,22 +354,22 @@ class MyController:
     def listbox_onselect_select_strategy(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect_select_strategy()
         selected_text_list = evaluate_list_box_selection(evt, "You selected items in strategy selection: ")
-        self.model.set_strategy_selection_values(selected_text_list)
+        self.model.strategy_selection_values.set(selected_text_list)
 
     def listbox_onselect_select_backtesting_stocks(self, evt):
         selected_text_list = evaluate_list_box_selection(evt, "You selected following stocks for backtesting: ")
-        self.model.set_backtesting_stocks_list(selected_text_list)
+        self.model.backtesting_stocks_list.set(selected_text_list)
 
     def listbox_onselect_select_backtesting_analyzers(self, evt):
         selected_text_list = evaluate_list_box_selection(evt, "You selected following analyzers for backtesting: ")
-        self.model.set_backtesting_analyzers_list(selected_text_list)
+        self.model.backtesting_analyzers_list.set(selected_text_list)
 
     def load_backtesting_stocks_from_file(self, multi_file_path):
         data_list = []
 
         # TODO not implemented backtesting
-        messagebox.showerror("Not Implemented Error", "Please do not use this now!")
-        raise NotImplementedError
+        # messagebox.showerror("Not Implemented Error", "Please do not use this now!")
+        #raise NotImplementedError
 
         for file_path in multi_file_path:
             data = bt.feed.GenericCSVData(
@@ -338,7 +384,7 @@ class MyController:
 
             data_list.append(data)
 
-        # TODO set list
+        self.model.backtesting_stocks_list.set(data_list)
 
 
 def init(top, gui, *args, **kwargs):
@@ -388,10 +434,10 @@ def load_analysis_parameters():
 
 
 def load_backtesting_stocks():
-    multi_file_path = filedialog.askopenfilenames(initialdir=GlobalVariables.get_data_files_path(),
-                                                  title="Select multiple stockdatafiles for backtesting",
-                                                  filetypes=[("CSV-Files", "*.csv"), ("Text-Files", "*.txt")],
-                                                  defaultextension='.csv')
+    multi_file_path = list(filedialog.askopenfilenames(initialdir=GlobalVariables.get_data_files_path(),
+                                                       title="Select multiple stockdatafiles for backtesting",
+                                                       filetypes=[("CSV-Files", "*.csv"), ("Text-Files", "*.txt")],
+                                                       defaultextension='.csv'))
 
     app.load_backtesting_stocks_from_file(multi_file_path)
 

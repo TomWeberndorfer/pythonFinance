@@ -1,19 +1,24 @@
+from Utils.ListWithChangedListeners import ListWithChangedListeners, DictWithChangedListeners, \
+    ObjectWithChangedListeners
+
+
 class MvcModel:
-    def __init__(self, view_controller):
+    def __init__(self):
         """
-        Init the mvc model with given controller
-        :param view_controller: controller
+        Init the mvc model with with all listener lists.
+        The model contains all parameters, which should be accessed directly.
+        The parameters are objects of ObjectsWithChangedListeners, which have almost the
+        same methods as the original object types. 
         """
-        self.vc = view_controller
-        self.available_strategies = []
-        self._analysis_parameters = {}
-        self.strategy_parameter_dicts = {}
-        self.strategy_selection_values = []
-        self.backtesting_stocks_list = []
-        self.backtesting_analyzers_list = []
-        self.result_stock_data_container_list = []
-        self.is_thread_running = False
         self._column_list = []
+
+        self.result_stock_data_container_list = ListWithChangedListeners()
+        self.backtesting_analyzers_list = ListWithChangedListeners()
+        self.strategy_selection_values = ListWithChangedListeners()
+        self.is_thread_running = ObjectWithChangedListeners(False)
+        self.analysis_parameters = DictWithChangedListeners()
+        self.backtesting_stocks_list = ListWithChangedListeners()
+        self.available_strategies_list = ListWithChangedListeners()
 
     def get_column_list(self):
         return self._column_list
@@ -32,79 +37,3 @@ class MvcModel:
                 is_updated = True
 
         return is_updated
-
-    def get_is_thread_running(self):
-        return self.is_thread_running
-
-    def set_is_thread_running(self, is_thread_running):
-        self.is_thread_running = is_thread_running
-        self.vc.is_thread_running_changed()
-
-    def get_result_stock_data_container_list(self):
-        return self.result_stock_data_container_list
-
-    def clear_result_stock_data_container_list(self):
-        self.result_stock_data_container_list = []
-        self.vc.result_stock_data_container_list_changed()
-
-    def extend_result_stock_data_container_list(self, stock_data_container_list):
-        self.result_stock_data_container_list.extend(stock_data_container_list)
-        self.vc.result_stock_data_container_list_changed()
-
-    def set_strategy_selection_values(self, values):
-        """
-        Set the selected strategies.
-        :param values: list with selected strategies as string
-        :return: -
-        """
-        self.strategy_selection_values = values
-
-    def get_strategy_selection_values(self):
-        return self.strategy_selection_values
-
-    def set_backtesting_stocks_list(self, value):
-        self.backtesting_stocks_list = value
-
-    def get_backtesting_stocks_list(self):
-        return self.backtesting_stocks_list
-
-    def set_backtesting_analyzers_list(self, value):
-        self.backtesting_analyzers_list = value
-
-    def get_backtesting_analyzers_list(self):
-        return self.backtesting_analyzers_list
-
-    # Delegates-- Model would call this on internal change
-    def analysis_parameters_changed(self):
-        self.vc.analysis_parameters_changed()
-
-    def get_analysis_parameters(self):
-        return self._analysis_parameters
-
-    def update_analysis_parameters_dict(self, items):
-        assert (isinstance(items, dict))
-        for key, value in items.items():
-            self._analysis_parameters.update({key: value})
-        self.analysis_parameters_changed()
-
-    def clear_analysis_parameters(self):
-        self._analysis_parameters = {}
-        self.analysis_parameters_changed()
-
-    # Delegates-- Model would call this on internal change
-    def strategy_list_changed(self):
-        self.vc.available_strategies_changed()
-
-    # setters and getters
-    def get_available_strategies(self):
-        return self.available_strategies
-
-    def add_to_available_strategies(self, item):
-        myList = self.available_strategies
-        myList.append(item)
-        self.available_strategies = myList
-        self.strategy_list_changed()
-
-    def clear_available_strategies_list(self):
-        self.available_strategies = []
-        self.strategy_list_changed()
