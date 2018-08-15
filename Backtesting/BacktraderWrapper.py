@@ -3,14 +3,11 @@ from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
 
 
 class BacktraderWrapper:
-    def run_test(self, data_list,
-                 initial_cash=10000,
-                 trade_commission_percent=0.005,
-                 analyzers=[],
-                 plot_result=True,
-                 params={}):
+    def run_test(self, data_list, initial_cash=10000, trade_commission_percent=0.005,
+                 analyzers=[], plot_result=True, params={}):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
+        :param data_list: a list with historical stock data in bt-format
         :param params: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         :param plot_result: Plot results in candle stick chart (disable it for unit testing)
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]

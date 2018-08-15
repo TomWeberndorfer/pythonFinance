@@ -78,15 +78,23 @@ class FileUtils:
 
 
 def read_tickers_and_data_from_file(stock_data_container_file):
+    """
+    Read the pickle file with stock data container for tickers and data.
+    :param stock_data_container_file: pickle data file
+    :return: container list
+    """
     stock_data_container_list = []
-    if os.path.exists(stock_data_container_file):
-        logger.info("Start reading tickers from file...")
 
-        with open(stock_data_container_file, "rb") as f:
-            stock_data_container_list += pickle.load(f)
+    if ".pickle" in stock_data_container_file:
+        if os.path.exists(stock_data_container_file):
+            logger.info("Start reading tickers from file...")
+
+            with open(stock_data_container_file, "rb") as f:
+                stock_data_container_list += pickle.load(f)
+    else:
+        logger.error("Please select a *.pickle file for the stock_data_container_file!")
 
     return stock_data_container_list
-
 
 def read_tickers_from_web(stock_data_container_file, list_with_stock_pages_to_read=[]):
     """

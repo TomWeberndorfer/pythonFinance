@@ -70,3 +70,14 @@ class GuiUtils:
 
         except Exception as e:
             logger.error("Exception Could not sort the given treeview: " + str(e) + "\n" + str(traceback.format_exc()))
+
+
+def evaluate_list_box_selection(evt, log_text):
+    widget = evt.widget
+    try:
+        selected_text_list = [widget.get(i) for i in widget.curselection()]
+    except Exception as e:
+        selected_text_list = []
+
+    logger.info(log_text + str(selected_text_list))
+    return selected_text_list

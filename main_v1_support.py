@@ -12,7 +12,7 @@ from tkinter import messagebox
 import logging
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
-
+import backtrader as bt
 from GUI.ScrollableFrame import ScrollableFrame
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.Logger_Instance import logger
@@ -20,12 +20,12 @@ from MvcModel import MvcModel
 from StockAnalysis import run_analysis
 from tkinter import *
 import webbrowser as wb
-import ast
+import datetime  # For datetime objects
 from tkinter import filedialog
 
 from Utils.GlobalVariables import *
-from Utils.GuiUtils import GuiUtils
-from Utils.common_utils import have_dicts_same_shape, delete_keys_from_dict, update_dict
+from Utils.GuiUtils import GuiUtils, evaluate_list_box_selection
+from Utils.common_utils import have_dicts_same_shape
 from Utils.file_utils import FileUtils
 
 
@@ -39,8 +39,11 @@ class MyController:
         self.model = MvcModel(self)  # initializes the model
         self.view = view  # initializes the view
         self.view.ButtonRunStrategy.config(command=self.start_screening)
-        self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect)
+        self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect_select_strategy)
+        self.view.sl_bt_select_stocks.bind('<<ListboxSelect>>', self.listbox_onselect_select_backtesting_stocks)
+        self.view.Scrolledlistbox3.bind('<<ListboxSelect>>', self.listbox_onselect_select_backtesting_analyzers)
         self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click_Scrolledtreeview1)
+        self.view.b_run_backtest.config(command=self.start_backtesting)
 
         self.analysis_parameters_changed()
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
@@ -68,20 +71,29 @@ class MyController:
 
     def start_screening(self):
         """
-        start the screening thread for NON blocking GUI.
+        Start the screening thread for NON blocking GUI.
         :return: nothing
         """
         if not self.model.get_is_thread_running():
             thread = Thread(target=self.screening)
             thread.start()
 
+    def start_backtesting(self):
+        """
+        Start the backtesting thread for NON blocking GUI.
+        :return: nothing
+        """
+        if not self.model.get_is_thread_running():
+            thread = Thread(target=self.backtesting)
+            thread.start()
+
     def screening(self):
         """
-        Method to start the screening once
+        Method to start the screening once, should be executed in a THREAD.
         :return: nothing, results are saved in the model.
         """
         try:
-            selection_values = self.model.get_strategy_selection_value()
+            selection_values = self.model.get_strategy_selection_values()
 
             if selection_values == "" or len(selection_values) <= 0:
                 messagebox.showerror("Selection Error", "Please select a strategy first!")
@@ -100,6 +112,53 @@ class MyController:
             self.model.clear_result_stock_data_container_list()
             analysis_params = self.model.get_analysis_parameters()
             results = run_analysis(selection_values, analysis_params['Strategies'], analysis_params['OtherParameters'])
+
+            self.model.extend_result_stock_data_container_list(results)
+        except Exception as e:
+            logger.error("Exception while screening: " + str(e) + "\n" + str(traceback.format_exc()))
+
+        self.model.set_is_thread_running(False)
+
+    def backtesting(self):
+        """
+        Method to start the backtesting once, should be executed in a THREAD.
+        :return: nothing, results are saved in the model.
+        """
+        try:
+            strategy_selections = self.model.get_strategy_selection_values()
+            backtesting_analyzers = self.model.get_backtesting_analyzers_list()
+            backtesting_stocks = self.model.get_backtesting_stocks_list()
+
+            if strategy_selections == "" or len(strategy_selections) <= 0:
+                messagebox.showerror("Selection Error", "Please select strategies to run in backtesting first!")
+                return
+
+            if backtesting_analyzers == "" or len(backtesting_analyzers) <= 0:
+                messagebox.showerror("Selection Error", "Please select analyzers to run in backtesting first!")
+                return
+
+            if backtesting_stocks == "" or len(backtesting_stocks) <= 0:
+                messagebox.showerror("Selection Error", "Please select stocks to run in backtesting first!")
+                return
+
+            # TODO not implemented backtesting
+            # read_tickers_and_data_from_file
+            raise NotImplementedError
+
+            req_params = StrategyFactory.get_required_parameters_with_default_parameters()
+            at_objects = w.scrollable_frame_parameters.form.at_objects
+            content_others = w.scrollable_frame_parameters.form.get_parameters(at_objects)
+
+            if not self.accept_parameters_from_text(content_others, req_params):
+                messagebox.showerror("Parameter file is not valid!",
+                                     "Please choose a valid parameters file!")
+
+            self.model.set_is_thread_running(True)
+            logger.info("Screening started...")
+            self.model.clear_result_stock_data_container_list()
+            analysis_params = self.model.get_analysis_parameters()
+            results = run_analysis(strategy_selections, analysis_params['Strategies'],
+                                   analysis_params['OtherParameters'])
 
             self.model.extend_result_stock_data_container_list(results)
         except Exception as e:
@@ -246,16 +305,40 @@ class MyController:
                 logger.error("Exception: " + str(e) + "\n" + str(traceback.format_exc()))
                 continue
 
-    def listbox_onselect(self, evt):
-        # Note here that Tkinter passes an event object to listbox_onselect()
-        widget = evt.widget
-        try:
-            selected_text_list = [widget.get(i) for i in widget.curselection()]
-        except Exception as e:
-            selected_text_list = []
+    def listbox_onselect_select_strategy(self, evt):
+        # Note here that Tkinter passes an event object to listbox_onselect_select_strategy()
+        selected_text_list = evaluate_list_box_selection(evt, "You selected items in strategy selection: ")
+        self.model.set_strategy_selection_values(selected_text_list)
 
-        logger.info("You selected items: " + str(selected_text_list))
-        self.model.set_strategy_selection_value(selected_text_list)
+    def listbox_onselect_select_backtesting_stocks(self, evt):
+        selected_text_list = evaluate_list_box_selection(evt, "You selected following stocks for backtesting: ")
+        self.model.set_backtesting_stocks_list(selected_text_list)
+
+    def listbox_onselect_select_backtesting_analyzers(self, evt):
+        selected_text_list = evaluate_list_box_selection(evt, "You selected following analyzers for backtesting: ")
+        self.model.set_backtesting_analyzers_list(selected_text_list)
+
+    def load_backtesting_stocks_from_file(self, multi_file_path):
+        data_list = []
+
+        # TODO not implemented backtesting
+        messagebox.showerror("Not Implemented Error", "Please do not use this now!")
+        raise NotImplementedError
+
+        for file_path in multi_file_path:
+            data = bt.feed.GenericCSVData(
+                dataname=file_path,
+                # TODO fromdate=datetime.datetime(2000, 1, 1),
+                # TODO todate=datetime.datetime(2000, 12, 31),
+                nullvalue=0.0,
+                datetime=0,
+                open=1, high=2, low=3,
+                close=4, volume=5,
+                openinterest=-1)
+
+            data_list.append(data)
+
+        # TODO set list
 
 
 def init(top, gui, *args, **kwargs):
@@ -302,6 +385,15 @@ def load_analysis_parameters():
 
     req_params = StrategyFactory.get_required_parameters_with_default_parameters()
     app.load_analysis_parameters_from_file(file_path, req_params)
+
+
+def load_backtesting_stocks():
+    multi_file_path = filedialog.askopenfilenames(initialdir=GlobalVariables.get_data_files_path(),
+                                                  title="Select multiple stockdatafiles for backtesting",
+                                                  filetypes=[("CSV-Files", "*.csv"), ("Text-Files", "*.txt")],
+                                                  defaultextension='.csv')
+
+    app.load_backtesting_stocks_from_file(multi_file_path)
 
 
 def init_result_table(tree_view, columns):

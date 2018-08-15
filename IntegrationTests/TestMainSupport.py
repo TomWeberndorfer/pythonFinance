@@ -44,7 +44,7 @@ class TestMainSupport(unittest.TestCase):
 
         controller.load_analysis_parameters_from_file(
             GlobalVariables.get_data_files_path() + '\\TestData\\OtherParameterFile_DO_NOT_RELOAD.pickle', req_params)
-        controller.model.set_strategy_selection_value(['W52HighTechnicalStrategy'])
+        controller.model.set_strategy_selection_values(['W52HighTechnicalStrategy'])
         root.mainloop()
 
         result_container = controller.model.get_result_stock_data_container_list()

@@ -12,12 +12,15 @@ except ImportError:
 
 try:
     import ttk
+
     py3 = 0
 except ImportError:
     import tkinter.ttk as ttk
+
     py3 = 1
 
 import main_v1_support
+
 
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
@@ -27,6 +30,7 @@ def vp_start_gui():
     main_v1_support.init(root, top)
     root.mainloop()
 
+
 w = None
 
 
@@ -34,7 +38,7 @@ def create_ASTA_Framework(root, *args, **kwargs):
     '''Starting point when module is imported by another program.'''
     global w, w_win, rt
     rt = root
-    w = Toplevel (root)
+    w = Toplevel(root)
     top = ASTA_Framework(w)
     main_v1_support.init(w, top, *args, **kwargs)
     return (w, top)
@@ -52,17 +56,17 @@ class ASTA_Framework:
            top is the toplevel containing window.'''
         _bgcolor = '#effbff'  # Closest X11 color: '{alice blue}'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85' 
-        _ana2color = '#d9d9d9' # X11 color: 'gray85' 
+        _compcolor = '#d9d9d9'  # X11 color: 'gray85'
+        _ana1color = '#d9d9d9'  # X11 color: 'gray85'
+        _ana2color = '#d9d9d9'  # X11 color: 'gray85'
         self.style = ttk.Style()
         if sys.platform == "win32":
             self.style.theme_use('winnative')
-        self.style.configure('.',background=_bgcolor)
-        self.style.configure('.',foreground=_fgcolor)
-        self.style.configure('.',font="TkDefaultFont")
-        self.style.map('.',background=
-            [('selected', _compcolor), ('active',_ana2color)])
+        self.style.configure('.', background=_bgcolor)
+        self.style.configure('.', foreground=_fgcolor)
+        self.style.configure('.', font="TkDefaultFont")
+        self.style.map('.', background=
+        [('selected', _compcolor), ('active', _ana2color)])
 
         top.geometry("1300x880+292+0")
         top.title("ASTA_Framework")
@@ -70,52 +74,49 @@ class ASTA_Framework:
         top.configure(highlightbackground="#d5eaff")
         top.configure(highlightcolor="black")
 
+        self.menubar = Menu(top, font="TkMenuFont", bg='#ff0000', fg=_fgcolor)
+        top.configure(menu=self.menubar)
 
-
-        self.menubar = Menu(top,font="TkMenuFont",bg='#ff0000',fg=_fgcolor)
-        top.configure(menu = self.menubar)
-
-        self.file = Menu(top,tearoff=0)
+        self.file = Menu(top, tearoff=0)
         self.menubar.add_cascade(menu=self.file,
-                background="#00ffff",
-                compound="left",
-                font=('Purisa',12,'normal','roman',),
-                foreground="#000000",
-                label="File")
+                                 background="#00ffff",
+                                 compound="left",
+                                 font=('Purisa', 12, 'normal', 'roman',),
+                                 foreground="#000000",
+                                 label="File")
         self.file.add_command(
-                activebackground="#f4bcb2",
-                activeforeground="#000000",
+            activebackground="#f4bcb2",
+            activeforeground="#000000",
             background="#effbff",
             command=main_v1_support.save_analysis_parameters,
-                font="TkMenuFont",
-                foreground="#000000",
+            font="TkMenuFont",
+            foreground="#000000",
             label="Save Analysis Params")
         self.file.add_command(
-                activebackground="#f4bcb2",
-                activeforeground="#000000",
+            activebackground="#f4bcb2",
+            activeforeground="#000000",
             background="#effbff",
             command=main_v1_support.load_analysis_parameters,
-                font="TkMenuFont",
-                foreground="#000000",
+            font="TkMenuFont",
+            foreground="#000000",
             label="Load Analysis Parameters")
         self.file.add_separator(
-                background="#ffff00")
+            background="#ffff00")
         self.file.add_command(
-                activebackground="#d9d9d9",
-                activeforeground="#000000",
-                background="#ebebeb",
-                command=main_v1_support.quit,
-                compound="top",
-                font="TkMenuFont",
-                foreground="#000000",
-                label="Quit")
-        self.edit = Menu(top,tearoff=0)
+            activebackground="#d9d9d9",
+            activeforeground="#000000",
+            background="#ebebeb",
+            command=main_v1_support.quit,
+            compound="top",
+            font="TkMenuFont",
+            foreground="#000000",
+            label="Quit")
+        self.edit = Menu(top, tearoff=0)
         self.menubar.add_cascade(menu=self.edit,
-                background="#990000",
-                font=('Purisa',12,'normal','roman',),
-                foreground="#ffff00",
-                label="Edit")
-
+                                 background="#990000",
+                                 font=('Purisa', 12, 'normal', 'roman',),
+                                 foreground="#ffff00",
+                                 label="Edit")
 
         self.style.configure('TNotebook.Tab', background=_bgcolor)
         self.style.configure('TNotebook.Tab', foreground=_fgcolor)
@@ -146,6 +147,7 @@ class ASTA_Framework:
         self.Scrolledtreeview1.column("#0", stretch="1")
         self.Scrolledtreeview1.column("#0", anchor="w")
 
+        # Button action binding is in support class
         self.ButtonRunStrategy = Button(self.TNotebook2_t1_page_res)
         self.ButtonRunStrategy.place(relx=0.1, rely=0.9, height=44, width=142)
         self.ButtonRunStrategy.configure(activebackground="#f4bcb2")
@@ -183,7 +185,8 @@ class ASTA_Framework:
         self.TPanedwindow2.add(self.TPanedwindow2_p2_parameters)
         self.__funcid0 = self.TPanedwindow2.bind('<Map>', self.__adjust_sash0)
 
-        self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.TPanedwindow2_p1_strat_selection)
+        self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.TPanedwindow2_p1_strat_selection,
+                                                              selectmode=MULTIPLE)
         self.Scrolledlistbox_selectStrategy.place(relx=0.0, rely=0.03
                                                   , relheight=0.95, relwidth=0.96)
         self.Scrolledlistbox_selectStrategy.configure(background="white")
@@ -234,7 +237,8 @@ class ASTA_Framework:
         self.TPanedwindow1.add(self.TPanedwindow1_p2_analysis)
         self.__funcid1 = self.TPanedwindow1.bind('<Map>', self.__adjust_sash1)
 
-        self.sl_bt_select_stocks = ScrolledListBox(self.TPanedwindow1_p1_bt_stocks)
+        self.sl_bt_select_stocks = ScrolledListBox(self.TPanedwindow1_p1_bt_stocks,
+                                                   selectmode=MULTIPLE)
         self.sl_bt_select_stocks.place(relx=0.04, rely=0.04, relheight=0.93
                                        , relwidth=0.95)
         self.sl_bt_select_stocks.configure(background="white")
@@ -271,8 +275,6 @@ class ASTA_Framework:
         self.Labelframe2.configure(highlightcolor="black")
         self.Labelframe2.configure(width=150)
 
-
-
     def __adjust_sash0(self, event):
         paned = event.widget
         pos = [266, ]
@@ -294,8 +296,6 @@ class ASTA_Framework:
         del self.__funcid1
 
 
-
-
 # The following code is added to facilitate the Scrolled widgets you specified.
 class AutoScroll(object):
     '''Configure the scrollbars for a widget.'''
@@ -310,7 +310,7 @@ class AutoScroll(object):
             pass
         hsb = ttk.Scrollbar(master, orient='horizontal', command=self.xview)
 
-        #self.configure(yscrollcommand=_autoscroll(vsb),
+        # self.configure(yscrollcommand=_autoscroll(vsb),
         #    xscrollcommand=_autoscroll(hsb))
         try:
             self.configure(yscrollcommand=self._autoscroll(vsb))
@@ -331,10 +331,10 @@ class AutoScroll(object):
         # Copy geometry methods of master  (taken from ScrolledText.py)
         if py3:
             methods = Pack.__dict__.keys() | Grid.__dict__.keys() \
-                  | Place.__dict__.keys()
+                      | Place.__dict__.keys()
         else:
             methods = Pack.__dict__.keys() + Grid.__dict__.keys() \
-                  + Place.__dict__.keys()
+                      + Place.__dict__.keys()
 
         for meth in methods:
             if meth[0] != '_' and meth not in ('config', 'configure'):
@@ -343,6 +343,7 @@ class AutoScroll(object):
     @staticmethod
     def _autoscroll(sbar):
         '''Hide and show scrollbar as needed.'''
+
         def wrapped(first, last):
             first, last = float(first), float(last)
             if first <= 0 and last >= 1:
@@ -350,30 +351,38 @@ class AutoScroll(object):
             else:
                 sbar.grid()
             sbar.set(first, last)
+
         return wrapped
 
     def __str__(self):
         return str(self.master)
 
+
 def _create_container(func):
     '''Creates a ttk Frame with a given master, and use this new frame to
     place the scrollbars and the widget.'''
+
     def wrapped(cls, master, **kw):
         container = ttk.Frame(master)
         return func(cls, container, **kw)
+
     return wrapped
+
 
 class ScrolledListBox(AutoScroll, Listbox):
     '''A standard Tkinter Text widget with scrollbars that will
     automatically show/hide as needed.'''
+
     @_create_container
     def __init__(self, master, **kw):
         Listbox.__init__(self, master, **kw)
         AutoScroll.__init__(self, master)
 
+
 class ScrolledTreeView(AutoScroll, ttk.Treeview):
     '''A standard ttk Treeview widget with scrollbars that will
     automatically show/hide as needed.'''
+
     @_create_container
     def __init__(self, master, **kw):
         ttk.Treeview.__init__(self, master, **kw)

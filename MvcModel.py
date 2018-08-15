@@ -8,7 +8,9 @@ class MvcModel:
         self.available_strategies = []
         self._analysis_parameters = {}
         self.strategy_parameter_dicts = {}
-        self.strategy_selection_value = []
+        self.strategy_selection_values = []
+        self.backtesting_stocks_list = []
+        self.backtesting_analyzers_list = []
         self.result_stock_data_container_list = []
         self.is_thread_running = False
         self._column_list = []
@@ -49,11 +51,28 @@ class MvcModel:
         self.result_stock_data_container_list.extend(stock_data_container_list)
         self.vc.result_stock_data_container_list_changed()
 
-    def set_strategy_selection_value(self, value):
-        self.strategy_selection_value = value
+    def set_strategy_selection_values(self, values):
+        """
+        Set the selected strategies.
+        :param values: list with selected strategies as string
+        :return: -
+        """
+        self.strategy_selection_values = values
 
-    def get_strategy_selection_value(self):
-        return self.strategy_selection_value
+    def get_strategy_selection_values(self):
+        return self.strategy_selection_values
+
+    def set_backtesting_stocks_list(self, value):
+        self.backtesting_stocks_list = value
+
+    def get_backtesting_stocks_list(self):
+        return self.backtesting_stocks_list
+
+    def set_backtesting_analyzers_list(self, value):
+        self.backtesting_analyzers_list = value
+
+    def get_backtesting_analyzers_list(self):
+        return self.backtesting_analyzers_list
 
     # Delegates-- Model would call this on internal change
     def analysis_parameters_changed(self):
