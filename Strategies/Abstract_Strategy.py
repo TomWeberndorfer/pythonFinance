@@ -16,10 +16,17 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         self.stock_data_container_list = stock_data_container_list
         self.result_list = [] # result list with stocks to buy or other results
         self.parameter_dict = parameter_dict # parameter for the strategy
-        StatusUpdate.__init__(self, len(stock_data_container_list))
+        if stock_data_container_list is None:
+            StatusUpdate.__init__(self, 0)
+        else:
+            StatusUpdate.__init__(self, len(stock_data_container_list))
         Abstract_SimpleMultithreading.__init__(self)
 
-    def run_strategy(self):
+    def run_strategy(self, my_stock_data_container_list=None):
+
+        if not my_stock_data_container_list is None:
+            self.stock_data_container_list = my_stock_data_container_list
+
         stack = inspect.stack()
         the_class = stack[0][0].f_locals["self"].__class__ #get the inherited class name
         if len(self.stock_data_container_list) > 0:

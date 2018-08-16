@@ -60,6 +60,12 @@ class BacktraderStrategyWrapper(bt.Strategy):
         self.params = params
         self.stock_screener = StrategyFactory()
 
+        # the params dict contains the strategy which is build with the string
+        # TODO mit none geht ned
+        # self.strategy_instance = self.stock_screener.prepare_strategy(self.params['strategy_to_test'],
+        #                                                          None,
+        #                                                          self.params['analysis_parameters'])
+
     ###############
     def notify_order(self, order):
         date = self.data.datetime.datetime().date()
@@ -148,11 +154,12 @@ class BacktraderStrategyWrapper(bt.Strategy):
         stock_data_container_list = [stock_data_container]
 
         # the params dict contains the strategy which is build with the string
-        strategy_instance = self.stock_screener.prepare_strategy(self.params['strategy_to_test'],
-                                                                 stock_data_container_list,
-                                                                 self.params)
+        self.strategy_instance = self.stock_screener.prepare_strategy(self.params['strategy_to_test'],
+                                                                      stock_data_container_list,
+                                                                      self.params['analysis_parameters'])
 
-        results = strategy_instance.run_strategy()
+        # TODO results = self.strategy_instance.run_strategy(stock_data_container_list)
+        results = self.strategy_instance.run_strategy()
 
         # Check if an order is pending ... if yes, we cannot send a 2nd one
         if self.order:

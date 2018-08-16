@@ -188,7 +188,7 @@ class ASTA_Framework:
         self.__funcid0 = self.TPanedwindow2.bind('<Map>', self.__adjust_sash0)
 
         self.Scrolledlistbox_selectStrategy = ScrolledListBox(self.TPanedwindow2_p1_strat_selection,
-                                                              selectmode=MULTIPLE)
+                                                              selectmode=MULTIPLE, exportselection=0)
         self.Scrolledlistbox_selectStrategy.place(relx=0.0, rely=0.03
                                                   , relheight=0.95, relwidth=0.96)
         self.Scrolledlistbox_selectStrategy.configure(background="white")
@@ -240,7 +240,7 @@ class ASTA_Framework:
         self.__funcid1 = self.TPanedwindow1.bind('<Map>', self.__adjust_sash1)
 
         self.sl_bt_select_stocks = ScrolledListBox(self.TPanedwindow1_p1_bt_stocks,
-                                                   selectmode=MULTIPLE)
+                                                   selectmode=MULTIPLE, exportselection=0)
         self.sl_bt_select_stocks.place(relx=0.04, rely=0.04, relheight=0.93
                                        , relwidth=0.95)
         self.sl_bt_select_stocks.configure(background="white")
@@ -253,7 +253,8 @@ class ASTA_Framework:
         self.sl_bt_select_stocks.configure(selectforeground="black")
         self.sl_bt_select_stocks.configure(width=10)
 
-        self.sb_select_analyzers = ScrolledListBox(self.TPanedwindow1_p2_analysis, selectmode=MULTIPLE)
+        self.sb_select_analyzers = ScrolledListBox(self.TPanedwindow1_p2_analysis, selectmode=MULTIPLE,
+                                                   exportselection=0)
         self.sb_select_analyzers.place(relx=0.01, rely=0.04, relheight=0.93
                                        , relwidth=0.3)
         self.sb_select_analyzers.configure(background="white")

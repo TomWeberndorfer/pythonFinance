@@ -4,22 +4,29 @@ from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
 
 class BacktraderWrapper:
     def run_test(self, data_list, initial_cash=10000, trade_commission_percent=0.005,
-                 analyzers=[], plot_result=True, params={}):
+                 analyzers=[], plot_result=True, strategy_to_test="", backtesting_parameters={},
+                 analysis_parameters={}):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
+        :param analysis_parameters: dict with analysis parameters for strategy
+        :param strategy_to_test: name of the strategy as string
         :param data_list: a list with historical stock data in bt-format
-        :param params: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
+        :param backtesting_parameters: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         :param plot_result: Plot results in candle stick chart (disable it for unit testing)
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]
-        :param trade_commission_percent: Trading commission for every buy/sell in percent of order
+        :param trade_commission_percent: Trading commission for every buy/sell in percent of order in percent
         :param initial_cash: Initial cash to trade with.
-        :param percentage_transaction_costs: Percentage of the position size which costs to buy/sell
-        :param bt_analyzers: a list with analyzer classes to add
         """
         cerebro = bt.Cerebro()
 
-        # add the backtrader strategy wrapper, the real strategy will be build there with the params dict
-        cerebro.addstrategy(BacktraderStrategyWrapper, params)
+        # wrap all parameters into one dict to fulfill cerebro add strategy
+        all_parameter = {}
+        all_parameter.update(backtesting_parameters)
+        all_parameter.update({'strategy_to_test': strategy_to_test})
+        all_parameter.update({'analysis_parameters': analysis_parameters})
+
+        # add the backtrader strategy wrapper, the real strategy will be build there with the backtesting_parameters dict
+        cerebro.addstrategy(BacktraderStrategyWrapper, all_parameter)
 
         if isinstance(data_list, list):
             for data in data_list:

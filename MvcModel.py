@@ -8,16 +8,21 @@ class MvcModel:
         Init the mvc model with with all listener lists.
         The model contains all parameters, which should be accessed directly.
         The parameters are objects of ObjectsWithChangedListeners, which have almost the
-        same methods as the original object types. 
+        same methods as the original object types.
         """
         self._column_list = []
-
         self.result_stock_data_container_list = ListWithChangedListeners()
-        self.backtesting_analyzers_list = ListWithChangedListeners()
-        self.strategy_selection_values = ListWithChangedListeners()
+
+        self.available_backtesting_analyzers_list = ListWithChangedListeners()
+        self.selected_backtesting_analyzers_list = ListWithChangedListeners()
+
+        self.available_backtesting_stocks_list = ListWithChangedListeners()
+        self.selected_backtesting_stocks_list = ListWithChangedListeners()
+
         self.is_thread_running = ObjectWithChangedListeners(False)
         self.analysis_parameters = DictWithChangedListeners()
-        self.backtesting_stocks_list = ListWithChangedListeners()
+
+        self.selected_strategies_list = ListWithChangedListeners()
         self.available_strategies_list = ListWithChangedListeners()
 
     def get_column_list(self):

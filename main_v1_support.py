@@ -4,6 +4,7 @@
 # In conjunction with Tcl version 8.6
 #    Jun 03, 2018 10:50:55 AM
 import _pickle as pickle
+from os.path import basename
 import queue
 import tkinter as tk
 import traceback
@@ -13,6 +14,8 @@ import logging
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
 import backtrader as bt
+
+from Backtesting.BacktraderWrapper import BacktraderWrapper
 from GUI.ScrollableFrame import ScrollableFrame
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.Logger_Instance import logger
@@ -22,9 +25,10 @@ from tkinter import *
 import webbrowser as wb
 import datetime  # For datetime objects
 from tkinter import filedialog
+import backtrader.feeds as btfeeds
 
 from Utils.GlobalVariables import *
-from Utils.GuiUtils import GuiUtils, evaluate_list_box_selection
+from Utils.GuiUtils import GuiUtils, evaluate_list_box_selection, set_buttons_state
 from Utils.common_utils import have_dicts_same_shape
 from Utils.file_utils import FileUtils
 
@@ -50,14 +54,17 @@ class MyController:
         self.console = ConsoleUi(self.view.Labelframe2)
 
         # add the listeners to mvc model
-        # TODO welches event??
-        # self.model.backtesting_stocks_list.add_event_listeners()
-        # self.model.strategy_selection_values.add_event_listeners()
-        # self.model.backtesting_analyzers_list.add_event_listeners()
+        # self.model.selected_backtesting_analyzers_list.add_event_listeners()
+        self.model.available_backtesting_analyzers_list.add_event_listeners(self.backtesting_analyzers_list_changed)
+        # self.model.selected_backtesting_stocks_list.add_event_listeners()
+        self.model.available_backtesting_stocks_list.add_event_listeners(self.backtesting_stocks_list_changed)
+
+        # TODO no need to add event lister
+        # self.model.selected_strategies_list.add_event_listeners(self.strategy_selection_changed)
+        self.model.available_strategies_list.add_event_listeners(self.available_strategies_changed)
 
         self.model.result_stock_data_container_list.add_event_listeners(self.result_stock_data_container_list_changed)
         self.model.is_thread_running.add_event_listeners(self.is_thread_running_changed)
-        self.model.available_strategies_list.add_event_listeners(self.available_strategies_changed)
         self.model.analysis_parameters.add_event_listeners(self.analysis_parameters_changed)
 
     def on_double_click_Scrolledtreeview1(self, event):
@@ -104,7 +111,7 @@ class MyController:
         :return: nothing, results are saved in the model.
         """
         try:
-            selection_values = self.model.strategy_selection_values.get()
+            selection_values = self.model.selected_strategies_list.get()
 
             if selection_values == "" or len(selection_values) <= 0:
                 messagebox.showerror("Selection Error", "Please select a strategy first!")
@@ -136,25 +143,31 @@ class MyController:
         :return: nothing, results are saved in the model.
         """
         try:
-            strategy_selections = self.model.strategy_selection_values.get()
-            backtesting_analyzers = self.model.backtesting_analyzers_list.get()
-            backtesting_stocks = self.model.backtesting_stocks_list.get()
+            strategy_selections = self.model.selected_strategies_list.get()
+            backtesting_analyzers = self.model.selected_backtesting_analyzers_list.get()
+            selected_backtesting_stocks = self.model.selected_backtesting_stocks_list.get()
 
-            if strategy_selections == "" or len(strategy_selections) <= 0:
-                messagebox.showerror("Selection Error", "Please select strategies to run in backtesting first!")
+            if strategy_selections == "" or not len(strategy_selections) is 1:
+                messagebox.showerror("Selection Error", "Please select exactly ONE strategie to run in backtesting!")
                 return
 
-            if backtesting_analyzers == "" or len(backtesting_analyzers) <= 0:
-                messagebox.showerror("Selection Error", "Please select analyzers to run in backtesting first!")
-                return
-
-            if backtesting_stocks == "" or len(backtesting_stocks) <= 0:
+            if selected_backtesting_stocks == "" or len(selected_backtesting_stocks) <= 0:
                 messagebox.showerror("Selection Error", "Please select stocks to run in backtesting first!")
                 return
 
-            # TODO not implemented backtesting
-            # read_tickers_and_data_from_file
-            raise NotImplementedError
+            if backtesting_analyzers == "" or len(backtesting_analyzers) <= 0:
+                continue_backtesting = messagebox.askyesno("Analyzer Selection",
+                                                           "No additional analyzer ist selected! Do you want to start backtesting anyway?")
+                if not continue_backtesting:
+                    return
+
+            available_backtesting_stocks_data = self.model.available_backtesting_stocks_list.get()
+            selected_backtesting_stocks_data = []
+            for selected_backtesting_stock_str in selected_backtesting_stocks:
+                for available_backtesting_stock_data in available_backtesting_stocks_data:
+                    if selected_backtesting_stock_str in available_backtesting_stock_data._name:
+                        selected_backtesting_stocks_data.append(available_backtesting_stock_data)
+                        pass
 
             req_params = StrategyFactory.get_required_parameters_with_default_parameters()
             at_objects = w.scrollable_frame_parameters.form.at_objects
@@ -165,15 +178,19 @@ class MyController:
                                      "Please choose a valid parameters file!")
 
             self.model.is_thread_running.set(True)
-            logger.info("Screening started...")
-            self.model.result_stock_data_container_list.clear()
-            analysis_params = self.model.analysis_parameters.get()
-            results = run_analysis(strategy_selections, analysis_params['Strategies'],
-                                   analysis_params['OtherParameters'])
+            logger.info("Backtesting started...")
 
-            self.model.result_stock_data_container_list.extend(results)
+            tbt = BacktraderWrapper()
+            # TODO nicht fix sondern entry...
+            backtesting_parameters = {'position_size_percents': 0.2}
+            analysis_params = self.model.analysis_parameters.get()['Strategies'][strategy_selections[0]]
+            # test only one strategy --> [0]
+            tbt.run_test(selected_backtesting_stocks_data, 30000, 0.005, backtesting_analyzers, True,
+                         strategy_selections[0],
+                         backtesting_parameters, analysis_params)
+
         except Exception as e:
-            logger.error("Exception while screening: " + str(e) + "\n" + str(traceback.format_exc()))
+            logger.error("Exception while backtesting: " + str(e) + "\n" + str(traceback.format_exc()))
 
         self.model.is_thread_running.set(False)
 
@@ -193,7 +210,7 @@ class MyController:
                 self.model.available_strategies_list.clear()
                 for item in params_dict['Strategies']:
                     self.model.available_strategies_list.append(item)
-                logger.info("Parameters Read")
+                logger.info("Analysis parameters Read")
             else:
                 logger.error("Parameters faulty, Please insert correct parameters!")
                 return False
@@ -272,12 +289,11 @@ class MyController:
             insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
 
     def is_thread_running_changed(self):
+        buttons = [w.ButtonRunStrategyRepetitive, w.ButtonRunStrategy, w.b_run_backtest, w.b_open_results_new_wd]
         if self.model.is_thread_running.get():
-            w.ButtonRunStrategyRepetitive['state'] = 'disabled'
-            w.ButtonRunStrategy['state'] = 'disabled'
+            set_buttons_state(buttons, 'disabled')
         else:
-            w.ButtonRunStrategy['state'] = 'normal'
-            w.ButtonRunStrategyRepetitive['state'] = 'normal'
+            set_buttons_state(buttons, 'normal')
 
     def result_stock_data_container_list_changed(self):
         """
@@ -321,59 +337,49 @@ class MyController:
         Additionally, it adds the not already available columns to the MvcModel and fill not available columns with dummy.
         :return: -
         """
-        tree = w.Scrolledtreeview1
-        tree.delete(*tree.get_children())
-        stock_data_container_list = self.model.result_stock_data_container_list.get()
+        insert_text_into_gui(w.sl_bt_select_stocks, "", delete=True, start=0)
+        # model internally chages and needs to signal a change
+        available_stocks = self.model.available_backtesting_stocks_list.get()
+        for available_stock in available_stocks:
+            insert_text_into_gui(w.sl_bt_select_stocks, available_stock._name)
 
-        for result_container in stock_data_container_list:
-            try:
-                is_updated = self.model.update_column_list(result_container.get_names_and_values().keys())
+    def strategy_selection_changed(self):
+        # TODO not implemented backtesting
+        raise NotImplementedError("TODO implementieren")
 
-                if is_updated:
-                    init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
-
-                GuiUtils.insert_into_treeview(self.view.Scrolledtreeview1, self.model.get_column_list(),
-                                              result_container.get_names_and_values(), "Stock")
-
-                # append all COLUMNS to file --> new layout leads to new line with header
-                FileUtils.append_text_list_to_file(self.model.get_column_list(),
-                                                   GlobalVariables.get_data_files_path() + "ScreeningResults.csv",
-                                                   True, ",")
-
-                # append VALUES to file
-                values = result_container.get_names_and_values().values()
-                text = ','.join(str(e) for e in values)
-                FileUtils.append_textline_to_file(text,
-                                                  GlobalVariables.get_data_files_path() + "ScreeningResults.csv",
-                                                  True)
-
-            except Exception as e:
-                logger.error("Exception: " + str(e) + "\n" + str(traceback.format_exc()))
-                continue
+    def backtesting_analyzers_list_changed(self):
+        insert_text_into_gui(w.sb_select_analyzers, "", delete=True, start=0)
+        # model internally chages and needs to signal a change
+        backtesting_analyzers_list = self.model.available_backtesting_analyzers_list.get()
+        for backtesting_analyzer in backtesting_analyzers_list:
+            insert_text_into_gui(w.sb_select_analyzers, backtesting_analyzer)
 
     def listbox_onselect_select_strategy(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect_select_strategy()
-        selected_text_list = evaluate_list_box_selection(evt, "You selected items in strategy selection: ")
-        self.model.strategy_selection_values.set(selected_text_list)
+        selected_text_list = evaluate_list_box_selection(evt, "You selected items in strategy selection: ",
+                                                         self.view.Scrolledlistbox_selectStrategy)
+        self.model.selected_strategies_list.set(selected_text_list)
 
     def listbox_onselect_select_backtesting_stocks(self, evt):
-        selected_text_list = evaluate_list_box_selection(evt, "You selected following stocks for backtesting: ")
-        self.model.backtesting_stocks_list.set(selected_text_list)
+        selected_text_list = evaluate_list_box_selection(evt, "You selected following stocks for backtesting: ",
+                                                         self.view.sl_bt_select_stocks)
+        self.model.selected_backtesting_stocks_list.set(selected_text_list)
 
     def listbox_onselect_select_backtesting_analyzers(self, evt):
-        selected_text_list = evaluate_list_box_selection(evt, "You selected following analyzers for backtesting: ")
-        self.model.backtesting_analyzers_list.set(selected_text_list)
+        selected_text_list = evaluate_list_box_selection(evt, "You selected following analyzers for backtesting: ",
+                                                         self.view.sb_select_analyzers)
+        self.model.selected_backtesting_analyzers_list.set(selected_text_list)
 
     def load_backtesting_stocks_from_file(self, multi_file_path):
         data_list = []
 
-        # TODO not implemented backtesting
-        # messagebox.showerror("Not Implemented Error", "Please do not use this now!")
-        #raise NotImplementedError
-
         for file_path in multi_file_path:
-            data = bt.feed.GenericCSVData(
+            # now you can call it directly with basename
+            stock_name = basename(file_path)
+            data = btfeeds.GenericCSVData(
+                name=stock_name,
                 dataname=file_path,
+                dtformat='%Y-%m-%d',
                 # TODO fromdate=datetime.datetime(2000, 1, 1),
                 # TODO todate=datetime.datetime(2000, 12, 31),
                 nullvalue=0.0,
@@ -384,7 +390,8 @@ class MyController:
 
             data_list.append(data)
 
-        self.model.backtesting_stocks_list.set(data_list)
+        self.model.available_backtesting_stocks_list.set(data_list)
+        logger.info("Backtesting stocks read")
 
 
 def init(top, gui, *args, **kwargs):
