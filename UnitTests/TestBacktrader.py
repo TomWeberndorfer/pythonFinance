@@ -74,5 +74,8 @@ class TestBacktrader(unittest.TestCase):
         analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                'within52w_high_fact': 0.99}
 
-        tbt.run_test(data_list, 30000, 0.005, analyzers, True, strategy_to_test, backtesting_parameters,
-                     analysis_parameters)
+        cerebro = tbt.run_test(data_list, 30000, 0.005, analyzers, strategy_to_test, backtesting_parameters,
+                               analysis_parameters)
+
+        # TODO implementieren
+        raise NotImplementedError

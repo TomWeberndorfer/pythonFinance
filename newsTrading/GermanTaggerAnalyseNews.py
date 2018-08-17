@@ -25,8 +25,8 @@ class GermanTaggerAnalyseNews:
         :param threshold: classifier threshold to recognize
         :param german_tagger: can be none, and will be loaded otherwise
         """
-        if stock_data_container_list is None:  # TODO: or not isinstance(stock_data_container_list[0], StockDataContainer):
-            raise NotImplementedError("stock_data_container_list is used wrong")
+        # if stock_data_container_list is None:  # TODO: or not isinstance(stock_data_container_list[0], StockDataContainer):
+        #    raise NotImplementedError("stock_data_container_list is used wrong")
 
         self.classifier = self.__train_classifier()
         self.threshold = threshold
@@ -37,10 +37,11 @@ class GermanTaggerAnalyseNews:
         self.stock_exchanges = []
 
         # TODO statt einzellisten umwandeln glei gscheid
-        for data_entry in self.stock_data_container_list:
-            self._names.append(data_entry.get_stock_name())
-            self.tickers.append(data_entry.stock_ticker())
-            self.stock_exchanges.append(data_entry.stock_exchange())
+        if self.stock_data_container_list is not None:
+            for data_entry in self.stock_data_container_list:
+                self._names.append(data_entry.get_stock_name())
+                self.tickers.append(data_entry.stock_ticker())
+                self.stock_exchanges.append(data_entry.stock_exchange())
 
         if german_tagger is None or isinstance(german_tagger, str):
             with open(german_tagger, 'rb') as f:

@@ -4,7 +4,7 @@ from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
 
 class BacktraderWrapper:
     def run_test(self, data_list, initial_cash=10000, trade_commission_percent=0.005,
-                 analyzers=[], plot_result=True, strategy_to_test="", backtesting_parameters={},
+                 analyzers=[], strategy_to_test="", backtesting_parameters={},
                  analysis_parameters={}):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
@@ -12,10 +12,10 @@ class BacktraderWrapper:
         :param strategy_to_test: name of the strategy as string
         :param data_list: a list with historical stock data in bt-format
         :param backtesting_parameters: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
-        :param plot_result: Plot results in candle stick chart (disable it for unit testing)
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]
         :param trade_commission_percent: Trading commission for every buy/sell in percent of order in percent
         :param initial_cash: Initial cash to trade with.
+        :return: cerebro final instance
         """
         cerebro = bt.Cerebro()
 
@@ -57,6 +57,4 @@ class BacktraderWrapper:
         # Print out the final result
         print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
-        # Plot the result
-        if plot_result:
-            cerebro.plot(style='candlestick', barup='green', bardown='red')
+        return cerebro

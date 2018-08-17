@@ -25,6 +25,8 @@ class MvcModel:
         self.selected_strategies_list = ListWithChangedListeners()
         self.available_strategies_list = ListWithChangedListeners()
 
+        self.cerebro = ObjectWithChangedListeners(None)
+
     def get_column_list(self):
         return self._column_list
 

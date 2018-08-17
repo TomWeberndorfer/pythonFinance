@@ -1,27 +1,18 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import datetime  # For datetime objects
-import os.path  # To manage paths
-import sys  # To find out the script name (in argv[0])
-
 # Import the backtrader platform
 import backtrader as bt
+
+from DataReading.StockDataContainer import StockDataContainer
+from Strategies.StrategyFactory import StrategyFactory
+from Utils.common_utils import convert_backtrader_to_dataframe
 
 ####################################
 # https://www.backtrader.com/docu/indautoref.html
 #
 ####################################
-
-
 # Create a Stratey
-from pandas import DataFrame
-
-from DataReading.StockDataContainer import StockDataContainer
-from Strategies.StrategyFactory import StrategyFactory
-from Utils.GlobalVariables import *
-from Utils.common_utils import convert_backtrader_to_dataframe, value_at_risk
-
 buy_data = []
 
 
@@ -61,10 +52,9 @@ class BacktraderStrategyWrapper(bt.Strategy):
         self.stock_screener = StrategyFactory()
 
         # the params dict contains the strategy which is build with the string
-        # TODO mit none geht ned
-        # self.strategy_instance = self.stock_screener.prepare_strategy(self.params['strategy_to_test'],
-        #                                                          None,
-        #                                                          self.params['analysis_parameters'])
+        self.strategy_instance = self.stock_screener.prepare_strategy(self.params['strategy_to_test'],
+                                                                      None,
+                                                                      self.params['analysis_parameters'])
 
     ###############
     def notify_order(self, order):
@@ -147,19 +137,15 @@ class BacktraderStrategyWrapper(bt.Strategy):
         # Simply log the closing price of the series from the reference
         self.log('Close: ' + str(self.dataclose[0]) + ", volume: " + str(self.datavol[0]))
 
-        # TODO den container anders
+        # TODO den container anders --> ned so benennen
         df1 = convert_backtrader_to_dataframe(self.datas[0])
-        stock_data_container = StockDataContainer("Autodesk Inc.", "ADSK", "")
+        stock_name = self.datas[0]._name
+        # TODO ticker not implemented
+        stock_data_container = StockDataContainer(stock_name, "TEMPXY", "")
         stock_data_container.set_historical_stock_data(df1)
         stock_data_container_list = [stock_data_container]
 
-        # the params dict contains the strategy which is build with the string
-        self.strategy_instance = self.stock_screener.prepare_strategy(self.params['strategy_to_test'],
-                                                                      stock_data_container_list,
-                                                                      self.params['analysis_parameters'])
-
-        # TODO results = self.strategy_instance.run_strategy(stock_data_container_list)
-        results = self.strategy_instance.run_strategy()
+        results = self.strategy_instance.run_strategy(stock_data_container_list)
 
         # Check if an order is pending ... if yes, we cannot send a 2nd one
         if self.order:

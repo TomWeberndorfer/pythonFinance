@@ -14,7 +14,6 @@ import logging
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
 import backtrader as bt
-
 from Backtesting.BacktraderWrapper import BacktraderWrapper
 from GUI.ScrollableFrame import ScrollableFrame
 from Strategies.StrategyFactory import StrategyFactory
@@ -49,6 +48,8 @@ class MyController:
         self.view.Scrolledtreeview1.bind("<Double-1>", self.on_double_click_Scrolledtreeview1)
         self.view.b_run_backtest.config(command=self.start_backtesting)
 
+        self.view.b_open_results_new_wd.config(command=self.plot_backtesting)
+
         self.analysis_parameters_changed()
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
         self.console = ConsoleUi(self.view.Labelframe2)
@@ -66,6 +67,7 @@ class MyController:
         self.model.result_stock_data_container_list.add_event_listeners(self.result_stock_data_container_list_changed)
         self.model.is_thread_running.add_event_listeners(self.is_thread_running_changed)
         self.model.analysis_parameters.add_event_listeners(self.analysis_parameters_changed)
+        self.model.cerebro.add_event_listeners(self.cerebro_result_changed)
 
     def on_double_click_Scrolledtreeview1(self, event):
         """
@@ -185,9 +187,12 @@ class MyController:
             backtesting_parameters = {'position_size_percents': 0.2}
             analysis_params = self.model.analysis_parameters.get()['Strategies'][strategy_selections[0]]
             # test only one strategy --> [0]
-            tbt.run_test(selected_backtesting_stocks_data, 30000, 0.005, backtesting_analyzers, True,
-                         strategy_selections[0],
-                         backtesting_parameters, analysis_params)
+            cerebro = tbt.run_test(selected_backtesting_stocks_data, 30000, 0.005, backtesting_analyzers,
+                                   strategy_selections[0],
+                                   backtesting_parameters, analysis_params)
+
+            # UPDATE a queue und da dann plot
+            self.model.cerebro.set(cerebro)
 
         except Exception as e:
             logger.error("Exception while backtesting: " + str(e) + "\n" + str(traceback.format_exc()))
@@ -289,7 +294,8 @@ class MyController:
             insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
 
     def is_thread_running_changed(self):
-        buttons = [w.ButtonRunStrategyRepetitive, w.ButtonRunStrategy, w.b_run_backtest, w.b_open_results_new_wd]
+        buttons = [w.ButtonRunStrategyRepetitive, w.ButtonRunStrategy, w.b_run_backtest, w.b_open_results_new_wd,
+                   w.b_open_results_new_wd]
         if self.model.is_thread_running.get():
             set_buttons_state(buttons, 'disabled')
         else:
@@ -353,6 +359,20 @@ class MyController:
         backtesting_analyzers_list = self.model.available_backtesting_analyzers_list.get()
         for backtesting_analyzer in backtesting_analyzers_list:
             insert_text_into_gui(w.sb_select_analyzers, backtesting_analyzer)
+
+    def cerebro_result_changed(self):
+        # just the same as button pressed --> can not be called directly because backtesting is another thread
+        # and plot can just be called in main tread
+        # TODO is not working anyway
+        # self.view.b_open_results_new_wd.invoke()
+        pass
+
+    def plot_backtesting(self):
+        cerebro = self.model.cerebro.get()
+        if cerebro is None:
+            messagebox.showerror("Plot error", "There is no backtesting result to plot! Run a backtest first")
+        else:
+            cerebro.plot(style='candlestick', barup='green', bardown='red')
 
     def listbox_onselect_select_strategy(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect_select_strategy()
