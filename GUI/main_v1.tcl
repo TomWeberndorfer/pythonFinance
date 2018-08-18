@@ -98,7 +98,7 @@ proc vTclWindow.top32 {base} {
         -menu "$top.m33" -background {#eaeaea} -highlightbackground {#d5eaff} \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 1300x780+326+99
+    wm geometry $top 1300x849+326+30
     update
     # set in toplevel.wgt.
     global vTcl
@@ -336,7 +336,7 @@ proc vTclWindow.top32 {base} {
     place $site_6_0.lab38 \
         -in $site_6_0 -x 10 -y 320 -anchor nw -bordermode ignore 
     place $site_6_0.lab39 \
-        -in $site_6_0 -x 10 -y 20 -anchor nw -bordermode ignore 
+        -in $site_6_0 -x 10 -y 17 -anchor nw -bordermode ignore 
     $site_4_2.tPa38 add $site_4_2.tPa38.p1 
         
     ttk::style configure TLabelframe.Label -background #effbff
@@ -389,8 +389,8 @@ proc vTclWindow.top32 {base} {
         -in $top -x 0 -y 0 -width 1281 -relwidth 0 -height 634 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab37 \
-        -in $top -x 9 -y 630 -relwidth 0.97 -relheight 0.2 -anchor nw \
-        -bordermode ignore 
+        -in $top -x 10 -y 0 -rely 0.77 -relwidth 0.97 -relheight 0.2 \
+        -anchor nw -bordermode ignore 
 
     vTcl:FireEvent $base <<Ready>>
 }
