@@ -11,13 +11,13 @@ import traceback
 from threading import Thread
 from tkinter import messagebox
 import logging
+from Utils.Logger_Instance import logger
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
 import backtrader as bt
 from Backtesting.BacktraderWrapper import BacktraderWrapper
 from GUI.ScrollableFrame import ScrollableFrame
 from Strategies.StrategyFactory import StrategyFactory
-from Utils.Logger_Instance import logger
 from MvcModel import MvcModel
 from StockAnalysis import run_analysis
 from tkinter import *
@@ -25,11 +25,12 @@ import webbrowser as wb
 import datetime  # For datetime objects
 from tkinter import filedialog
 import backtrader.feeds as btfeeds
-
+import backtrader.analyzers as btanalyzer
 from Utils.GlobalVariables import *
 from Utils.GuiUtils import GuiUtils, evaluate_list_box_selection, set_buttons_state
-from Utils.common_utils import have_dicts_same_shape
+from Utils.common_utils import have_dicts_same_shape, get_current_class_and_function_name
 from Utils.file_utils import FileUtils
+import ast
 
 
 class MyController:
@@ -57,10 +58,18 @@ class MyController:
         # add the listeners to mvc model
         # self.model.selected_backtesting_analyzers_list.add_event_listeners()
         self.model.available_backtesting_analyzers_list.add_event_listeners(self.backtesting_analyzers_list_changed)
-        # self.model.selected_backtesting_stocks_list.add_event_listeners()
+
+        # TODO load from file: analyzers
+        analyzer_list = [btanalyzer.AnnualReturn, btanalyzer.Calmar, btanalyzer.DrawDown, btanalyzer.TimeDrawDown,
+                         btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
+                         btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
+
+        for analyzer in analyzer_list:
+            self.model.available_backtesting_analyzers_list.append(analyzer)
+
         self.model.available_backtesting_stocks_list.add_event_listeners(self.backtesting_stocks_list_changed)
 
-        # TODO no need to add event lister
+        # no need to add event lister
         # self.model.selected_strategies_list.add_event_listeners(self.strategy_selection_changed)
         self.model.available_strategies_list.add_event_listeners(self.available_strategies_changed)
 
@@ -146,7 +155,7 @@ class MyController:
         """
         try:
             strategy_selections = self.model.selected_strategies_list.get()
-            backtesting_analyzers = self.model.selected_backtesting_analyzers_list.get()
+            selected_backtesting_analyzers_str = self.model.selected_backtesting_analyzers_list.get()
             selected_backtesting_stocks = self.model.selected_backtesting_stocks_list.get()
 
             if strategy_selections == "" or not len(strategy_selections) is 1:
@@ -157,11 +166,17 @@ class MyController:
                 messagebox.showerror("Selection Error", "Please select stocks to run in backtesting first!")
                 return
 
-            if backtesting_analyzers == "" or len(backtesting_analyzers) <= 0:
+            if selected_backtesting_analyzers_str == "" or len(selected_backtesting_analyzers_str) <= 0:
                 continue_backtesting = messagebox.askyesno("Analyzer Selection",
                                                            "No additional analyzer ist selected! Do you want to start backtesting anyway?")
                 if not continue_backtesting:
                     return
+
+            data_backtesting_analyzers = []
+            for ana in self.model.available_backtesting_analyzers_list.get():
+                for selected_backtesting_analyzer_str in selected_backtesting_analyzers_str:
+                    if selected_backtesting_analyzer_str in ana.__name__:
+                        data_backtesting_analyzers.append(ana)
 
             available_backtesting_stocks_data = self.model.available_backtesting_stocks_list.get()
             selected_backtesting_stocks_data = []
@@ -187,17 +202,34 @@ class MyController:
             backtesting_parameters = {'position_size_percents': 0.2}
             analysis_params = self.model.analysis_parameters.get()['Strategies'][strategy_selections[0]]
             # test only one strategy --> [0]
-            cerebro = tbt.run_test(selected_backtesting_stocks_data, 30000, 0.005, backtesting_analyzers,
-                                   strategy_selections[0],
-                                   backtesting_parameters, analysis_params)
+            cerebro, backtest_result = tbt.run_test(selected_backtesting_stocks_data, 30000, 0.005,
+                                                    data_backtesting_analyzers,
+                                                    strategy_selections[0],
+                                                    backtesting_parameters, analysis_params)
 
-            # UPDATE a queue und da dann plot
+            insert_text_into_gui(self.view.Scrolledtext_analyzer_results, "", delete=True, start=1.0)
+
+            # TODO make it simpler
+            analyzers = backtest_result[0].analyzers
+            for analyzer in analyzers:
+                ana_res = analyzer.get_analysis()
+                items = list(ana_res.items())
+                text_list = []
+                for i in items:
+                    text = ': '.join(str(e) for e in i)
+                    text_list.append(text)
+
+                final_text = '\n'.join(str(e) for e in text_list)
+                insert_text_into_gui(self.view.Scrolledtext_analyzer_results,
+                                     str(analyzer.__class__.__name__) + ":\n" + str(final_text) + "\n\n")
+
             self.model.cerebro.set(cerebro)
 
         except Exception as e:
             logger.error("Exception while backtesting: " + str(e) + "\n" + str(traceback.format_exc()))
 
         self.model.is_thread_running.set(False)
+        logger.info("Backtesting finished.")
 
     def accept_parameters_from_text(self, params_dict, required_parameters):
         """
@@ -358,7 +390,7 @@ class MyController:
         # model internally chages and needs to signal a change
         backtesting_analyzers_list = self.model.available_backtesting_analyzers_list.get()
         for backtesting_analyzer in backtesting_analyzers_list:
-            insert_text_into_gui(w.sb_select_analyzers, backtesting_analyzer)
+            insert_text_into_gui(w.sb_select_analyzers, str(backtesting_analyzer.__name__))
 
     def cerebro_result_changed(self):
         # just the same as button pressed --> can not be called directly because backtesting is another thread
@@ -421,6 +453,27 @@ def init(top, gui, *args, **kwargs):
     top_level = top
     root = top
     app = MyController(root, w)
+
+    # ########################
+    try:
+        # load the last saved file path
+        req_params = StrategyFactory.get_required_parameters_with_default_parameters()
+        param_dict = {}
+        last_used_parameter_file_path = GlobalVariables.get_last_used_parameter_file()
+        with open(last_used_parameter_file_path, 'r') as myfile:
+            file_content = myfile.read()
+            param_dict = ast.literal_eval(file_content)
+
+        param_file = param_dict['parameterfile']
+        app.load_analysis_parameters_from_file(param_file, req_params)
+
+        multi_file_path = param_dict['backtest_stock_selection']
+        app.load_backtesting_stocks_from_file(multi_file_path)
+
+    except Exception as e:
+        logger.error("Exception while opening last saved file path: " + str(e) + "\n" + str(traceback.format_exc()))
+
+    # ########################
     return app
 
 
@@ -570,3 +623,12 @@ class QueueHandler(logging.Handler):
 
     def emit(self, record):
         self.log_queue.put(record)
+
+
+def class_for_name(module_name, class_name):
+    import importlib
+    # load the module, will raise ImportError if module cannot be loaded
+    m = importlib.import_module(module_name)
+    # get the class, will raise AttributeError if class cannot be found
+    c = getattr(m, class_name)
+    return c

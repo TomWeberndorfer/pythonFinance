@@ -25,8 +25,6 @@ class GermanTaggerAnalyseNews:
         :param threshold: classifier threshold to recognize
         :param german_tagger: can be none, and will be loaded otherwise
         """
-        # if stock_data_container_list is None:  # TODO: or not isinstance(stock_data_container_list[0], StockDataContainer):
-        #    raise NotImplementedError("stock_data_container_list is used wrong")
 
         self.classifier = self.__train_classifier()
         self.threshold = threshold

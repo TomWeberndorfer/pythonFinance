@@ -68,14 +68,16 @@ class TestBacktrader(unittest.TestCase):
             )
             data_list.append(data_pd)
 
-        analyzers = [btanalyzer.TradeAnalyzer]
+        analyzers = [btanalyzer.AnnualReturn, btanalyzer.Calmar, btanalyzer.DrawDown, btanalyzer.TimeDrawDown,
+                     btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
+                     btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
         strategy_to_test = "W52HighTechnicalStrategy"
         backtesting_parameters = {'position_size_percents': 0.2}
         analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                'within52w_high_fact': 0.99}
 
-        cerebro = tbt.run_test(data_list, 30000, 0.005, analyzers, strategy_to_test, backtesting_parameters,
-                               analysis_parameters)
+        cerebro, res = tbt.run_test(data_list, 30000, 0.005, analyzers, strategy_to_test, backtesting_parameters,
+                                    analysis_parameters)
 
         # TODO implementieren
-        raise NotImplementedError
+        # raise NotImplementedError

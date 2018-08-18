@@ -14,6 +14,11 @@ class GlobalVariables:
         return data_file_path
 
     @staticmethod
+    def get_last_used_parameter_file():
+        data_file_path = GlobalVariables.get_data_files_path() + "DefaultSelection.txt"
+        return data_file_path
+
+    @staticmethod
     def get_stock_data_labels_dict(uppercase=False):
         #real sorting: ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
         # TODO vom dataprovider lesen und dann zuweisen (irgendeine aktie abfragen)

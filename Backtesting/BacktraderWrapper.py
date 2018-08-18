@@ -1,5 +1,7 @@
 import backtrader as bt
 from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
+import logging
+from Utils.Logger_Instance import logger
 
 
 class BacktraderWrapper:
@@ -45,16 +47,16 @@ class BacktraderWrapper:
         # 0.5% of the operation value --> 2500 € --> 12.5 per Buy/Sell
         cerebro.broker.setcommission(commission=trade_commission_percent)
         # Print out the starting conditions
-        print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+        logger.info('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
         backtest_result = cerebro.run()
         analyzers = backtest_result[0].analyzers
 
         for analyzer in analyzers:
             test = analyzer.get_analysis()
-            print(str(analyzer) + ": " + str(test))
+            logger.info(str(analyzer) + ": " + str(test))
 
         # Print out the final result
-        print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+        logger.info('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
-        return cerebro
+        return cerebro, backtest_result

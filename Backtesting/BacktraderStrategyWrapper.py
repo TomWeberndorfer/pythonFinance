@@ -3,7 +3,8 @@ from __future__ import (absolute_import, division, print_function,
 
 # Import the backtrader platform
 import backtrader as bt
-
+import logging
+from Utils.Logger_Instance import logger
 from DataReading.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.common_utils import convert_backtrader_to_dataframe
@@ -21,7 +22,7 @@ class BacktraderStrategyWrapper(bt.Strategy):
     def log(self, txt, dt=None):
         ''' Logging function fot this strategy'''
         dt = dt or self.datas[0].datetime.date(0)
-        print('%s, %s' % (dt.isoformat(), txt))
+        logger.info('%s, %s' % (dt.isoformat(), txt))
 
     def set_params(self, params):
         self.params = params
@@ -61,9 +62,9 @@ class BacktraderStrategyWrapper(bt.Strategy):
         date = self.data.datetime.datetime().date()
 
         if order.status == order.Accepted:
-            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
-            print('{} Order Accepted'.format(order.info['name']))
-            print('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
+            logger.info('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            logger.info('{} Order Accepted'.format(order.info['name']))
+            logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
                 date,
                 order.status,
                 order.ref,
@@ -74,9 +75,9 @@ class BacktraderStrategyWrapper(bt.Strategy):
             buy_data.append((date, order.price))
 
         if order.status == order.Completed:
-            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
-            print('{} Order Completed'.format(order.info['name']))
-            print('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
+            logger.info('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            logger.info('{} Order Completed'.format(order.info['name']))
+            logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
                 date,
                 order.status,
                 order.ref,
@@ -84,14 +85,14 @@ class BacktraderStrategyWrapper(bt.Strategy):
                 'NA' if not order.price else round(order.price, 5),
                 'NA' if not order.price else round(order.price * order.size, 5)
             ))
-            print('Created: {} Price: {} Size: {}'.format(bt.num2date(order.created.dt), order.created.price,
-                                                          order.created.size))
-            print('-' * 80)
+            logger.info('Created: {} Price: {} Size: {}'.format(bt.num2date(order.created.dt), order.created.price,
+                                                                order.created.size))
+            logger.info('-' * 80)
 
         if order.status == order.Canceled:
-            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
-            print('{} Order Canceled'.format(order.info['name']))
-            print('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
+            logger.info('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            logger.info('{} Order Canceled'.format(order.info['name']))
+            logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
                 date,
                 order.status,
                 order.ref,
@@ -101,9 +102,9 @@ class BacktraderStrategyWrapper(bt.Strategy):
             ))
 
         if order.status == order.Rejected:
-            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
-            print('WARNING! {} Order Rejected'.format(order.info['name']))
-            print('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
+            logger.info('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            logger.info('WARNING! {} Order Rejected'.format(order.info['name']))
+            logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
                 date,
                 order.status,
                 order.ref,
@@ -111,18 +112,18 @@ class BacktraderStrategyWrapper(bt.Strategy):
                 'NA' if not order.price else round(order.price, 5),
                 'NA' if not order.price else round(order.price * order.size, 5)
             ))
-            print('-' * 80)
+            logger.info('-' * 80)
 
     def notify_trade(self, trade):
         date = self.data.datetime.datetime()
         if trade.isclosed:
-            print('-' * 32, ' NOTIFY TRADE ', '-' * 32)
-            print('{}, Close Price: {}, Profit, Gross {}, Net {}'.format(
+            logger.info('-' * 32, ' NOTIFY TRADE ', '-' * 32)
+            logger.info('{}, Close Price: {}, Profit, Gross {}, Net {}'.format(
                 date,
                 trade.price,
                 round(trade.pnl, 2),
                 round(trade.pnlcomm, 2)))
-            print('-' * 80)
+            logger.info('-' * 80)
             buy_data.append((date, trade.price))
 
     ###########
@@ -140,8 +141,8 @@ class BacktraderStrategyWrapper(bt.Strategy):
         # TODO den container anders --> ned so benennen
         df1 = convert_backtrader_to_dataframe(self.datas[0])
         stock_name = self.datas[0]._name
-        # TODO ticker not implemented
-        stock_data_container = StockDataContainer(stock_name, "TEMPXY", "")
+        # ticker not implemented, but not needed
+        stock_data_container = StockDataContainer(stock_name, "", "")
         stock_data_container.set_historical_stock_data(df1)
         stock_data_container_list = [stock_data_container]
 
