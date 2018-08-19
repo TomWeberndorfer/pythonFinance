@@ -58,9 +58,11 @@ class TestBacktrader(unittest.TestCase):
         #        dfs = [df_1, df_2]
         dfs = [df_2]
 
-        for df_in in dfs:
+        for i in range(0, len(dfs)):
+            df_in = dfs[i]
             data_pd = bt.feeds.PandasData(
                 dataname=df_in,
+                name="Data Frame " + str(i + 1),
                 datetime=0,
                 open=1, high=2, low=3,
                 close=4, volume=5,
@@ -79,6 +81,6 @@ class TestBacktrader(unittest.TestCase):
 
         cerebro, res = tbt.run_test(data_list, analyzers, strategy_to_test, backtesting_parameters,
                                     analysis_parameters)
-        # cerebro.plot(style='candlestick', barup='green', bardown='red')
+        cerebro.plot(style='candlestick', barup='green', bardown='red')
         # TODO implementieren
         # raise NotImplementedError

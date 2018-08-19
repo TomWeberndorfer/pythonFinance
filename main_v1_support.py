@@ -242,8 +242,6 @@ class MyController:
                     if not param_key in required_parameters.keys() or len(params_dict[param_key]) <= 0:
                         logger.error("Parameter keys faulty, please insert correct parameters!")
                         return False
-                    # and 'OtherParameters' in params_dict.keys() and len(params_dict['OtherParameters']) > 0 \
-                    # and 'Strategies' in params_dict.keys() and len(params_dict['Strategies']) > 0 and \
 
                     if not have_dicts_same_shape(required_parameters, params_dict):
                         logger.error("Parameter shapes are faulty, please insert correct parameters!")

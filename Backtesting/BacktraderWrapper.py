@@ -29,7 +29,8 @@ class BacktraderWrapper:
 
         if isinstance(data_list, list):
             for data in data_list:
-                cerebro.adddata(data)
+                cerebro.adddata(data, name=data._name)
+
         else:
             raise NotImplementedError("Data must be a list")
 

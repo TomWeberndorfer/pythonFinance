@@ -121,6 +121,7 @@ class BacktraderStrategyWrapper(bt.Strategy):
             logger.info('{}, Close Price: {}, Profit, Gross {}, Net {}'.format(
                 date,
                 trade.price,
+                trade.data._name,
                 round(trade.pnl, 2),
                 round(trade.pnlcomm, 2)))
             logger.info('-' * 80)
@@ -134,6 +135,15 @@ class BacktraderStrategyWrapper(bt.Strategy):
         Must implement the real strategy.
         :return:
         """
+        # TODO https://backtest-rookies.com/2017/08/22/backtrader-multiple-data-feeds-indicators/
+
+        # for i, d in enumerate(self.datas):
+        #     date_time= self.datetime.date()
+        #     data_name = d._name
+        #     pos = self.getposition(d).size
+        #     if not pos:
+        #         pass
+
         long_stop = self.data.close[0] - 5  # Will not be hit
         # Simply log the closing price of the series from the reference
         self.log('Close: ' + str(self.dataclose[0]) + ", volume: " + str(self.datavol[0]))
