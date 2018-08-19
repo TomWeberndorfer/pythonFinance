@@ -5,8 +5,7 @@ from Utils.Logger_Instance import logger
 
 
 class BacktraderWrapper:
-    def run_test(self, data_list, initial_cash=10000, trade_commission_percent=0.005,
-                 analyzers=[], strategy_to_test="", backtesting_parameters={},
+    def run_test(self, data_list, analyzers=[], strategy_to_test="", backtesting_parameters={},
                  analysis_parameters={}):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
@@ -15,8 +14,6 @@ class BacktraderWrapper:
         :param data_list: a list with historical stock data in bt-format
         :param backtesting_parameters: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]
-        :param trade_commission_percent: Trading commission for every buy/sell in percent of order in percent
-        :param initial_cash: Initial cash to trade with.
         :return: cerebro final instance
         """
         cerebro = bt.Cerebro()
@@ -37,7 +34,7 @@ class BacktraderWrapper:
             raise NotImplementedError("Data must be a list")
 
         # Set our desired cash start
-        cerebro.broker.setcash(initial_cash)
+        cerebro.broker.setcash(backtesting_parameters['initial_cash'])
 
         for analyzer in analyzers:
             cerebro.addanalyzer(analyzer)
@@ -45,7 +42,7 @@ class BacktraderWrapper:
         # Set the commission
         # https://www.backtrader.com/docu/commission-schemes/commission-schemes.html
         # 0.5% of the operation value --> 2500 € --> 12.5 per Buy/Sell
-        cerebro.broker.setcommission(commission=trade_commission_percent)
+        cerebro.broker.setcommission(commission=backtesting_parameters['trade_commission_percent'])
         # Print out the starting conditions
         logger.info('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 

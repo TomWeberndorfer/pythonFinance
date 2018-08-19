@@ -34,7 +34,6 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
         analysed_stocks.extend(strategy_result)
 
     # risk model
-    # TODO mehrere risk model --> liste oder dict
     risk_models = other_params['RiskModels']
     for rm_name in risk_models.keys():
         rm_parameters = risk_models[rm_name]

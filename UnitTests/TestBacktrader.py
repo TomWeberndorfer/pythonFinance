@@ -72,12 +72,13 @@ class TestBacktrader(unittest.TestCase):
                      btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
                      btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
         strategy_to_test = "W52HighTechnicalStrategy"
-        backtesting_parameters = {'position_size_percents': 0.2}
+        backtesting_parameters = {'position_size_percents': 0.2, 'initial_cash': 30000,
+                                  'trade_commission_percent': 0.005}
         analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                'within52w_high_fact': 0.99}
 
-        cerebro, res = tbt.run_test(data_list, 30000, 0.005, analyzers, strategy_to_test, backtesting_parameters,
+        cerebro, res = tbt.run_test(data_list, analyzers, strategy_to_test, backtesting_parameters,
                                     analysis_parameters)
-
+        # cerebro.plot(style='candlestick', barup='green', bardown='red')
         # TODO implementieren
         # raise NotImplementedError

@@ -198,18 +198,17 @@ class MyController:
             logger.info("Backtesting started...")
 
             tbt = BacktraderWrapper()
-            # TODO nicht fix sondern entry...
-            backtesting_parameters = {'position_size_percents': 0.2}
+            backtesting_parameters = self.model.analysis_parameters.get()["BacktestingParameters"]
             analysis_params = self.model.analysis_parameters.get()['Strategies'][strategy_selections[0]]
             # test only one strategy --> [0]
-            cerebro, backtest_result = tbt.run_test(selected_backtesting_stocks_data, 30000, 0.005,
+            cerebro, backtest_result = tbt.run_test(selected_backtesting_stocks_data,
                                                     data_backtesting_analyzers,
                                                     strategy_selections[0],
                                                     backtesting_parameters, analysis_params)
 
             insert_text_into_gui(self.view.Scrolledtext_analyzer_results, "", delete=True, start=1.0)
 
-            # TODO make it simpler
+            # get items of analyzers and append it to the name
             analyzers = backtest_result[0].analyzers
             for analyzer in analyzers:
                 ana_res = analyzer.get_analysis()
@@ -238,10 +237,18 @@ class MyController:
         :return: True, if parameters are valid and updated.
         """
         try:
-            if isinstance(params_dict, dict) \
-                    and 'OtherParameters' in params_dict.keys() and len(params_dict['OtherParameters']) > 0 \
-                    and 'Strategies' in params_dict.keys() and len(params_dict['Strategies']) > 0 and \
-                    have_dicts_same_shape(required_parameters, params_dict):
+            if isinstance(params_dict, dict):
+                for param_key in params_dict.keys():
+                    if not param_key in required_parameters.keys() or len(params_dict[param_key]) <= 0:
+                        logger.error("Parameter keys faulty, please insert correct parameters!")
+                        return False
+                    # and 'OtherParameters' in params_dict.keys() and len(params_dict['OtherParameters']) > 0 \
+                    # and 'Strategies' in params_dict.keys() and len(params_dict['Strategies']) > 0 and \
+
+                    if not have_dicts_same_shape(required_parameters, params_dict):
+                        logger.error("Parameter shapes are faulty, please insert correct parameters!")
+                        return False
+
                 self.model.analysis_parameters.clear()
                 self.model.analysis_parameters.update(params_dict)
                 self.model.available_strategies_list.clear()
@@ -249,7 +256,7 @@ class MyController:
                     self.model.available_strategies_list.append(item)
                 logger.info("Analysis parameters Read")
             else:
-                logger.error("Parameters faulty, Please insert correct parameters!")
+                logger.error("Parameters are no dict, please insert correct parameters!")
                 return False
 
         except Exception as e:
@@ -380,10 +387,6 @@ class MyController:
         available_stocks = self.model.available_backtesting_stocks_list.get()
         for available_stock in available_stocks:
             insert_text_into_gui(w.sl_bt_select_stocks, available_stock._name)
-
-    def strategy_selection_changed(self):
-        # TODO not implemented backtesting
-        raise NotImplementedError("TODO implementieren")
 
     def backtesting_analyzers_list_changed(self):
         insert_text_into_gui(w.sb_select_analyzers, "", delete=True, start=0)
