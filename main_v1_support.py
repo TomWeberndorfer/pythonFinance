@@ -222,6 +222,13 @@ class MyController:
                 insert_text_into_gui(self.view.Scrolledtext_analyzer_results,
                                      str(analyzer.__class__.__name__) + ":\n" + str(final_text) + "\n\n")
 
+            portvalue = round(cerebro.broker.getvalue(), 2)
+            pnl = round(portvalue - backtesting_parameters['initial_cash'], 2)
+
+            # Print out the final result
+            insert_text_into_gui(self.view.Scrolledtext_analyzer_results,'Final Portfolio Value: ${}'.format(portvalue) + "\n")
+            insert_text_into_gui(self.view.Scrolledtext_analyzer_results,'Profit/Loss (rounded 2 places): ${}'.format(pnl))
+
             self.model.cerebro.set(cerebro)
 
         except Exception as e:
@@ -471,6 +478,11 @@ def init(top, gui, *args, **kwargs):
         multi_file_path = param_dict['backtest_stock_selection']
         app.load_backtesting_stocks_from_file(multi_file_path)
 
+    except FileNotFoundError as fnfe:
+        override_params = messagebox.askyesno("Last saved file is not found!",
+                                              "Do you want to CREATE a new file?")
+
+        # TODO
     except Exception as e:
         logger.error("Exception while opening last saved file path: " + str(e) + "\n" + str(traceback.format_exc()))
 

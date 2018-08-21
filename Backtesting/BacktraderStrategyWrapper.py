@@ -62,7 +62,7 @@ class BacktraderStrategyWrapper(bt.Strategy):
         date = self.data.datetime.datetime().date()
 
         if order.status == order.Accepted:
-            logger.info('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            logger.info('--------- NOTIFY ORDER ---------')
             logger.info('{} Order Accepted'.format(order.info['name']))
             logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
                 date,
@@ -75,7 +75,7 @@ class BacktraderStrategyWrapper(bt.Strategy):
             buy_data.append((date, order.price))
 
         if order.status == order.Completed:
-            logger.info('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            logger.info('--------- NOTIFY ORDER ---------')
             logger.info('{} Order Completed'.format(order.info['name']))
             logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
                 date,
@@ -87,10 +87,10 @@ class BacktraderStrategyWrapper(bt.Strategy):
             ))
             logger.info('Created: {} Price: {} Size: {}'.format(bt.num2date(order.created.dt), order.created.price,
                                                                 order.created.size))
-            logger.info('-' * 80)
+            logger.info('----------')
 
         if order.status == order.Canceled:
-            logger.info('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            logger.info('--------- NOTIFY ORDER ---------')
             logger.info('{} Order Canceled'.format(order.info['name']))
             logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
                 date,
@@ -102,7 +102,7 @@ class BacktraderStrategyWrapper(bt.Strategy):
             ))
 
         if order.status == order.Rejected:
-            logger.info('-' * 32, ' NOTIFY ORDER ', '-' * 32)
+            logger.info('--------- NOTIFY ORDER ---------')
             logger.info('WARNING! {} Order Rejected'.format(order.info['name']))
             logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
                 date,
@@ -112,19 +112,19 @@ class BacktraderStrategyWrapper(bt.Strategy):
                 'NA' if not order.price else round(order.price, 5),
                 'NA' if not order.price else round(order.price * order.size, 5)
             ))
-            logger.info('-' * 80)
+            logger.info('----------')
 
     def notify_trade(self, trade):
         date = self.data.datetime.datetime()
         if trade.isclosed:
-            logger.info('-' * 32, ' NOTIFY TRADE ', '-' * 32)
+            logger.info('---------  NOTIFY TRADE  ---------')
             logger.info('{}, Close Price: {}, Profit, Gross {}, Net {}'.format(
                 date,
                 trade.price,
                 trade.data._name,
                 round(trade.pnl, 2),
                 round(trade.pnlcomm, 2)))
-            logger.info('-' * 80)
+            logger.info('----------')
             buy_data.append((date, trade.price))
 
     ###########
@@ -136,42 +136,42 @@ class BacktraderStrategyWrapper(bt.Strategy):
         :return:
         """
         # TODO https://backtest-rookies.com/2017/08/22/backtrader-multiple-data-feeds-indicators/
+        stock_data_container_list = []
 
-        # for i, d in enumerate(self.datas):
-        #     date_time= self.datetime.date()
-        #     data_name = d._name
-        #     pos = self.getposition(d).size
-        #     if not pos:
-        #         pass
+        for i, hist_data in enumerate(self.datas):
+            date_time= self.datetime.date()
+            data_name = hist_data._name
 
-        long_stop = self.data.close[0] - 5  # Will not be hit
-        # Simply log the closing price of the series from the reference
-        self.log('Close: ' + str(self.dataclose[0]) + ", volume: " + str(self.datavol[0]))
+            long_stop = hist_data.close[0] - 5  # Will not be hit
+            # Simply log the closing price of the series from the reference
+            self.log('Data:' + str(data_name) + ', Close: ' + str(hist_data.close[0]) + ", volume: " + str(hist_data.volume[0]))
 
-        # TODO den container anders --> ned so benennen
-        df1 = convert_backtrader_to_dataframe(self.datas[0])
-        stock_name = self.datas[0]._name
-        # ticker not implemented, but not needed
-        stock_data_container = StockDataContainer(stock_name, "", "")
-        stock_data_container.set_historical_stock_data(df1)
-        stock_data_container_list = [stock_data_container]
+            # TODO den container anders --> ned so benennen
+            df1 = convert_backtrader_to_dataframe(hist_data)
+            # ticker not implemented, but not needed
+            stock_data_container = StockDataContainer(data_name, "", "")
+            stock_data_container.set_historical_stock_data(df1)
+            stock_data_container_list.append(stock_data_container)
 
-        results = self.strategy_instance.run_strategy(stock_data_container_list)
+            results = self.strategy_instance.run_strategy(stock_data_container_list)
 
-        # Check if an order is pending ... if yes, we cannot send a 2nd one
-        if self.order:
-            return
+            pos = self.getposition(hist_data).size
 
-        # Check if we are in the market
-        if not self.position:
-            if len(results) > 0:
-                self.buy_price = self.dataclose[0]
+            # Check if an order is pending ... if yes, we cannot send a 2nd one
+            # TODO ??
+            #if self.order:
+            #    return
 
-                # num_of_pos_to_buy = round(self.params["fixed_pos_size"] / self.buy_price)
-                # self.buyCnt = num_of_pos_to_buy
+            # Check if we are in the market
+            if not pos:
+                if len(results) > 0:
+                    self.buy_price = hist_data.close[0]
 
-                buy_ord = self.order_target_percent(target=self.params["position_size_percents"])
-                buy_ord.addinfo(name="Long Market Entry")
-                stop_size = buy_ord.size - abs(self.position.size)
-                self.sl_ord = self.sell(size=stop_size, exectype=bt.Order.Stop, price=long_stop)
-                self.sl_ord.addinfo(name='Long Stop Loss')
+                    # num_of_pos_to_buy = round(self.params["fixed_pos_size"] / self.buy_price)
+                    # self.buyCnt = num_of_pos_to_buy
+
+                    buy_ord = self.order_target_percent(data=hist_data, target=self.params["position_size_percents"])
+                    buy_ord.addinfo(name="Long Market Entry")
+                    stop_size = buy_ord.size - abs(self.position.size)
+                    self.sl_ord = self.sell(data=hist_data, size=stop_size, exectype=bt.Order.Stop, price=long_stop)
+                    self.sl_ord.addinfo(name='Long Stop Loss')
