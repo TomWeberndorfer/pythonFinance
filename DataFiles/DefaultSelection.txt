@@ -1,1 +1,0 @@
-{"parameterfile": "D:\\github\\pythonFinance\\DataFiles\\parameter_file.pickle", "backtest_stock_selection": ["D:\\github\\pythonFinance\\DataFiles\\Tiffany & Co..csv", "D:\\github\\pythonFinance\\DataFiles\\Test2.csv", "D:\\github\\pythonFinance\\DataFiles\\Test2 - Kopie.csv"]}
