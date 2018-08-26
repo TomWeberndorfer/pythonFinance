@@ -46,8 +46,12 @@ class TestStrategyFactory(unittest.TestCase):
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
                         'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
 
+        backtesting_parameters = {'position_size_percents': 0.2, 'initial_cash': 30000,
+                                  'trade_commission_percent': 0.005}
+
         all_strategy_parameters_dict = {'Strategies': all_strategy_parameters_dict}
         all_strategy_parameters_dict.update({"OtherParameters": other_params})
+        all_strategy_parameters_dict.update({"BacktestingParameters": backtesting_parameters})
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 
         self.assertTrue(have_dicts_same_shape(req_params, all_strategy_parameters_dict))

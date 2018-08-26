@@ -10,7 +10,7 @@ class StrategyFactory(Abstract_StrategyFactory):
     @staticmethod
     def get_implemented_strategies_list():
         # TODO imports must be there, else not able to get globals()
-        return ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy"]  # TODO, "GapUpHighVolumeStrategy"]
+        return ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy", "GapUpHighVolumeStrategy"]
 
     def _create_strategy(self, strategy_to_create, stock_data_container_list, parameter_dict):
         strategy = None

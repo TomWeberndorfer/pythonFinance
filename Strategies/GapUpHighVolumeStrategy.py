@@ -3,13 +3,17 @@ import traceback
 from Utils.Logger_Instance import logger
 from Signals.Signals import signal_is_volume_high_enough, signal_gap_up
 from Strategies.Abstract_Strategy import Abstract_Strategy
+from Utils.GlobalVariables import *
 
 
 class GapUpHighVolumeStrategy(Abstract_Strategy):
 
     @staticmethod
     def get_required_parameters_with_default_parameters():
-        raise NotImplementedError
+        data_file_path = GlobalVariables.get_data_files_path()
+        strategy_parameter_dict = \
+            {'GapUpHighVolumeStrategy': {'min_gap_factor': 1.03}}
+        return strategy_parameter_dict
 
     def _method_to_execute(self, stock_data_container):
         try:
@@ -29,7 +33,7 @@ class GapUpHighVolumeStrategy(Abstract_Strategy):
         :param stock_data_container: stock name
         :param stock_data: stock data
         :param min_gap_factor: minimum gap up factor (ex: 1.03 = 3%)
-        :return: stock to buy with {'buy', 'get_stock_name', 'sb', 'sl'}
+        :return: stock to buy with as container list
         """
 
         if stock_data_container is None or parameter_dict['min_gap_factor'] is None:
