@@ -85,6 +85,10 @@ class Abstract_DataContainer:
         self._position_size = size
 
     def get_position_size(self):
+        """
+        Position size in units of a stock.
+        :return: number of stocks
+        """
         return self._position_size
 
     def get_risk_model(self):
