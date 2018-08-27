@@ -16,7 +16,7 @@ import requests
 from scipy.stats import norm
 
 import Utils.Logger_Instance
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 
 

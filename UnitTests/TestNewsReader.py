@@ -1,17 +1,12 @@
-import os
-import re
 import unittest
 from datetime import datetime
 
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
-from DataReading.NewsStockDataReaders.TraderfoxNewsDataReader import TraderfoxNewsDataReader
 
-from DataReading.StockDataContainer import StockDataContainer
-from Utils.file_utils import read_tickers_from_file_or_web, FileUtils
+from Utils.file_utils import read_tickers_from_file_or_web
 from newsFeedReader.traderfox_hp_news import is_date_actual
-from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 from Utils.GlobalVariables import *
-import pandas as pd
+
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
 

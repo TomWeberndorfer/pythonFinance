@@ -1,5 +1,4 @@
-from DataReading.Abstract_DataContainerDecorcator import Abstract_DataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.Abstract_DataContainerDecorcator import Abstract_DataContainerDecorator
 
 
 class NewsDataContainerDecorator(Abstract_DataContainerDecorator):

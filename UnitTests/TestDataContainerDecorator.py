@@ -1,10 +1,9 @@
-import os
 import unittest
 from pandas import DataFrame
 from datetime import datetime, timedelta
 from dateutil import parser
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 
 # from directory UnitTests to --> root folder with: ..\\..\\

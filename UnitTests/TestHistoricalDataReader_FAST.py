@@ -1,13 +1,9 @@
-import os
 import unittest
 
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
 from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
-from Utils.file_utils import read_tickers_from_file_or_web
-import pandas_datareader.data as web
-import datetime
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\TestData\\'

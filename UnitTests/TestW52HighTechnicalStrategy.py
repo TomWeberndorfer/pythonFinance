@@ -1,10 +1,9 @@
-import os
 import unittest
 
 from pandas import DataFrame
 from Utils.GlobalVariables import *
 
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Strategies.StrategyFactory import StrategyFactory
 from Strategies.W52HighTechnicalStrategy import W52HighTechnicalStrategy

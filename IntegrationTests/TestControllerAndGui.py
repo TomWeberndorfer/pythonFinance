@@ -1,17 +1,8 @@
-import os
 import unittest
 
-import time
-from pandas import DataFrame
-
 import main_v1_support
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
-from GUI.main_v1 import ScrolledTreeView, LabelFrame, vp_start_gui, Framework
-from MvcModel import MvcModel
-from Utils.GuiUtils import GuiUtils
+from GUI.main_v1 import Framework
 from Utils.GlobalVariables import *
-from threading import Thread
 import ast
 from Utils.file_utils import check_file_exists_and_delete
 from Strategies.StrategyFactory import StrategyFactory

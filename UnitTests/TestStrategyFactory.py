@@ -17,29 +17,31 @@ class TestStrategyFactory(unittest.TestCase):
     def test_data_in_dict(self):
         stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
         all_strategy_parameters_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
-                                                                 'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
-                                                                 'data_readers': {'TraderfoxNewsDataReader':
-                                                                     {
-                                                                         'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
-                                                                         'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
-                                                                         'reload_data': True,
-                                                                         'ticker_needed': False},
-                                                                     'HistoricalDataReader':
-                                                                         {'weeks_delta': 52,
-                                                                          'data_source': 'iex',
-                                                                          'reload_data': True,
-                                                                          'ticker_needed': False}}},
-                                   'W52HighTechnicalStrategy':
-                                       {'check_days': 7,
-                                        'min_cnt': 3,
-                                        'min_vol_dev_fact': 1.2,
-                                        'within52w_high_fact': 0.98,
-                                        'data_readers': {'HistoricalDataReader': {
-                                            'weeks_delta': 52,
-                                            'data_source': 'iex',
-                                            'reload_data': False,
-                                            'ticker_needed': True}}}
-                                   }
+                                                                      'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                      'data_readers': {'TraderfoxNewsDataReader':
+                                                                          {
+                                                                              'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
+                                                                              'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                              'reload_data': True,
+                                                                              'ticker_needed': False},
+                                                                          'HistoricalDataReader':
+                                                                              {'weeks_delta': 52,
+                                                                               'data_source': 'iex',
+                                                                               'reload_data': True,
+                                                                               'ticker_needed': False}}},
+                                        'W52HighTechnicalStrategy':
+                                            {'check_days': 7,
+                                             'min_cnt': 3,
+                                             'min_vol_dev_fact': 1.2,
+                                             'within52w_high_fact': 0.98,
+                                             'data_readers': {'HistoricalDataReader': {
+                                                 'weeks_delta': 52,
+                                                 'data_source': 'iex',
+                                                 'reload_data': False,
+                                                 'ticker_needed': True}}},
+                                        'GapUpHighVolumeStrategy': {
+                                            'min_gap_factor': 1.03}
+                                        }
         other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',

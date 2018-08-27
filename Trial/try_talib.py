@@ -1,17 +1,9 @@
 import inspect
 from talib import abstract
-import numpy
 import os
-import talib
-import pandas as pd
-from datetime import datetime
-from datetime import timedelta
 
-from DataRead_Google_Yahoo import read_data_from_google_with_pandas
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
-from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import calc_true_range, calc_mean_true_range
-
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 
 # https://github.com/mrjbq7/ta-lib/issues/13
 import talib

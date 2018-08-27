@@ -11,9 +11,7 @@ import nltk
 from textblob.classifiers import NaiveBayesClassifier
 
 from DataRead_Google_Yahoo import get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
-from Utils.common_utils import is_float, GlobalVariables
+from Utils.common_utils import is_float
 from Utils.Logger_Instance import logger
 
 

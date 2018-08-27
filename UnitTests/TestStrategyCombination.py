@@ -1,9 +1,8 @@
-import os
 import unittest
 from pandas import DataFrame
 
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
 from datetime import datetime, timedelta

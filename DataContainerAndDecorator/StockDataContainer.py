@@ -1,4 +1,4 @@
-from DataReading.Abstract_DataContainer import Abstract_DataContainer
+from DataContainerAndDecorator.Abstract_DataContainer import Abstract_DataContainer
 
 
 class StockDataContainer(Abstract_DataContainer):

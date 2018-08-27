@@ -1,11 +1,10 @@
 import unittest
-from datetime import datetime
 
 from pandas import DataFrame
 
 from DataRead_Google_Yahoo import get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 

@@ -1,10 +1,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import datetime  # For datetime objects
-import os.path  # To manage paths
-import sys  # To find out the script name (in argv[0])
-
 # Import the backtrader platform
 import backtrader as bt
 
@@ -17,10 +13,10 @@ import backtrader as bt
 # Create a Stratey
 from pandas import DataFrame
 
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
-from Utils.common_utils import convert_backtrader_to_dataframe, value_at_risk
+from Utils.common_utils import convert_backtrader_to_dataframe
 
 buy_data = []
 P = 10000
