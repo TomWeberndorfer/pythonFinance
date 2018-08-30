@@ -1,12 +1,12 @@
 import unittest
 
-from Strategies.W52HighTechnicalStrategy import W52HighTechnicalStrategy
-from Strategies.SimplePatternNewsStrategy import SimplePatternNewsStrategy
+from Strategies.Abstract_Strategy import Abstract_Strategy
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
-
+from pandas import DataFrame
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Utils.common_utils import have_dicts_same_shape
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
@@ -128,3 +128,25 @@ class TestStrategyFactory(unittest.TestCase):
 
         self.assertFalse(have_dicts_same_shape(req_params['Strategies']['W52HighTechnicalStrategy'],
                                                missing_strategy_parameter_dict))
+
+    def test_get_implemented_strategies_list(self):
+        w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
+
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000), ]
+
+        df = DataFrame.from_records(data, columns=labels)
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container.set_historical_stock_data(df)
+        stock_data_container_list = [stock_data_container]
+
+        ##################################################
+        # 52 w strategy
+        stock_screener = StrategyFactory()
+        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", stock_data_container_list,
+                                                       w52hi_parameter_dict)
+
+        self.assertNotEqual(None, w52_hi_strat)
+        self.assertTrue(isinstance(w52_hi_strat, Abstract_Strategy))

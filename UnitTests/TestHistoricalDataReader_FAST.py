@@ -1,7 +1,7 @@
 import unittest
 
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
-from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
+from DataReading.DataReaderFactory import DataReaderFactory
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 

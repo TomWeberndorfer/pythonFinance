@@ -6,7 +6,7 @@ from Utils.GlobalVariables import *
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Strategies.StrategyFactory import StrategyFactory
-from Strategies.W52HighTechnicalStrategy import W52HighTechnicalStrategy
+from Strategies.ImplementedStrategies.TechnicalStrategy.W52HighTechnicalStrategy import W52HighTechnicalStrategy
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'

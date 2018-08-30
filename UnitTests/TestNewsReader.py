@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
+from DataReading.DataReaderFactory import DataReaderFactory
 
 from Utils.file_utils import read_tickers_from_file_or_web
 from newsFeedReader.traderfox_hp_news import is_date_actual
