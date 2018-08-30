@@ -1,30 +1,39 @@
-from Strategies.GapUpHighVolumeStrategy import GapUpHighVolumeStrategy
-from Strategies.SimplePatternNewsStrategy import SimplePatternNewsStrategy
-from Strategies.W52HighTechnicalStrategy import W52HighTechnicalStrategy
+import traceback
+
 from Utils.GlobalVariables import *
 from Strategies.Abstract_StrategyFactory import Abstract_StrategyFactory
-
+from pathlib import Path
+from glob import glob
+from Utils.common_utils import class_for_name, get_recursive_module
+from Utils.Logger_Instance import logger
 
 class StrategyFactory(Abstract_StrategyFactory):
 
     @staticmethod
-    def get_implemented_strategies_list():
-        # TODO imports must be there, else not able to get globals()
-        return ["SimplePatternNewsStrategy", "W52HighTechnicalStrategy"]  # TODO, "GapUpHighVolumeStrategy"]
+    def get_implemented_strategies_dict():
+        strategy_dict = {}
+
+        path = Path(os.path.dirname(os.path.abspath(__file__)))
+        all_files = [file for file in list(path.glob('./*/**/**/*.py')) if 'strat' in file.stem or 'Strat' in file.stem]
+
+        for file in all_files:
+            try:
+                module_and_class = get_recursive_module(file.parent, path) + '.' + file.stem
+                strat_class = class_for_name(module_and_class, file.stem)
+                strategy_dict.update({file.stem: strat_class})
+            except ImportError as ie:
+                pass
+        return strategy_dict
 
     def _create_strategy(self, strategy_to_create, stock_data_container_list, parameter_dict):
-        strategy = None
-        strategies_list = StrategyFactory.get_implemented_strategies_list()
-
-        # check if this strategy is implemented
-        if strategy_to_create in strategies_list:
-            # create a class variable from string
-            strat_class = globals()[strategy_to_create]
+        strategy_dict = StrategyFactory.get_implemented_strategies_dict()
+        if strategy_to_create in strategy_dict:
+            # get the class from class dict and create the concrete object than
+            strat_class = strategy_dict[strategy_to_create]
             strategy = strat_class(stock_data_container_list, parameter_dict)
+            return strategy
         else:
             raise NotImplementedError("Strategy is not implemented: " + str(strategy_to_create))
-
-        return strategy
 
     @staticmethod
     def get_required_parameters_with_default_parameters():
@@ -33,12 +42,15 @@ class StrategyFactory(Abstract_StrategyFactory):
         :return: dict with required values and default parameters
         """
         all_strategy_parameters_dict = {}
-        strategies_list = StrategyFactory.get_implemented_strategies_list()
+        strategies_dict = StrategyFactory.get_implemented_strategies_dict()
 
-        for strat in strategies_list:
-            strat_class = globals()[strat]
-            def_params = strat_class.get_required_parameters_with_default_parameters()
-            all_strategy_parameters_dict.update(def_params)
+        for strat_class_key in list(strategies_dict.keys()):
+            try:
+                def_params = strategies_dict[strat_class_key].get_required_parameters_with_default_parameters()
+                all_strategy_parameters_dict.update(def_params)
+            except NotImplementedError as nie:
+                logger.error("Exception for strategy class " + strat_class_key + ": " + str(nie) + "\n" + str(
+                    traceback.format_exc()))
 
         all_strategy_parameters_dict = {'Strategies': all_strategy_parameters_dict}
         other_params = StrategyFactory.get_other_parameters_with_default_parameters()

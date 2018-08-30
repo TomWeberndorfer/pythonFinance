@@ -1,4 +1,4 @@
-from DataReading.Abstract_DataContainer import Abstract_DataContainer
+from DataContainerAndDecorator.Abstract_DataContainer import Abstract_DataContainer
 
 
 class StockDataContainer(Abstract_DataContainer):
@@ -10,7 +10,7 @@ class StockDataContainer(Abstract_DataContainer):
     def get_names_and_values(self):
         """
         Method to return the _names and values as dictionary to insert in a treeview or else.
-        :return: a dict with _names as keys and values, Ex: {'Stockname': "Apple Inc"}
+        :return: a dict with _names as keys and values, Ex: {'Stockname': "Apple Inc."}
         """
         names_and_values_dict = {'Rank': self.get_rank(),
                                  'StrategyAndRecommendation': self.get_recommendation_strategies(),

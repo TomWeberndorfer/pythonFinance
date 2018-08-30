@@ -3,7 +3,7 @@ import traceback
 
 from pandas_datareader import data
 
-from DataReading.Abstract_DataReader import Abstract_StockDataReader
+from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
 from Utils.Logger_Instance import logger
 from Utils.GlobalVariables import *
 

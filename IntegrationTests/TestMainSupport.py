@@ -1,17 +1,7 @@
-import os
 import unittest
 
-import time
-from pandas import DataFrame
-
 import main_v1_support
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
-from GUI.main_v1 import ScrolledTreeView, LabelFrame, vp_start_gui
-from MvcModel import MvcModel
-from Utils.GuiUtils import GuiUtils
 from Utils.GlobalVariables import *
-from threading import Thread
 from Strategies.StrategyFactory import StrategyFactory
 
 try:

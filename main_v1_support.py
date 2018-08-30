@@ -31,6 +31,7 @@ from Utils.GuiUtils import GuiUtils, evaluate_list_box_selection, set_buttons_st
 from Utils.common_utils import have_dicts_same_shape, get_current_class_and_function_name
 from Utils.file_utils import FileUtils
 import ast
+import configparser
 
 
 class MyController:
@@ -78,6 +79,8 @@ class MyController:
         self.model.analysis_parameters.add_event_listeners(self.analysis_parameters_changed)
         self.model.cerebro.add_event_listeners(self.cerebro_result_changed)
 
+        self.current_parameterfile = ""
+
     def on_double_click_Scrolledtreeview1(self, event):
         """
         On double click event for scrolledtreeview1,
@@ -90,6 +93,7 @@ class MyController:
             cur_stock = self.view.Scrolledtreeview1.item(cur_selection)
 
             # TODO je nachj container unterschiedlich 2 --> name is first
+            # TODO einstellen der aufruf seite
             stock_name = cur_stock['values'][2]
             url_to_open = "http://www.finanzen.at/suchergebnisse?_type=Aktien&_search="
             wb.open_new_tab(url_to_open + stock_name)
@@ -226,8 +230,10 @@ class MyController:
             pnl = round(portvalue - backtesting_parameters['initial_cash'], 2)
 
             # Print out the final result
-            insert_text_into_gui(self.view.Scrolledtext_analyzer_results,'Final Portfolio Value: ${}'.format(portvalue) + "\n")
-            insert_text_into_gui(self.view.Scrolledtext_analyzer_results,'Profit/Loss (rounded 2 places): ${}'.format(pnl))
+            insert_text_into_gui(self.view.Scrolledtext_analyzer_results,
+                                 'Final Portfolio Value: ${}'.format(portvalue) + "\n")
+            insert_text_into_gui(self.view.Scrolledtext_analyzer_results,
+                                 'Profit/Loss (rounded 2 places): ${}'.format(pnl))
 
             self.model.cerebro.set(cerebro)
 
@@ -280,6 +286,7 @@ class MyController:
         try:
             with open(file_path, "rb") as f:
                 items = pickle.load(f)
+                self.current_parameterfile = file_path
                 if not self.accept_parameters_from_text(items, required_parameters):
                     override_params = messagebox.askyesno("Parameter file is not valid!",
                                                           "Do you want to CREATE a new file with default parameters?")
@@ -466,16 +473,22 @@ def init(top, gui, *args, **kwargs):
     try:
         # load the last saved file path
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
-        param_dict = {}
         last_used_parameter_file_path = GlobalVariables.get_last_used_parameter_file()
-        with open(last_used_parameter_file_path, 'r') as myfile:
-            file_content = myfile.read()
-            param_dict = ast.literal_eval(file_content)
 
-        param_file = param_dict['parameterfile']
+        config = configparser.ConfigParser()
+        config.read(last_used_parameter_file_path)
+
+        # param_file = ast.literal_eval(config["Parameters"]['parameterfile'])
+        param_file = (config["Parameters"]['parameterfile'])
         app.load_analysis_parameters_from_file(param_file, req_params)
 
-        multi_file_path = param_dict['backtest_stock_selection']
+        # TODO
+        multi_file_path_str = config["Parameters"]['backteststockselection']
+        if "," in multi_file_path_str:
+            multi_file_path = multi_file_path_str.split(',')
+        else:
+            multi_file_path = multi_file_path_str
+        # multi_file_path = ast.literal_eval(multi_file_path_str)
         app.load_backtesting_stocks_from_file(multi_file_path)
 
     except FileNotFoundError as fnfe:
@@ -507,6 +520,25 @@ def save_analysis_parameters():
     req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 
     app.dump_analysis_parameters_to_file(file_path, all_txt, req_params)
+
+    save_last_used_parameter_file()
+
+
+def save_last_used_parameter_file():
+    last_used_parameter_file_path = GlobalVariables.get_last_used_parameter_file()
+    config = configparser.ConfigParser()
+    curr_file = app.current_parameterfile
+
+    data_files_path = GlobalVariables.get_data_files_path()
+    backtest_stocks = app.model.available_backtesting_stocks_list.get()
+
+    str_stocks = ','.join(str(data_files_path + stock._name) for stock in backtest_stocks)
+
+    config["Parameters"] = {'parameterfile': curr_file,
+                            'backteststockselection': str_stocks}
+
+    with open(last_used_parameter_file_path, 'w') as configfile:
+        config.write(configfile)
 
 
 def quit():
@@ -636,12 +668,3 @@ class QueueHandler(logging.Handler):
 
     def emit(self, record):
         self.log_queue.put(record)
-
-
-def class_for_name(module_name, class_name):
-    import importlib
-    # load the module, will raise ImportError if module cannot be loaded
-    m = importlib.import_module(module_name)
-    # get the class, will raise AttributeError if class cannot be found
-    c = getattr(m, class_name)
-    return c

@@ -1,3 +1,4 @@
+import importlib
 import inspect
 import platform
 import smtplib
@@ -16,7 +17,7 @@ import requests
 from scipy.stats import norm
 
 import Utils.Logger_Instance
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 
 
@@ -450,34 +451,27 @@ def have_dicts_same_shape(d1, d2):
         return not isinstance(d2, dict)  # if d2 is a dict, False, else True.
 
 
-def delete_keys_from_dict(dict_del, lst_keys):
+def class_for_name(module_name, class_name):
     """
-    Deletes the keys from dict, even if nested and returns the new dict
-    https://stackoverflow.com/questions/3405715/elegant-way-to-remove-fields-from-nested-dictionaries
-    :param dict_del: dict to delete from
-    :param lst_keys: list with keys to delete
-    :return: new dict
+    Load the class from given module
+    :param module_name: string with whole module name as string
+    :param class_name: class name as string
+    :return: the class
     """
-    from boltons.iterutils import remap
-    drop_keys = lambda path, key, value: key not in lst_keys
-    clean = remap(dict_del, visit=drop_keys)
-    return clean
-
-    # for k in lst_keys:
-    #     try:
-    #         del dict_del[k]
-    #     except KeyError:
-    #         pass
-    # for v in dict_del.values():
-    #     if isinstance(v, dict):
-    #         delete_keys_from_dict(v, lst_keys)
-    #
-    # return dict_del
+    # load the module, will raise ImportError if module cannot be loaded
+    m = importlib.import_module(module_name)
+    # get the class, will raise AttributeError if class cannot be found
+    c = getattr(m, class_name)
+    return c
 
 
-def update_dict(a, b):
-    for key in b:
-        if not key in a or type(a[key]) != dict or type(b[key]) != dict:
-            a[key] = b[key]
+def get_recursive_module(self, root):
+    if str(self) in str(root):
+        return str(self.stem)
+
+    else:
+        text = get_recursive_module(self.parent, root)
+        if text is '':
+            return str(self.stem)
         else:
-            update_dict(a[key], b[key])
+            return text + '.' + str(self.stem)

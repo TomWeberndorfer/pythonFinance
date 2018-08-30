@@ -15,7 +15,11 @@ class GlobalVariables:
 
     @staticmethod
     def get_last_used_parameter_file():
-        data_file_path = GlobalVariables.get_data_files_path() + "DefaultSelection.txt"
+        """
+        Get the last used parameter file configuration file
+        :return: path + name of the config file
+        """
+        data_file_path = GlobalVariables.get_data_files_path() + "FileConfig.ini"
         return data_file_path
 
     @staticmethod

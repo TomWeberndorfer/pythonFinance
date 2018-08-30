@@ -6,9 +6,9 @@ import bs4 as bs
 import pandas as pd
 import requests
 
-from DataReading.Abstract_DataReader import Abstract_StockDataReader
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
+from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
+from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
 from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews

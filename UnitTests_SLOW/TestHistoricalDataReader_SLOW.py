@@ -1,9 +1,8 @@
-import os
 import unittest
 
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
-from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
-from DataReading.StockDataContainer import StockDataContainer
+from DataReading.DataReaderFactory import DataReaderFactory
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 from Utils.file_utils import read_tickers_from_file_or_web
 from Utils.Logger_Instance import logger

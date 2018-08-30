@@ -1,27 +1,11 @@
 import json
 
 # TODO from yahoo_finance import Share
-import googlefinance.client as google_client
 import urllib3
 
 str1 = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query="
 str2 = "&region=1&lang="
 str3 = "&callback=YAHOO.Finance.SymbolSuggest.ssCallback"
-
-
-def read_data_from_google_with_client(stock_name, interval="86400", period="1M"):
-    if stock_name is None:
-        raise NotImplementedError
-
-    param = {
-        'q': stock_name,  # Stock symbol (ex: "AAPL")
-        'i': interval,  # Interval size in seconds ("86400" = 1 day intervals)
-        # 'x': "INDEXDJX", # Stock exchange symbol on which stock is traded (ex: "NASD")
-        'p': period  # Period (Ex: "1Y" = 1 year)
-    }
-    # get price data (return pandas dataframe)
-    df = google_client.get_price_data(param)
-    return df
 
 def get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks(name_abbr):
     """

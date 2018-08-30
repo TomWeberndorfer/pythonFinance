@@ -42,7 +42,7 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         :param argument: A single element of the list to execute
         :return: should return the result or add it to the list and return nothing
         """
-        raise Exception("Abstractmethod")
+        raise NotImplementedError("Abstractmethod")
 
     @staticmethod
     @abstractmethod
@@ -51,4 +51,4 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         Return a dict with required strategy parameters and default parameter values.
         :return: dict with required values and default parameters
         """
-        raise Exception("Abstractmethod")
+        raise NotImplementedError("Abstractmethod")

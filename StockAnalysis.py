@@ -1,7 +1,6 @@
-import os
 from datetime import datetime
 import _pickle as pickle
-from DataReading.NewsStockDataReaders.DataReaderFactory import DataReaderFactory
+from DataReading.DataReaderFactory import DataReaderFactory
 from RiskManagement.RiskModelFactory import RiskModelFactory
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.Logger_Instance import logger

@@ -3,9 +3,8 @@ from __future__ import (absolute_import, division, print_function,
 
 # Import the backtrader platform
 import backtrader as bt
-import logging
 from Utils.Logger_Instance import logger
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.common_utils import convert_backtrader_to_dataframe
 

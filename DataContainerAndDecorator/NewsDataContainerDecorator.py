@@ -1,5 +1,4 @@
-from DataReading.Abstract_DataContainerDecorcator import Abstract_DataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.Abstract_DataContainerDecorcator import Abstract_DataContainerDecorator
 
 
 class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
@@ -13,7 +12,7 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
         self._stock_current_prize = stock_current_prize
 
     def __str__(self):
-        return self._shaped_data_container.__str__()
+        return self._shaped_data_container.__str__() + ", " + self._original_news
 
     def get_names_and_values(self):
         names_and_values_dict = self._shaped_data_container.get_names_and_values()

@@ -1,6 +1,6 @@
 import unittest
 
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from GUI.main_v1 import ScrolledTreeView, LabelFrame
 from Utils.GlobalVariables import *
 from Utils.GuiUtils import GuiUtils

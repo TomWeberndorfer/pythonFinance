@@ -81,6 +81,6 @@ class TestBacktrader(unittest.TestCase):
 
         cerebro, res = tbt.run_test(data_list, analyzers, strategy_to_test, backtesting_parameters,
                                     analysis_parameters)
-        cerebro.plot(style='candlestick', barup='green', bardown='red')
+        # cerebro.plot(style='candlestick', barup='green', bardown='red')
         # TODO implementieren
         # raise NotImplementedError

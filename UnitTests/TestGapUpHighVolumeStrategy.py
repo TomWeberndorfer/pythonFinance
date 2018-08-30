@@ -3,7 +3,7 @@ import unittest
 
 from pandas import DataFrame
 
-from DataReading.StockDataContainer import StockDataContainer
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import GlobalVariables

@@ -1,12 +1,12 @@
 import unittest
 
-from Strategies.W52HighTechnicalStrategy import W52HighTechnicalStrategy
-from Strategies.SimplePatternNewsStrategy import SimplePatternNewsStrategy
+from Strategies.Abstract_Strategy import Abstract_Strategy
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
-
+from pandas import DataFrame
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Utils.common_utils import have_dicts_same_shape
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
@@ -17,37 +17,43 @@ class TestStrategyFactory(unittest.TestCase):
     def test_data_in_dict(self):
         stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
         all_strategy_parameters_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
-                                                                 'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
-                                                                 'data_readers': {'TraderfoxNewsDataReader':
-                                                                     {
-                                                                         'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
-                                                                         'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
-                                                                         'reload_data': True,
-                                                                         'ticker_needed': False},
-                                                                     'HistoricalDataReader':
-                                                                         {'weeks_delta': 52,
-                                                                          'data_source': 'iex',
-                                                                          'reload_data': True,
-                                                                          'ticker_needed': False}}},
-                                   'W52HighTechnicalStrategy':
-                                       {'check_days': 7,
-                                        'min_cnt': 3,
-                                        'min_vol_dev_fact': 1.2,
-                                        'within52w_high_fact': 0.98,
-                                        'data_readers': {'HistoricalDataReader': {
-                                            'weeks_delta': 52,
-                                            'data_source': 'iex',
-                                            'reload_data': False,
-                                            'ticker_needed': True}}}
-                                   }
+                                                                      'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                      'data_readers': {'TraderfoxNewsDataReader':
+                                                                          {
+                                                                              'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
+                                                                              'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                              'reload_data': True,
+                                                                              'ticker_needed': False},
+                                                                          'HistoricalDataReader':
+                                                                              {'weeks_delta': 52,
+                                                                               'data_source': 'iex',
+                                                                               'reload_data': True,
+                                                                               'ticker_needed': False}}},
+                                        'W52HighTechnicalStrategy':
+                                            {'check_days': 7,
+                                             'min_cnt': 3,
+                                             'min_vol_dev_fact': 1.2,
+                                             'within52w_high_fact': 0.98,
+                                             'data_readers': {'HistoricalDataReader': {
+                                                 'weeks_delta': 52,
+                                                 'data_source': 'iex',
+                                                 'reload_data': False,
+                                                 'ticker_needed': True}}},
+                                        'GapUpHighVolumeStrategy': {
+                                            'min_gap_factor': 1.03}
+                                        }
         other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
                         'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
 
+        backtesting_parameters = {'position_size_percents': 0.2, 'initial_cash': 30000,
+                                  'trade_commission_percent': 0.005}
+
         all_strategy_parameters_dict = {'Strategies': all_strategy_parameters_dict}
         all_strategy_parameters_dict.update({"OtherParameters": other_params})
+        all_strategy_parameters_dict.update({"BacktestingParameters": backtesting_parameters})
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 
         self.assertTrue(have_dicts_same_shape(req_params, all_strategy_parameters_dict))
@@ -122,3 +128,25 @@ class TestStrategyFactory(unittest.TestCase):
 
         self.assertFalse(have_dicts_same_shape(req_params['Strategies']['W52HighTechnicalStrategy'],
                                                missing_strategy_parameter_dict))
+
+    def test_get_implemented_strategies_list(self):
+        w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
+
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000), ]
+
+        df = DataFrame.from_records(data, columns=labels)
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container.set_historical_stock_data(df)
+        stock_data_container_list = [stock_data_container]
+
+        ##################################################
+        # 52 w strategy
+        stock_screener = StrategyFactory()
+        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", stock_data_container_list,
+                                                       w52hi_parameter_dict)
+
+        self.assertNotEqual(None, w52_hi_strat)
+        self.assertTrue(isinstance(w52_hi_strat, Abstract_Strategy))

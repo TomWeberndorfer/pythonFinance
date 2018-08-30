@@ -1,11 +1,6 @@
-import os
 import unittest
-from pandas import DataFrame, np
-from datetime import datetime
 
-from DataReading.NewsDataContainerDecorator import NewsDataContainerDecorator
-from DataReading.StockDataContainer import StockDataContainer
-from RiskManagement.FixedSizeRiskModel import FixedSizeRiskModel
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from StockAnalysis import _read_data
 from Utils.GlobalVariables import *
 
