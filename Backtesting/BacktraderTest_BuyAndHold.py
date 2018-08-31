@@ -16,7 +16,7 @@ from pandas import DataFrame
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
-from Utils.common_utils import convert_backtrader_to_dataframe
+from Utils.StockDataUtils import convert_backtrader_to_dataframe
 
 buy_data = []
 P = 10000

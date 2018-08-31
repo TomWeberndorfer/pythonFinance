@@ -12,7 +12,7 @@ import backtrader as bt
 
 from Utils.Logger_Instance import logger
 from Utils.GlobalVariables import *
-from Utils.common_utils import convert_backtrader_to_dataframe
+from Utils.StockDataUtils import convert_backtrader_to_dataframe
 
 ####################################
 # https://www.backtrader.com/docu/indautoref.html

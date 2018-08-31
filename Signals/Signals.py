@@ -2,7 +2,7 @@ import traceback
 
 from Utils.Logger_Instance import logger
 from Utils.GlobalVariables import *
-from Utils.common_utils import calc_avg_vol
+from Utils.StockDataUtils import calc_avg_vol
 
 
 # TODO from talib.func import ATR

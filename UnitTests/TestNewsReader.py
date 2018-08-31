@@ -3,13 +3,13 @@ from datetime import datetime
 
 from DataReading.DataReaderFactory import DataReaderFactory
 
-from Utils.file_utils import read_tickers_from_file_or_web
+from Utils.FileUtils import FileUtils
 from newsFeedReader.traderfox_hp_news import is_date_actual
 from Utils.GlobalVariables import *
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
-
+from Utils.FileUtils import FileUtils
 
 class TestNewsReader(unittest.TestCase):
 
@@ -70,17 +70,16 @@ class TestNewsReader(unittest.TestCase):
         stock_data_container_file_name = "stock_data_container_file.pickle"
         stock_data_container_file = filepath + stock_data_container_file_name
 
-        # TODO 11: seite geht nicht mehr
         list_with_stock_pages_to_read = [
             ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
              'wikitable sortable', 0, 1, 'en'],
             ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
              'tbody', 'class', 'row-hover', 2, 1, 'de']]
 
-        stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, True,
-                                                                  list_with_stock_pages_to_read)
+        stock_data_container_list = FileUtils.read_tickers_from_file_or_web(stock_data_container_file, True,
+                                                                            list_with_stock_pages_to_read)
         self.assertGreater(len(stock_data_container_list), 800)
 
-        stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, False,
-                                                                  list_with_stock_pages_to_read)
+        stock_data_container_list = FileUtils.read_tickers_from_file_or_web(stock_data_container_file, False,
+                                                                            list_with_stock_pages_to_read)
         self.assertGreater(len(stock_data_container_list), 800)

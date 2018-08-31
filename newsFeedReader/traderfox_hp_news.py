@@ -1,11 +1,9 @@
-import bs4 as bs
 import datetime
-import requests
-
-from Utils.file_utils import replace_in_file, get_hash_from_file, check_file_exists_or_create
-from Utils.news_utils import generate_hash
 from datetime import datetime
+
 import pandas as pd
+
+from Utils.FileUtils import FileUtils
 
 
 def is_date_actual(date_to_check, last_date_file="", last_date="", date_time_format="%d.%m.%Y um %H:%M"):
@@ -22,7 +20,7 @@ def is_date_actual(date_to_check, last_date_file="", last_date="", date_time_for
         raise NotImplementedError
 
     if last_date == "":
-        if check_file_exists_or_create(last_date_file, "last_check_date"):  # no need to check, creates anyway
+        if FileUtils.check_file_exists_or_create(last_date_file, "last_check_date"):  # no need to check, creates anyway
             data = pd.read_csv(last_date_file)
             last_date_str = str(data.last_check_date[0])
             last_date = datetime.strptime(last_date_str, date_time_format)

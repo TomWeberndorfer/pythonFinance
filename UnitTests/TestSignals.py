@@ -7,7 +7,7 @@ import pandas as pd
 from Signals.Signals import signal_is_volume_high_enough, signal_is52_w_high, \
     signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, signal_is_a_few_higher_than_avg, \
     signal_is_volume_raising
-from Utils.common_utils import calc_avg_vol, calculate_stopbuy_and_stoploss
+from Utils.StockDataUtils import calc_avg_vol, calculate_stopbuy_and_stoploss
 
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Utils.GlobalVariables import *

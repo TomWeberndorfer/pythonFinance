@@ -1,13 +1,7 @@
-import re
 from unittest import TestCase
-import pandas as pd
-from datetime import datetime
 
 from Utils.ListWithChangedListeners import ListWithChangedListeners, DictWithChangedListeners, \
     ObjectWithChangedListeners
-from Utils.common_utils import send_email, is_date_today
-from Utils.file_utils import check_file_exists_or_create, FileUtils
-from Utils.GlobalVariables import *
 
 
 class ListenerClass:

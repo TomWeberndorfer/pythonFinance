@@ -2,8 +2,7 @@
 
 import feedparser
 
-from Utils.file_utils import replace_in_file
-from Utils.news_utils import generate_hash
+from Utils.NewsUtils import NewsUtils
 
 lastId = 0 #TODO temp solution
 #TODO alternativ mit etag nud modified wann des geht
@@ -16,7 +15,7 @@ feed = feedparser.parse(url)
 #feed = feedparser.parse("http://finance.yahoo.com/q/h?s=msft")
 #feed = feedparser.parse("http://feeds.reuters.com/reuters/companyNews")
 
-id = generate_hash(url, feed.entries)
+id = NewsUtils.generate_hash(url, feed.entries)
 
 # 304 means no changes
 if lastId == id:

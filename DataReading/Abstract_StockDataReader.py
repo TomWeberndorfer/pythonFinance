@@ -3,7 +3,7 @@ import _pickle as pickle
 
 from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
 from Utils.StatusUpdate import StatusUpdate
-from Utils.common_utils import CommonUtils
+from Utils.CommonUtils import CommonUtils
 
 
 class Abstract_StockDataReader(StatusUpdate, Abstract_SimpleMultithreading):

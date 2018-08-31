@@ -3,7 +3,7 @@
 from pandas import DataFrame
 
 from Utils.GlobalVariables import *
-from Utils.common_utils import value_at_risk
+from Utils.StockDataUtils import value_at_risk
 
 if __name__ == "__main__":
     labels = []

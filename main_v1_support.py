@@ -11,6 +11,8 @@ import traceback
 from threading import Thread
 from tkinter import messagebox
 import logging
+
+from Utils.GuiUtils import GuiUtils
 from Utils.Logger_Instance import logger
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
@@ -27,9 +29,8 @@ from tkinter import filedialog
 import backtrader.feeds as btfeeds
 import backtrader.analyzers as btanalyzer
 from Utils.GlobalVariables import *
-from Utils.GuiUtils import GuiUtils, evaluate_list_box_selection, set_buttons_state
-from Utils.common_utils import have_dicts_same_shape, get_current_class_and_function_name
-from Utils.file_utils import FileUtils
+from Utils.CommonUtils import CommonUtils
+from Utils.FileUtils import FileUtils
 import ast
 import configparser
 
@@ -256,7 +257,7 @@ class MyController:
                         logger.error("Parameter keys faulty, please insert correct parameters!")
                         return False
 
-                    if not have_dicts_same_shape(required_parameters, params_dict):
+                    if not CommonUtils.have_dicts_same_shape(required_parameters, params_dict):
                         logger.error("Parameter shapes are faulty, please insert correct parameters!")
                         return False
 
@@ -348,9 +349,9 @@ class MyController:
         buttons = [w.ButtonRunStrategyRepetitive, w.ButtonRunStrategy, w.b_run_backtest, w.b_open_results_new_wd,
                    w.b_open_results_new_wd]
         if self.model.is_thread_running.get():
-            set_buttons_state(buttons, 'disabled')
+            GuiUtils.set_buttons_state(buttons, 'disabled')
         else:
-            set_buttons_state(buttons, 'normal')
+            GuiUtils.set_buttons_state(buttons, 'normal')
 
     def result_stock_data_container_list_changed(self):
         """
@@ -423,18 +424,20 @@ class MyController:
 
     def listbox_onselect_select_strategy(self, evt):
         # Note here that Tkinter passes an event object to listbox_onselect_select_strategy()
-        selected_text_list = evaluate_list_box_selection(evt, "You selected items in strategy selection: ",
-                                                         self.view.Scrolledlistbox_selectStrategy)
+        selected_text_list = GuiUtils.evaluate_list_box_selection(evt, "You selected items in strategy selection: ",
+                                                                  self.view.Scrolledlistbox_selectStrategy)
         self.model.selected_strategies_list.set(selected_text_list)
 
     def listbox_onselect_select_backtesting_stocks(self, evt):
-        selected_text_list = evaluate_list_box_selection(evt, "You selected following stocks for backtesting: ",
-                                                         self.view.sl_bt_select_stocks)
+        selected_text_list = GuiUtils.evaluate_list_box_selection(evt,
+                                                                  "You selected following stocks for backtesting: ",
+                                                                  self.view.sl_bt_select_stocks)
         self.model.selected_backtesting_stocks_list.set(selected_text_list)
 
     def listbox_onselect_select_backtesting_analyzers(self, evt):
-        selected_text_list = evaluate_list_box_selection(evt, "You selected following analyzers for backtesting: ",
-                                                         self.view.sb_select_analyzers)
+        selected_text_list = GuiUtils.evaluate_list_box_selection(evt,
+                                                                  "You selected following analyzers for backtesting: ",
+                                                                  self.view.sb_select_analyzers)
         self.model.selected_backtesting_analyzers_list.set(selected_text_list)
 
     def load_backtesting_stocks_from_file(self, multi_file_path):

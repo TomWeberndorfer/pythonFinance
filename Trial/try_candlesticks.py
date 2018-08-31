@@ -2,15 +2,17 @@ from datetime import datetime
 from datetime import timedelta
 
 from matplotlib import style
+from plotly import graph_objs as go, plotly as py
+
+from Utils.GlobalVariables import GlobalVariables
 
 style.use('ggplot')
 
-
-from Utils.common_utils import plot_stock_as_candlechart_with_volume
-
 end = datetime.now()
 ago52_w = (end - timedelta(weeks=52))
-df = read_data_from_google_with_pandas("ADBE", ago52_w, end) # 2017-09-21
+
+
+# df = read_data_from_google_with_pandas("ADBE", ago52_w, end) # 2017-09-21
 # df_ohlc = df['Close'].resample('10D').ohlc()
 # df_volume = df['Volume'].resample('10D').sum()
 #
@@ -25,4 +27,22 @@ df = read_data_from_google_with_pandas("ADBE", ago52_w, end) # 2017-09-21
 # ax2.fill_between(df_volume.index.map(mdates.date2num), df_volume.values, 0)
 # plt.show()
 
-plot_stock_as_candlechart_with_volume("AAPL", df)
+def plot_stock_as_candlechart_with_volume(stock_name, stock_data):
+    """
+    print the given stock data as candlestick OHLC chart + volume
+    :param stock_name: name of the stock (for title to print)
+    :param stock_data: data to print, from google or yahoo
+    :return: nothing
+    """
+    # py.plotly.tools.set_credentials_file(username='webc', api_key='bWWpIIZ51DsGeqBXNb15')
+
+    trace = go.Candlestick(x=stock_data.index,
+                           open=stock_data[GlobalVariables.get_stock_data_labels_dict()['Open']],
+                           high=stock_data[GlobalVariables.get_stock_data_labels_dict()['High']],
+                           low=stock_data[GlobalVariables.get_stock_data_labels_dict()['Low']],
+                           close=stock_data[GlobalVariables.get_stock_data_labels_dict()['Close']])
+    data = [trace]
+    py.plot(data, filename=stock_name)
+    return
+
+#plot_stock_as_candlechart_with_volume("AAPL", df)

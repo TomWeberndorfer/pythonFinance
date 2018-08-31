@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from Utils.common_utils import CommonUtils
+from Utils.CommonUtils import CommonUtils
 
 
 class Abstract_SimpleMultithreading:

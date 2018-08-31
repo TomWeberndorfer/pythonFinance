@@ -6,7 +6,7 @@ import backtrader as bt
 from Utils.Logger_Instance import logger
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
-from Utils.common_utils import convert_backtrader_to_dataframe
+from Utils.StockDataUtils import convert_backtrader_to_dataframe
 
 ####################################
 # https://www.backtrader.com/docu/indautoref.html

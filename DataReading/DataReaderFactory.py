@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from DataReading.Abstract_ReaderFactory import Abstract_ReaderFactory
-from Utils.common_utils import class_for_name, get_recursive_module
+from Utils.CommonUtils import CommonUtils
 
 
 class DataReaderFactory(Abstract_ReaderFactory):
@@ -16,8 +16,8 @@ class DataReaderFactory(Abstract_ReaderFactory):
 
         for file in all_files:
             try:
-                module_and_class = get_recursive_module(file.parent, path) + '.' + file.stem
-                reader_class = class_for_name(module_and_class, file.stem)
+                module_and_class = CommonUtils.get_recursive_module(file.parent, path) + '.' + file.stem
+                reader_class = CommonUtils.class_for_name(module_and_class, file.stem)
                 readers_dict.update({file.stem: reader_class})
             except ImportError as ie:
                 pass

@@ -71,21 +71,21 @@ class GuiUtils:
         except Exception as e:
             logger.error("Exception Could not sort the given treeview: " + str(e) + "\n" + str(traceback.format_exc()))
 
+    @staticmethod
+    def evaluate_list_box_selection(evt, log_text, own_widget=None):
+        widget = evt.widget
 
-def evaluate_list_box_selection(evt, log_text, own_widget=None):
-    widget = evt.widget
+        if own_widget is None or own_widget is widget:
+            try:
+                selected_text_list = [widget.get(i) for i in widget.curselection()]
+            except Exception as e:
+                logger.error("Selection failed:" + str(e) + "\n" + str(traceback.format_exc()))
+                selected_text_list = []
 
-    if own_widget is None or own_widget is widget:
-        try:
-            selected_text_list = [widget.get(i) for i in widget.curselection()]
-        except Exception as e:
-            logger.error("Selection failed:" + str(e) + "\n" + str(traceback.format_exc()))
-            selected_text_list = []
+            logger.info(log_text + str(selected_text_list))
+            return selected_text_list
 
-        logger.info(log_text + str(selected_text_list))
-        return selected_text_list
-
-
-def set_buttons_state(buttons, state):
-    for button in buttons:
-        button['state'] = state
+    @staticmethod
+    def set_buttons_state(buttons, state):
+        for button in buttons:
+            button['state'] = state

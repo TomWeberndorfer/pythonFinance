@@ -1,10 +1,10 @@
 import unittest
 
 import main_v1_support
-from GUI.main_v1 import Framework
+from GUI.main_v1 import ASTA_Framework
 from Utils.GlobalVariables import *
 import ast
-from Utils.file_utils import check_file_exists_and_delete
+from Utils.FileUtils import FileUtils
 from Strategies.StrategyFactory import StrategyFactory
 
 try:
@@ -29,11 +29,11 @@ class TestControllerAndGui(unittest.TestCase):
     def test_dump_and_load_other_parameter_to_file(self):
         global val, w, root
         root = Tk()
-        top = Framework(root)
+        top = ASTA_Framework(root)
         controller = main_v1_support.init(root, top)
 
         strat_param_file = GlobalVariables.get_data_files_path() + '\\TestData\\ParameterFile_test_dump_and_load_strat_params.pickle'
-        check_file_exists_and_delete(strat_param_file)
+        FileUtils.check_file_exists_and_delete(strat_param_file)
 
         strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
                                                                  'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
@@ -76,11 +76,11 @@ class TestControllerAndGui(unittest.TestCase):
     def test_dump_params(self):
         global val, w, root
         root = Tk()
-        top = Framework(root)
+        top = ASTA_Framework(root)
         controller = main_v1_support.init(root, top)
 
         strat_param_file = GlobalVariables.get_data_files_path() + '\\TestData\\ParameterFile_test_dump_and_load_strat_params.pickle'
-        check_file_exists_and_delete(strat_param_file)
+        FileUtils.check_file_exists_and_delete(strat_param_file)
 
         strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
                                                                  'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',

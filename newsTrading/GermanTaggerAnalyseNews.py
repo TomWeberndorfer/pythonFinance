@@ -11,7 +11,7 @@ import nltk
 from textblob.classifiers import NaiveBayesClassifier
 
 from DataRead_Google_Yahoo import get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks
-from Utils.common_utils import is_float
+from Utils.CommonUtils import CommonUtils
 from Utils.Logger_Instance import logger
 
 
@@ -186,7 +186,7 @@ class GermanTaggerAnalyseNews:
             if len(price_tuple) > 0:
                 price = price_tuple[len(price_tuple) - 1][0]  # TODO 1: comment
                 price = price.replace(",", ".")  # replace german comma
-                if is_float(price):
+                if CommonUtils.is_float(price):
                     # price_tuple: [0] --> number, [1]--> CD
                     target_price_return = float(price)
 

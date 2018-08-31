@@ -4,7 +4,7 @@ from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDat
 from DataReading.DataReaderFactory import DataReaderFactory
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
-from Utils.file_utils import read_tickers_from_file_or_web
+from Utils.FileUtils import FileUtils
 from Utils.Logger_Instance import logger
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -111,12 +111,10 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
         # TODO 11: seite geht nicht mehr
         list_with_stock_pages_to_read = [
             ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
-             'wikitable sortable', 0, 1, "en"] ]
-
-            #,
-            #['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
-            # 'tbody', 'class', 'row-hover', 2, 1, 'de']]
-        stock_data_container_list = read_tickers_from_file_or_web(stock_data_container_file, True,
+             'wikitable sortable', 0, 1, "en"],
+            ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
+             'tbody', 'class', 'row-hover', 2, 1, 'de']]
+        stock_data_container_list = FileUtils.read_tickers_from_file_or_web(stock_data_container_file, True,
                                                                   list_with_stock_pages_to_read)
 
         # stock_data_container_list = self.split_list(stock_data_container_list, 3)

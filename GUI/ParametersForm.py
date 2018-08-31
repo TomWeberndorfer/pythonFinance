@@ -4,7 +4,7 @@ from tkinter import ttk, W, E
 import tkinter as tk
 from tkinter import ttk, W, E
 
-from Utils.common_utils import is_float, is_int
+from Utils.CommonUtils import CommonUtils
 
 
 class ParametersForm:
@@ -98,9 +98,9 @@ class ParametersForm:
         else:
             txt_entry = params.get()
 
-            if is_int(txt_entry):
+            if CommonUtils.is_int(txt_entry):
                 all_txt = int(txt_entry)
-            elif is_float(txt_entry):
+            elif CommonUtils.is_float(txt_entry):
                 all_txt = float(txt_entry)
             elif isinstance(txt_entry, str):
                 if txt_entry in 'True':

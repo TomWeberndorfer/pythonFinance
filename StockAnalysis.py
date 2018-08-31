@@ -56,13 +56,14 @@ def _read_data(selected_strategies_list, strategy_parameter_dict, other_params, 
             reader_type = data_reader
 
             # TODO anders machen, ned hier importieren
-            from Utils.file_utils import read_tickers_from_web, read_tickers_and_data_from_file
+            from Utils.FileUtils import FileUtils
             if data_reader_params['ticker_needed']:
                 if data_reader_params['reload_data'] is True:
-                    stock_data_container_list = read_tickers_from_web(other_params['stock_data_container_file'],
-                                                                      other_params['list_with_stock_pages_to_read'])
+                    stock_data_container_list = FileUtils.read_tickers_from_web(
+                        other_params['stock_data_container_file'],
+                        other_params['list_with_stock_pages_to_read'])
                 else:
-                    stock_data_container_list = read_tickers_and_data_from_file(
+                    stock_data_container_list = FileUtils.read_tickers_and_data_from_file(
                         other_params['stock_data_container_file'])
 
             readers[reader_type] = data_storage.prepare(reader_type, stock_data_container_list,

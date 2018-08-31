@@ -19,9 +19,9 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         raise NotImplementedError("Not needed because of single thread reading")
 
     def read_data(self):
-        from Utils.file_utils import check_file_exists_and_delete
+        from Utils.FileUtils import FileUtils
         if self.reload_stockdata:
-            check_file_exists_and_delete(self._parameter_dict['last_date_time_file'])
+            FileUtils.check_file_exists_and_delete(self._parameter_dict['last_date_time_file'])
 
         self.__read_news_from_traderfox(self._parameter_dict['last_date_time_file'])
 
@@ -35,7 +35,7 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         :param date_file: file for last check date
         :return: news as list
         """
-        from Utils.file_utils import FileUtils
+        from Utils.FileUtils import FileUtils
 
         # TODO enable for enhanced info
         # url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
@@ -100,13 +100,13 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         :param date_to_check:
         :return:
         """
-        from Utils.file_utils import check_file_exists_or_create
+        from Utils.FileUtils import FileUtils
         try:
             if date_to_check is None:
                 raise NotImplementedError
 
             if last_date == "":
-                if check_file_exists_or_create(last_date_file,
+                if FileUtils.check_file_exists_or_create(last_date_file,
                                                "last_check_date" + "\n01.01.2000 um 00:00"):  # no need to check, creates anyway
                     data = pd.read_csv(last_date_file)
                     last_date_str = str(data.last_check_date[0])

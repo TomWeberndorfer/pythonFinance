@@ -5,7 +5,7 @@ from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
 from pandas import DataFrame
 # from directory UnitTests to --> root folder with: ..\\..\\
-from Utils.common_utils import have_dicts_same_shape
+from Utils.CommonUtils import CommonUtils
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,7 +56,7 @@ class TestStrategyFactory(unittest.TestCase):
         all_strategy_parameters_dict.update({"BacktestingParameters": backtesting_parameters})
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 
-        self.assertTrue(have_dicts_same_shape(req_params, all_strategy_parameters_dict))
+        self.assertTrue(CommonUtils.have_dicts_same_shape(req_params, all_strategy_parameters_dict))
 
         # key "news" instead of "news_threshold"
         corrupted_strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news': 0.7,
@@ -84,7 +84,7 @@ class TestStrategyFactory(unittest.TestCase):
                                                       'ticker_needed': True}}}
                                              }
 
-        self.assertFalse(have_dicts_same_shape(req_params, corrupted_strategy_parameter_dict))
+        self.assertFalse(CommonUtils.have_dicts_same_shape(req_params, corrupted_strategy_parameter_dict))
 
         # missing 'SimplePatternNewsStrategy'
         missing_strategy_parameter_dict = {'W52HighTechnicalStrategy':
@@ -99,7 +99,7 @@ class TestStrategyFactory(unittest.TestCase):
                                                     'ticker_needed': True}}}
                                            }
 
-        self.assertFalse(have_dicts_same_shape(req_params, missing_strategy_parameter_dict))
+        self.assertFalse(CommonUtils.have_dicts_same_shape(req_params, missing_strategy_parameter_dict))
 
     def test_partial_data_in_dict(self):
         stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
@@ -126,8 +126,8 @@ class TestStrategyFactory(unittest.TestCase):
         all_strategy_parameters_dict = {'Strategies': missing_strategy_parameter_dict}
         all_strategy_parameters_dict.update({"OtherParameters": other_params})
 
-        self.assertFalse(have_dicts_same_shape(req_params['Strategies']['W52HighTechnicalStrategy'],
-                                               missing_strategy_parameter_dict))
+        self.assertFalse(CommonUtils.have_dicts_same_shape(req_params['Strategies']['W52HighTechnicalStrategy'],
+                                                           missing_strategy_parameter_dict))
 
     def test_get_implemented_strategies_list(self):
         w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}

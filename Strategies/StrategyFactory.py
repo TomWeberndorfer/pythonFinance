@@ -4,7 +4,7 @@ from Utils.GlobalVariables import *
 from Strategies.Abstract_StrategyFactory import Abstract_StrategyFactory
 from pathlib import Path
 from glob import glob
-from Utils.common_utils import class_for_name, get_recursive_module
+from Utils.CommonUtils import CommonUtils
 from Utils.Logger_Instance import logger
 
 class StrategyFactory(Abstract_StrategyFactory):
@@ -18,8 +18,8 @@ class StrategyFactory(Abstract_StrategyFactory):
 
         for file in all_files:
             try:
-                module_and_class = get_recursive_module(file.parent, path) + '.' + file.stem
-                strat_class = class_for_name(module_and_class, file.stem)
+                module_and_class = CommonUtils.get_recursive_module(file.parent, path) + '.' + file.stem
+                strat_class = CommonUtils.class_for_name(module_and_class, file.stem)
                 strategy_dict.update({file.stem: strat_class})
             except ImportError as ie:
                 pass

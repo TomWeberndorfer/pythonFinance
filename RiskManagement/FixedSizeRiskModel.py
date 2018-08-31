@@ -3,7 +3,7 @@ from Utils.GlobalVariables import *
 from RiskManagement.Abstract_RiskModel import Abstract_RiskModel
 from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
 from Utils.Logger_Instance import logger
-from Utils.common_utils import calculate_stopbuy_and_stoploss
+from Utils.StockDataUtils import calculate_stopbuy_and_stoploss
 
 
 class FixedSizeRiskModel(Abstract_RiskModel):

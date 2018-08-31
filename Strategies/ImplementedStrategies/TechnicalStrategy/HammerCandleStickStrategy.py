@@ -1,6 +1,6 @@
 from Signals.Signals import signal_is_volume_high_enough, signal_hammer
 from Strategies.Abstract_Strategy import Abstract_Strategy
-from Utils.common_utils import calculate_stopbuy_and_stoploss
+from Utils.StockDataUtils import calculate_stopbuy_and_stoploss
 
 
 class HammerCandleStickStrategy (Abstract_Strategy):
