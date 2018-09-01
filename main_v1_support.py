@@ -35,7 +35,7 @@ import ast
 import configparser
 
 
-class MyController:
+class MvcController:
     """
     Classs for the controlling of mvc design with gui
     """
@@ -470,7 +470,7 @@ def init(top, gui, *args, **kwargs):
     w = gui
     top_level = top
     root = top
-    app = MyController(root, w)
+    app = MvcController(root, w)
 
     # ########################
     try:

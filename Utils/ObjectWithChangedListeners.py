@@ -12,6 +12,10 @@ class ObjectWithChangedListeners:
         self._data_changed()
 
     def clear(self):
+        """
+        Clears the variable with the implemented clear value or set the default value.
+        :return:
+        """
         if isinstance(self._object, dict) or isinstance(self._object, list):
             self._object.clear()
         else:
@@ -35,6 +39,7 @@ class ListWithChangedListeners(ObjectWithChangedListeners):
         """
         Init the list with event listeners.
         """
+        # the "[]" indicates python to create a list
         super().__init__([])
 
     def append(self, value):
@@ -51,10 +56,16 @@ class DictWithChangedListeners(ObjectWithChangedListeners):
         """
         Init the dict with event listeners.
         """
+        # the "{}" indicates python to create a dict
         super().__init__({})
 
-    def update(self, items):
-        assert (isinstance(items, dict))
-        for key, value in items.items():
+    def update(self, another_items_dict):
+        """
+        Update the given dict with a values of another dict instance and calls the data changed method.
+        :param another_items_dict: dict instance with keys and values to insert into the list
+        :return: -
+        """
+        assert (isinstance(another_items_dict, dict))
+        for key, value in another_items_dict.items():
             self._object.update({key: value})
         self._data_changed()

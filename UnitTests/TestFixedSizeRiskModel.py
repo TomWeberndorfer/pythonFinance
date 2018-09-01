@@ -2,7 +2,7 @@ import unittest
 from pandas import DataFrame, np
 
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
-from RiskManagement.FixedSizeRiskModel import FixedSizeRiskModel
+from RiskManagement.ImplementedRiskModels.FixedSizeRiskModel import FixedSizeRiskModel
 from Utils.GlobalVariables import *
 
 # from directory UnitTests to --> root folder with: ..\\..\\

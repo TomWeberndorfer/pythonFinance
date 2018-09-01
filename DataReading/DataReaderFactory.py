@@ -8,19 +8,8 @@ class DataReaderFactory(Abstract_ReaderFactory):
 
     @staticmethod
     def get_implemented_data_readers_dict():
-        readers_dict = {}
-
         path = Path(os.path.dirname(os.path.abspath(__file__)))
-        all_files = [file for file in list(path.glob('./*/**/**/*.py'))
-                     if 'Read' in file.stem or 'read' in file.stem]
-
-        for file in all_files:
-            try:
-                module_and_class = CommonUtils.get_recursive_module(file.parent, path) + '.' + file.stem
-                reader_class = CommonUtils.class_for_name(module_and_class, file.stem)
-                readers_dict.update({file.stem: reader_class})
-            except ImportError as ie:
-                pass
+        readers_dict = CommonUtils.get_implemented_items_dict(path, './*/**/**/*.py', "read")
         return readers_dict
 
     def _create_data_reader(self, reader_to_create, stock_data_container_list,

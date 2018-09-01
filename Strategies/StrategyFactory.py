@@ -7,22 +7,13 @@ from glob import glob
 from Utils.CommonUtils import CommonUtils
 from Utils.Logger_Instance import logger
 
+
 class StrategyFactory(Abstract_StrategyFactory):
 
     @staticmethod
     def get_implemented_strategies_dict():
-        strategy_dict = {}
-
         path = Path(os.path.dirname(os.path.abspath(__file__)))
-        all_files = [file for file in list(path.glob('./*/**/**/*.py')) if 'strat' in file.stem or 'Strat' in file.stem]
-
-        for file in all_files:
-            try:
-                module_and_class = CommonUtils.get_recursive_module(file.parent, path) + '.' + file.stem
-                strat_class = CommonUtils.class_for_name(module_and_class, file.stem)
-                strategy_dict.update({file.stem: strat_class})
-            except ImportError as ie:
-                pass
+        strategy_dict = CommonUtils.get_implemented_items_dict(path, './*/**/**/*.py', "strat")
         return strategy_dict
 
     def _create_strategy(self, strategy_to_create, stock_data_container_list, parameter_dict):

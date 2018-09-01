@@ -1,4 +1,4 @@
-from Utils.ListWithChangedListeners import ListWithChangedListeners, DictWithChangedListeners, \
+from Utils.ObjectWithChangedListeners import ListWithChangedListeners, DictWithChangedListeners, \
     ObjectWithChangedListeners
 
 

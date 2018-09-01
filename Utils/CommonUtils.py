@@ -5,8 +5,9 @@ import sys
 import traceback
 from datetime import datetime
 from multiprocessing.dummy import Pool as ThreadPool
-
+from pathlib import Path
 import bs4 as bs
+import os
 import requests
 
 import Utils.Logger_Instance
@@ -305,3 +306,26 @@ class CommonUtils:
                 return str(self.stem)
             else:
                 return text + '.' + str(self.stem)
+
+    @staticmethod
+    def get_implemented_items_dict(file_path_glob, glob_path, keyword):
+        """
+        Get the implemented classes of the sub-directiory and return as dict with name and class.
+        :param file_path_glob: os path of the current file: os.path.abspath variable
+        :param glob_path: filter to look for, ex. the folders below: './*/**/**/*.py'
+        :param keyword: keyword in the file name to search
+        :return: dict with all implemented classes
+        """
+        items_dict = {}
+
+        all_files = [file for file in list(file_path_glob.glob(glob_path))
+                     if keyword.lower() in file.stem.lower()]
+
+        for file in all_files:
+            try:
+                module_and_class = CommonUtils.get_recursive_module(file.parent, file_path_glob) + '.' + file.stem
+                curr_class = CommonUtils.class_for_name(module_and_class, file.stem)
+                items_dict.update({file.stem: curr_class})
+            except ImportError as ie:
+                pass
+        return items_dict

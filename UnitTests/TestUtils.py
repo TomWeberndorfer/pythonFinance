@@ -2,10 +2,11 @@ import re
 from unittest import TestCase
 import pandas as pd
 from datetime import datetime
-
+from pathlib import Path
 from Utils.CommonUtils import CommonUtils
 from Utils.FileUtils import FileUtils
 from Utils.GlobalVariables import *
+
 
 class TestUtils(TestCase):
 
@@ -60,3 +61,9 @@ class TestUtils(TestCase):
             file_content = myfile.read()
             for text in text_to_find:
                 self.assertTrue(str(text) in file_content)
+
+    def test_get_implemented_items_dict(self):
+        path = Path(os.path.dirname(os.path.abspath(__file__)))
+        test_dict = CommonUtils.get_implemented_items_dict(path, './*/**/**/*.py', "TestClassForUtils")
+        self.assertEqual(1, len(test_dict))
+        self.assertEqual("TestClassForUtils", list(test_dict.keys())[0])
