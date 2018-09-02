@@ -63,7 +63,8 @@ class StrategyFactory(Abstract_StrategyFactory):
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
-                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+                        'RiskModels': {
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
         other_parameters_dict = {"OtherParameters": other_params}
 
@@ -77,8 +78,7 @@ class StrategyFactory(Abstract_StrategyFactory):
         :key trade_commission_percent: Trading commission for every buy/sell in percent of order in percent
         :key initial_cash: Initial cash to trade with.
         """
-        backtesting_parameters = {'position_size_percents': 0.2, 'initial_cash': 30000,
-                                  'trade_commission_percent': 0.005}
+        backtesting_parameters = {'initial_cash': 30000, 'trade_commission_percent': 0.005}
         parameters_dict = {"BacktestingParameters": backtesting_parameters}
 
         return parameters_dict

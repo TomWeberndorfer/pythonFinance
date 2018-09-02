@@ -27,7 +27,7 @@ class TestRiskAnalysis(unittest.TestCase):
                           'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                           'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
 
-            'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': fixes_pos_size}}}
+            'RiskModels': {'FixedSizeRiskModel': {'TargetValue': fixes_pos_size}}}
 
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():

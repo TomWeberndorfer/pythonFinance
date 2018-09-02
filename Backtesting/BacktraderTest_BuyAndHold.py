@@ -56,79 +56,6 @@ class TestStrategy_1(bt.Strategy):
         self.highest_high = 0  # max (self.datahi)
         self.buyCnt = 0
 
-        # Indicators for the plotting show
-
-        # bt.indicators.ExponentialMovingAverage(self.datas[0], period=25)
-        # bt.indicators.WeightedMovingAverage(self.datas[0], period=25,
-        #                                     subplot=True)
-        # bt.indicators.StochasticSlow(self.datas[0])
-        # bt.indicators.MACDHisto(self.datas[0])
-        # rsi = bt.indicators.RSI(self.datas[0])
-        # bt.indicators.SmoothedMovingAverage(rsi, period=10)
-        # bt.indicators.ATR(self.datas[0], plot=False)
-
-        ##################################################
-        # 52 w strategy
-        self.w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
-                                     'within52w_high_fact': 0.99}
-        self.stock_screener = StrategyFactory()
-
-    ###############
-    def notify_order(self, order):
-        date = self.data.datetime.datetime().date()
-
-        if order.status == order.Accepted:
-            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
-            print('{} Order Accepted'.format(order.info['name']))
-            print('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
-                date,
-                order.status,
-                order.ref,
-                order.size,
-                'NA' if not order.price else round(order.price, 5),
-                'NA' if not order.price else round(order.price * order.size, 5)
-            ))
-            buy_data.append((date, order.price))
-
-        if order.status == order.Completed:
-            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
-            print('{} Order Completed'.format(order.info['name']))
-            print('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
-                date,
-                order.status,
-                order.ref,
-                order.size,
-                'NA' if not order.price else round(order.price, 5),
-                'NA' if not order.price else round(order.price * order.size, 5)
-            ))
-            print('Created: {} Price: {} Size: {}'.format(bt.num2date(order.created.dt), order.created.price,
-                                                          order.created.size))
-            print('-' * 80)
-
-        if order.status == order.Canceled:
-            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
-            print('{} Order Canceled'.format(order.info['name']))
-            print('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
-                date,
-                order.status,
-                order.ref,
-                order.size,
-                'NA' if not order.price else round(order.price, 5),
-                'NA' if not order.price else round(order.price * order.size, 5)
-            ))
-
-        if order.status == order.Rejected:
-            print('-' * 32, ' NOTIFY ORDER ', '-' * 32)
-            print('WARNING! {} Order Rejected'.format(order.info['name']))
-            print('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
-                date,
-                order.status,
-                order.ref,
-                order.size,
-                'NA' if not order.price else round(order.price, 5),
-                'NA' if not order.price else round(order.price * order.size, 5)
-            ))
-            print('-' * 80)
 
     def notify_trade(self, trade):
         date = self.data.datetime.datetime()
@@ -244,6 +171,7 @@ if __name__ == '__main__':
         volume=5,
         openinterest=-1
     )
+
     cerebro.adddata(data_pd_2)
 
     # Set our desired cash start

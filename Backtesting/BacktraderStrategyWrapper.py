@@ -19,7 +19,7 @@ buy_data = []
 class BacktraderStrategyWrapper(bt.Strategy):
 
     def log(self, txt, dt=None):
-        ''' Logging function fot this strategy'''
+        """ Logging function fot this strategy"""
         dt = dt or self.datas[0].datetime.date(0)
         logger.info('%s, %s' % (dt.isoformat(), txt))
 
@@ -55,6 +55,13 @@ class BacktraderStrategyWrapper(bt.Strategy):
         self.strategy_instance = self.stock_screener.prepare_strategy(self.params['strategy_to_test'],
                                                                       None,
                                                                       self.params['analysis_parameters'])
+
+        # only one risk model can be used, the first risk model to be taken
+        risk_model = self.params["risk_model"]
+        order_target = risk_model['OrderTarget']
+        self.order_target_method = self._get_order_target(order_target)
+
+        self.order_parameter_value = risk_model['TargetValue']
 
     ###############
     def notify_order(self, order):
@@ -138,12 +145,13 @@ class BacktraderStrategyWrapper(bt.Strategy):
         stock_data_container_list = []
 
         for i, hist_data in enumerate(self.datas):
-            date_time= self.datetime.date()
+            date_time = self.datetime.date()
             data_name = hist_data._name
 
             long_stop = hist_data.close[0] - 5  # Will not be hit
             # Simply log the closing price of the series from the reference
-            self.log('Data:' + str(data_name) + ', Close: ' + str(hist_data.close[0]) + ", volume: " + str(hist_data.volume[0]))
+            self.log('Time:' + str(date_time) + ', Data:' + str(data_name) + ', Close: ' + str(
+                hist_data.close[0]) + ", volume: " + str(hist_data.volume[0]))
 
             # TODO den container anders --> ned so benennen
             df1 = convert_backtrader_to_dataframe(hist_data)
@@ -151,16 +159,9 @@ class BacktraderStrategyWrapper(bt.Strategy):
             stock_data_container = StockDataContainer(data_name, "", "")
             stock_data_container.set_historical_stock_data(df1)
             stock_data_container_list.append(stock_data_container)
-
             results = self.strategy_instance.run_strategy(stock_data_container_list)
 
             pos = self.getposition(hist_data).size
-
-            # Check if an order is pending ... if yes, we cannot send a 2nd one
-            # TODO ??
-            #if self.order:
-            #    return
-
             # Check if we are in the market
             if not pos:
                 if len(results) > 0:
@@ -169,8 +170,30 @@ class BacktraderStrategyWrapper(bt.Strategy):
                     # num_of_pos_to_buy = round(self.params["fixed_pos_size"] / self.buy_price)
                     # self.buyCnt = num_of_pos_to_buy
 
-                    buy_ord = self.order_target_percent(data=hist_data, target=self.params["position_size_percents"])
+                    buy_ord = self.order_target_method(data=hist_data, target=self.order_parameter_value)
                     buy_ord.addinfo(name="Long Market Entry")
                     stop_size = buy_ord.size - abs(self.position.size)
                     self.sl_ord = self.sell(data=hist_data, size=stop_size, exectype=bt.Order.Stop, price=long_stop)
                     self.sl_ord.addinfo(name='Long Stop Loss')
+
+    def _get_order_target(self, order_type_str):
+        """
+        Get the method of the backtrader order target.
+        size -> amount of shares, contracts in the portfolio of a specific asset
+        value -> value in monetary units of the asset in the portfolio
+        percent -> percentage (from current portfolio) value of the asset in the current portfolio
+        :param order_type_str: type or part of the type as string
+        :return: target bounded method
+        """
+        order_target = None
+
+        if order_type_str in "order_target_size":
+            order_target = self.order_target_size
+        elif order_type_str in "order_target_value":
+            order_target = self.order_target_value
+        elif order_type_str in "order_target_percent":
+            order_target = self.order_target_percent
+        else:
+            raise NotImplementedError("Order target " + str(order_type_str) + " is not implemented!")
+
+        return order_target

@@ -1,8 +1,4 @@
-from abc import abstractmethod
-from Utils.GlobalVariables import *
 from RiskManagement.Abstract_RiskModel import Abstract_RiskModel
-from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
-from Utils.Logger_Instance import logger
 from Utils.StockDataUtils import calculate_stopbuy_and_stoploss
 
 
@@ -20,7 +16,7 @@ class FixedSizeRiskModel(Abstract_RiskModel):
         sb = res['stop_buy']
         # cut the comma value to avoid position size above the fixes size maximum
         if sb is not 0:
-            num_of_pos_to_buy = int(self._parameter_dict["FixedPositionSize"] / sb)
+            num_of_pos_to_buy = int(self._parameter_dict["TargetValue"] / sb)
             stock_data_container.set_position_size(num_of_pos_to_buy)
             stock_data_container.set_stop_buy(round(sb, 2))
         else:

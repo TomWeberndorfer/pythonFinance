@@ -46,9 +46,10 @@ class TestStrategyFactory(unittest.TestCase):
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
-                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+                        'RiskModels': {
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
-        backtesting_parameters = {'position_size_percents': 0.2, 'initial_cash': 30000,
+        backtesting_parameters = {'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
 
         all_strategy_parameters_dict = {'Strategies': all_strategy_parameters_dict}
@@ -121,7 +122,8 @@ class TestStrategyFactory(unittest.TestCase):
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
-                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+                        'RiskModels': {
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
         all_strategy_parameters_dict = {'Strategies': missing_strategy_parameter_dict}
         all_strategy_parameters_dict.update({"OtherParameters": other_params})

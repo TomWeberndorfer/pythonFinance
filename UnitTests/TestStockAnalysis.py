@@ -24,7 +24,8 @@ class TestStockAnalysis(unittest.TestCase):
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
-                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+                        'RiskModels': {
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
         # from Utils.file_utils import read_tickers_from_file_or_web
         # stock_data_container_list = read_tickers_from_file_or_web(_analysis_parameters['stock_data_container_file'],
@@ -73,7 +74,8 @@ class TestStockAnalysis(unittest.TestCase):
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
-                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+                        'RiskModels': {
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
@@ -115,7 +117,8 @@ class TestStockAnalysis(unittest.TestCase):
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
-                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+                        'RiskModels': {
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)

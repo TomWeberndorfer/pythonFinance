@@ -64,7 +64,8 @@ class TestControllerAndGui(unittest.TestCase):
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
-                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+                        'RiskModels': {
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
         params = {'Strategies': strategy_parameter_dict, 'OtherParameters': other_params}
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
@@ -101,7 +102,8 @@ class TestControllerAndGui(unittest.TestCase):
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
-                        'RiskModels': {'FixedSizeRiskModel': {'FixedPositionSize': 2500}}}
+                        'RiskModels': {
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
         params = {'Strategies': strategy_parameter_dict, 'OtherParameters': other_params}
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()

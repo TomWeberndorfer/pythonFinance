@@ -6,7 +6,7 @@ from Utils.Logger_Instance import logger
 
 class BacktraderWrapper:
     def run_test(self, data_list, analyzers=[], strategy_to_test="", backtesting_parameters={},
-                 analysis_parameters={}):
+                 analysis_parameters={}, risk_model={}):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
         :param analysis_parameters: dict with analysis parameters for strategy
@@ -14,7 +14,8 @@ class BacktraderWrapper:
         :param data_list: a list with historical stock data in bt-format
         :param backtesting_parameters: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]
-        :return: cerebro final instance
+        :param risk_model: other testing relevant parameters as dict
+        :return: cerebro final instance, backtrader test result 
         """
         cerebro = bt.Cerebro()
 
@@ -23,6 +24,7 @@ class BacktraderWrapper:
         all_parameter.update(backtesting_parameters)
         all_parameter.update({'strategy_to_test': strategy_to_test})
         all_parameter.update({'analysis_parameters': analysis_parameters})
+        all_parameter.update({'risk_model': risk_model})
 
         # add the backtrader strategy wrapper, the real strategy will be build there with the backtesting_parameters dict
         cerebro.addstrategy(BacktraderStrategyWrapper, all_parameter)

@@ -12,7 +12,7 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 
 class TestFixedSizeRiskModel(unittest.TestCase):
     def test_TestFixedSizeRiskModel(self):
-        parameter_dict = {'FixedPositionSize': 2500}
+        parameter_dict = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
 
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
