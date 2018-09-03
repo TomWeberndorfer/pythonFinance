@@ -19,8 +19,7 @@ stock_data_container_file = test_filepath + stock_data_container_file_name
 class TestGapUpHighVolumeStrategy(unittest.TestCase):
 
     def test_run_strategy__gap_up_STOCK_AS_RESULT__no_gap_EMPTY_RESULT(self):
-
-        parameter_dict = {'min_gap_factor': 1.1}
+        analysis_parameters = {'min_gap_factor': 1.1}
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)
@@ -32,7 +31,7 @@ class TestGapUpHighVolumeStrategy(unittest.TestCase):
                 ('2016-09-19', 23.6, 23.77, 23.46, 23.51, 31000),
                 ('2016-09-20', 23.73, 23.76, 23.26, 23.31, 31000),
                 ('2016-09-21', 23.36, 23.78, 23.35, 23.73, 31000),
-                ('2016-09-22', 33.83, 33.89, 33.46, 33.73, 31000),]
+                ('2016-09-22', 33.83, 33.89, 33.46, 33.73, 31000), ]
 
         df = DataFrame.from_records(data, columns=labels)
         stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
@@ -41,8 +40,9 @@ class TestGapUpHighVolumeStrategy(unittest.TestCase):
 
         ##################################################
         stock_screener = StrategyFactory()
-        strat = stock_screener.prepare_strategy("GapUpHighVolumeStrategy", stock_data_container_list,
-                                                       parameter_dict)
+        strat = stock_screener.prepare_strategy("GapUpHighVolumeStrategy",
+                                                stock_data_container_list=stock_data_container_list,
+                                                analysis_parameters=analysis_parameters)
         results = strat.run_strategy()
         self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
 
@@ -63,8 +63,8 @@ class TestGapUpHighVolumeStrategy(unittest.TestCase):
 
         ##################################################
         stock_screener = StrategyFactory()
-        strat = stock_screener.prepare_strategy("GapUpHighVolumeStrategy", stock_data_container_list,
-                                                parameter_dict)
+        strat = stock_screener.prepare_strategy("GapUpHighVolumeStrategy",
+                                                stock_data_container_list=stock_data_container_list,
+                                                analysis_parameters=analysis_parameters)
         results = strat.run_strategy()
         self.assertEqual(len(results), 0)
-

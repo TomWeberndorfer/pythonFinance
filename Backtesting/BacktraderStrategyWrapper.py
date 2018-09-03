@@ -23,17 +23,11 @@ class BacktraderStrategyWrapper(bt.Strategy):
         dt = dt or self.datas[0].datetime.date(0)
         logger.info('%s, %s' % (dt.isoformat(), txt))
 
-    def set_params(self, params):
-        self.params = params
-
-    def __init__(self, params):
+    def __init__(self, **kwargs):
         """
         Init method to wrap the ASTA-Strategy to the bt.Strategy
-        :param params: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
+        :param kwargs: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         """
-
-        if params['strategy_to_test'] is None or len(params['strategy_to_test']) <= 0:
-            raise KeyError("params must contain key: strategy_to_test!")
 
         # Keep a reference to the "close" line in the data[0] dataseries
         self.dataclose = self.datas[0].close
@@ -42,22 +36,24 @@ class BacktraderStrategyWrapper(bt.Strategy):
         self.datalo = self.datas[0].low
         self.buy_price = 0
 
+        # set the given values in self
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
         # To keep track of pending orders and buy price/commission
         self.order = None
         self.buyprice = None
         self.buycomm = None
         self.highest_high = 0  # max (self.datahi)
         self.buyCnt = 0
-        self.params = params
+
         self.stock_screener = StrategyFactory()
 
-        # the params dict contains the strategy which is build with the string
-        self.strategy_instance = self.stock_screener.prepare_strategy(self.params['strategy_to_test'],
-                                                                      None,
-                                                                      self.params['analysis_parameters'])
+        # the parameter dict contains the strategy which is build with the string
+        self.strategy_instance = self.stock_screener.prepare_strategy(self.strategy_to_test, **kwargs)
 
         # only one risk model can be used, the first risk model to be taken
-        risk_model = self.params["risk_model"]
+        risk_model = self.risk_model
         order_target = risk_model['OrderTarget']
         self.order_target_method = self._get_order_target(order_target)
 
@@ -148,6 +144,8 @@ class BacktraderStrategyWrapper(bt.Strategy):
             date_time = self.datetime.date()
             data_name = hist_data._name
 
+            # test = hist_data.newsText
+
             long_stop = hist_data.close[0] - 5  # Will not be hit
             # Simply log the closing price of the series from the reference
             self.log('Time:' + str(date_time) + ', Data:' + str(data_name) + ', Close: ' + str(
@@ -166,10 +164,6 @@ class BacktraderStrategyWrapper(bt.Strategy):
             if not pos:
                 if len(results) > 0:
                     self.buy_price = hist_data.close[0]
-
-                    # num_of_pos_to_buy = round(self.params["fixed_pos_size"] / self.buy_price)
-                    # self.buyCnt = num_of_pos_to_buy
-
                     buy_ord = self.order_target_method(data=hist_data, target=self.order_parameter_value)
                     buy_ord.addinfo(name="Long Market Entry")
                     stop_size = buy_ord.size - abs(self.position.size)

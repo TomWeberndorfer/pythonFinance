@@ -3,10 +3,14 @@ import unittest
 import backtrader as bt
 import backtrader.analyzers as btanalyzer
 import pandas as pd
+import datetime
+
+from backtrader.feeds import GenericCSVData
 
 from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
 from Backtesting.BacktraderWrapper import BacktraderWrapper
 # from directory UnitTests to --> root folder with: ..\\..\\
+from DataContainerAndDecorator.GenericBacktraderCsvNewsData import GenericBacktraderCsvNewsData, MyCSVData
 from Utils.GlobalVariables import *
 
 test_filepath = GlobalVariables.get_data_files_path() + 'TestData\\'
@@ -80,13 +84,15 @@ class TestBacktrader(unittest.TestCase):
         analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                'within52w_high_fact': 0.99}
 
-        cerebro, res = tbt.run_test(data_list, analyzers, strategy_to_test, backtesting_parameters,
-                                    analysis_parameters)
+        risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
+
+        cerebro, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters, analysis_parameters,
+                                    risk_model, analyzers)
         # cerebro.plot(style='candlestick', barup='green', bardown='red')
         # TODO implementieren
         # raise NotImplementedError
 
-    def test_backtrader_52whi_(self):
+    def test_run_test(self):
         tbt = BacktraderWrapper()
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict(False).items():
@@ -134,8 +140,45 @@ class TestBacktrader(unittest.TestCase):
 
         risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
 
-        cerebro, res = tbt.run_test(data_list, analyzers, strategy_to_test, backtesting_parameters,
-                                    analysis_parameters, risk_model)
+        cerebro, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters, analysis_parameters,
+                                    risk_model, analyzers)
+
+        self.assertNotEqual(None, cerebro)
+        self.assertNotEqual(None, res)
+
+    def test_GenericBacktraderCsvNewsData(self):
+        tbt = BacktraderWrapper()
+        data_list = []
+
+        gbcnw = GenericCSVData(
+            dataname='C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\BacktraderNewsCsv.csv',
+            dtformat=('%Y-%m-%d'),
+
+            nullvalue=0.0,
+            datetime=0,
+            open=1, high=2, low=3,
+            close=4, volume=5,
+            openinterest=-1,
+        )
+
+        data_list.append(gbcnw)
+
+        analyzers = [btanalyzer.AnnualReturn, btanalyzer.Calmar, btanalyzer.DrawDown, btanalyzer.TimeDrawDown,
+                     btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
+                     btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
+        strategy_to_test = "W52HighTechnicalStrategy"
+        backtesting_parameters = {'initial_cash': 30000,
+                                  'trade_commission_percent': 0.005}
+        analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
+                               'within52w_high_fact': 0.99}
+
+        risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
+        file = GlobalVariables.get_data_files_path() + "OnlyNewsText.csv"
+
+        news_data = pd.read_csv(file)
+
+        cerebro, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters, analysis_parameters,
+                                    risk_model, news_data, analyzers)
 
         self.assertNotEqual(None, cerebro)
         self.assertNotEqual(None, res)

@@ -147,8 +147,9 @@ class TestStrategyFactory(unittest.TestCase):
         ##################################################
         # 52 w strategy
         stock_screener = StrategyFactory()
-        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", stock_data_container_list,
-                                                       w52hi_parameter_dict)
+        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy",
+                                                       stock_data_container_list=stock_data_container_list,
+                                                       analysis_parameters=w52hi_parameter_dict)
 
         self.assertNotEqual(None, w52_hi_strat)
         self.assertTrue(isinstance(w52_hi_strat, Abstract_Strategy))

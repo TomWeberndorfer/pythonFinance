@@ -8,11 +8,11 @@ from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
 class SimplePatternNewsStrategy(Abstract_Strategy):
-    def __init__(self, stock_data_container_list, parameter_dict):
-        Abstract_Strategy.__init__(self, stock_data_container_list, parameter_dict)
+    def __init__(self, **kwargs):
+        Abstract_Strategy.__init__(self, **kwargs)
         self.text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list,
-                                                     self.parameter_dict['news_threshold'],
-                                                     self.parameter_dict['german_tagger'])
+                                                     self.analysis_parameters['news_threshold'],
+                                                     self.analysis_parameters['german_tagger'])
 
     def _method_to_execute(self, stock_data_container):
         try:

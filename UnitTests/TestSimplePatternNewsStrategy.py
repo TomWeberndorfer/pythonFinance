@@ -34,11 +34,12 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         rwe_stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [aapl, rwe]
 
-        parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
+        analysis_parameters = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
 
         stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list, parameter_dict)
+                                                        stock_data_container_list=stock_data_container_list,
+                                                        analysis_parameters=analysis_parameters)
 
         results = news_strategy.run_strategy()
 
@@ -79,10 +80,11 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         rwe_stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [apple_stock_data_container, rwe_stock_data_container]
 
-        parameter_dict = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
+        analysis_parameters = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
         stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list, parameter_dict)
+                                                        stock_data_container_list=stock_data_container_list,
+                                                        analysis_parameters=analysis_parameters)
 
         results = news_strategy.run_strategy()
 

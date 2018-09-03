@@ -16,12 +16,12 @@ class StrategyFactory(Abstract_StrategyFactory):
         strategy_dict = CommonUtils.get_implemented_items_dict(path, './*/**/**/*.py', "strat")
         return strategy_dict
 
-    def _create_strategy(self, strategy_to_create, stock_data_container_list, parameter_dict):
+    def _create_strategy(self, strategy_to_create, **kwargs):
         strategy_dict = StrategyFactory.get_implemented_strategies_dict()
         if strategy_to_create in strategy_dict:
             # get the class from class dict and create the concrete object than
             strat_class = strategy_dict[strategy_to_create]
-            strategy = strat_class(stock_data_container_list, parameter_dict)
+            strategy = strat_class(**kwargs)
             return strategy
         else:
             raise NotImplementedError("Strategy is not implemented: " + str(strategy_to_create))

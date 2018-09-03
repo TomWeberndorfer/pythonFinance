@@ -18,7 +18,7 @@ class GapUpHighVolumeStrategy(Abstract_Strategy):
     def _method_to_execute(self, stock_data_container):
         try:
             if len(stock_data_container.historical_stock_data()) > 0:
-                result = self.strat_gap_up__hi_volume(stock_data_container, self.parameter_dict)
+                result = self.strat_gap_up__hi_volume(stock_data_container, self.analysis_parameters)
 
                 if result is not None:
                     self.result_list.append(result)

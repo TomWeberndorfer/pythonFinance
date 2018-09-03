@@ -99,8 +99,9 @@ class TestStockDataContainer(unittest.TestCase):
         ##################################################
         # 52 w strategy
         stock_screener = StrategyFactory()
-        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy", stock_data_container_list,
-                                                       w52hi_parameter_dict)
+        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy",
+                                                       stock_data_container_list=stock_data_container_list,
+                                                       analysis_parameters=w52hi_parameter_dict)
         # results = w52_hi_strat.run_strategy()
         w52_hi_strat.run_strategy()
         self.assertGreater(len(stock_data_container_list), 0)
@@ -118,7 +119,8 @@ class TestStockDataContainer(unittest.TestCase):
 
         stock_screener = StrategyFactory()
         news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list, parameter_dict)
+                                                        stock_data_container_list=stock_data_container_list,
+                                                        analysis_parameters=parameter_dict)
 
         news_strategy.run_strategy()
         self.assertEqual(stock_data_container_list[0].get_stock_name(), "Apple Inc.")

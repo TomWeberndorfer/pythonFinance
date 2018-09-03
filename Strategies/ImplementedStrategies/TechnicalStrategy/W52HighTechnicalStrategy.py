@@ -5,12 +5,13 @@ from Signals.Signals import signal_is_volume_high_enough, signal_is_volume_raisi
 from Strategies.Abstract_Strategy import Abstract_Strategy
 from Utils.GlobalVariables import *
 
+
 class W52HighTechnicalStrategy(Abstract_Strategy):
 
     def _method_to_execute(self, stock_data_container):
         try:
             if len(stock_data_container.historical_stock_data()) > 0:
-                result = self._strat_52_w_hi_hi_volume(stock_data_container, self.parameter_dict)
+                result = self._strat_52_w_hi_hi_volume(stock_data_container, self.analysis_parameters)
 
                 if result is not None:
                     result.update_used_strategy_and_recommendation(self.__class__.__name__, "BUY")

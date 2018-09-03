@@ -5,29 +5,27 @@ from Utils.Logger_Instance import logger
 
 
 class BacktraderWrapper:
-    def run_test(self, data_list, analyzers=[], strategy_to_test="", backtesting_parameters={},
-                 analysis_parameters={}, risk_model={}):
+    def run_test(self, data_list, strategy_to_test, backtesting_parameters, analysis_parameters, risk_model,
+                 news_data={}, analyzers=[], **kwargs):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
+        :param news_data:
         :param analysis_parameters: dict with analysis parameters for strategy
         :param strategy_to_test: name of the strategy as string
         :param data_list: a list with historical stock data in bt-format
         :param backtesting_parameters: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]
         :param risk_model: other testing relevant parameters as dict
-        :return: cerebro final instance, backtrader test result 
+        :return: cerebro final instance, backtrader test result
         """
         cerebro = bt.Cerebro()
 
-        # wrap all parameters into one dict to fulfill cerebro add strategy
-        all_parameter = {}
-        all_parameter.update(backtesting_parameters)
-        all_parameter.update({'strategy_to_test': strategy_to_test})
-        all_parameter.update({'analysis_parameters': analysis_parameters})
-        all_parameter.update({'risk_model': risk_model})
-
-        # add the backtrader strategy wrapper, the real strategy will be build there with the backtesting_parameters dict
-        cerebro.addstrategy(BacktraderStrategyWrapper, all_parameter)
+        # add the backtrader strategy wrapper, real strategy will be build there with the backtesting_parameters dict
+        # cerebro.addstrategy(BacktraderStrategyWrapper, all_parameter, news_data)
+        cerebro.addstrategy(BacktraderStrategyWrapper, strategy_to_test=strategy_to_test,
+                            backtesting_parameters=backtesting_parameters,
+                            news_data=news_data, analysis_parameters=analysis_parameters, risk_model=risk_model,
+                            **kwargs)
 
         if isinstance(data_list, list):
             for data in data_list:

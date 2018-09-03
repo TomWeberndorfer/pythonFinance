@@ -27,8 +27,9 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
         strat_factory = StrategyFactory()
         result_stock_data_container_list = stock_data_container_list
 
-        strategy = strat_factory.prepare_strategy(strategy_name, result_stock_data_container_list,
-                                                  strategy_parameter_dict[strategy_name])
+        strategy = strat_factory.prepare_strategy(strategy_name,
+                                                  stock_data_container_list=result_stock_data_container_list,
+                                                  analysis_parameters=strategy_parameter_dict[strategy_name])
         strategy_result = strategy.run_strategy()
         analysed_stocks.extend(strategy_result)
 

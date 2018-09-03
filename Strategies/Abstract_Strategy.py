@@ -7,19 +7,22 @@ from Utils.Logger_Instance import logger
 
 
 class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
-    def __init__(self, stock_data_container_list, parameter_dict):
+    def __init__(self, **kwargs):
         """
         Initialization of the strategy as definition of variables only.
         :param stock_data_container_list: a list with objects of StockDataContainer - class
         :param parameter_dict: a list with parameters for the strategy
         """
-        self.stock_data_container_list = stock_data_container_list
+
+        # set the given values in self
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
         self.result_list = [] # result list with stocks to buy or other results
-        self.parameter_dict = parameter_dict # parameter for the strategy
-        if stock_data_container_list is None:
-            StatusUpdate.__init__(self, 0)
+        if hasattr(self, "stock_data_container_list") and self.stock_data_container_list is not None:
+            StatusUpdate.__init__(self, len(self.stock_data_container_list))
         else:
-            StatusUpdate.__init__(self, len(stock_data_container_list))
+            StatusUpdate.__init__(self, 0)
         Abstract_SimpleMultithreading.__init__(self)
 
     def run_strategy(self, my_stock_data_container_list=None):

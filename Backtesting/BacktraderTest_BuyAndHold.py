@@ -83,8 +83,8 @@ class TestStrategy_1(bt.Strategy):
         stock_data_container_list = [stock_data_container]
 
         w52_hi_strat = self.stock_screener.prepare_strategy("W52HighTechnicalStrategy",
-                                                            stock_data_container_list,
-                                                            self.w52hi_parameter_dict)
+                                                            stock_data_container_list=stock_data_container_list,
+                                                            analysis_parameters=self.w52hi_parameter_dict)
 
         results = w52_hi_strat.run_strategy()
 

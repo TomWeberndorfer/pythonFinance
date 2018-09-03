@@ -212,10 +212,9 @@ class MvcController:
             first_rm_key = list(risk_models.keys())[0]
             risk_model = risk_models[first_rm_key]
             # test only one strategy --> [0]
-            cerebro, backtest_result = tbt.run_test(selected_backtesting_stocks_data,
-                                                    data_backtesting_analyzers,
-                                                    strategy_selections[0],
-                                                    backtesting_parameters, analysis_params, risk_model)
+            cerebro, backtest_result = tbt.run_test(selected_backtesting_stocks_data, strategy_selections[0],
+                                                    backtesting_parameters, analysis_params, risk_model,
+                                                    data_backtesting_analyzers)
 
             insert_text_into_gui(self.view.Scrolledtext_analyzer_results, "", delete=True, start=1.0)
 
