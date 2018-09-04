@@ -1,30 +1,31 @@
 import backtrader as bt
+
+from Backtesting.Abstract_Backtesting import Abstract_Backtesting
 from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
 import logging
 from Utils.Logger_Instance import logger
 
 
-class BacktraderWrapper:
+class BacktraderWrapper(Abstract_Backtesting):
     def run_test(self, data_list, strategy_to_test, backtesting_parameters, analysis_parameters, risk_model,
-                 news_data={}, analyzers=[], **kwargs):
+                 analyzers=[], **kwargs):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
-        :param news_data:
         :param analysis_parameters: dict with analysis parameters for strategy
         :param strategy_to_test: name of the strategy as string
         :param data_list: a list with historical stock data in bt-format
         :param backtesting_parameters: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]
         :param risk_model: other testing relevant parameters as dict
-        :return: cerebro final instance, backtrader test result
+        :return: backtesting_result_instance final instance, backtrader test result
         """
         cerebro = bt.Cerebro()
 
         # add the backtrader strategy wrapper, real strategy will be build there with the backtesting_parameters dict
-        # cerebro.addstrategy(BacktraderStrategyWrapper, all_parameter, news_data)
+        # backtesting_result_instance.addstrategy(BacktraderStrategyWrapper, all_parameter, news_data)
         cerebro.addstrategy(BacktraderStrategyWrapper, strategy_to_test=strategy_to_test,
                             backtesting_parameters=backtesting_parameters,
-                            news_data=news_data, analysis_parameters=analysis_parameters, risk_model=risk_model,
+                            analysis_parameters=analysis_parameters, risk_model=risk_model,
                             **kwargs)
 
         if isinstance(data_list, list):

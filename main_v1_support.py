@@ -78,7 +78,7 @@ class MvcController:
         self.model.result_stock_data_container_list.add_event_listeners(self.result_stock_data_container_list_changed)
         self.model.is_thread_running.add_event_listeners(self.is_thread_running_changed)
         self.model.analysis_parameters.add_event_listeners(self.analysis_parameters_changed)
-        self.model.cerebro.add_event_listeners(self.cerebro_result_changed)
+        self.model.backtesting_result_instance.add_event_listeners(self.cerebro_result_changed)
 
         self.current_parameterfile = ""
 
@@ -183,6 +183,7 @@ class MvcController:
                     if selected_backtesting_analyzer_str in ana.__name__:
                         data_backtesting_analyzers.append(ana)
 
+            # TODO only pass file names --> load should be in another module for enhance resusing
             available_backtesting_stocks_data = self.model.available_backtesting_stocks_list.get()
             selected_backtesting_stocks_data = []
             for selected_backtesting_stock_str in selected_backtesting_stocks:
@@ -212,9 +213,11 @@ class MvcController:
             first_rm_key = list(risk_models.keys())[0]
             risk_model = risk_models[first_rm_key]
             # test only one strategy --> [0]
-            cerebro, backtest_result = tbt.run_test(selected_backtesting_stocks_data, strategy_selections[0],
-                                                    backtesting_parameters, analysis_params, risk_model,
-                                                    data_backtesting_analyzers)
+            backtesting_result_instance, backtest_result = tbt.run_test(selected_backtesting_stocks_data,
+                                                                        strategy_selections[0],
+                                                                        backtesting_parameters, analysis_params,
+                                                                        risk_model,
+                                                                        data_backtesting_analyzers)
 
             insert_text_into_gui(self.view.Scrolledtext_analyzer_results, "", delete=True, start=1.0)
 
@@ -232,7 +235,7 @@ class MvcController:
                 insert_text_into_gui(self.view.Scrolledtext_analyzer_results,
                                      str(analyzer.__class__.__name__) + ":\n" + str(final_text) + "\n\n")
 
-            portvalue = round(cerebro.broker.getvalue(), 2)
+            portvalue = round(backtesting_result_instance.broker.getvalue(), 2)
             pnl = round(portvalue - backtesting_parameters['initial_cash'], 2)
 
             # Print out the final result
@@ -241,7 +244,7 @@ class MvcController:
             insert_text_into_gui(self.view.Scrolledtext_analyzer_results,
                                  'Profit/Loss (rounded 2 places): ${}'.format(pnl))
 
-            self.model.cerebro.set(cerebro)
+            self.model.backtesting_result_instance.set(backtesting_result_instance)
 
         except Exception as e:
             logger.error("Exception while backtesting: " + str(e) + "\n" + str(traceback.format_exc()))
@@ -421,7 +424,7 @@ class MvcController:
         pass
 
     def plot_backtesting(self):
-        cerebro = self.model.cerebro.get()
+        cerebro = self.model.backtesting_result_instance.get()
         if cerebro is None:
             messagebox.showerror("Plot error", "There is no backtesting result to plot! Run a backtest first")
         else:
@@ -466,6 +469,7 @@ class MvcController:
             data_list.append(data)
 
         self.model.available_backtesting_stocks_list.set(data_list)
+        # self.model.    TODO: da ghern de news irgendwie eini
         logger.info("Backtesting stocks read")
 
 
@@ -538,6 +542,7 @@ def save_last_used_parameter_file():
     curr_file = app.current_parameterfile
 
     data_files_path = GlobalVariables.get_data_files_path()
+    #TODO dictr with name and file instad of backtrader object
     backtest_stocks = app.model.available_backtesting_stocks_list.get()
 
     str_stocks = ','.join(str(data_files_path + stock._name) for stock in backtest_stocks)

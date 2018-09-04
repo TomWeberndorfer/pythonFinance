@@ -3,6 +3,9 @@ from __future__ import (absolute_import, division, print_function,
 
 # Import the backtrader platform
 import backtrader as bt
+import os
+import pandas as pd
+from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
 from Utils.Logger_Instance import logger
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
@@ -58,6 +61,16 @@ class BacktraderStrategyWrapper(bt.Strategy):
         self.order_target_method = self._get_order_target(order_target)
 
         self.order_parameter_value = risk_model['TargetValue']
+
+        self.news_data_dict = {}
+
+        # add the news text because backtrader does not support news
+        # data from pandas do not have a name --> not add news
+        for i, hist_data in enumerate(self.datas):
+            dataname = hist_data._dataname
+            if isinstance(dataname, str) and os.path.exists(dataname):
+                news_data = pd.read_csv(dataname)
+                self.news_data_dict.update({dataname: news_data})
 
     ###############
     def notify_order(self, order):
@@ -142,21 +155,35 @@ class BacktraderStrategyWrapper(bt.Strategy):
 
         for i, hist_data in enumerate(self.datas):
             date_time = self.datetime.date()
-            data_name = hist_data._name
+            stock_name = hist_data._name
+            dataname = hist_data._dataname
 
-            # test = hist_data.newsText
+            curr_news = ""
+            # add the news text because backtrader does not support news
+            # data from pandas do not have a name --> not add news
+            if isinstance(dataname, str):
+                news_data = self.news_data_dict[dataname]
+                if hasattr(news_data, "NewsText") and hasattr(news_data, "Date"):
+                    for currEntry in range(0, len(news_data.Date)):
+                        if str(date_time) in news_data.Date[currEntry]:
+                            try:
+                                curr_news = str(news_data.NewsText[currEntry])
+                            except Exception as e:
+                                pass
+                            break
 
             long_stop = hist_data.close[0] - 5  # Will not be hit
             # Simply log the closing price of the series from the reference
-            self.log('Time:' + str(date_time) + ', Data:' + str(data_name) + ', Close: ' + str(
+            self.log('Time:' + str(date_time) + ', Data:' + str(stock_name) + ', Close: ' + str(
                 hist_data.close[0]) + ", volume: " + str(hist_data.volume[0]))
 
             # TODO den container anders --> ned so benennen
             df1 = convert_backtrader_to_dataframe(hist_data)
             # ticker not implemented, but not needed
-            stock_data_container = StockDataContainer(data_name, "", "")
+            stock_data_container = StockDataContainer(stock_name, "", "")
             stock_data_container.set_historical_stock_data(df1)
-            stock_data_container_list.append(stock_data_container)
+            news_dec = NewsDataContainerDecorator(stock_data_container, 0, 0, curr_news, 0)
+            stock_data_container_list.append(news_dec)
             results = self.strategy_instance.run_strategy(stock_data_container_list)
 
             pos = self.getposition(hist_data).size

@@ -54,11 +54,13 @@ class GermanTaggerAnalyseNews:
            :return: result_news_stock_data_container
            """
 
-        if stock_data_container is None:
-            raise NotImplementedError
+        assert len(stock_data_container.original_news()) > 0
+        assert stock_data_container is not None
 
         try:
-            if stock_data_container.original_news() is not None:
+            if stock_data_container.original_news() is not None \
+                    and stock_data_container.original_news().lower() is not "nan" \
+                    and len(stock_data_container.original_news()) > 10:
                 prob_dist = self.classifier.prob_classify(stock_data_container.original_news())
                 stock_data_container.set_prop_dist(prob_dist.prob("pos"))
         except AttributeError:

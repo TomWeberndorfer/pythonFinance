@@ -10,6 +10,10 @@ from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 class SimplePatternNewsStrategy(Abstract_Strategy):
     def __init__(self, **kwargs):
         Abstract_Strategy.__init__(self, **kwargs)
+
+        if not hasattr(self, "stock_data_container_list"):
+            self.stock_data_container_list = []
+
         self.text_analysis = GermanTaggerAnalyseNews(self.stock_data_container_list,
                                                      self.analysis_parameters['news_threshold'],
                                                      self.analysis_parameters['german_tagger'])

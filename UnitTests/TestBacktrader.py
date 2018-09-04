@@ -59,9 +59,7 @@ class TestBacktrader(unittest.TestCase):
         df_2 = pd.DataFrame.from_records(data_in_2, columns=labels)
 
         data_list = []
-        # TODO dazu
-        #        dfs = [df_1, df_2]
-        dfs = [df_2]
+        dfs = [df_1, df_2]
 
         for i in range(0, len(dfs)):
             df_in = dfs[i]
@@ -86,11 +84,15 @@ class TestBacktrader(unittest.TestCase):
 
         risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
 
-        cerebro, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters, analysis_parameters,
-                                    risk_model, analyzers)
-        # cerebro.plot(style='candlestick', barup='green', bardown='red')
-        # TODO implementieren
-        # raise NotImplementedError
+        backtesting_result_instance, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters,
+                                                        analysis_parameters,
+                                                        risk_model, analyzers)
+        # TODO backtesting_result_instance.plot(style='candlestick', barup='green', bardown='red')
+        portvalue = round(backtesting_result_instance.broker.getvalue(), 2)
+        pnl = round(portvalue - backtesting_parameters['initial_cash'], 2)
+
+        self.assertNotEqual(None, backtesting_result_instance)
+        self.assertNotEqual(backtesting_parameters['initial_cash'], pnl)
 
     def test_run_test(self):
         tbt = BacktraderWrapper()
@@ -140,11 +142,15 @@ class TestBacktrader(unittest.TestCase):
 
         risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
 
-        cerebro, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters, analysis_parameters,
-                                    risk_model, analyzers)
+        backtesting_result_instance, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters,
+                                                        analysis_parameters,
+                                                        risk_model, analyzers)
 
-        self.assertNotEqual(None, cerebro)
-        self.assertNotEqual(None, res)
+        portvalue = round(backtesting_result_instance.broker.getvalue(), 2)
+        pnl = round(portvalue - backtesting_parameters['initial_cash'], 2)
+
+        self.assertNotEqual(None, backtesting_result_instance)
+        self.assertNotEqual(backtesting_parameters['initial_cash'], pnl)
 
     def test_GenericBacktraderCsvNewsData(self):
         tbt = BacktraderWrapper()
@@ -166,19 +172,22 @@ class TestBacktrader(unittest.TestCase):
         analyzers = [btanalyzer.AnnualReturn, btanalyzer.Calmar, btanalyzer.DrawDown, btanalyzer.TimeDrawDown,
                      btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
                      btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
-        strategy_to_test = "W52HighTechnicalStrategy"
+        data_file_path = GlobalVariables.get_data_files_path()
+
+        analysis_parameters = {'news_threshold': 0.7,
+                               'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle'}
+
+        strategy_to_test = "SimplePatternNewsStrategy"
         backtesting_parameters = {'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
-        analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
-                               'within52w_high_fact': 0.99}
 
         risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
-        file = GlobalVariables.get_data_files_path() + "OnlyNewsText.csv"
+        backtesting_result_instance, backtest_result = tbt.run_test(data_list, strategy_to_test, backtesting_parameters,
+                                                                    analysis_parameters,
+                                                                    risk_model, analyzers)
 
-        news_data = pd.read_csv(file)
+        portvalue = round(backtesting_result_instance.broker.getvalue(), 2)
+        pnl = round(portvalue - backtesting_parameters['initial_cash'], 2)
 
-        cerebro, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters, analysis_parameters,
-                                    risk_model, news_data, analyzers)
-
-        self.assertNotEqual(None, cerebro)
-        self.assertNotEqual(None, res)
+        self.assertNotEqual(None, backtesting_result_instance)
+        self.assertNotEqual(backtesting_parameters['initial_cash'], pnl)

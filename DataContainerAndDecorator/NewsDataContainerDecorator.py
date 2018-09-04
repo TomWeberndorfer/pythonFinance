@@ -5,6 +5,9 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
 
     def __init__(self, shaped_data_container, stock_target_price, prob_dist, original_news,
                  stock_current_prize):
+
+        assert isinstance(original_news, str)
+
         super().__init__(shaped_data_container)
         self._stock_target_price = stock_target_price
         self._prob_dist = prob_dist
