@@ -1,19 +1,23 @@
+from os.path import basename
+
 import backtrader as bt
 
 from Backtesting.Abstract_Backtesting import Abstract_Backtesting
 from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
 import logging
 from Utils.Logger_Instance import logger
+import backtrader.feeds as btfeeds
+from Utils.GlobalVariables import GlobalVariables
 
 
 class BacktraderWrapper(Abstract_Backtesting):
-    def run_test(self, data_list, strategy_to_test, backtesting_parameters, analysis_parameters, risk_model,
+    def run_test(self, data_file_list, strategy_to_test, backtesting_parameters, analysis_parameters, risk_model,
                  analyzers=[], **kwargs):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
         :param analysis_parameters: dict with analysis parameters for strategy
         :param strategy_to_test: name of the strategy as string
-        :param data_list: a list with historical stock data in bt-format
+        :param data_file_list: a list with files to read as string
         :param backtesting_parameters: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]
         :param risk_model: other testing relevant parameters as dict
@@ -28,9 +32,24 @@ class BacktraderWrapper(Abstract_Backtesting):
                             analysis_parameters=analysis_parameters, risk_model=risk_model,
                             **kwargs)
 
-        if isinstance(data_list, list):
-            for data in data_list:
-                cerebro.adddata(data, name=data._name)
+        # load the data from given file list and add it to backtrader instance
+        if isinstance(data_file_list, list):
+            for file_path in data_file_list:
+                if isinstance(file_path, str):
+                    stock_name = basename(file_path)
+                    data = btfeeds.GenericCSVData(
+                        name=stock_name,
+                        dataname=file_path,
+                        dtformat=GlobalVariables.get_stock_data_dtformat(),
+                        nullvalue=0.0,
+                        datetime=0,
+                        open=1, high=2, low=3,
+                        close=4, volume=5,
+                        openinterest=-1)
+                    cerebro.adddata(data, name=data._name)
+                else:
+                    # compatibility for backtrader pandas data feed
+                    cerebro.adddata(file_path, name=file_path._name)
 
         else:
             raise NotImplementedError("Data must be a list")

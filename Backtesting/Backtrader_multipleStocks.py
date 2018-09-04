@@ -210,7 +210,7 @@ if __name__ == '__main__':
         # data = bt.feeds.GenericCSVData(
         #     dataname=dn,
         #     nullvalue=0.0,
-        #     dtformat=('%Y-%m-%d'),
+        #     dtformat=GlobalVariables.get_stock_data_dtformat(),,
         #     datetime=0,
         #     open=1,
         #     high=2,
@@ -223,7 +223,7 @@ if __name__ == '__main__':
         data = bt.feeds.GenericCSVData(
             dataname=dn,
             nullvalue=0.0,
-            dtformat=('%Y-%m-%d'),
+            dtformat=GlobalVariables.get_stock_data_dtformat(),
             datetime=0,
             open=o_idx,
             high=h_idx,

@@ -183,14 +183,13 @@ class MvcController:
                     if selected_backtesting_analyzer_str in ana.__name__:
                         data_backtesting_analyzers.append(ana)
 
-            # TODO only pass file names --> load should be in another module for enhance resusing
             available_backtesting_stocks_data = self.model.available_backtesting_stocks_list.get()
             selected_backtesting_stocks_data = []
             for selected_backtesting_stock_str in selected_backtesting_stocks:
                 for available_backtesting_stock_data in available_backtesting_stocks_data:
-                    if selected_backtesting_stock_str in available_backtesting_stock_data._name:
+                    if selected_backtesting_stock_str in available_backtesting_stock_data:
                         selected_backtesting_stocks_data.append(available_backtesting_stock_data)
-                        pass
+                        break
 
             req_params = StrategyFactory.get_required_parameters_with_default_parameters()
             at_objects = w.scrollable_frame_parameters.form.at_objects
@@ -405,9 +404,9 @@ class MvcController:
         """
         insert_text_into_gui(w.sl_bt_select_stocks, "", delete=True, start=0)
         # model internally chages and needs to signal a change
-        available_stocks = self.model.available_backtesting_stocks_list.get()
-        for available_stock in available_stocks:
-            insert_text_into_gui(w.sl_bt_select_stocks, available_stock._name)
+        available_stock_files = self.model.available_backtesting_stocks_list.get()
+        for available_stock in available_stock_files:
+            insert_text_into_gui(w.sl_bt_select_stocks, basename(available_stock))
 
     def backtesting_analyzers_list_changed(self):
         insert_text_into_gui(w.sb_select_analyzers, "", delete=True, start=0)
@@ -449,27 +448,7 @@ class MvcController:
         self.model.selected_backtesting_analyzers_list.set(selected_text_list)
 
     def load_backtesting_stocks_from_file(self, multi_file_path):
-        data_list = []
-
-        for file_path in multi_file_path:
-            # now you can call it directly with basename
-            stock_name = basename(file_path)
-            data = btfeeds.GenericCSVData(
-                name=stock_name,
-                dataname=file_path,
-                dtformat='%Y-%m-%d',
-                # TODO fromdate=datetime.datetime(2000, 1, 1),
-                # TODO todate=datetime.datetime(2000, 12, 31),
-                nullvalue=0.0,
-                datetime=0,
-                open=1, high=2, low=3,
-                close=4, volume=5,
-                openinterest=-1)
-
-            data_list.append(data)
-
-        self.model.available_backtesting_stocks_list.set(data_list)
-        # self.model.    TODO: da ghern de news irgendwie eini
+        self.model.available_backtesting_stocks_list.set(multi_file_path)
         logger.info("Backtesting stocks read")
 
 
@@ -541,11 +520,10 @@ def save_last_used_parameter_file():
     config = configparser.ConfigParser()
     curr_file = app.current_parameterfile
 
-    data_files_path = GlobalVariables.get_data_files_path()
     #TODO dictr with name and file instad of backtrader object
     backtest_stocks = app.model.available_backtesting_stocks_list.get()
 
-    str_stocks = ','.join(str(data_files_path + stock._name) for stock in backtest_stocks)
+    str_stocks = ','.join(str(stock) for stock in backtest_stocks)
 
     config["Parameters"] = {'parameterfile': curr_file,
                             'backteststockselection': str_stocks}

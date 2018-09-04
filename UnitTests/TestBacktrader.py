@@ -154,21 +154,7 @@ class TestBacktrader(unittest.TestCase):
 
     def test_GenericBacktraderCsvNewsData(self):
         tbt = BacktraderWrapper()
-        data_list = []
-
-        gbcnw = GenericCSVData(
-            dataname='C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\BacktraderNewsCsv.csv',
-            dtformat=('%Y-%m-%d'),
-
-            nullvalue=0.0,
-            datetime=0,
-            open=1, high=2, low=3,
-            close=4, volume=5,
-            openinterest=-1,
-        )
-
-        data_list.append(gbcnw)
-
+        data_list = ['C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\BacktraderNewsCsv.csv']
         analyzers = [btanalyzer.AnnualReturn, btanalyzer.Calmar, btanalyzer.DrawDown, btanalyzer.TimeDrawDown,
                      btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
                      btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]

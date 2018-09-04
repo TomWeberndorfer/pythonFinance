@@ -34,3 +34,11 @@ class GlobalVariables:
             stock_data_labels_dict = {'Date': 'Date', 'Open': 'Open', 'High': 'High', 'Low': 'Low',
                                       'Close': 'Close', 'Volume': 'Volume'}
         return stock_data_labels_dict
+
+    @staticmethod
+    def get_stock_data_dtformat():
+        """
+        Get the stock data date time format.
+        :return: date time format
+        """
+        return '%Y-%m-%d'
