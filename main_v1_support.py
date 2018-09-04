@@ -16,22 +16,18 @@ from Utils.GuiUtils import GuiUtils
 from Utils.Logger_Instance import logger
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
-import backtrader as bt
-from Backtesting.BacktraderWrapper import BacktraderWrapper
+from Backtesting.Backtrader.BacktraderWrapper import BacktraderWrapper
 from GUI.ScrollableFrame import ScrollableFrame
 from Strategies.StrategyFactory import StrategyFactory
 from MvcModel import MvcModel
 from StockAnalysis import run_analysis
 from tkinter import *
 import webbrowser as wb
-import datetime  # For datetime objects
 from tkinter import filedialog
-import backtrader.feeds as btfeeds
 import backtrader.analyzers as btanalyzer
 from Utils.GlobalVariables import *
 from Utils.CommonUtils import CommonUtils
 from Utils.FileUtils import FileUtils
-import ast
 import configparser
 
 

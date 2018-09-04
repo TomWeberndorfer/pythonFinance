@@ -7,10 +7,8 @@ import datetime
 
 from backtrader.feeds import GenericCSVData
 
-from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
-from Backtesting.BacktraderWrapper import BacktraderWrapper
+from Backtesting.Backtrader.BacktraderWrapper import BacktraderWrapper
 # from directory UnitTests to --> root folder with: ..\\..\\
-from DataContainerAndDecorator.GenericBacktraderCsvNewsData import GenericBacktraderCsvNewsData, MyCSVData
 from Utils.GlobalVariables import *
 
 test_filepath = GlobalVariables.get_data_files_path() + 'TestData\\'
