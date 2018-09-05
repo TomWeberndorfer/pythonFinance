@@ -75,7 +75,7 @@ class TestBacktrader(unittest.TestCase):
                      btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
                      btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
         strategy_to_test = "W52HighTechnicalStrategy"
-        backtesting_parameters = {'initial_cash': 30000,
+        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
         analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                'within52w_high_fact': 0.99}
@@ -133,7 +133,7 @@ class TestBacktrader(unittest.TestCase):
                      btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
                      btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
         strategy_to_test = "W52HighTechnicalStrategy"
-        backtesting_parameters = {'initial_cash': 30000,
+        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
         analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                'within52w_high_fact': 0.99}
@@ -162,7 +162,7 @@ class TestBacktrader(unittest.TestCase):
                                'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle'}
 
         strategy_to_test = "SimplePatternNewsStrategy"
-        backtesting_parameters = {'initial_cash': 30000,
+        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
 
         risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}

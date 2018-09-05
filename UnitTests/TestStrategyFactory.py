@@ -54,7 +54,7 @@ class TestStrategyFactory(unittest.TestCase):
                         'RiskModels': {
                             'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
-        backtesting_parameters = {'initial_cash': 30000,
+        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
 
         all_strategy_parameters_dict = {'Strategies': all_strategy_parameters_dict}

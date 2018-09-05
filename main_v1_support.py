@@ -4,31 +4,32 @@
 # In conjunction with Tcl version 8.6
 #    Jun 03, 2018 10:50:55 AM
 import _pickle as pickle
-from os.path import basename
+import configparser
+import logging
 import queue
 import tkinter as tk
 import traceback
+import webbrowser as wb
+from os.path import basename
 from threading import Thread
+from tkinter import *
+from tkinter import filedialog
 from tkinter import messagebox
-import logging
-
-from Utils.GuiUtils import GuiUtils
-from Utils.Logger_Instance import logger
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
-from Backtesting.Backtrader.BacktraderWrapper import BacktraderWrapper
+
+import backtrader.analyzers as btanalyzer
+
+from Backtesting.BacktestingFactory import BacktestingFactory
 from GUI.ScrollableFrame import ScrollableFrame
-from Strategies.StrategyFactory import StrategyFactory
 from MvcModel import MvcModel
 from StockAnalysis import run_analysis
-from tkinter import *
-import webbrowser as wb
-from tkinter import filedialog
-import backtrader.analyzers as btanalyzer
-from Utils.GlobalVariables import *
+from Strategies.StrategyFactory import StrategyFactory
 from Utils.CommonUtils import CommonUtils
 from Utils.FileUtils import FileUtils
-import configparser
+from Utils.GlobalVariables import *
+from Utils.GuiUtils import GuiUtils
+from Utils.Logger_Instance import logger
 
 
 class MvcController:
@@ -198,8 +199,10 @@ class MvcController:
             self.model.is_thread_running.set(True)
             logger.info("Backtesting started...")
 
-            tbt = BacktraderWrapper()
+            bf = BacktestingFactory()
             backtesting_parameters = self.model.analysis_parameters.get()["BacktestingParameters"]
+            bt_framework = backtesting_parameters['BacktestingFramework']
+            tbt = bf.prepare(bt_framework)
             # get the selection of the first strategy
             analysis_params = self.model.analysis_parameters.get()['Strategies'][strategy_selections[0]]
 
