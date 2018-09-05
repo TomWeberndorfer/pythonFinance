@@ -3,6 +3,7 @@ import unittest
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
 from DataReading.DataReaderFactory import DataReaderFactory
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
+from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
 from Utils.FileUtils import FileUtils
 from Utils.Logger_Instance import logger
@@ -108,14 +109,12 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
                 for i in range(wanted_parts)]
 
     def test_read_data_all(self):
-        # TODO 11: seite geht nicht mehr
-        list_with_stock_pages_to_read = [
-            ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
-             'wikitable sortable', 0, 1, "en"],
-            ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
-             'tbody', 'class', 'row-hover', 2, 1, 'de']]
+        dict_with_stock_pages_to_read = \
+            StrategyFactory.get_other_parameters_with_default_parameters()["OtherParameters"][
+                'dict_with_stock_pages_to_read']
+
         stock_data_container_list = FileUtils.read_tickers_from_file_or_web(stock_data_container_file, True,
-                                                                  list_with_stock_pages_to_read)
+                                                                            dict_with_stock_pages_to_read)
 
         # stock_data_container_list = self.split_list(stock_data_container_list, 3)
         # stock_data_container_list = stock_data_container_list[0]

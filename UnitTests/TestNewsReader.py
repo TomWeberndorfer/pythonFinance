@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 
 from DataReading.DataReaderFactory import DataReaderFactory
+from Strategies.StrategyFactory import StrategyFactory
 
 from Utils.FileUtils import FileUtils
 from newsFeedReader.traderfox_hp_news import is_date_actual
@@ -38,9 +39,8 @@ class TestNewsReader(unittest.TestCase):
                               'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
                               'reload_data': True, 'ticker_needed': False}
 
-        reader = data_storage.prepare(reader_type, stock_data_container_list,
-                                      False,
-                                      data_reader_params)
+        reader = data_storage.prepare(reader_type, stock_data_container_list=stock_data_container_list,
+                                      reload_stockdata=True, parameter_dict=data_reader_params)
         reader.read_data()
         self.assertGreater(len(stock_data_container_list), 0)
 
@@ -70,16 +70,14 @@ class TestNewsReader(unittest.TestCase):
         stock_data_container_file_name = "stock_data_container_file.pickle"
         stock_data_container_file = filepath + stock_data_container_file_name
 
-        list_with_stock_pages_to_read = [
-            ['http://en.wikipedia.org/wiki/List_of_S%26P_500_companies', 'table', 'class',
-             'wikitable sortable', 0, 1, 'en'],
-            ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
-             'tbody', 'class', 'row-hover', 2, 1, 'de']]
+        dict_with_stock_pages_to_read = \
+        StrategyFactory.get_other_parameters_with_default_parameters()["OtherParameters"][
+            'dict_with_stock_pages_to_read']
 
         stock_data_container_list = FileUtils.read_tickers_from_file_or_web(stock_data_container_file, True,
-                                                                            list_with_stock_pages_to_read)
+                                                                            dict_with_stock_pages_to_read)
         self.assertGreater(len(stock_data_container_list), 800)
 
         stock_data_container_list = FileUtils.read_tickers_from_file_or_web(stock_data_container_file, False,
-                                                                            list_with_stock_pages_to_read)
+                                                                            dict_with_stock_pages_to_read)
         self.assertGreater(len(stock_data_container_list), 800)

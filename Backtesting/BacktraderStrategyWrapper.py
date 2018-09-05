@@ -159,6 +159,10 @@ class BacktraderStrategyWrapper(bt.Strategy):
             dataname = hist_data._dataname
 
             curr_news = ""
+            # TODO print anything to indicate a news in gui
+            # TODO https://www.backtrader.com/docu/extending-a-datafeed.html
+            # TODO ex: btind.SMA(self.data.pe, period=1, subplot=False) for data of classification
+
             # add the news text because backtrader does not support news
             # data from pandas do not have a name --> not add news
             if isinstance(dataname, str):

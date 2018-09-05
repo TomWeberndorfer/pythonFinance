@@ -91,8 +91,9 @@ class TestGoogleHistoricalDataReader(unittest.TestCase):
 
         data_storage = DataReaderFactory()
         strategy_parameter_dict = {'Name': 'HistoricalDataReader', 'weeks_delta': 52, 'data_source': 'iex'}
-        stock_data_reader = data_storage.prepare("HistoricalDataReader", stock_data_container_list,
-                                                 True, strategy_parameter_dict)
+        stock_data_reader = data_storage.prepare("HistoricalDataReader",
+                                                 stock_data_container_list=stock_data_container_list,
+                                                 reload_stockdata=True, parameter_dict=strategy_parameter_dict)
         stock_data_reader.read_data()
 
         self.assertEqual(len(stock_data_container_list), 2)

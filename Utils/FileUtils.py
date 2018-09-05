@@ -97,10 +97,10 @@ class FileUtils:
         return stock_data_container_list
 
     @staticmethod
-    def read_tickers_from_web(stock_data_container_file, list_with_stock_pages_to_read=[]):
+    def read_tickers_from_web(stock_data_container_file, dict_with_stock_pages_to_read={}):
         """
            Read the gives list of stock pages
-            :param list_with_stock_pages_to_read:
+            :param dict_with_stock_pages_to_read:
             :param stock_data_container_file:
            :return: stock_data_container_list
         """
@@ -109,7 +109,8 @@ class FileUtils:
         logger.info("Start reading tickers from web...")
 
         pool = CommonUtils.get_threading_pool()
-        result_list = pool.map(CommonUtils.read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
+        list_w = dict_with_stock_pages_to_read.values()
+        result_list = pool.map(CommonUtils.read_table_columns_from_webpage_list, list_w)
 
         for result in result_list:
             stock_data_container_list.extend(result)
@@ -120,11 +121,11 @@ class FileUtils:
         return stock_data_container_list
 
     @staticmethod
-    def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, list_with_stock_pages_to_read=[]):
+    def read_tickers_from_file_or_web(stock_data_container_file, reload_file=False, dict_with_stock_pages_to_read={}):
         """
             TODO
            read the sp500 and CDAX tickers and saves it to given file
-            :param list_with_stock_pages_to_read:
+            :param dict_with_stock_pages_to_read:
             :param stock_data_container_file:
             :param stock_exchange_file:
             :param names_file:
@@ -143,7 +144,9 @@ class FileUtils:
             logger.info("Start reading tickers...")
 
             pool = CommonUtils.get_threading_pool()
-            result_list = pool.map(CommonUtils.read_table_columns_from_webpage_list, list_with_stock_pages_to_read)
+
+            list_w = dict_with_stock_pages_to_read.values()
+            result_list = pool.map(CommonUtils.read_table_columns_from_webpage_list, list_w)
 
             for result in result_list:
                 stock_data_container_list.extend(result)

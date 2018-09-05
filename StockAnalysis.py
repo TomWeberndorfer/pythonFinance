@@ -38,7 +38,7 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
     for rm_name in risk_models.keys():
         rm_parameters = risk_models[rm_name]
         rm_factory = RiskModelFactory()
-        fsr = rm_factory.prepare(rm_name, analysed_stocks, rm_parameters)
+        fsr = rm_factory.prepare(rm_name, stock_data_container_list=analysed_stocks, parameter_dict=rm_parameters)
         fsr.determine_risk()
 
     logger.info("Runtime at " + str(datetime.now()) + " for run analysis and duration: " + str(
@@ -62,14 +62,15 @@ def _read_data(selected_strategies_list, strategy_parameter_dict, other_params, 
                 if data_reader_params['reload_data'] is True:
                     stock_data_container_list = FileUtils.read_tickers_from_web(
                         other_params['stock_data_container_file'],
-                        other_params['list_with_stock_pages_to_read'])
+                        other_params['dict_with_stock_pages_to_read'])
                 else:
                     stock_data_container_list = FileUtils.read_tickers_and_data_from_file(
                         other_params['stock_data_container_file'])
 
-            readers[reader_type] = data_storage.prepare(reader_type, stock_data_container_list,
-                                                        data_reader_params['reload_data'],
-                                                        data_reader_params)
+            readers[reader_type] = data_storage.prepare(reader_type,
+                                                        stock_data_container_list=stock_data_container_list,
+                                                        reload_stockdata=data_reader_params['reload_data'],
+                                                        parameter_dict=data_reader_params)
             logger.info("data_reader " + reader_type + " initialised.")
             # only add, if not added by another strategy reader --> avoid duplications
             try:

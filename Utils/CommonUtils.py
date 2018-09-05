@@ -35,12 +35,12 @@ class CommonUtils:
             raise AttributeError("arguments false")
 
         return CommonUtils.send_email(from_addr=from_addr,
-                          to_addr_list=[to_addr],
-                          cc_addr_list=[],
-                          subject=subject_text,
-                          message=message_text,
-                          login='python.trading.framework',
-                          password='8n6Qw8YoJe8m')
+                                      to_addr_list=[to_addr],
+                                      cc_addr_list=[],
+                                      subject=subject_text,
+                                      message=message_text,
+                                      login='python.trading.framework',
+                                      password='8n6Qw8YoJe8m')
 
     @staticmethod
     def get_threading_pool(max_number_threads=200):
@@ -160,15 +160,17 @@ class CommonUtils:
         return stock_name
 
     @staticmethod
-    def read_table_columns_from_webpage_list(page_list):
+    def read_table_columns_from_webpage_list(page_dict):
         """
         TODO statt liste nur dict und diese methode weg und statt übergabeparameter in dict suchen
-        :param page_list:
+        :param page_dict:
         :return:
         """
-        return CommonUtils.read_table_columns_from_webpage(page_list[0], page_list[1], page_list[2], page_list[3],
-                                                           page_list[4],
-                                                           page_list[5], page_list[6])
+        return CommonUtils.read_table_columns_from_webpage(page_dict['websource_address'], page_dict['find_name'],
+                                                           page_dict['class_name'], page_dict['table_class'],
+                                                           page_dict['ticker_column_to_read'],
+                                                           page_dict['name_column_to_read'],
+                                                           page_dict['stock_exchange'])
 
     @staticmethod
     def read_table_columns_from_webpage(websource_address, find_name, class_name, table_class, ticker_column_to_read,

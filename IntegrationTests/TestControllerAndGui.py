@@ -60,7 +60,7 @@ class TestControllerAndGui(unittest.TestCase):
                                             'ticker_needed': True}}}
                                    }
         stock_data_file = 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\stock_data_container_file.pickle'
-        other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
+        other_params = {'stock_data_container_file': stock_data_file, 'dict_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
@@ -98,7 +98,7 @@ class TestControllerAndGui(unittest.TestCase):
                                                                           'ticker_needed': False}}}
                                    }
         stock_data_file = 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\stock_data_container_file.pickle'
-        other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
+        other_params = {'stock_data_container_file': stock_data_file, 'dict_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},

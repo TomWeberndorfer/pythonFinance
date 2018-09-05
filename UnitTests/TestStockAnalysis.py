@@ -20,7 +20,7 @@ class TestStockAnalysis(unittest.TestCase):
                                                                                              'reload_data': False,
                                                                                              'ticker_needed': ticker_needed}}}}
         stock_data_file = 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\stock_data_container_file.pickle'
-        other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
+        other_params = {'stock_data_container_file': stock_data_file, 'dict_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
@@ -30,7 +30,7 @@ class TestStockAnalysis(unittest.TestCase):
         # from Utils.file_utils import read_tickers_from_file_or_web
         # stock_data_container_list = read_tickers_from_file_or_web(_analysis_parameters['stock_data_container_file'],
         #                                                          False,
-        #                                                          _analysis_parameters['list_with_stock_pages_to_read'])
+        #                                                          _analysis_parameters['dict_with_stock_pages_to_read'])
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)
@@ -70,7 +70,7 @@ class TestStockAnalysis(unittest.TestCase):
                                                                  }
                                    }
         stock_data_file = 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\stock_data_container_file.pickle'
-        other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
+        other_params = {'stock_data_container_file': stock_data_file, 'dict_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
@@ -113,7 +113,7 @@ class TestStockAnalysis(unittest.TestCase):
                                                                           'reload_data': True,
                                                                           'ticker_needed': False}}}}
         stock_data_file = 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\stock_data_container_file.pickle'
-        other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
+        other_params = {'stock_data_container_file': stock_data_file, 'dict_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},

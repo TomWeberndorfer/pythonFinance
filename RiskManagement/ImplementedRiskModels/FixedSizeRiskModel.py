@@ -16,7 +16,7 @@ class FixedSizeRiskModel(Abstract_RiskModel):
         sb = res['stop_buy']
         # cut the comma value to avoid position size above the fixes size maximum
         if sb is not 0:
-            num_of_pos_to_buy = int(self._parameter_dict["TargetValue"] / sb)
+            num_of_pos_to_buy = int(self.parameter_dict["TargetValue"] / sb)
             stock_data_container.set_position_size(num_of_pos_to_buy)
             stock_data_container.set_stop_buy(round(sb, 2))
         else:

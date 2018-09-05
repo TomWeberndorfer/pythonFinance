@@ -32,7 +32,7 @@ class TestFixedSizeRiskModel(unittest.TestCase):
         stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [stock_data_container]
 
-        fsr = FixedSizeRiskModel(stock_data_container_list, parameter_dict)
+        fsr = FixedSizeRiskModel(stock_data_container_list=stock_data_container_list, parameter_dict=parameter_dict)
         fsr.determine_risk()
 
         self.assertEqual(np.math.isclose(26.130, stock_data_container_list[0].get_stop_buy(), abs_tol=0.01), True)

@@ -58,11 +58,21 @@ class StrategyFactory(Abstract_StrategyFactory):
         Return a dict with required other parameters and default parameter values.
         :return: dict with required values and default parameters
         """
+
+        # TODO insert:
+        # ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
+        # 'tbody', 'class', 'row-hover', 2, 1, 'de']]
+
         stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
-        other_params = {'stock_data_container_file': stock_data_file, 'list_with_stock_pages_to_read': {
-            'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
-                      'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
-                      'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
+        other_params = {'stock_data_container_file': stock_data_file,
+                        'dict_with_stock_pages_to_read': {
+                            'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
+                                      'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
+                                      'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'},
+                            'DAX': {
+                                'websource_address': "http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/",
+                                'find_name': 'tbody', 'class_name': 'class', 'table_class': 'row-hover',
+                                'ticker_column_to_read': 2, 'name_column_to_read': 1, 'stock_exchange': 'de'}},
                         'RiskModels': {
                             'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
