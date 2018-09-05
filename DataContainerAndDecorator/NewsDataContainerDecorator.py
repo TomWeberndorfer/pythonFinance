@@ -23,7 +23,7 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
         names_and_values_dict['Rank'] = self.get_rank()
 
         names_and_values_dict.update(
-            {"Target Price": self.stock_target_price(), "Stock Current Prize": self.stock_current_prize(),
+            {"Target Price": self.stock_target_price(),
              "Pos. Probability Distribution": self.positive_prob_dist(),
              "Original News": self.original_news()})
         return names_and_values_dict
@@ -36,12 +36,6 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
 
     def original_news(self):
         return self._original_news
-
-    def stock_current_prize(self):
-        return self._stock_current_prize
-
-    def set_stock_current_prize(self, stock_current_prize):
-        self._stock_current_prize = stock_current_prize
 
     def set_prop_dist(self, prob_dist):
         """

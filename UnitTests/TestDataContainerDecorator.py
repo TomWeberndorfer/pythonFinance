@@ -15,7 +15,7 @@ class TestDataContainerDecorator(unittest.TestCase):
     def test_NewsDataContainerDecorator_get_names_and_values__target_price_111__stockname_test1(self):
         container = StockDataContainer("test1", "t1", "en")
         result_container = container.get_names_and_values()
-        self.assertEqual(9, len(result_container))
+        self.assertEqual(10, len(result_container))
 
         news_dec = NewsDataContainerDecorator(container, 111, 0.9, "test news", 99)
         result_news_dec = news_dec.get_names_and_values()

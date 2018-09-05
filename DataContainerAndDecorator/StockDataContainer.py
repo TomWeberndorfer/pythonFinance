@@ -16,7 +16,8 @@ class StockDataContainer(Abstract_DataContainer):
                                  'StrategyAndRecommendation': self.get_recommendation_strategies(),
                                  'Stockname': self.get_stock_name(), "Ticker": self.stock_ticker(),
                                  "Exchange": self.stock_exchange(), 'StopBuy': self.get_stop_buy(),
-                                 'StopLoss': self.get_stop_loss(), 'PositionSize': self.get_position_size(),
+                                 'StopLoss': self.get_stop_loss(), "Stock Current Prize": self.stock_current_prize(),
+                                 'PositionSize': self.get_position_size(),
                                  'RiskModels': self.get_risk_model()}
         return names_and_values_dict
 

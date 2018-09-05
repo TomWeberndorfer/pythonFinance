@@ -39,7 +39,7 @@ class TestStockDataContainer(unittest.TestCase):
     def test_StockDataContainer_get_names_and_values__stockname_test1__ticker_t1__exchange_en(self):
         container = StockDataContainer("test1", "t1", "en")
         result_container = container.get_names_and_values()
-        self.assertEqual(9, len(result_container))
+        self.assertEqual(10, len(result_container))
         self.assertEqual({}, result_container["StrategyAndRecommendation"])
         self.assertEqual("t1", result_container["Ticker"])
         self.assertEqual("test1", result_container["Stockname"])
