@@ -37,9 +37,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         analysis_parameters = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
 
         stock_screener = StrategyFactory()
-        news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list=stock_data_container_list,
-                                                        analysis_parameters=analysis_parameters)
+        news_strategy = stock_screener.prepare("SimplePatternNewsStrategy",
+                                               stock_data_container_list=stock_data_container_list,
+                                               analysis_parameters=analysis_parameters)
 
         results = news_strategy.run_strategy()
 
@@ -82,9 +82,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
 
         analysis_parameters = {'news_threshold': 0.7, 'german_tagger': filepath + 'nltk_german_classifier_data.pickle'}
         stock_screener = StrategyFactory()
-        news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list=stock_data_container_list,
-                                                        analysis_parameters=analysis_parameters)
+        news_strategy = stock_screener.prepare("SimplePatternNewsStrategy",
+                                               stock_data_container_list=stock_data_container_list,
+                                               analysis_parameters=analysis_parameters)
 
         results = news_strategy.run_strategy()
 

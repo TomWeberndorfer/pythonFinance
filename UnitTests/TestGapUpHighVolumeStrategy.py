@@ -40,9 +40,9 @@ class TestGapUpHighVolumeStrategy(unittest.TestCase):
 
         ##################################################
         stock_screener = StrategyFactory()
-        strat = stock_screener.prepare_strategy("GapUpHighVolumeStrategy",
-                                                stock_data_container_list=stock_data_container_list,
-                                                analysis_parameters=analysis_parameters)
+        strat = stock_screener.prepare("GapUpHighVolumeStrategy",
+                                       stock_data_container_list=stock_data_container_list,
+                                       analysis_parameters=analysis_parameters)
         results = strat.run_strategy()
         self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
 
@@ -63,8 +63,8 @@ class TestGapUpHighVolumeStrategy(unittest.TestCase):
 
         ##################################################
         stock_screener = StrategyFactory()
-        strat = stock_screener.prepare_strategy("GapUpHighVolumeStrategy",
-                                                stock_data_container_list=stock_data_container_list,
-                                                analysis_parameters=analysis_parameters)
+        strat = stock_screener.prepare("GapUpHighVolumeStrategy",
+                                       stock_data_container_list=stock_data_container_list,
+                                       analysis_parameters=analysis_parameters)
         results = strat.run_strategy()
         self.assertEqual(len(results), 0)

@@ -47,9 +47,9 @@ class TestStrategyCombination(unittest.TestCase):
         stock_data_container_list = [apple_stock_data_container, apple_stock_data_container_2]
 
         stock_screener = StrategyFactory()
-        news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list=stock_data_container_list,
-                                                        analysis_parameters=parameter_dict)
+        news_strategy = stock_screener.prepare("SimplePatternNewsStrategy",
+                                               stock_data_container_list=stock_data_container_list,
+                                               analysis_parameters=parameter_dict)
 
         news_strategy.run_strategy()
         self.assertEqual("SELL",
@@ -61,9 +61,9 @@ class TestStrategyCombination(unittest.TestCase):
                              name_idx])
 
         # 52 wh strat ####################################
-        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy",
-                                                       stock_data_container_list=stock_data_container_list,
-                                                       analysis_parameters=w52hi_parameter_dict)
+        w52_hi_strat = stock_screener.prepare("W52HighTechnicalStrategy",
+                                              stock_data_container_list=stock_data_container_list,
+                                              analysis_parameters=w52hi_parameter_dict)
         w52_hi_strat.run_strategy()
 
         self.assertEqual(stock_data_container_list[0].get_stock_name(), "Apple Inc.")
@@ -115,15 +115,15 @@ class TestStrategyCombination(unittest.TestCase):
         stock_data_container_list = [apple_stock_data_container]
 
         stock_screener = StrategyFactory()
-        news_strategy = stock_screener.prepare_strategy("SimplePatternNewsStrategy",
-                                                        stock_data_container_list=stock_data_container_list,
-                                                        analysis_parameters=parameter_dict)
+        news_strategy = stock_screener.prepare("SimplePatternNewsStrategy",
+                                               stock_data_container_list=stock_data_container_list,
+                                               analysis_parameters=parameter_dict)
         news_strategy.run_strategy()
 
         # 52 wh strat ####################################
-        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy",
-                                                       stock_data_container_list=stock_data_container_list,
-                                                       analysis_parameters=w52hi_parameter_dict)
+        w52_hi_strat = stock_screener.prepare("W52HighTechnicalStrategy",
+                                              stock_data_container_list=stock_data_container_list,
+                                              analysis_parameters=w52hi_parameter_dict)
         w52_hi_strat.run_strategy()
 
         self.assertEqual(stock_data_container_list[0].get_stock_name(), "Apple Inc.")

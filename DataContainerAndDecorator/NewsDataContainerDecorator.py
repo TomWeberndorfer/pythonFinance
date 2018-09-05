@@ -64,8 +64,5 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
         return base_rank + add_rank
 
     # TODO temp bugfix because risk model is set in decorator instead of the container
-    def get_risk_model(self):
-        return self._shaped_data_container.get_risk_model()
-
-    def set_risk_model(self, risk_model):
-        self._shaped_data_container.set_risk_model(risk_model)
+    # def set_risk_model(self, risk_model):
+    # self._shaped_data_container.set_risk_model(risk_model)

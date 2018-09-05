@@ -1,8 +1,10 @@
 import unittest
 from pandas import DataFrame, np
 
+from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from RiskManagement.ImplementedRiskModels.FixedSizeRiskModel import FixedSizeRiskModel
+from RiskManagement.RiskModelFactory import RiskModelFactory
 from Utils.GlobalVariables import *
 
 # from directory UnitTests to --> root folder with: ..\\..\\
@@ -38,3 +40,66 @@ class TestFixedSizeRiskModel(unittest.TestCase):
         self.assertEqual(np.math.isclose(26.130, stock_data_container_list[0].get_stop_buy(), abs_tol=0.01), True)
         self.assertEqual(np.math.isclose(25.35, stock_data_container_list[0].get_stop_loss(), abs_tol=0.01), True)
         self.assertEqual(np.math.isclose(95, stock_data_container_list[0].get_position_size(), abs_tol=0.01), True)
+
+    def test_FixedSizeRiskModel_with_factory_and_StockDataContainer(self):
+
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
+                ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
+                ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
+                ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
+                ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
+                ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+                ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
+                ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
+                ('2016-10-12', 23.16, 26, 23.11, 23.18, 46000)]
+
+        df = DataFrame.from_records(data, columns=labels)
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container.set_historical_stock_data(df)
+        stock_data_container_list = [stock_data_container]
+
+        rm_factory = RiskModelFactory()
+        parameter_dict = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
+        fsr = rm_factory.prepare("FixedSizeRiskModel", stock_data_container_list=stock_data_container_list,
+                                 parameter_dict=parameter_dict)
+        fsr.determine_risk()
+
+        self.assertEqual(np.math.isclose(26.130, stock_data_container_list[0].get_stop_buy(), abs_tol=0.01), True)
+        self.assertEqual(np.math.isclose(25.35, stock_data_container_list[0].get_stop_loss(), abs_tol=0.01), True)
+        self.assertEqual(np.math.isclose(95, stock_data_container_list[0].get_position_size(), abs_tol=0.01), True)
+        self.assertEqual("FixedSizeRiskModel", stock_data_container_list[0].get_risk_model())
+
+    def test_FixedSizeRiskModel_with_factory_and_Decorator(self):
+
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
+                ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
+                ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
+                ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
+                ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
+                ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+                ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
+                ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
+                ('2016-10-12', 23.16, 26, 23.11, 23.18, 46000)]
+
+        df = DataFrame.from_records(data, columns=labels)
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container.set_historical_stock_data(df)
+        news_dec = NewsDataContainerDecorator(stock_data_container, 111, 0.9, "test news", 99)
+        stock_data_container_list = [news_dec]
+
+        rm_factory = RiskModelFactory()
+        parameter_dict = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
+        fsr = rm_factory.prepare("FixedSizeRiskModel", stock_data_container_list=stock_data_container_list,
+                                 parameter_dict=parameter_dict)
+        fsr.determine_risk()
+
+        self.assertEqual(np.math.isclose(26.130, stock_data_container_list[0].get_stop_buy(), abs_tol=0.01), True)
+        self.assertEqual(np.math.isclose(25.35, stock_data_container_list[0].get_stop_loss(), abs_tol=0.01), True)
+        self.assertEqual(np.math.isclose(95, stock_data_container_list[0].get_position_size(), abs_tol=0.01), True)
+        self.assertEqual("FixedSizeRiskModel", stock_data_container_list[0].get_risk_model())

@@ -43,9 +43,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         ##################################################
         # 52 w strategy
         stock_screener = StrategyFactory()
-        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy",
-                                                       stock_data_container_list=stock_data_container_list,
-                                                       analysis_parameters=w52hi_parameter_dict)
+        w52_hi_strat = stock_screener.prepare("W52HighTechnicalStrategy",
+                                              stock_data_container_list=stock_data_container_list,
+                                              analysis_parameters=w52hi_parameter_dict)
         results = w52_hi_strat.run_strategy()
         self.assertGreater(len(results), 0)
         self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
@@ -444,8 +444,8 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         # 52 w strategy
         w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
         stock_screener = StrategyFactory()
-        w52_hi_strat = stock_screener.prepare_strategy("W52HighTechnicalStrategy",
-                                                       stock_data_container_list=stock_data_container_list,
-                                                       analysis_parameters=w52hi_parameter_dict)
+        w52_hi_strat = stock_screener.prepare("W52HighTechnicalStrategy",
+                                              stock_data_container_list=stock_data_container_list,
+                                              analysis_parameters=w52hi_parameter_dict)
         results = w52_hi_strat.run_strategy()
         self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())

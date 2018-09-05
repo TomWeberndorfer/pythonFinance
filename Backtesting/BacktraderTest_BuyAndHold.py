@@ -56,7 +56,6 @@ class TestStrategy_1(bt.Strategy):
         self.highest_high = 0  # max (self.datahi)
         self.buyCnt = 0
 
-
     def notify_trade(self, trade):
         date = self.data.datetime.datetime()
         if trade.isclosed:
@@ -82,9 +81,9 @@ class TestStrategy_1(bt.Strategy):
         stock_data_container.set_historical_stock_data(df1)
         stock_data_container_list = [stock_data_container]
 
-        w52_hi_strat = self.stock_screener.prepare_strategy("W52HighTechnicalStrategy",
-                                                            stock_data_container_list=stock_data_container_list,
-                                                            analysis_parameters=self.w52hi_parameter_dict)
+        w52_hi_strat = self.stock_screener.prepare("W52HighTechnicalStrategy",
+                                                   stock_data_container_list=stock_data_container_list,
+                                                   analysis_parameters=self.w52hi_parameter_dict)
 
         results = w52_hi_strat.run_strategy()
 

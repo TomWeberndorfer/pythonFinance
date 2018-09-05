@@ -1,30 +1,16 @@
 import traceback
-
-from Utils.GlobalVariables import *
-from Strategies.Abstract_StrategyFactory import Abstract_StrategyFactory
 from pathlib import Path
-from glob import glob
-from Utils.CommonUtils import CommonUtils
+
+from Utils.Abstract_Factory import Abstract_Factory
+from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
 
 
-class StrategyFactory(Abstract_StrategyFactory):
+class StrategyFactory(Abstract_Factory):
 
-    @staticmethod
-    def get_implemented_strategies_dict():
+    def __init__(self):
         path = Path(os.path.dirname(os.path.abspath(__file__)))
-        strategy_dict = CommonUtils.get_implemented_items_dict(path, './*/**/**/*.py', "strat")
-        return strategy_dict
-
-    def _create_strategy(self, strategy_to_create, **kwargs):
-        strategy_dict = StrategyFactory.get_implemented_strategies_dict()
-        if strategy_to_create in strategy_dict:
-            # get the class from class dict and create the concrete object than
-            strat_class = strategy_dict[strategy_to_create]
-            strategy = strat_class(**kwargs)
-            return strategy
-        else:
-            raise NotImplementedError("Strategy is not implemented: " + str(strategy_to_create))
+        super().__init__(path, './*/**/**/*.py', 'strat')
 
     @staticmethod
     def get_required_parameters_with_default_parameters():
@@ -33,7 +19,8 @@ class StrategyFactory(Abstract_StrategyFactory):
         :return: dict with required values and default parameters
         """
         all_strategy_parameters_dict = {}
-        strategies_dict = StrategyFactory.get_implemented_strategies_dict()
+        strat_factory = StrategyFactory()
+        strategies_dict = strat_factory.get_implemented_classes()
 
         for strat_class_key in list(strategies_dict.keys()):
             try:

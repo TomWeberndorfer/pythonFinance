@@ -3,7 +3,7 @@ from abc import abstractmethod
 from DataContainerAndDecorator.Abstract_DataContainer import Abstract_DataContainer
 
 
-class Abstract_DataContainerDecorator(Abstract_DataContainer):
+class Abstract_DataContainerDecorator:
 
     def __init__(self, shaped_data_container):
         self._shaped_data_container = shaped_data_container

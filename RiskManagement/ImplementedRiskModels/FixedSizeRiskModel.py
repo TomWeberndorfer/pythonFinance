@@ -29,3 +29,4 @@ class FixedSizeRiskModel(Abstract_RiskModel):
             stock_data_container.set_stop_loss(0)
 
         stock_data_container.set_risk_model("FixedSizeRiskModel")
+        assert stock_data_container.get_risk_model() in "FixedSizeRiskModel"

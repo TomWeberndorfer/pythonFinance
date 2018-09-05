@@ -53,7 +53,7 @@ class BacktraderStrategyWrapper(bt.Strategy):
         self.stock_screener = StrategyFactory()
 
         # the parameter dict contains the strategy which is build with the string
-        self.strategy_instance = self.stock_screener.prepare_strategy(self.strategy_to_test, **kwargs)
+        self.strategy_instance = self.stock_screener.prepare(self.strategy_to_test, **kwargs)
 
         # only one risk model can be used, the first risk model to be taken
         risk_model = self.risk_model
