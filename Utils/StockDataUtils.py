@@ -92,7 +92,6 @@ def convert_backtrader_to_dataframe(data):
     for key, value in GlobalVariables.get_stock_data_labels_dict().items():
         cols.append(value)
     lst = []
-    cols = ['open', 'high', 'low', 'close', 'volume']
 
     # the data starts at [0] with the current value
     # and goes negative for older values
@@ -100,7 +99,7 @@ def convert_backtrader_to_dataframe(data):
     while i <= 0:
         try:
             lst.append([
-                # data.datetime[i],
+                "-",
                 float(data.open[i]),
                 float(data.high[i]),
                 float(data.low[i]),

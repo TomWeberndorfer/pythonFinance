@@ -473,7 +473,7 @@ def init(top, gui, *args, **kwargs):
         if "," in multi_file_path_str:
             multi_file_path = multi_file_path_str.split(',')
         else:
-            multi_file_path = multi_file_path_str
+            multi_file_path = [multi_file_path_str]
         # multi_file_path = ast.literal_eval(multi_file_path_str)
         app.load_backtesting_stocks_from_file(multi_file_path)
 

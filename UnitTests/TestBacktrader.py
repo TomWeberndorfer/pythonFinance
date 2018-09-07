@@ -107,7 +107,7 @@ class TestBacktrader(unittest.TestCase):
             ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
             ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),  # --> buy
             ('2016-10-11', 23.62, 23.74, 23.41, 23.41, 45000),
-            ('2016-10-12', 26.16, 27, 260, 26, 46000),
+            ('2016-10-12', 26.16, 27, 26.0, 26, 46000),
             ('2016-10-13', 23.52, 23.64, 23.18, 23.238, 32000),  # --> sell
             ('2016-10-14', 23.52, 23.64, 23.18, 23.2, 33000),
             ('2016-10-15', 18.7, 20, 17, 18.7, 33000),
@@ -149,6 +149,44 @@ class TestBacktrader(unittest.TestCase):
 
         self.assertNotEqual(None, backtesting_result_instance)
         self.assertNotEqual(backtesting_parameters['initial_cash'], pnl)
+
+    def test_run_test2(self):
+        tbt = BacktraderWrapper()
+        data_list = []
+        datafile_path = GlobalVariables.get_data_files_path()
+
+        data = bt.feeds.GenericCSVData(
+            dataname=datafile_path + 'NEWBacktesting.csv',
+            nullvalue=0.0,
+            dtformat=GlobalVariables.get_stock_data_dtformat(),
+            datetime=0,
+            open=1, high=2, low=3,
+            close=4, volume=5,
+            openinterest=-1
+        )
+        data_list.append(data)
+        analyzers = [btanalyzer.AnnualReturn, btanalyzer.Calmar, btanalyzer.DrawDown, btanalyzer.TimeDrawDown,
+                     btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
+                     btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
+        strategy_to_test = "W52HighTechnicalStrategy"
+        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
+                                  'trade_commission_percent': 0}
+        analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
+                               'within52w_high_fact': 0.99}
+
+        risk_model = {'FixedSizeRiskModel': {'OrderTarget': 'order_target_size', 'TargetValue': 100}}
+
+        backtesting_result_instance, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters,
+                                                        analysis_parameters,
+                                                        risk_model, analyzers)
+
+        portvalue = round(backtesting_result_instance.broker.getvalue(), 2)
+        pnl = round(portvalue - backtesting_parameters['initial_cash'], 2)
+
+        self.assertNotEqual(None, backtesting_result_instance)
+        self.assertEqual(29969.0, portvalue)
+        self.assertEqual(-31, pnl)
+
 
     def test_GenericBacktraderCsvNewsData(self):
         tbt = BacktraderWrapper()
