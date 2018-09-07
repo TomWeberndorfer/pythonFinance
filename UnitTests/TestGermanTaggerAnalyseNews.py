@@ -16,20 +16,18 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
     def test_analyse_single_news(self):
         rwe_cont = NewsDataContainerDecorator(StockDataContainer("RWE AG ST O.N.", "RWE", "de"), 0, 0,
-                                              "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf", 0)
+                                              "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf")
         rwe_cont2 = NewsDataContainerDecorator(StockDataContainer("RWE AG ST O.N.", "RWE", "de"), 0, 0,
-                                               "19.03.2018 um 08:58, ANALYSE-FLASH: HSBC senkt RWE auf 'Reduce' - Ziel 18 Euro",
-                                               0)
+                                               "19.03.2018 um 08:58, ANALYSE-FLASH: HSBC senkt RWE auf 'Reduce' - Ziel 18 Euro")
         rhm = StockDataContainer("RHEINMETALL AG", "RHM", "de")
         bei = StockDataContainer("BEIERSDORF AG O.N.", "BEI", "de")
         ads = StockDataContainer("ADIDAS AG NA O.N.", "ADS", "de")
         aapl = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", "en"), 0, 0,
-                                          "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf", 0)
+                                          "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf")
         aapl2 = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", "en"), 0, 0,
-                                           "ANALYSE-FLASH: Independent Research senkt Ziel für Apple auf 118 Euro", 0)
+                                           "ANALYSE-FLASH: Independent Research senkt Ziel für Apple auf 118 Euro")
         aapl3 = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", "en"), 0, 0,
-                                           "05.03.2018, ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125 Euro",
-                                           0)
+                                           "05.03.2018, ANALYSE-FLASH: NordLB hebt Apple auf 'Kaufen' - Ziel 125 Euro")
         acx = StockDataContainer("BET-AT-HOME.COM AG O.N.", "ACX", "de")
         rhhby = StockDataContainer("Roche Holding AG", "RHHBY", "")
         lor = StockDataContainer("LOrealfuture", "LORFK8.EX", "")
@@ -70,13 +68,11 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
     def test_analyse_single_news_CDAX_companies(self):
         rhm = NewsDataContainerDecorator(StockDataContainer("RHEINMETALL AG", "RHM", "de"), 0, 0,
-                                         "05.03.2018, ANALYSE-FLASH: NordLB hebt Rheinmetall auf 'Kaufen' - Ziel 125 Euro",
-                                         0)
+                                         "05.03.2018, ANALYSE-FLASH: NordLB hebt Rheinmetall auf 'Kaufen' - Ziel 125 Euro")
         bei = NewsDataContainerDecorator(StockDataContainer("BEIERSDORF AG O.N.", "BEI", "de"), 0, 0,
-                                         "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118 Euro",
-                                         0)
+                                         "ANALYSE-FLASH: Independent Research senkt Ziel für Beiersdorf auf 118 Euro")
         ads = NewsDataContainerDecorator(StockDataContainer("ADIDAS AG NA O.N.", "ADS", "de"), 0, 0,
-                                         "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf", 0)
+                                         "ANALYSE-FLASH: Credit Suisse nimmt Adidas mit 'Underperform' wieder auf")
         # acx = NewsDataContainerDecorator(StockDataContainer("BET-AT-HOME.COM AG O.N.", "ACX", "de"), 0, 0,
         # , 0
         # rhhby = NewsDataContainerDecorator(StockDataContainer("Roche Holding AG", "RHHBY", "")
@@ -236,8 +232,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
 
         df = DataFrame.from_records(data, columns=labels)
         rwe_container = NewsDataContainerDecorator(StockDataContainer("RWE AG ST O.N.", "RWE", "de"), 0, 0,
-                                                   "20.07.2018 um 08:02, ANALYSE-FLASH: Morgan Stanley hebt RWE auf \\'Overweight\\' und Ziel auf 26 Euro",
-                                                   0)
+                                                   "20.07.2018 um 08:02, ANALYSE-FLASH: Morgan Stanley hebt RWE auf \\'Overweight\\' und Ziel auf 26 Euro")
         rwe_container.set_historical_stock_data(df)
 
         stock_data_container_list = [rwe_container,

@@ -18,9 +18,6 @@ class Abstract_RiskModel(Abstract_SimpleMultithreading):
         if len(self.stock_data_container_list) > 0:
             self.map_list(self.stock_data_container_list)
 
-        logger.info("Determining risk finished.")
-        # TODO return self.result_list
-
     @abstractmethod
     def _method_to_execute(self, argument):
         """

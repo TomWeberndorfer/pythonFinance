@@ -92,8 +92,7 @@ class TestStockDataContainer(unittest.TestCase):
 
         df = DataFrame.from_records(data, columns=labels)
         stock_data_container = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
-                                                          "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Outperform' wieder auf, BUY",
-                                                          0)
+                                                          "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Outperform' wieder auf, BUY")
         stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [stock_data_container]
         ##################################################

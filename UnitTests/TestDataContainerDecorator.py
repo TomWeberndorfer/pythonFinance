@@ -17,7 +17,7 @@ class TestDataContainerDecorator(unittest.TestCase):
         result_container = container.get_names_and_values()
         self.assertEqual(10, len(result_container))
 
-        news_dec = NewsDataContainerDecorator(container, 111, 0.9, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, 0.9, "test news")
         result_news_dec = news_dec.get_names_and_values()
         self.assertEqual(13, len(result_news_dec))
         self.assertEqual({}, result_news_dec["StrategyAndRecommendation"])
@@ -27,7 +27,7 @@ class TestDataContainerDecorator(unittest.TestCase):
 
     def test_NewsDataContainerDecorator_update_used_strategy_and_recommendation(self):
         container = StockDataContainer("test1", "t1", "en")
-        news_dec = NewsDataContainerDecorator(container, 111, 0.9, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, 0.9, "test news")
         news_dec.update_used_strategy_and_recommendation("TestStrategy", "BUY")
         res_dict = news_dec.get_recommendation_strategies()
         self.assertEqual(1, len(res_dict))
@@ -64,32 +64,32 @@ class TestDataContainerDecorator(unittest.TestCase):
     def test_NewsDataContainerDecorator_test_rank(self):
         container = StockDataContainer("test1", "t1", "en")
         pos_prob_dist = 0
-        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news")
         news_dec.update_used_strategy_and_recommendation("TestStrategy", "SELL")
         self.assertEqual(-3, news_dec.get_rank())
 
         pos_prob_dist = 0.49
-        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news")
         news_dec.update_used_strategy_and_recommendation("TestStrategy", "BUY")
         self.assertEqual(0, news_dec.get_rank())
 
         pos_prob_dist = 0.51
-        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news")
         news_dec.update_used_strategy_and_recommendation("TestStrategy", "BUY")
         self.assertEqual(2, news_dec.get_rank())
 
         pos_prob_dist = 0.76
-        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news")
         news_dec.update_used_strategy_and_recommendation("TestStrategy", "BUY")
         self.assertEqual(3, news_dec.get_rank())
 
         pos_prob_dist = 1
-        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news")
         news_dec.update_used_strategy_and_recommendation("TestStrategy", "BUY")
         self.assertEqual(3, news_dec.get_rank())
 
         pos_prob_dist = 1
-        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, pos_prob_dist, "test news")
         news_dec.update_used_strategy_and_recommendation("TestStrategy", "SELL")
         self.assertEqual(1, news_dec.get_rank())
 
@@ -97,7 +97,7 @@ class TestDataContainerDecorator(unittest.TestCase):
         container = StockDataContainer("test1", "t1", "en")
         container.set_stop_buy(10)
         self.assertEqual(10, container.get_stop_buy())
-        news_dec = NewsDataContainerDecorator(container, 111, 1, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, 1, "test news")
         news_dec.set_stop_buy(20)
         self.assertEqual(20, news_dec.get_stop_buy())
 
@@ -105,7 +105,7 @@ class TestDataContainerDecorator(unittest.TestCase):
         container = StockDataContainer("test1", "t1", "en")
         container.set_stop_loss(10)
         self.assertEqual(10, container.get_stop_loss())
-        news_dec = NewsDataContainerDecorator(container, 111, 1, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, 1, "test news")
         news_dec.set_stop_loss(20)
         self.assertEqual(20, news_dec.get_stop_loss())
 
@@ -113,7 +113,7 @@ class TestDataContainerDecorator(unittest.TestCase):
         container = StockDataContainer("test1", "t1", "en")
         container.set_position_size(100)
         self.assertEqual(100, container.get_position_size())
-        news_dec = NewsDataContainerDecorator(container, 111, 1, "test news", 99)
+        news_dec = NewsDataContainerDecorator(container, 111, 1, "test news")
         news_dec.set_position_size(20)
         self.assertEqual(20, news_dec.get_position_size())
 
@@ -134,7 +134,7 @@ class TestDataContainerDecorator(unittest.TestCase):
             des_val = data[0][col]
             self.assertEqual(des_val, cur_val)
 
-        news_dec = NewsDataContainerDecorator(apple_stock_data_container, 111, 1, "test news", 99)
+        news_dec = NewsDataContainerDecorator(apple_stock_data_container, 111, 1, "test news")
 
         data_2 = [('2017-11-11', 11, 22, 33, 44, 55)]
         df_2 = DataFrame.from_records(data_2, columns=labels)

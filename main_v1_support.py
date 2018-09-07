@@ -208,13 +208,10 @@ class MvcController:
 
             # get the risk model value without key
             risk_models = self.model.analysis_parameters.get()['OtherParameters']['RiskModels']
-            first_rm_key = list(risk_models.keys())[0]
-            risk_model = risk_models[first_rm_key]
-            # test only one strategy --> [0]
             backtesting_result_instance, backtest_result = tbt.run_test(selected_backtesting_stocks_data,
                                                                         strategy_selections[0],
                                                                         backtesting_parameters, analysis_params,
-                                                                        risk_model,
+                                                                        risk_models,
                                                                         data_backtesting_analyzers)
 
             insert_text_into_gui(self.view.Scrolledtext_analyzer_results, "", delete=True, start=1.0)
@@ -248,7 +245,6 @@ class MvcController:
             logger.error("Exception while backtesting: " + str(e) + "\n" + str(traceback.format_exc()))
 
         self.model.is_thread_running.set(False)
-        logger.info("Backtesting finished.")
 
     def accept_parameters_from_text(self, params_dict, required_parameters):
         """

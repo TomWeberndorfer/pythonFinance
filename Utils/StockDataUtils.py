@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
+from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import GlobalVariables
 
 
@@ -112,6 +114,41 @@ def convert_backtrader_to_dataframe(data):
     df1 = pd.DataFrame(lst, columns=cols)
 
     return df1
+
+
+def convert_backtrader_to_asta_data(hist_data, news_data_dict, date_time, stock_data_container_list):
+    """
+    Converts the backtrader nect-data into asta stock data container format
+    :param hist_data: historical dat in backtrader format
+    :param news_data_dict: dict with all news data
+    :param date_time: current date to look up in news
+    :param stock_data_container_list: list to insert result
+    :return: - return as ref of the data list
+    """
+    stock_name = hist_data._name
+    dataname = hist_data._dataname
+    curr_news = ""
+    # add the news text because backtrader does not support news
+    # data from pandas do not have a name --> not add news
+    if isinstance(dataname, str):
+        news_data = news_data_dict[dataname]
+        if hasattr(news_data, "NewsText") and hasattr(news_data, "Date"):
+            for currEntry in range(0, len(news_data.Date)):
+                if str(date_time) in news_data.Date[currEntry]:
+                    try:
+                        curr_news = str(news_data.NewsText[currEntry])
+                    except Exception as e:
+                        pass
+                    break
+
+    # TODO den container anders --> ned so benennen
+    # convert backtrader format to asta-format
+    df1 = convert_backtrader_to_dataframe(hist_data)
+    # ticker not implemented, but not needed
+    stock_data_container = StockDataContainer(stock_name, "", "")
+    stock_data_container.set_historical_stock_data(df1)
+    news_dec = NewsDataContainerDecorator(stock_data_container, 0, 0, curr_news)
+    stock_data_container_list.append(news_dec)
 
 
 def value_at_risk(df_close, portfolio_value, conv=0.99):

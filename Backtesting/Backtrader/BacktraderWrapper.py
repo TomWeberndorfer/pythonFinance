@@ -11,7 +11,7 @@ from Utils.GlobalVariables import GlobalVariables
 
 
 class BacktraderWrapper(Abstract_Backtesting):
-    def run_test(self, data_file_list, strategy_to_test, backtesting_parameters, analysis_parameters, risk_model,
+    def run_test(self, data_file_list, strategy_to_test, backtesting_parameters, analysis_parameters, risk_models,
                  analyzers=[], **kwargs):
         """
         Run method for the wrapper which wrap the ASTA-Framework structure to backtrader structure.
@@ -20,7 +20,7 @@ class BacktraderWrapper(Abstract_Backtesting):
         :param data_file_list: a list with files to read as string
         :param backtesting_parameters: Dict with parameters for testing, the Key "strategy_to_test" contains the strategy class to test.
         :param analyzers: List with class of btanalyzer, ex.: [btanalyzer.TradeAnalyzer]
-        :param risk_model: other testing relevant parameters as dict
+        :param risk_models: other testing relevant parameters as dict
         :return: backtesting_result_instance final instance, backtrader test result
         """
         cerebro = bt.Cerebro()
@@ -29,7 +29,7 @@ class BacktraderWrapper(Abstract_Backtesting):
         # backtesting_result_instance.addstrategy(BacktraderStrategyWrapper, all_parameter, news_data)
         cerebro.addstrategy(BacktraderStrategyWrapper, strategy_to_test=strategy_to_test,
                             backtesting_parameters=backtesting_parameters,
-                            analysis_parameters=analysis_parameters, risk_model=risk_model,
+                            analysis_parameters=analysis_parameters, risk_model=risk_models, status_update=False,
                             **kwargs)
 
         # load the data from given file list and add it to backtrader instance
@@ -66,6 +66,7 @@ class BacktraderWrapper(Abstract_Backtesting):
         cerebro.broker.setcommission(commission=backtesting_parameters['trade_commission_percent'])
         # Print out the starting conditions
         logger.info('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+        logger.info('--------------------')
 
         backtest_result = cerebro.run()
         analyzers = backtest_result[0].analyzers

@@ -84,7 +84,7 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
 
                     news_dec = NewsDataContainerDecorator(container,
                                                           name_ticker_exchange_target_prize.stock_target_price(),
-                                                          0, prep_news, 0)
+                                                          0, prep_news)
 
                     self.stock_data_container_list.append(news_dec)
 

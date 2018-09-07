@@ -24,9 +24,9 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         df = DataFrame.from_records(data, columns=labels)
 
         aapl = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", "en"), 0, 0,
-                                          "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf", 0)
+                                          "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf")
         rwe = NewsDataContainerDecorator(StockDataContainer("RWE AG ST O.N.", "RWE", ""), 0, 0,
-                                         "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf", 0)
+                                         "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf")
         aapl.set_historical_stock_data(df)
         rwe.set_historical_stock_data(df)
 
@@ -66,17 +66,14 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         df = DataFrame.from_records(data, columns=labels)
 
         apple_stock_data_container = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
-                                                                "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
-                                                                0)
+                                                                "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf")
         apple_stock_data_container2 = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
-                                                                 "ANALYSE-FLASH: Sparkasse nimmt Apple mit Buy wieder auf",
-                                                                 0)
+                                                                 "ANALYSE-FLASH: Sparkasse nimmt Apple mit Buy wieder auf")
 
         apple_stock_data_container.set_historical_stock_data(df)
         apple_stock_data_container2.set_historical_stock_data(df)
         rwe_stock_data_container = NewsDataContainerDecorator(StockDataContainer("RWE AG ST O.N.", "RWE", ""), 0, 0,
-                                                              "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf",
-                                                              0)
+                                                              "ANALYSE-FLASH: Credit Suisse nimmt RWE mit 'Outperform' wieder auf")
         rwe_stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [apple_stock_data_container, rwe_stock_data_container]
 

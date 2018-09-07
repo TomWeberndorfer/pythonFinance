@@ -37,11 +37,9 @@ class TestStrategyCombination(unittest.TestCase):
         df = DataFrame.from_records(data, columns=labels)
 
         apple_stock_data_container = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
-                                                                "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
-                                                                0)
+                                                                "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf")
         apple_stock_data_container_2 = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
-                                                                  "ANALYSE-FLASH: Sparkasse hebt Apple auf 'Buy' und Ziel auf 97 Euro",
-                                                                  0)
+                                                                  "ANALYSE-FLASH: Sparkasse hebt Apple auf 'Buy' und Ziel auf 97 Euro")
         apple_stock_data_container.set_historical_stock_data(df)
         apple_stock_data_container_2.set_historical_stock_data(df)
         stock_data_container_list = [apple_stock_data_container, apple_stock_data_container_2]
@@ -109,8 +107,7 @@ class TestStrategyCombination(unittest.TestCase):
         df = DataFrame.from_records(data, columns=labels)
 
         apple_stock_data_container = NewsDataContainerDecorator(StockDataContainer("Apple Inc.", "AAPL", ""), 0, 0,
-                                                                "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf",
-                                                                0)
+                                                                "ANALYSE-FLASH: Credit Suisse nimmt Apple mit 'Underperform' wieder auf")
         apple_stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [apple_stock_data_container]
 

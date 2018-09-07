@@ -6,17 +6,17 @@ import backtrader as bt
 import os
 import pandas as pd
 from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
+from RiskManagement.RiskModelFactory import RiskModelFactory
 from Utils.Logger_Instance import logger
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
-from Utils.StockDataUtils import convert_backtrader_to_dataframe
+from Utils.StockDataUtils import convert_backtrader_to_dataframe, convert_backtrader_to_asta_data
 
 ####################################
 # https://www.backtrader.com/docu/indautoref.html
 #
 ####################################
-# Create a Stratey
-buy_data = []
+# Create a Straty
 
 
 class BacktraderStrategyWrapper(bt.Strategy):
@@ -56,12 +56,9 @@ class BacktraderStrategyWrapper(bt.Strategy):
         self.strategy_instance = self.stock_screener.prepare(self.strategy_to_test, **kwargs)
 
         # only one risk model can be used, the first risk model to be taken
-        risk_model = self.risk_model
-        order_target = risk_model['OrderTarget']
-        self.order_target_method = self._get_order_target(order_target)
-
-        self.order_parameter_value = risk_model['TargetValue']
-
+        first_rm_key = list(self.risk_model.keys())[0]
+        self.curr_risk_model = self.risk_model[first_rm_key]
+        self.order_target_method = self._get_order_target(self.curr_risk_model['OrderTarget'])
         self.news_data_dict = {}
 
         # add the news text because backtrader does not support news
@@ -77,70 +74,28 @@ class BacktraderStrategyWrapper(bt.Strategy):
         date = self.data.datetime.datetime().date()
 
         if order.status == order.Accepted:
-            logger.info('--------- NOTIFY ORDER ---------')
-            logger.info('{} Order Accepted'.format(order.info['name']))
-            logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
-                date,
-                order.status,
-                order.ref,
-                order.size,
-                'NA' if not order.price else round(order.price, 5),
-                'NA' if not order.price else round(order.price * order.size, 5)
-            ))
-            buy_data.append((date, order.price))
+            self._log_order(date, order, "Accepted")
 
         if order.status == order.Completed:
-            logger.info('--------- NOTIFY ORDER ---------')
-            logger.info('{} Order Completed'.format(order.info['name']))
-            logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
-                date,
-                order.status,
-                order.ref,
-                order.size,
-                'NA' if not order.price else round(order.price, 5),
-                'NA' if not order.price else round(order.price * order.size, 5)
-            ))
-            logger.info('Created: {} Price: {} Size: {}'.format(bt.num2date(order.created.dt), order.created.price,
-                                                                order.created.size))
-            logger.info('----------')
+            self._log_order(date, order, "Completed")
 
         if order.status == order.Canceled:
-            logger.info('--------- NOTIFY ORDER ---------')
-            logger.info('{} Order Canceled'.format(order.info['name']))
-            logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
-                date,
-                order.status,
-                order.ref,
-                order.size,
-                'NA' if not order.price else round(order.price, 5),
-                'NA' if not order.price else round(order.price * order.size, 5)
-            ))
+            self._log_order(date, order, "Canceled")
 
         if order.status == order.Rejected:
-            logger.info('--------- NOTIFY ORDER ---------')
-            logger.info('WARNING! {} Order Rejected'.format(order.info['name']))
-            logger.info('{}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
-                date,
-                order.status,
-                order.ref,
-                order.size,
-                'NA' if not order.price else round(order.price, 5),
-                'NA' if not order.price else round(order.price * order.size, 5)
-            ))
-            logger.info('----------')
+            self._log_order(date, order, "Rejected")
 
     def notify_trade(self, trade):
         date = self.data.datetime.datetime()
         if trade.isclosed:
             logger.info('---------  NOTIFY TRADE  ---------')
-            logger.info('{}, Close Price: {}, Profit, Gross {}, Net {}'.format(
+            logger.info('   {}, Close Price: {}, Profit, Gross {}, Net {}'.format(
                 date,
                 trade.price,
                 trade.data._name,
                 round(trade.pnl, 2),
                 round(trade.pnlcomm, 2)))
             logger.info('----------')
-            buy_data.append((date, trade.price))
 
     ###########
 
@@ -151,55 +106,56 @@ class BacktraderStrategyWrapper(bt.Strategy):
         :return:
         """
         # TODO https://backtest-rookies.com/2017/08/22/backtrader-multiple-data-feeds-indicators/
-        stock_data_container_list = []
 
         for i, hist_data in enumerate(self.datas):
+            stock_data_container_list = []
             date_time = self.datetime.date()
             stock_name = hist_data._name
-            dataname = hist_data._dataname
 
-            curr_news = ""
+            self.log('Close: ' + str(
+                hist_data.close[0]) + ", volume: " + str(hist_data.volume[0]) + ', Datasource: ' + str(stock_name))
+
             # TODO print anything to indicate a news in gui
             # TODO https://www.backtrader.com/docu/extending-a-datafeed.html
             # TODO ex: btind.SMA(self.data.pe, period=1, subplot=False) for data of classification
 
-            # add the news text because backtrader does not support news
-            # data from pandas do not have a name --> not add news
-            if isinstance(dataname, str):
-                news_data = self.news_data_dict[dataname]
-                if hasattr(news_data, "NewsText") and hasattr(news_data, "Date"):
-                    for currEntry in range(0, len(news_data.Date)):
-                        if str(date_time) in news_data.Date[currEntry]:
-                            try:
-                                curr_news = str(news_data.NewsText[currEntry])
-                            except Exception as e:
-                                pass
-                            break
-
-            long_stop = hist_data.close[0] - 5  # Will not be hit
-            # Simply log the closing price of the series from the reference
-            self.log('Time:' + str(date_time) + ', Data:' + str(stock_name) + ', Close: ' + str(
-                hist_data.close[0]) + ", volume: " + str(hist_data.volume[0]))
-
-            # TODO den container anders --> ned so benennen
-            df1 = convert_backtrader_to_dataframe(hist_data)
-            # ticker not implemented, but not needed
-            stock_data_container = StockDataContainer(stock_name, "", "")
-            stock_data_container.set_historical_stock_data(df1)
-            news_dec = NewsDataContainerDecorator(stock_data_container, 0, 0, curr_news, 0)
-            stock_data_container_list.append(news_dec)
-            results = self.strategy_instance.run_strategy(stock_data_container_list)
+            convert_backtrader_to_asta_data(hist_data, self.news_data_dict, date_time, stock_data_container_list)
+            # test only one strategy, first one --> [0]
+            self.strategy_instance.run_strategy(stock_data_container_list)
 
             pos = self.getposition(hist_data).size
             # Check if we are in the market
             if not pos:
-                if len(results) > 0:
-                    self.buy_price = hist_data.close[0]
-                    buy_ord = self.order_target_method(data=hist_data, target=self.order_parameter_value)
-                    buy_ord.addinfo(name="Long Market Entry")
-                    stop_size = buy_ord.size - abs(self.position.size)
-                    self.sl_ord = self.sell(data=hist_data, size=stop_size, exectype=bt.Order.Stop, price=long_stop)
-                    self.sl_ord.addinfo(name='Long Stop Loss')
+                # TODO insert sell for short strategies too
+                # check if buy
+                try:
+                    if len(stock_data_container_list) > 0 and 'buy' in \
+                            stock_data_container_list[0].get_recommendation_strategies()[self.strategy_to_test][
+                                0].lower():
+                        # test only first risk model --> [0]
+                        rm_factory = RiskModelFactory()
+                        first_rm_key = list(self.risk_model.keys())[0]
+                        risk_model = self.risk_model[first_rm_key]
+                        fsr = rm_factory.prepare(first_rm_key, stock_data_container_list=stock_data_container_list,
+                                                 parameter_dict=risk_model)
+                        fsr.determine_risk()
+
+                        # TODO checken ob da ned zwei stop order draus gemacht werden
+                        # --> TODO order long - stop bearbeiten
+                        # einstiegskurs nicht nach strategie sondern gleich
+
+                        # buy the stock
+                        self.buy_price = hist_data.close[0]
+                        buy_ord = self.order_target_method(data=hist_data, target=self.curr_risk_model['TargetValue'])
+                        buy_ord.addinfo(name="Long Market Entry")
+
+                        # get the stop loss value for risk avoiding
+                        long_stop = stock_data_container_list[0].get_stop_loss()
+                        stop_size = buy_ord.size - abs(self.position.size)
+                        self.sl_ord = self.sell(data=hist_data, size=stop_size, exectype=bt.Order.Stop, price=long_stop)
+                        self.sl_ord.addinfo(name='Long Stop Loss')
+                except Exception as e:
+                    print(e)
 
     def _get_order_target(self, order_type_str):
         """
@@ -222,3 +178,15 @@ class BacktraderStrategyWrapper(bt.Strategy):
             raise NotImplementedError("Order target " + str(order_type_str) + " is not implemented!")
 
         return order_target
+
+    def _log_order(self, date, order, text):
+        logger.info('---------  NOTIFY ORDER:')
+        logger.info(('  {} Order ' + text).format(order.info['name']))
+        logger.info('   {}, Status {}: Ref: {}, Size: {}, Price: {}, Position: {}'.format(
+            date,
+            order.status,
+            order.ref,
+            order.size,
+            'NA' if not order.price else round(order.price, 5),
+            'NA' if not order.price else round(order.price * order.size, 5)
+        ))

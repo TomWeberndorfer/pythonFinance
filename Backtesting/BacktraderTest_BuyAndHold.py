@@ -18,7 +18,6 @@ from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
 from Utils.StockDataUtils import convert_backtrader_to_dataframe
 
-buy_data = []
 P = 10000
 c = 0.99  # 99% confidence interval
 com = 0.005
@@ -66,7 +65,6 @@ class TestStrategy_1(bt.Strategy):
                 round(trade.pnl, 2),
                 round(trade.pnlcomm, 2)))
             print('-' * 80)
-            buy_data.append((date, trade.price))
 
     ###########
 

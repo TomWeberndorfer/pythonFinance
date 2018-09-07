@@ -13,16 +13,22 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         :param stock_data_container_list: a list with objects of StockDataContainer - class
         :param parameter_dict: a list with parameters for the strategy
         """
+        stat_num = 0
+        self.result_list = []  # result list with stocks to buy or other results
 
         # set the given values in self
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        self.result_list = [] # result list with stocks to buy or other results
-        if hasattr(self, "stock_data_container_list") and self.stock_data_container_list is not None:
-            StatusUpdate.__init__(self, len(self.stock_data_container_list))
+        if hasattr(self, "status_update"):
+            stat_update = self.status_update
         else:
-            StatusUpdate.__init__(self, 0)
+            stat_update = True
+
+        if hasattr(self, "stock_data_container_list") and self.stock_data_container_list is not None:
+            stat_num = len(self.stock_data_container_list)
+
+        StatusUpdate.__init__(self, stat_num, stat_update)
         Abstract_SimpleMultithreading.__init__(self)
 
     def run_strategy(self, my_stock_data_container_list=None):
@@ -31,11 +37,9 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
             self.stock_data_container_list = my_stock_data_container_list
 
         stack = inspect.stack()
-        the_class = stack[0][0].f_locals["self"].__class__ #get the inherited class name
+        # the_class = stack[0][0].f_locals["self"].__class__ #get the inherited class name
         if len(self.stock_data_container_list) > 0:
             self.map_list(self.stock_data_container_list)
-
-            logger.info(str(the_class) + " finished.")
         return self.result_list
 
     @abstractmethod

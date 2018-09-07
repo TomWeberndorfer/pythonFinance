@@ -75,8 +75,7 @@ class StrategyFactory(Abstract_Factory):
         :key trade_commission_percent: Trading commission for every buy/sell in percent of order in percent
         :key initial_cash: Initial cash to trade with.
         """
-        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper',
-                                  'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
+        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
         parameters_dict = {"BacktestingParameters": backtesting_parameters}
 

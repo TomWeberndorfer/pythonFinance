@@ -3,8 +3,7 @@ from DataContainerAndDecorator.Abstract_DataContainerDecorcator import Abstract_
 
 class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
 
-    def __init__(self, shaped_data_container, stock_target_price, prob_dist, original_news,
-                 stock_current_prize):
+    def __init__(self, shaped_data_container, stock_target_price, prob_dist, original_news):
 
         assert isinstance(original_news, str)
 
@@ -12,7 +11,6 @@ class NewsDataContainerDecorator(Abstract_DataContainerDecorator):
         self._stock_target_price = stock_target_price
         self._prob_dist = prob_dist
         self._original_news = original_news
-        self._stock_current_prize = stock_current_prize
 
     def __str__(self):
         return self._shaped_data_container.__str__() + ", " + self._original_news

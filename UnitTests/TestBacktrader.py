@@ -80,7 +80,7 @@ class TestBacktrader(unittest.TestCase):
         analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                'within52w_high_fact': 0.99}
 
-        risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
+        risk_model = {'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}
 
         backtesting_result_instance, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters,
                                                         analysis_parameters,
@@ -95,7 +95,7 @@ class TestBacktrader(unittest.TestCase):
     def test_run_test(self):
         tbt = BacktraderWrapper()
         labels = []
-        for key, value in GlobalVariables.get_stock_data_labels_dict(False).items():
+        for key, value in GlobalVariables.get_stock_data_labels_dict(True).items():
             labels.append(value)
 
         data_in_2 = [
@@ -105,12 +105,12 @@ class TestBacktrader(unittest.TestCase):
             ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31500),
             ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
             ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
-            ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
-            ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
-            ('2016-10-12', 26.16, 27, 26.11, 26, 46000),
-            ('2016-10-13', 23.52, 23.64, 23.18, 23.238, 32000),
-            ('2016-10-14', 23.52, 23.64, 23.18, 23.0, 33000),
-            ('2016-10-15', 18.7, 20, 17, 18.5, 33000),
+            ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),  # --> buy
+            ('2016-10-11', 23.62, 23.74, 23.41, 23.41, 45000),
+            ('2016-10-12', 26.16, 27, 260, 26, 46000),
+            ('2016-10-13', 23.52, 23.64, 23.18, 23.238, 32000),  # --> sell
+            ('2016-10-14', 23.52, 23.64, 23.18, 23.2, 33000),
+            ('2016-10-15', 18.7, 20, 17, 18.7, 33000),
             ('2016-10-16', 18, 19, 16, 15, 33000)]
         df_2 = pd.DataFrame.from_records(data_in_2, columns=labels)
 
@@ -134,11 +134,11 @@ class TestBacktrader(unittest.TestCase):
                      btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
         strategy_to_test = "W52HighTechnicalStrategy"
         backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
-                                  'trade_commission_percent': 0.005}
+                                  'trade_commission_percent': 0}
         analysis_parameters = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                'within52w_high_fact': 0.99}
 
-        risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
+        risk_model = {'FixedSizeRiskModel': {'OrderTarget': 'order_target_size', 'TargetValue': 100}}
 
         backtesting_result_instance, res = tbt.run_test(data_list, strategy_to_test, backtesting_parameters,
                                                         analysis_parameters,
@@ -165,7 +165,7 @@ class TestBacktrader(unittest.TestCase):
         backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
 
-        risk_model = {'OrderTarget': 'order_target_value', 'TargetValue': 2500}
+        risk_model = {'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}
         backtesting_result_instance, backtest_result = tbt.run_test(data_list, strategy_to_test, backtesting_parameters,
                                                                     analysis_parameters,
                                                                     risk_model, analyzers)
