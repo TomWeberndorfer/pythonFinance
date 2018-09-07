@@ -17,14 +17,14 @@ except ImportError:
     import tkinter.ttk as ttk
     py3 = 1
 
-import main_v1_support
+import MvcController
 
 def vp_start_gui():
     '''Starting point when module is the main routine.'''
     global val, w, root
     root = Tk()
     top = ASTA_Framework(root)
-    main_v1_support.init(root, top)
+    MvcController.init(root, top)
     root.mainloop()
 
 w = None
@@ -34,7 +34,7 @@ def create_ASTA_Framework(root, *args, **kwargs):
     rt = root
     w = Toplevel(root)
     top = ASTA_Framework(w)
-    main_v1_support.init(w, top, *args, **kwargs)
+    MvcController.init(w, top, *args, **kwargs)
     return (w, top)
 
 def destroy_ASTA_Framework():
@@ -81,7 +81,7 @@ class ASTA_Framework:
             activebackground="#f4bcb2",
             activeforeground="#000000",
             background="#effbff",
-            command=main_v1_support.save_analysis_parameters,
+            command=MvcController.save_analysis_parameters,
             font="TkMenuFont",
             foreground="#000000",
             label="Save Analysis Params")
@@ -89,7 +89,7 @@ class ASTA_Framework:
             activebackground="#f4bcb2",
             activeforeground="#000000",
             background="#effbff",
-            command=main_v1_support.load_analysis_parameters,
+            command=MvcController.load_analysis_parameters,
             font="TkMenuFont",
             foreground="#000000",
             label="Load Analysis Parameters")
@@ -99,7 +99,7 @@ class ASTA_Framework:
             activebackground="#f4bcb2",
             activeforeground="#000000",
             background="#effbff",
-            command=main_v1_support.load_backtesting_stocks,
+            command=MvcController.load_backtesting_stocks,
             font="TkMenuFont",
             foreground="#000000",
             label="Load Backtesting Stocks")
@@ -109,7 +109,7 @@ class ASTA_Framework:
             activebackground="#d9d9d9",
             activeforeground="#000000",
             background="#ebebeb",
-            command=main_v1_support.quit,
+            command=MvcController.quit,
             font="TkMenuFont",
             foreground="#000000",
             label="Quit")

@@ -1,6 +1,6 @@
 import unittest
 
-import main_v1_support
+import MvcController
 from Utils.GlobalVariables import *
 from Strategies.StrategyFactory import StrategyFactory
 
@@ -28,7 +28,7 @@ class TestMainSupport(unittest.TestCase):
         global val, w, root
         root = Tk()
         top = Framework(root)
-        controller = main_v1_support.init(root, top)
+        controller = MvcController.init(root, top)
 
         req_params = StrategyFactory.get_required_parameters_with_default_parameters()
 

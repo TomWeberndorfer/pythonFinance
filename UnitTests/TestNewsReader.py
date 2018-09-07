@@ -5,7 +5,7 @@ from DataReading.DataReaderFactory import DataReaderFactory
 from Strategies.StrategyFactory import StrategyFactory
 
 from Utils.FileUtils import FileUtils
-from newsFeedReader.traderfox_hp_news import is_date_actual
+from NewsFeedReader.traderfox_hp_news import is_date_actual
 from Utils.GlobalVariables import *
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

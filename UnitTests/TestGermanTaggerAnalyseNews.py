@@ -2,11 +2,11 @@ import unittest
 
 from pandas import DataFrame
 
-from DataRead_Google_Yahoo import get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks
+from Utils.DataRead_Google_Yahoo import get_symbol_and_real_name_from_abbrev_name_from_topforeignstocks
 from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
-from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
+from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\TestData\\'

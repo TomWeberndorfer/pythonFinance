@@ -11,7 +11,7 @@ from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContain
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
-from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
+from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
 class TraderfoxNewsDataReader(Abstract_StockDataReader):

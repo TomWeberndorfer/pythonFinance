@@ -4,7 +4,7 @@ from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
 from Strategies.Abstract_Strategy import Abstract_Strategy
 from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
-from newsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
+from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
 class SimplePatternNewsStrategy(Abstract_Strategy):

@@ -1,6 +1,6 @@
 import unittest
 
-import main_v1_support
+import MvcController
 from GUI.main_v1 import ASTA_Framework
 from Utils.GlobalVariables import *
 import ast
@@ -30,7 +30,7 @@ class TestControllerAndGui(unittest.TestCase):
         global val, w, root
         root = Tk()
         top = ASTA_Framework(root)
-        controller = main_v1_support.init(root, top)
+        controller = MvcController.init(root, top)
 
         strat_param_file = GlobalVariables.get_data_files_path() + '\\TestData\\ParameterFile_test_dump_and_load_strat_params.pickle'
         FileUtils.check_file_exists_and_delete(strat_param_file)
@@ -78,7 +78,7 @@ class TestControllerAndGui(unittest.TestCase):
         global val, w, root
         root = Tk()
         top = ASTA_Framework(root)
-        controller = main_v1_support.init(root, top)
+        controller = MvcController.init(root, top)
 
         strat_param_file = GlobalVariables.get_data_files_path() + '\\TestData\\ParameterFile_test_dump_and_load_strat_params.pickle'
         FileUtils.check_file_exists_and_delete(strat_param_file)

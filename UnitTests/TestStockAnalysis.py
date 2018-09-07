@@ -1,7 +1,7 @@
 import unittest
 
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
-from StockAnalysis import _read_data
+from Utils.StockAnalysis import _read_data
 from Utils.GlobalVariables import *
 
 # from directory UnitTests to --> root folder with: ..\\..\\
