@@ -331,3 +331,19 @@ class CommonUtils:
             except ImportError as ie:
                 pass
         return items_dict
+
+
+def wrapper(func, *args, **kwargs):
+    """
+    Wrapps the function and the arguments
+    :param func:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    # do something before
+    try:
+        return func(*args, **kwargs)
+
+    except Exception as e:
+        print(e)

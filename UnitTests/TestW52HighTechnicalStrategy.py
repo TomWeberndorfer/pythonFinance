@@ -1,12 +1,11 @@
 import unittest
 
 from pandas import DataFrame
-from Utils.GlobalVariables import *
 
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Strategies.StrategyFactory import StrategyFactory
-from Strategies.ImplementedStrategies.TechnicalStrategy.W52HighTechnicalStrategy import W52HighTechnicalStrategy
+from Utils.GlobalVariables import *
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 filepath = ROOT_DIR + '\\DataFiles\\'
@@ -16,9 +15,9 @@ stock_data_container_file_name = "stock_data_container_file.pickle"
 stock_data_container_file = test_filepath + stock_data_container_file_name
 
 
-class TestSimplePatternNewsStrategy(unittest.TestCase):
+class TestW52HighTechnicalStrategy(unittest.TestCase):
 
-    def test_run_strategy(self):
+    def test_run_strategy__strat_fulfilled__stock_in_result(self):
 
         w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
 
@@ -50,38 +49,14 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
         self.assertGreater(len(results), 0)
         self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
 
-    def test_strat_52WHi_HiVolume(self):
+    def test_run_strategy__no52high__empty_result(self):
         w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
-
-        labels = []
-        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
-            labels.append(value)
-        data = [
-            ('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
-            ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
-            ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
-            ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
-            ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
-            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
-            ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
-            ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
-            ('2016-10-12', 23.16, 26, 23.11, 23.18, 46000)]
-
-        df = DataFrame.from_records(data, columns=labels)
-        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
-        stock_data_container.set_historical_stock_data(df)
-        stock_data_container_list = [stock_data_container]
-        strat = W52HighTechnicalStrategy(stock_data_container_list=stock_data_container_list,
-                                         analysis_parameters=w52hi_parameter_dict)
-        res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
-        self.assertEqual(res.get_stock_name(), stock_data_container.get_stock_name())
-
         # volume higher, but stock value under 52w high within 98%
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)
         data = [
-            ('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
+            ('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000), # --> 23.91 is highest high
             ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
             ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
             ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
@@ -89,88 +64,18 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
             ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
             ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
             ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
-            ('2016-10-12', 23.16, 23.8, 23.11, 23.18, 46000)]
+            ('2016-10-12', 23.16, 23.21, 23.11, 23.18, 46000)]  # --> 23.91 * 0, 98 = 23.431 > 23.21
 
         df = DataFrame.from_records(data, columns=labels)
         stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
         stock_data_container.set_historical_stock_data(df)
         stock_data_container_list = [stock_data_container]
-        strat = W52HighTechnicalStrategy(stock_data_container_list=stock_data_container_list,
-                                         analysis_parameters=w52hi_parameter_dict)
-        res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
-        self.assertEqual(res.get_stock_name(), stock_data_container.get_stock_name())
-
-        # test_strat_52WHi_HiVolume_Below52WHigh
-        labels = []
-        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
-            labels.append(value)
-        data = [
-            ('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
-            ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
-            ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
-            ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
-            ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
-            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
-            ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
-            ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
-            ('2016-10-12', 23.16, 23.8, 23.11, 23.18, 46000)]
-
-        # file = test_filepath + 'test_strat_52WHi_HiVolume_ErrorParameters.csv'
-        df = DataFrame.from_records(data, columns=labels)
-        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
-        stock_data_container.set_historical_stock_data(df)
-        stock_data_container_list = [stock_data_container]
-        strat = W52HighTechnicalStrategy(stock_data_container_list=stock_data_container_list,
-                                         analysis_parameters=w52hi_parameter_dict)
-        res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
-        self.assertEqual(res.get_stock_name(), stock_data_container.get_stock_name())
-
-        labels = []
-        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
-            labels.append(value)
-        data = [
-            ('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
-            ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
-            ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
-            ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
-            ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 32000),
-            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 33000),
-            ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 34000),
-            ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 35000),
-            ('2016-10-12', 23.16, 23.8, 23.11, 23.18, 36000)]
-
-        # file = test_filepath + 'test_strat_52WHi_HiVolume_VolumeNotAbove.csv'
-        df = DataFrame.from_records(data, columns=labels)
-        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
-        stock_data_container.set_historical_stock_data(df)
-        stock_data_container_list = [stock_data_container]
-        strat = W52HighTechnicalStrategy(stock_data_container_list=stock_data_container_list,
-                                         analysis_parameters=w52hi_parameter_dict)
-        res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
-        self.assertEqual(res is None, True)
-
-        labels = []
-        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
-            labels.append(value)
-        data = [
-            ('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
-            ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
-            ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
-            ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
-            ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
-            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
-            ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
-            ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
-            ('2016-10-12', 23.16, 23.0, 23.11, 23.18, 46000)]
-        # file = test_filepath + 'test_strat_52WHi_HiVolume_Not52WHigh.csv'
-        df = DataFrame.from_records(data, columns=labels)
-        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
-        stock_data_container.set_historical_stock_data(df)
-        stock_data_container_list = [stock_data_container]
-        strat = W52HighTechnicalStrategy(stock_data_container_list=stock_data_container_list,
-                                         analysis_parameters=w52hi_parameter_dict)
-        res = strat._strat_52_w_hi_hi_volume(stock_data_container, w52hi_parameter_dict)
-        self.assertEqual(res is None, True)
+        stock_screener = StrategyFactory()
+        w52_hi_strat = stock_screener.prepare("W52HighTechnicalStrategy",
+                                              stock_data_container_list=stock_data_container_list,
+                                              analysis_parameters=w52hi_parameter_dict)
+        results = w52_hi_strat.run_strategy()
+        self.assertEqual(0, len(results))
 
     # TODO
     # def test_attribute_err(self):
@@ -178,7 +83,7 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
     #        strat_52_w_hi_hi_volume("TestName1", data, 5, 3, 0.98, 0.98)
     #        strat_52_w_hi_hi_volume("TestName1", data, 5, 3, 1.2, 1.2)
 
-    def test_with_real_data(self):
+    def test_with_real_data__strat_fulfilled__stock_in_result(self):
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)
@@ -449,3 +354,57 @@ class TestSimplePatternNewsStrategy(unittest.TestCase):
                                               analysis_parameters=w52hi_parameter_dict)
         results = w52_hi_strat.run_strategy()
         self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
+
+    def test__volume_not_above__empty_result(self):
+        w52hi_parameter_dict = {'check_days': 5, 'min_cnt': 3, 'min_vol_dev_fact': 1.2, 'within52w_high_fact': 0.98}
+
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [
+            ('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
+            ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
+            ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
+            ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
+            ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 32000),
+            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 33000),
+            ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 34000),
+            ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 35000),
+            ('2016-10-12', 23.16, 23.8, 23.11, 23.18, 36000)]
+
+        # file = test_filepath + 'test_strat_52WHi_HiVolume_VolumeNotAbove.csv'
+        df = DataFrame.from_records(data, columns=labels)
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container.set_historical_stock_data(df)
+        stock_data_container_list = [stock_data_container]
+        stock_screener = StrategyFactory()
+        w52_hi_strat = stock_screener.prepare("W52HighTechnicalStrategy",
+                                              stock_data_container_list=stock_data_container_list,
+                                              analysis_parameters=w52hi_parameter_dict)
+        results = w52_hi_strat.run_strategy()
+        self.assertEqual(0, len(results))
+
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [
+            ('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
+            ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
+            ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
+            ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
+            ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
+            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+            ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
+            ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
+            ('2016-10-12', 23.16, 23.0, 23.11, 23.18, 46000)]
+        # file = test_filepath + 'test_strat_52WHi_HiVolume_Not52WHigh.csv'
+        df = DataFrame.from_records(data, columns=labels)
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container.set_historical_stock_data(df)
+        stock_data_container_list = [stock_data_container]
+        stock_screener = StrategyFactory()
+        w52_hi_strat = stock_screener.prepare("W52HighTechnicalStrategy",
+                                              stock_data_container_list=stock_data_container_list,
+                                              analysis_parameters=w52hi_parameter_dict)
+        results = w52_hi_strat.run_strategy()
+        self.assertEqual(0, len(results))

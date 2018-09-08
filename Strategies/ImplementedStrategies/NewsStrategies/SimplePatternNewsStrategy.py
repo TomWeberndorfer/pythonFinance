@@ -1,13 +1,21 @@
-import inspect
 import traceback
+
+from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
+from Strategies.Abstract_Strategy import Abstract_Strategy
 from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
-from Strategies.Abstract_Strategy import Abstract_Strategy
-from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
-from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
 
 class SimplePatternNewsStrategy(Abstract_Strategy):
+    def add_signals(self, stock_data_container, analysis_parameters):
+        """
+        Add the text analysis signal
+        :param stock_data_container:
+        :param analysis_parameters:
+        :return:
+        """
+        self.signal_list = [[self.text_analysis.analyse_single_news, stock_data_container]]
+
     def __init__(self, **kwargs):
         Abstract_Strategy.__init__(self, **kwargs)
 
@@ -20,15 +28,19 @@ class SimplePatternNewsStrategy(Abstract_Strategy):
 
     def _method_to_execute(self, stock_data_container):
         try:
-            result = self.text_analysis.analyse_single_news(stock_data_container)
-            if result is not None:
-                ppd = result.positive_prob_dist()
+
+            self.add_signals(stock_data_container, self.analysis_parameters)
+            result = self._evaluate_signals()
+
+            if result is not None and result is not False:
+                ppd = stock_data_container.positive_prob_dist()
                 if ppd >= 0.5:
                     rec = "BUY"
                 else:
                     rec = "SELL"
-                result.update_used_strategy_and_recommendation(self.__class__.__name__, rec)
-                self.result_list.append(result)
+
+                stock_data_container.update_used_strategy_and_recommendation(self.__class__.__name__, rec)
+                self.result_list.append(stock_data_container)
         except Exception as e:
             logger.error("For stock: " + str(stock_data_container.get_stock_name()) + ": " + str(e) + "\n" + str(
                 traceback.format_exc()))

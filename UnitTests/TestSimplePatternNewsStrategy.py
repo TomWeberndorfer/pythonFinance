@@ -13,7 +13,7 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 
 class TestSimplePatternNewsStrategy(unittest.TestCase):
 
-    def test_run_strategy(self):
+    def test_run_strategy__two_positive_news__both_with_pos_classification(self):
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)

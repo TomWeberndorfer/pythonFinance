@@ -18,7 +18,7 @@ stock_data_container_file = test_filepath + stock_data_container_file_name
 
 class TestGapUpHighVolumeStrategy(unittest.TestCase):
 
-    def test_run_strategy__gap_up_STOCK_AS_RESULT__no_gap_EMPTY_RESULT(self):
+    def test_run_strategy__gap_up_STOCK_AS_RESULT(self):
         analysis_parameters = {'min_gap_factor': 1.1}
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
@@ -46,7 +46,11 @@ class TestGapUpHighVolumeStrategy(unittest.TestCase):
         results = strat.run_strategy()
         self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
 
-        #################
+    def test_run_strategy__no_gap_EMPTY_RESULT(self):
+        analysis_parameters = {'min_gap_factor': 1.1}
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
         data = [('2016-09-13', 23.6, 23.73, 23.15, 23.26, 31000),
                 ('2016-09-14', 23.33, 23.43, 22.95, 23.11, 31000),
                 ('2016-09-15', 23.15, 23.77, 23.14, 23.62, 31000),

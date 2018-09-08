@@ -149,14 +149,16 @@ class TestBacktrader(unittest.TestCase):
 
         self.assertNotEqual(None, backtesting_result_instance)
         self.assertNotEqual(backtesting_parameters['initial_cash'], pnl)
+        self.assertEqual(29969.0, portvalue)
+        self.assertEqual(-31, pnl)
 
     def test_run_test2(self):
         tbt = BacktraderWrapper()
         data_list = []
-        datafile_path = GlobalVariables.get_data_files_path()
+        datafile_path = GlobalVariables.get_data_files_path() + "TestData\\TestBacktraderRun_test2.csv"
 
         data = bt.feeds.GenericCSVData(
-            dataname=datafile_path + 'NEWBacktesting.csv',
+            dataname=datafile_path,
             nullvalue=0.0,
             dtformat=GlobalVariables.get_stock_data_dtformat(),
             datetime=0,

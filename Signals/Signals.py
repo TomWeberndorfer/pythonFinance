@@ -31,7 +31,7 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
     data_len = len(stock)
 
     if data_len < 5: #must have enough data
-        return False #TODO
+        return None #TODO
         #TOD raise IndexError
 
     raise_cnt = 0
@@ -57,7 +57,7 @@ def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
         i -= 1
 
     if raise_cnt < min_cnt:
-        return False
+        return None
 
     return True
 
@@ -84,13 +84,13 @@ def signal_is_last_volume_higher_than_avg(data, vol_avg, significance_factor):
     data_len = len(data)
 
     if data_len < 5: #must have enough data
-        return False  # TODO
+        return None  # TODO
         raise IndexError
 
     vol_last = data.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['Volume']]
     min_calc_vol = vol_avg * significance_factor
     if vol_last < min_calc_vol:
-        return False
+        return None
     else:
         return True
 
@@ -122,7 +122,7 @@ def signal_is_a_few_higher_than_avg(stock, check_days, min_cnt, volume_average):
     data_len = len(stock)
 
     if data_len < 5: #must have enough data
-        return False  # TODO
+        return None  # TODO
         raise IndexError
 
     while cnt > 0:
@@ -136,7 +136,7 @@ def signal_is_a_few_higher_than_avg(stock, check_days, min_cnt, volume_average):
     if higher_than_avg >= min_cnt:
         return True
 
-    return False
+    return None
 
 
 def signal_is_volume_raising(data, check_days, min_cnt, min_vol_dev_fact):
@@ -165,16 +165,16 @@ def signal_is_volume_raising(data, check_days, min_cnt, min_vol_dev_fact):
 
     # t1: minimum raising cnt within check days
     if not signal_is_volume_raising_within_check_days(data, check_days, min_cnt):
-        return False
+        return None
 
     # t2: last volume higher than avg
     # 1.2: is significant higher than avg
     if not signal_is_last_volume_higher_than_avg(data, vol_avg, min_vol_dev_fact):
-        return False
+        return None
 
     # t3: at least a few volume higher than avg
     if not signal_is_a_few_higher_than_avg(data, check_days, min_cnt, vol_avg):
-        return False
+        return None
 
     return True
 
@@ -204,7 +204,7 @@ def signal_is52_w_high(stock, within52w_high_fact=0.97):
     data_len = len(stock)
 
     if data_len < 5: #must have enough data
-        return False  # TODO
+        return None  # TODO
         raise IndexError
 
     cur_val = stock.iloc[data_len - 1][GlobalVariables.get_stock_data_labels_dict()['High']]
@@ -218,7 +218,7 @@ def signal_is52_w_high(stock, within52w_high_fact=0.97):
         if cur_val >= hi_minus_limit:
             return True
         else:
-            return False
+            return None
 
 
 def signal_gap_up(stock_data, min_gap_multiplier):
@@ -246,7 +246,7 @@ def signal_gap_up(stock_data, min_gap_multiplier):
     if cur_val > gap_up_val:
         return True
     else:
-        return False
+        return None
 
 
 def signal_hammer(stock_data, hammer_length_in_factor, handle_bigger_than_head_factor):
@@ -265,19 +265,19 @@ def signal_hammer(stock_data, hammer_length_in_factor, handle_bigger_than_head_f
 
     #do not use read hammer
     if tday_open_value > close_value:
-        return False
+        return None
 
     head_length = close_value - tday_open_value
 
     # handle
     if tday_open_value > close_value:
-        return False
+        return None
 
     handle_length = tday_open_value - tday_low_value
 
     # the handle must be bigger than handle to recognize a hammer
     if head_length > (handle_length * handle_bigger_than_head_factor):
-        return False
+        return None
 
     signal_len = head_length + handle_length
 
@@ -305,4 +305,4 @@ def signal_is_volume_high_enough(historical_stock_data, min_req_vol=15000):
     if vol_avg > min_req_vol:
         return True
     else:
-        return False
+        return None

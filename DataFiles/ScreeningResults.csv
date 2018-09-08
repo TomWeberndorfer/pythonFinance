@@ -643,3 +643,51 @@ Rank,StrategyAndRecommendation,Stockname,Ticker,Exchange,StopBuy,StopLoss,Positi
 1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-05 19:48:42.282351']},Fortive Corp,FTV,en,85.55,82.98,83.46,29,FixedSizeRiskModel
 1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-05 19:48:42.575172']},Ulta Beauty,ULTA,en,276.35,268.06,274.37,9,FixedSizeRiskModel
 1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-05 19:48:42.721081']},MEDICLIN AG,MED,de,238.16,231.02,235.49,10,FixedSizeRiskModel
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:47:29.576840']},Hugoton Royalty Trust,HGT,,1.86,1.8,0.44,1344,FixedSizeRiskModel,86.0,0.89,05.09.2018 um 07:49, ANALYSE FLASH: HSBC hebt Hugo Boss auf buy und  auf 86 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:47:29.577839']},LEONI,LEO,,8.52,8.26,7.69,293,FixedSizeRiskModel,29.0,0.07,06.09.2018 um 07:40, ANALYSE FLASH: UBS senkt Leoni auf sell und  auf 29 €
+2.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:47:29.579838']},Adobe Systems Incorporated,ADBE,,271.31,263.17,260.87,9,FixedSizeRiskModel,58.5,0.71,06.09.2018 um 10:05, ANALYSE FLASH: Hauck & Aufhäuser startet Ado mit buy    58.50 €
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:47:29.580837']},Morphosys,MOR,,36.08,35.0,27.41,69,FixedSizeRiskModel,0,0.43,07.09.2018 um 07:27, ANALYSE FLASH: Berenberg senkt Morphosys auf hold und hebt  an
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:47:29.581836']},iShares Edge MSCI USA Momentum Fctr ETF,MTUM,,119.25,115.68,116.27,20,FixedSizeRiskModel,198.0,0.19,07.09.2018 um 08:25, ANALYSE FLASH: SocGen senkt MTU Aero Engines auf hold    198 €
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:47:29.582835']},Apple Inc.,AAPL,,230.82,223.89,221.3,10,FixedSizeRiskModel,240.0,0.43,07.09.2018 um 08:41, ANALYSE FLASH: Goldman hebt  für Apple auf 240$  neutral
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:47:29.582835']},Aerojet Rocketdyne Holdings, Inc.,AJRD,,37.89,36.75,35.94,65,FixedSizeRiskModel,33.0,0.43,07.09.2018 um 10:02, ANALYSE FLASH: JPMorgan belässt Rocket Internet auf overweight    33 €
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.873270']},WIRECARD,WDI,,0,0,0,0,FixedSizeRiskModel,220.0,0.89,05.09.2018 um 07:12, ANALYSE FLASH: UBS hebt  für Wirecard auf 220 €   buy
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.874270']},WIRECARD,WDI,,0,0,0,0,FixedSizeRiskModel,220.0,0.89,05.09.2018 um 07:14, ANALYSE FLASH: UBS hebt  für Wirecard auf 220 €   buy
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.875269']},AIXTRON,AIXA,,0,0,0,0,FixedSizeRiskModel,0,0.89,05.09.2018 um 07:19, ANALYSE FLASH: Berenberg hebt Aixtron auf buy und erhöht Kursziel deutlich
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.876269']},Hugoton Royalty Trust,HGT,,1.86,1.8,0.44,1344,FixedSizeRiskModel,86.0,0.89,05.09.2018 um 07:49, ANALYSE FLASH: HSBC hebt Hugo Boss auf buy und  auf 86 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.877267']},Vapiano SE,VAO,,0,0,0,0,FixedSizeRiskModel,17.5,0.19,05.09.2018 um 08:43, ANALYSE FLASH: Berenberg senkt Vapiano auf hold und  auf 17.50 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.878268']},BAYER,BAY,,0,0,0,0,FixedSizeRiskModel,85.0,0.19,05.09.2018 um 11:15, ANALYSE FLASH: Warburg Research senkt  für Bayer auf 85 €   hold
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.879268']},Federated Kaufmann R,KAUFX,,0,0,0,0,FixedSizeRiskModel,0,0.43,05.09.2018 um 13:38, ANALYSE: Scout24 hat Nachholpotenzial   Deutsche Bank rät zum Kauf
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.879268']},BAYER,BAY,,0,0,0,0,FixedSizeRiskModel,80.0,0.19,05.09.2018 um 17:15, ANALYSE FLASH: NordLB senkt  für Bayer auf 80 €   halten
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.880266']},BAYER,BAY,,0,0,0,0,FixedSizeRiskModel,116.0,0.43,05.09.2018 um 17:26, ANALYSE FLASH: Goldman belässt Bayer auf buy    116 €
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.881266']},RWE,RWE,,0,0,0,0,FixedSizeRiskModel,25.0,0.89,06.09.2018 um 07:35, ANALYSE FLASH: HSBC hebt RWE auf buy und  25 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.882264']},LEONI,LEO,,8.52,8.26,7.69,293,FixedSizeRiskModel,29.0,0.07,06.09.2018 um 07:40, ANALYSE FLASH: UBS senkt Leoni auf sell und  auf 29 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.883264']},E.ON SE,EONGY,,0,0,0,0,FixedSizeRiskModel,10.2,0.19,06.09.2018 um 07:41, ANALYSE FLASH: HSBC senkt Eon auf hold    10.20 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.883264']},Schaeffler AG,SHA,,0,0,0,0,FixedSizeRiskModel,10.0,0.07,06.09.2018 um 08:04, ANALYSE FLASH: UBS senkt Schaeffler auf sell und  auf 10 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.884263']},ZALANDO,ZAL,,0,0,0,0,FixedSizeRiskModel,0,0.19,06.09.2018 um 08:43, ANALYSE FLASH: Merrill Lynch nimmt Zalando mit underperform wieder auf
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.885263']},FIELMANN,FIE,,0,0,0,0,FixedSizeRiskModel,55.0,0.43,06.09.2018 um 08:55, ANALYSE FLASH: Equinet hebt Fielmann auf neutral    55 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.886262']},Vapiano SE,VAO,,0,0,0,0,FixedSizeRiskModel,16.0,0.19,06.09.2018 um 09:46, ANALYSE FLASH: Kepler Cheuvreux senkt Vapiano auf hold    16 €
+2.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.887261']},Adobe Systems Incorporated,ADBE,,271.31,263.17,260.87,9,FixedSizeRiskModel,58.5,0.71,06.09.2018 um 10:05, ANALYSE FLASH: Hauck & Aufhäuser startet Ado mit buy    58.50 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.888261']},Vapiano SE,VAO,,0,0,0,0,FixedSizeRiskModel,13.7,0.19,06.09.2018 um 14:09, ANALYSE FLASH: Jefferies senkt Vapiano auf hold    13.70 €
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.888261']},Morphosys,MOR,,36.08,35.0,27.41,69,FixedSizeRiskModel,0,0.43,07.09.2018 um 07:27, ANALYSE FLASH: Berenberg senkt Morphosys auf hold und hebt  an
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.889261']},KERING,PP,,0,0,0,0,FixedSizeRiskModel,0,0.89,07.09.2018 um 07:31, ANALYSE FLASH: Goldman hebt Kering auf conviction buy list    605 €
+2.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.890260']},AIXTRON,AIXA,,0,0,0,0,FixedSizeRiskModel,11.0,0.71,07.09.2018 um 07:52, ANALYSE FLASH: Baader Bank hebt Aixtron auf hold    11 €
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.891259']},iShares Edge MSCI USA Momentum Fctr ETF,MTUM,,119.25,115.68,116.27,20,FixedSizeRiskModel,198.0,0.19,07.09.2018 um 08:25, ANALYSE FLASH: SocGen senkt MTU Aero Engines auf hold    198 €
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.892258']},Apple Inc.,AAPL,,230.82,223.89,221.3,10,FixedSizeRiskModel,240.0,0.43,07.09.2018 um 08:41, ANALYSE FLASH: Goldman hebt  für Apple auf 240$  neutral
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.892258']},Aerojet Rocketdyne Holdings, Inc.,AJRD,,37.89,36.75,35.94,65,FixedSizeRiskModel,33.0,0.43,07.09.2018 um 10:02, ANALYSE FLASH: JPMorgan belässt Rocket Internet auf overweight    33 €
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.893258']},Metzler Wertsicherungsfonds 96 B,A1T6KX,,0,0,0,0,FixedSizeRiskModel,0,0.43,07.09.2018 um 12:25, ANALYSE: Bernstein betont den Wert der Finanzsparten der Autokonzerne
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.894256']},Yara International ASA,YAR,,0,0,0,0,FixedSizeRiskModel,425.0,0.89,07.09.2018 um 14:57, ANALYSE FLASH: JPMorgan hebt Yara auf overweight    425 Kronen
+-2.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.895257']},Vapiano SE,VAO,,0,0,0,0,FixedSizeRiskModel,21.0,0.43,07.09.2018 um 14:58, ANALYSE FLASH: Equinet senkt  für Vapiano auf 21 €   buy
+-3.0,{'SimplePatternNewsStrategy': ['SELL', '2018-09-08 14:49:55.896256']},Facebook,FB-USD,,0,0,0,0,FixedSizeRiskModel,165.0,0.19,07.09.2018 um 14:59, ANALYSE FLASH: DZ Bank senkt Facebook auf halten   Fairer Wert 165 US Dollar
+3.0,{'SimplePatternNewsStrategy': ['BUY', '2018-09-08 14:49:55.896256']},WIRECARD,WDI,,0,0,0,0,FixedSizeRiskModel,240.0,0.89,05.09.2018 um 07:39, ANALYSE FLASH: Barclays hebt  für Wirecard auf 240 €   overweight
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:51:58.860842']},HP Inc.,HPQ,en,25.41,24.64,24.71,98,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:51:59.017745']},Anthem Inc.,ANTM,en,274.51,266.27,271.9,9,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:51:59.353538']},Fortive Corp,FTV,en,85.55,82.98,84.59,29,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:51:59.595387']},Rockwell Collins,COL,en,140.26,136.05,138.26,17,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:51:59.718313']},Ulta Beauty,ULTA,en,290.41,281.7,285.8,8,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:51:59.925184']},Sysco Corp.,SYY,en,76.36,74.07,74.7,32,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:52:33.989615']},Anthem Inc.,ANTM,en,274.51,266.27,271.9,9,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:52:34.076562']},HP Inc.,HPQ,en,25.41,24.64,24.71,98,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:52:34.556265']},Fortive Corp,FTV,en,85.55,82.98,84.59,29,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:52:34.835095']},Rockwell Collins,COL,en,140.26,136.05,138.26,17,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:52:34.907049']},Ulta Beauty,ULTA,en,290.41,281.7,285.8,8,FixedSizeRiskModel
+1,{'W52HighTechnicalStrategy': ['BUY', '2018-09-08 14:52:35.108924']},Sysco Corp.,SYY,en,76.36,74.07,74.7,32,FixedSizeRiskModel

@@ -72,11 +72,11 @@ class StrategyFactory(Abstract_Factory):
         """
         Return a dict with required backtesting parameters and default parameter values.
         :return: dict with required values and default parameters
-        :key trade_commission_percent: Trading commission for every buy/sell in percent of order in percent
+        :key trade_commission_percent: Trading commission for both orders in percent of order in percent, both, not for every trade!
         :key initial_cash: Initial cash to trade with.
         """
         backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
-                                  'trade_commission_percent': 0.005}
+                                  'trade_commission_percent': 0.01}
         parameters_dict = {"BacktestingParameters": backtesting_parameters}
 
         return parameters_dict

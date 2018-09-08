@@ -30,7 +30,7 @@ class TestSignals(unittest.TestCase):
             ('2016-09-19', 23.6, 23.77, 23.46, 23.51, 14000),
             ('2016-09-20', 23.73, 23.76, 23.26, 23.31, 14000)]
         df = pd.DataFrame.from_records(data, columns=labels)
-        self.assertEqual(signal_is_volume_high_enough(df, min_req_vol=15000), False)
+        self.assertEqual(signal_is_volume_high_enough(df, min_req_vol=15000), None)
 
         # volume above 30k
         labels = []
@@ -79,7 +79,7 @@ class TestSignals(unittest.TestCase):
             ('2016-10-12', 100, 97, 100.11, 100.18, 31000)]
 
         data = pd.DataFrame.from_records(data, columns=labels)
-        self.assertEqual(signal_is52_w_high(data, 0.98), False)
+        self.assertEqual(signal_is52_w_high(data, 0.98), None)
 
         # last val > 1.03 hi: High: 100, lastval = 104
         labels = []
@@ -191,7 +191,7 @@ class TestSignals(unittest.TestCase):
             ('2016-10-12', 90, 100, 100.11, 100.18, 11000)]
 
         data = pd.DataFrame.from_records(data, columns=labels)
-        self.assertEqual(signal_is_volume_raising_within_check_days(data, check_days, raising_days), False)
+        self.assertEqual(signal_is_volume_raising_within_check_days(data, check_days, raising_days), None)
 
         # t1: h, l, l, l, h
         #file = test_filepath + 'test_isVolumeRaising_2_t1_HLLLH.csv'
@@ -209,7 +209,7 @@ class TestSignals(unittest.TestCase):
             ('2016-10-12', 90, 100, 100.11, 100.18, 11000)]
 
         data = pd.DataFrame.from_records(data, columns=labels)
-        self.assertEqual(signal_is_volume_raising_within_check_days(data, check_days, raising_days), False)
+        self.assertEqual(signal_is_volume_raising_within_check_days(data, check_days, raising_days), None)
 
     def test_t2_is_last_volume_higher_than_avg__avg_not_higher__avg_is_higher(self):
         significance_factor = 1.2
@@ -231,7 +231,7 @@ class TestSignals(unittest.TestCase):
 
         data = pd.DataFrame.from_records(data, columns=labels)
         vol_avg = calc_avg_vol(data)
-        self.assertEqual(signal_is_last_volume_higher_than_avg(data, vol_avg, significance_factor), False)
+        self.assertEqual(signal_is_last_volume_higher_than_avg(data, vol_avg, significance_factor), None)
 
         # t2: above avg 4k2
         #file = test_filepath + 'test_t2_isLastVolumeHigherThanAvg_belowAvg4k_last5k2.csv'
@@ -305,7 +305,7 @@ class TestSignals(unittest.TestCase):
 
         data = pd.DataFrame.from_records(data, columns=labels)
         vol_avg = calc_avg_vol(data)
-        self.assertEqual(signal_is_a_few_higher_than_avg(data, check_days, raising_days, vol_avg), False)
+        self.assertEqual(signal_is_a_few_higher_than_avg(data, check_days, raising_days, vol_avg), None)
 
     def test_signal_is_volume_raising(self):
         # True
@@ -343,7 +343,7 @@ class TestSignals(unittest.TestCase):
             ('2016-10-12', 90, 100, 100.11, 100.18, 4850)]
 
         data = pd.DataFrame.from_records(data, columns=labels)
-        self.assertEqual(signal_is_volume_raising(data, 5, 3, 1.2), False)
+        self.assertEqual(signal_is_volume_raising(data, 5, 3, 1.2), None)
 
         # False t2: last vol not higher than avg
         #file = test_filepath + 'test_isVolumeRaising_2_False_T2.csv'
@@ -361,7 +361,7 @@ class TestSignals(unittest.TestCase):
             ('2016-10-12', 90, 100, 100.11, 100.18, 3800)]
 
         data = pd.DataFrame.from_records(data, columns=labels)
-        self.assertEqual(signal_is_volume_raising(data, 5, 3, 1.2), False)
+        self.assertEqual(signal_is_volume_raising(data, 5, 3, 1.2), None)
 
         # False t3: at least NOT a few volume higher than avg
         #file = test_filepath + 'test_isVolumeRaising_2_False_T3.csv'
@@ -379,7 +379,7 @@ class TestSignals(unittest.TestCase):
             ('2016-10-12', 90, 100, 100.11, 100.18, 6800)]
 
         data = pd.DataFrame.from_records(data, columns=labels)
-        self.assertEqual(signal_is_volume_raising(data, 5, 3, 1.2), False)
+        self.assertEqual(signal_is_volume_raising(data, 5, 3, 1.2), None)
 
     def test_calculate_stopbuy_and_stoploss(self):
         #file = test_filepath + 'test_calculate_stopbuy_and_stoploss_Ok.csv'

@@ -10,7 +10,7 @@ filepath = ROOT_DIR + '\\DataFiles\\'
 
 
 class TestStockAnalysis(unittest.TestCase):
-    def test__read_data__HistoricalDataReader(self):
+    def test__read_data__HistoricalDataReader__both_container_filled_with_hist_data(self):
         ticker_needed = False
         strategy_parameter_dict = {'W52HighTechnicalStrategy': {'check_days': 7, 'min_cnt': 3, 'min_vol_dev_fact': 1.2,
                                                                 'within52w_high_fact': 0.98,
@@ -27,10 +27,6 @@ class TestStockAnalysis(unittest.TestCase):
                         'RiskModels': {
                             'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
-        # from Utils.file_utils import read_tickers_from_file_or_web
-        # stock_data_container_list = read_tickers_from_file_or_web(_analysis_parameters['stock_data_container_file'],
-        #                                                          False,
-        #                                                          _analysis_parameters['dict_with_stock_pages_to_read'])
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)
@@ -42,16 +38,20 @@ class TestStockAnalysis(unittest.TestCase):
         stock_data_container_list = _read_data(['W52HighTechnicalStrategy'], strategy_parameter_dict, other_params,
                                                stock_data_container_list)
 
+        apple_idx = stock_data_container_list.index(apple_stock_data_container)
+        intel_idx = stock_data_container_list.index(intel_container)
         self.assertEqual(len(stock_data_container_list), 2)
-        self.assertGreater(len(stock_data_container_list[0].historical_stock_data()), 200)
-        self.assertGreater(len(stock_data_container_list[1].historical_stock_data()), 200)
+        self.assertEqual(stock_data_container_list[apple_idx].get_stock_name(), "Apple Inc.")
+        self.assertEqual(stock_data_container_list[intel_idx].get_stock_name(), "Intel Corporation")
+        self.assertGreater(len(stock_data_container_list[apple_idx].historical_stock_data()), 200)
+        self.assertGreater(len(stock_data_container_list[intel_idx].historical_stock_data()), 200)
         self.assertNotEqual(
-            stock_data_container_list[1].historical_stock_data()[GlobalVariables.get_stock_data_labels_dict()['High']][
+            stock_data_container_list[apple_idx].historical_stock_data()[GlobalVariables.get_stock_data_labels_dict()['High']][
                 0],
             stock_data_container_list[0].historical_stock_data()[GlobalVariables.get_stock_data_labels_dict()['High']][
-                0])
+                intel_idx])
 
-    def test__read_data__TraderfoxNewsDataReader_historical_data(self):
+    def test__read_data__TraderfoxNewsDataReader_historical_data__both_container_filled_with_hist_data(self):
         # attention these are test data files
         strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
                                                                  'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
@@ -88,14 +88,18 @@ class TestStockAnalysis(unittest.TestCase):
         stock_data_container_list = _read_data(['SimplePatternNewsStrategy'], strategy_parameter_dict, other_params,
                                                stock_data_container_list)
 
+        apple_idx = stock_data_container_list.index(apple_stock_data_container)
+        intel_idx = stock_data_container_list.index(intel_container)
         self.assertGreater(len(stock_data_container_list), 2)
-        self.assertGreater(len(stock_data_container_list[0].historical_stock_data()), 200)
-        self.assertGreater(len(stock_data_container_list[1].historical_stock_data()), 200)
+        self.assertEqual(stock_data_container_list[apple_idx].get_stock_name(), "Apple Inc.")
+        self.assertEqual(stock_data_container_list[intel_idx].get_stock_name(), "Intel Corporation")
+        self.assertGreater(len(stock_data_container_list[apple_idx].historical_stock_data()), 200)
+        self.assertGreater(len(stock_data_container_list[intel_idx].historical_stock_data()), 200)
         self.assertNotEqual(
-            stock_data_container_list[1].historical_stock_data()[GlobalVariables.get_stock_data_labels_dict()['High']][
+            stock_data_container_list[apple_idx].historical_stock_data()[GlobalVariables.get_stock_data_labels_dict()['High']][
                 0],
             stock_data_container_list[0].historical_stock_data()[GlobalVariables.get_stock_data_labels_dict()['High']][
-                0])
+                intel_idx])
 
     def test__read_data__TraderfoxNewsDataReader_news_data(self):
         # attention these are test data files

@@ -197,7 +197,9 @@ class MvcController:
                                      "Please choose a valid parameters file!")
 
             self.model.is_thread_running.set(True)
-            logger.info("Backtesting started...")
+            logger.info("")
+            logger.info("*********************************************************************************************")
+            logger.info("******************** Backtesting started... *************************************************")
 
             bf = BacktestingFactory()
             backtesting_parameters = self.model.analysis_parameters.get()["BacktestingParameters"]
@@ -287,19 +289,28 @@ class MvcController:
         :return: nothing
         """
         try:
-            with open(file_path, "rb") as f:
-                items = pickle.load(f)
+            items = None
+            if os.path.isfile(file_path):
+                with open(file_path, "rb") as f:
+                    items = pickle.load(f)
+
                 self.current_parameterfile = file_path
-                if not self.accept_parameters_from_text(items, required_parameters):
+                if self.accept_parameters_from_text(items, required_parameters):
+                    override_params = False
+                else:
                     override_params = messagebox.askyesno("Parameter file is not valid!",
                                                           "Do you want to CREATE a new file with default parameters?")
+            else:
+                override_params = True
 
-                    if override_params:
-                        self.model.analysis_parameters.clear()
-                        self.model.analysis_parameters.update(required_parameters)
-                        self.model.available_strategies_list.clear()
-                        for item in required_parameters['Strategies']:
-                            self.model.available_strategies_list.append(item)
+            if override_params:
+                self.model.analysis_parameters.clear()
+                self.model.analysis_parameters.update(required_parameters)
+                self.model.available_strategies_list.clear()
+                for item in required_parameters['Strategies']:
+                    self.model.available_strategies_list.append(item)
+
+                messagebox.showinfo("Parameterfile created", "New parameters created!")
 
         except Exception as e:
             messagebox.showerror("Parameter file is not valid!",
@@ -321,6 +332,8 @@ class MvcController:
             with open(file_path, "wb") as f:
                 pickle.dump(params_dict, f)
                 logger.info("Parameters Saved")
+
+            self.current_parameterfile = file_path
         else:
             messagebox.showerror("Parameter file is not valid!",
                                  "Please choose a valid parameters file!")
@@ -464,24 +477,22 @@ def init(top, gui, *args, **kwargs):
         config = configparser.ConfigParser()
         config.read(last_used_parameter_file_path)
 
-        # param_file = ast.literal_eval(config["Parameters"]['parameterfile'])
-        param_file = (config["Parameters"]['parameterfile'])
+        try:
+            param_file = (config["Parameters"]['parameterfile'])
+
+            multi_file_path_str = config["Parameters"]['backteststockselection']
+            if "," in multi_file_path_str:
+                multi_file_path = multi_file_path_str.split(',')
+            else:
+                multi_file_path = [multi_file_path_str]
+            # multi_file_path = ast.literal_eval(multi_file_path_str)
+            app.load_backtesting_stocks_from_file(multi_file_path)
+
+        except Exception as e:
+            param_file = ""
+
         app.load_analysis_parameters_from_file(param_file, req_params)
 
-        # TODO
-        multi_file_path_str = config["Parameters"]['backteststockselection']
-        if "," in multi_file_path_str:
-            multi_file_path = multi_file_path_str.split(',')
-        else:
-            multi_file_path = [multi_file_path_str]
-        # multi_file_path = ast.literal_eval(multi_file_path_str)
-        app.load_backtesting_stocks_from_file(multi_file_path)
-
-    except FileNotFoundError as fnfe:
-        override_params = messagebox.askyesno("Last saved file is not found!",
-                                              "Do you want to CREATE a new file?")
-
-        # TODO
     except Exception as e:
         logger.error("Exception while opening last saved file path: " + str(e) + "\n" + str(traceback.format_exc()))
 
@@ -519,6 +530,8 @@ def save_last_used_parameter_file():
     backtest_stocks = app.model.available_backtesting_stocks_list.get()
 
     str_stocks = ','.join(str(stock) for stock in backtest_stocks)
+    #if str_stocks is "":
+        #str_stocks = []
 
     config["Parameters"] = {'parameterfile': curr_file,
                             'backteststockselection': str_stocks}
