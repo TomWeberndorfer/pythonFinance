@@ -342,8 +342,4 @@ def wrapper(func, *args, **kwargs):
     :return:
     """
     # do something before
-    try:
-        return func(*args, **kwargs)
-
-    except Exception as e:
-        print(e)
+    return func(*args, **kwargs)

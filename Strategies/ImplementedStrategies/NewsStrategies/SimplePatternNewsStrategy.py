@@ -1,6 +1,7 @@
 import traceback
 
 from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
+from Signals.Signals import evaluate_signals
 from Strategies.Abstract_Strategy import Abstract_Strategy
 from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
@@ -30,7 +31,7 @@ class SimplePatternNewsStrategy(Abstract_Strategy):
         try:
 
             self.add_signals(stock_data_container, self.analysis_parameters)
-            result = self._evaluate_signals()
+            result = evaluate_signals(self.signal_list)
 
             if result is not None and result is not False:
                 ppd = stock_data_container.positive_prob_dist()

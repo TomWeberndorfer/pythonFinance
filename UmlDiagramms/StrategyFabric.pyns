@@ -1,0 +1,21 @@
+# PynSource Version 1.1
+{'type':'meta', 'info1':'Lorem ipsum dolor sit amet, consectetur adipiscing elit is latin.'}
+{'type':'umlshape', 'id':'Abstract_Strategy', 'x':139, 'y':103, 'width':386, 'height':205, 'attrs':'result_list|signal_list|stock_data_container_list', 'meths':'__init__|run_strategy|_method_to_execute|add_signals|get_required_parameters_with_default_parameters|evaluate_signals'}
+{'type':'umlshape', 'id':'StatusUpdate', 'x':31, 'y':37, 'width':142, 'height':31, 'attrs':'', 'meths':''}
+{'type':'umlshape', 'id':'Abstract_SimpleMultithreading', 'x':241, 'y':37, 'width':330, 'height':31, 'attrs':'', 'meths':''}
+{'type':'umlshape', 'id':'SimplePatternNewsStrategy', 'x':302, 'y':346, 'width':386, 'height':189, 'attrs':'signal_list|stock_data_container_list|text_analysis|result_list', 'meths':'add_signals|__init__|_method_to_execute|get_required_parameters_with_default_parameters'}
+{'type':'umlshape', 'id':'W52HighTechnicalStrategy', 'x':17, 'y':553, 'width':386, 'height':125, 'attrs':'signal_list', 'meths':'_method_to_execute|add_signals|get_required_parameters_with_default_parameters'}
+{'type':'umlshape', 'id':'StrategyFactory', 'x':745, 'y':438, 'width':410, 'height':115, 'attrs':'', 'meths':'__init__|get_required_parameters_with_default_parameters|get_other_parameters_with_default_parameters|get_backtesting_parameters_with_default_parameters'}
+{'type':'umlshape', 'id':'Abstract_Factory', 'x':857, 'y':190, 'width':187, 'height':31, 'attrs':'', 'meths':''}
+{'type':'edge', 'id':'Abstract_Strategy_to_StatusUpdate', 'source':'Abstract_Strategy', 'target':'StatusUpdate', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'Abstract_Strategy_to_Abstract_SimpleMultithreading', 'source':'Abstract_Strategy', 'target':'Abstract_SimpleMultithreading', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'Abstract_Strategy_to_StatusUpdate', 'source':'Abstract_Strategy', 'target':'StatusUpdate', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'Abstract_Strategy_to_Abstract_SimpleMultithreading', 'source':'Abstract_Strategy', 'target':'Abstract_SimpleMultithreading', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'Abstract_Strategy_to_StatusUpdate', 'source':'Abstract_Strategy', 'target':'StatusUpdate', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'Abstract_Strategy_to_Abstract_SimpleMultithreading', 'source':'Abstract_Strategy', 'target':'Abstract_SimpleMultithreading', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'SimplePatternNewsStrategy_to_Abstract_Strategy', 'source':'SimplePatternNewsStrategy', 'target':'Abstract_Strategy', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'W52HighTechnicalStrategy_to_Abstract_Strategy', 'source':'W52HighTechnicalStrategy', 'target':'Abstract_Strategy', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'StrategyFactory_to_Abstract_Factory', 'source':'StrategyFactory', 'target':'Abstract_Factory', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'StrategyFactory_to_W52HighTechnicalStrategy', 'source':'StrategyFactory', 'target':'W52HighTechnicalStrategy', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'StrategyFactory_to_SimplePatternNewsStrategy', 'source':'StrategyFactory', 'target':'SimplePatternNewsStrategy', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'Abstract_Factory_to_Abstract_Strategy', 'source':'Abstract_Factory', 'target':'Abstract_Strategy', 'uml_edge_type':'generalisation'}

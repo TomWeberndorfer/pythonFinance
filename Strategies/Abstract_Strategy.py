@@ -1,8 +1,9 @@
 import inspect
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 import traceback
+
+from Signals.Signals import evaluate_signals
 from Utils.Abstract_SimpleMultithreading import Abstract_SimpleMultithreading
-from Utils.CommonUtils import wrapper
 from Utils.StatusUpdate import StatusUpdate
 from Utils.Logger_Instance import logger
 
@@ -53,7 +54,7 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         try:
             if len(stock_data_container.historical_stock_data()) > 0:
                 self.add_signals(stock_data_container, self.analysis_parameters)
-                result = self._evaluate_signals()
+                result = evaluate_signals(self.signal_list)
 
                 if result is not None:
                     stock_data_container.update_used_strategy_and_recommendation(self.__class__.__name__, "BUY")
@@ -80,15 +81,3 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         """
         raise NotImplementedError("Abstractmethod")
 
-    def _evaluate_signals(self):
-        """
-        Evaluates the signals from the signal list. Automatically wrapps the list with function and all parameters.
-        :return:
-        """
-        for entry in self.signal_list:
-            func = entry.pop(0)
-            res = wrapper(func, *entry)
-            if res is None or res is False:
-                return None
-
-        return True

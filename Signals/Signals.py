@@ -1,12 +1,11 @@
 import traceback
 
+from Utils.CommonUtils import wrapper
 from Utils.Logger_Instance import logger
 from Utils.GlobalVariables import *
 from Utils.StockDataUtils import calc_avg_vol
-
-
-# TODO from talib.func import ATR
-
+import talib
+from talib import abstract
 
 def signal_is_volume_raising_within_check_days(stock, check_days, min_cnt):
     """
@@ -306,3 +305,35 @@ def signal_is_volume_high_enough(historical_stock_data, min_req_vol=15000):
         return True
     else:
         return None
+
+
+def evaluate_signals(signal_list):
+    """
+    Evaluates the signals from the signal list. Automatically wraps the list with function and all parameters.
+    :return:
+    """
+    for entry in signal_list:
+        func_str = entry.pop(0)
+
+        if isinstance(func_str, str):
+            try:
+                func = eval(func_str)
+            except Exception as e:
+                func = abstract.Function(func_str)
+        else:
+            func = func_str  # argument is a func instead of string
+
+        kwargs = None
+        for e in entry:
+            if isinstance(e, dict):
+                kwargs = entry.pop()
+                break
+
+        if kwargs is None:
+            res = wrapper(func, *entry)
+        else:
+            res = wrapper(func, *entry, **kwargs)
+        if res is None or res is False:
+            return None
+
+    return True

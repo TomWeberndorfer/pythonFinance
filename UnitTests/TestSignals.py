@@ -6,11 +6,12 @@ import pandas as pd
 
 from Signals.Signals import signal_is_volume_high_enough, signal_is52_w_high, \
     signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, signal_is_a_few_higher_than_avg, \
-    signal_is_volume_raising
+    signal_is_volume_raising, evaluate_signals
 from Utils.StockDataUtils import calc_avg_vol, calculate_stopbuy_and_stoploss
 
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Utils.GlobalVariables import *
+import talib
 
 test_filepath = GlobalVariables.get_data_files_path() + 'TestData\\'
 
@@ -454,3 +455,73 @@ class TestSignals(unittest.TestCase):
         # print(txt1)
         # print(txt2)
         #print(txt3)
+
+    def test_evaluate_signals__talib_function(self):
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data_in = [
+            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+            ('2016-10-10', 23.62, 23.88, 23.55, 24.0, 44000),
+            ('2016-10-11', 23.62, 30.0, 23.01, 23.16, 45000),
+            ('2016-10-12', 23.16, 23.0, 23.11, 23.5, 46000)]
+
+        data = pd.DataFrame.from_records(data_in, columns=labels)
+
+        signal_list = [[talib.SMA, data.close, {'timeperiod': 30}]]
+
+        res = evaluate_signals(signal_list)
+        self.assertNotEqual(None, res)
+
+    def test_evaluate_signals__talib_string(self):
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data_in = [
+            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+            ('2016-10-10', 23.62, 23.88, 23.55, 24.0, 44000),
+            ('2016-10-11', 23.62, 30.0, 23.01, 23.16, 45000),
+            ('2016-10-12', 23.16, 23.0, 23.11, 23.5, 46000)]
+
+        data = pd.DataFrame.from_records(data_in, columns=labels)
+
+        signal_list = [["SMA", data.close, {'timeperiod': 30}]]
+        # TODO so geht es:
+        # signal_list = [["SMA", data, {'timeperiod': 30}]]
+
+        res = evaluate_signals(signal_list)
+        self.assertNotEqual(None, res)
+
+    def test_evaluate_signals__signal_is_volume_high_enough_function(self):
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data_in = [
+            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+            ('2016-10-10', 23.62, 23.88, 23.55, 24.0, 44000),
+            ('2016-10-11', 23.62, 30.0, 23.01, 23.16, 45000),
+            ('2016-10-12', 23.16, 23.0, 23.11, 23.5, 46000)]
+
+        data = pd.DataFrame.from_records(data_in, columns=labels)
+
+        signal_list = [[signal_is_volume_high_enough, data]]
+
+        res = evaluate_signals(signal_list)
+        self.assertNotEqual(None, res)
+
+    def test_evaluate_signals__signal_is_volume_high_enough_string(self):
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data_in = [
+            ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+            ('2016-10-10', 23.62, 23.88, 23.55, 24.0, 44000),
+            ('2016-10-11', 23.62, 30.0, 23.01, 23.16, 45000),
+            ('2016-10-12', 23.16, 23.0, 23.11, 23.5, 46000)]
+
+        data = pd.DataFrame.from_records(data_in, columns=labels)
+
+        signal_list = [["signal_is_volume_high_enough", data]]
+
+        res = evaluate_signals(signal_list)
+        self.assertNotEqual(None, res)
