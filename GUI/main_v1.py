@@ -164,16 +164,29 @@ class ASTA_Framework:
 
         self.ButtonRunStrategyRepetitive = Button(self.TNotebook2_t1_page_res)
         self.ButtonRunStrategyRepetitive.place(relx=0.25, rely=0.9, height=44
-                                               , width=142)
+                                               , width=160)
         self.ButtonRunStrategyRepetitive.configure(activebackground="#f4bcb2")
         self.ButtonRunStrategyRepetitive.configure(activeforeground="#000000")
-        self.ButtonRunStrategyRepetitive.configure(background="#d5eaff")
+        self.ButtonRunStrategyRepetitive.configure(background="greenyellow")
         self.ButtonRunStrategyRepetitive.configure(disabledforeground="#a3a3a3")
         self.ButtonRunStrategyRepetitive.configure(foreground="#000000")
         self.ButtonRunStrategyRepetitive.configure(highlightbackground="#effbff")
         self.ButtonRunStrategyRepetitive.configure(highlightcolor="black")
         self.ButtonRunStrategyRepetitive.configure(pady="0")
-        self.ButtonRunStrategyRepetitive.configure(text='''Run Strategy Repetitive''')
+        # Text is set in the controller
+
+        self.ButtonStartAutoTrading = Button(self.TNotebook2_t1_page_res)
+        self.ButtonStartAutoTrading.place(relx=0.40, rely=0.9, height=44
+                                          , width=142)
+        self.ButtonStartAutoTrading.configure(activebackground="#f4bcb2")
+        self.ButtonStartAutoTrading.configure(activeforeground="#000000")
+        self.ButtonStartAutoTrading.configure(background="greenyellow")
+        self.ButtonStartAutoTrading.configure(disabledforeground="#a3a3a3")
+        self.ButtonStartAutoTrading.configure(foreground="#000000")
+        self.ButtonStartAutoTrading.configure(highlightbackground="#effbff")
+        self.ButtonStartAutoTrading.configure(highlightcolor="black")
+        self.ButtonStartAutoTrading.configure(pady="0")
+        # Text is set in the controller
 
         self.TPanedwindow2 = ttk.Panedwindow(self.TNotebook2_t2_page_config
                                              , orient="horizontal")

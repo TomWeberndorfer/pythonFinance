@@ -65,11 +65,11 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
                                                   GlobalVariables.get_data_files_path() + "NewsForBacktesting.txt",
                                                   True)
                 all_news.append(news_text)
-
+                # TODO des ist doppelt, auch im identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier
                 prep_news = text_analysis.optimize_text_for_german_tagger(news_text)
                 name_ticker_exchange_target_prize = \
                     text_analysis.identify_stock_name_and_stock_ticker_and_target_price_from_news_nltk_german_classifier(
-                        prep_news)
+                        news_text)
                 if name_ticker_exchange_target_prize is not None and name_ticker_exchange_target_prize.get_stock_name() != "":
                     container = StockDataContainer(name_ticker_exchange_target_prize.get_stock_name(),
                                                    name_ticker_exchange_target_prize.stock_ticker(),

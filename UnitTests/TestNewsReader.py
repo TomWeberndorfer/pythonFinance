@@ -34,9 +34,10 @@ class TestNewsReader(unittest.TestCase):
 
         stock_data_container_list = []
         data_storage = DataReaderFactory()
+        data_file_path = GlobalVariables.get_data_files_path()
         reader_type = 'TraderfoxNewsDataReader'
         data_reader_params = {'Name': 'TraderfoxNewsDataReader', 'last_date_time_file': test_file,
-                              'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                              'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                               'reload_data': True, 'ticker_needed': False}
 
         reader = data_storage.prepare(reader_type, stock_data_container_list=stock_data_container_list,

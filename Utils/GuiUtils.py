@@ -87,5 +87,16 @@ class GuiUtils:
 
     @staticmethod
     def set_buttons_state(buttons, state):
-        for button in buttons:
-            button['state'] = state
+        """
+        Set button state, or buttons state as list
+        :param buttons: single items or list
+        :param state: state as text
+        :return: nothing
+        """
+
+        if isinstance(buttons, list):
+            for button in buttons:
+                button['state'] = state
+        else:
+            # only single button
+            buttons['state'] = state

@@ -48,12 +48,13 @@ class TestMvcModel(unittest.TestCase):
 
     def test_add_to_other_params(self):
         root = Tk()
+        data_file_path = GlobalVariables.get_data_files_path()
         strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
-                                                                 'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                 'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                  'data_readers': {'TraderfoxNewsDataReader':
                                                                      {
-                                                                         'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
-                                                                         'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                         'last_date_time_file': data_file_path + '\\TestData\\last_date_time.csv',
+                                                                         'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                          'reload_data': True,
                                                                          'ticker_needed': False},
                                                                      'HistoricalDataReader':
@@ -72,7 +73,7 @@ class TestMvcModel(unittest.TestCase):
                                             'reload_data': False,
                                             'ticker_needed': True}}}
                                    }
-        stock_data_file = 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\stock_data_container_file.pickle'
+        stock_data_file = data_file_path + 'TestData\\stock_data_container_file.pickle'
         other_params = {'stock_data_container_file': stock_data_file, 'dict_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',

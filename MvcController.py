@@ -17,6 +17,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import backtrader.analyzers as btanalyzer
 
@@ -42,6 +43,11 @@ class MvcController:
         self.model = MvcModel()  # initializes the model
         self.view = view  # initializes the view
         self.view.ButtonRunStrategy.config(command=self.start_screening)
+        self.view.ButtonRunStrategyRepetitive.config(command=self.start_screening_repetitive)
+        self.view.ButtonStartAutoTrading.config(command=self.start_automatic_trading)
+        self.view.ButtonRunStrategyRepetitive['text'] = "Start Run Strategy Repetitive"
+        self.view.ButtonStartAutoTrading['text'] = "Start Automatic Trading"
+
         self.view.Scrolledlistbox_selectStrategy.bind('<<ListboxSelect>>', self.listbox_onselect_select_strategy)
         self.view.sl_bt_select_stocks.bind('<<ListboxSelect>>', self.listbox_onselect_select_backtesting_stocks)
         self.view.sb_select_analyzers.bind('<<ListboxSelect>>', self.listbox_onselect_select_backtesting_analyzers)
@@ -53,6 +59,8 @@ class MvcController:
         self.analysis_parameters_changed()
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
         self.console = ConsoleUi(self.view.Labelframe2)
+
+        self.background_scheduler = BackgroundScheduler()
 
         # add the listeners to mvc model
         # self.model.selected_backtesting_analyzers_list.add_event_listeners()
@@ -71,13 +79,33 @@ class MvcController:
         # no need to add event lister
         # self.model.selected_strategies_list.add_event_listeners(self.strategy_selection_changed)
         self.model.available_strategies_list.add_event_listeners(self.available_strategies_changed)
-
         self.model.result_stock_data_container_list.add_event_listeners(self.result_stock_data_container_list_changed)
-        self.model.is_thread_running.add_event_listeners(self.is_thread_running_changed)
+
+        self.model.thread_state.add_event_listeners(self.is_screening_thread_running_changed)
+        self.model.is_background_thread_running.add_event_listeners(self.is_screening_thread_running_changed)
+
         self.model.analysis_parameters.add_event_listeners(self.analysis_parameters_changed)
         self.model.backtesting_result_instance.add_event_listeners(self.cerebro_result_changed)
 
         self.current_parameterfile = ""
+
+        self.deactivate_buttons_while_repetitive_screening = [self.view.ButtonRunStrategy,
+                                                              self.view.b_run_backtest,
+                                                              self.view.b_open_results_new_wd,
+                                                              self.view.b_open_results_new_wd,
+                                                              self.view.ButtonStartAutoTrading]
+
+        self.deactivate_buttons_while_auto_trading_screening = [self.view.ButtonRunStrategyRepetitive,
+                                                                self.view.ButtonRunStrategy,
+                                                                self.view.b_run_backtest,
+                                                                self.view.b_open_results_new_wd,
+                                                                self.view.b_open_results_new_wd]
+
+        # add all_buttons to disable / enable when running
+        self.all_buttons = [self.view.ButtonRunStrategyRepetitive, self.view.ButtonRunStrategy,
+                            self.view.b_run_backtest,
+                            self.view.b_open_results_new_wd,
+                            self.view.b_open_results_new_wd, self.view.ButtonStartAutoTrading]
 
     def on_double_click_Scrolledtreeview1(self, event):
         """
@@ -105,18 +133,77 @@ class MvcController:
         Start the screening thread for NON blocking GUI.
         :return: nothing
         """
-        if not self.model.is_thread_running.get():
+        if self.model.thread_state.get() is GlobalVariables.get_screening_states()['not_running']:
             thread = Thread(target=self.screening)
             thread.start()
+
+    def start_screening_repetitive(self, interval_sec=120):  # TODO screening 15
+        """
+        Start the screening repetitive, due to interval, if screening is not already running.
+        :param interval_sec: interval time, defines the cycle time to restart the screening
+        :return: nothing
+        """
+        if self.model.thread_state.get() is GlobalVariables.get_screening_states()[
+            'repetititve_screening']:
+            try:
+                self.background_scheduler.shutdown()
+            except Exception as e:
+                logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
+            self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
+
+        else:
+            try:
+                if not self._check_if_strategy_can_run():
+                    # self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
+                    return
+
+                self.start_screening()  # start first time manually IMMEDIATELY
+                self.background_scheduler.add_job(self.start_screening, 'interval', seconds=interval_sec)
+                self.background_scheduler.start()
+                self.model.thread_state.set(
+                    GlobalVariables.get_screening_states()['repetititve_screening'])
+
+            except Exception as e:
+                logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
+                self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
+
+    def start_automatic_trading(self):
+        if self.model.thread_state.get() is \
+                GlobalVariables.get_screening_states()['auto_trading']:  # TODO screening 15
+            # TODO
+            # self.background_scheduler.shutdown()
+            self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
+        else:
+            if self.model.thread_state.get() is GlobalVariables.get_screening_states()['not_running']:
+                # self.background_scheduler.add_job(self.start_screening, 'interval', seconds=interval_sec)
+                # self.background_scheduler.start()
+                self.model.thread_state.set(GlobalVariables.get_screening_states()['auto_trading'])
 
     def start_backtesting(self):
         """
         Start the backtesting thread for NON blocking GUI.
         :return: nothing
         """
-        if not self.model.is_thread_running.get():
+        if self.model.thread_state.get() is GlobalVariables.get_screening_states()['not_running']:
             thread = Thread(target=self.backtesting)
             thread.start()
+
+    def _check_if_strategy_can_run(self):
+        selection_values = self.model.selected_strategies_list.get()
+        if selection_values == "" or len(selection_values) <= 0:
+            messagebox.showerror("Selection Error", "Please select a strategy first!")
+            return False
+
+        req_params = StrategyFactory.get_required_parameters_with_default_parameters()
+        at_objects = w.scrollable_frame_parameters.form.at_objects
+        content_others = w.scrollable_frame_parameters.form.get_parameters(at_objects)
+
+        if not self.accept_parameters_from_text(content_others, req_params):
+            messagebox.showerror("Parameter file is not valid!",
+                                 "Please choose a valid parameters file!")
+            return False
+
+        return True
 
     def screening(self):
         """
@@ -124,21 +211,11 @@ class MvcController:
         :return: nothing, results are saved in the model.
         """
         try:
-            selection_values = self.model.selected_strategies_list.get()
-
-            if selection_values == "" or len(selection_values) <= 0:
-                messagebox.showerror("Selection Error", "Please select a strategy first!")
+            if not self._check_if_strategy_can_run():
                 return
 
-            req_params = StrategyFactory.get_required_parameters_with_default_parameters()
-            at_objects = w.scrollable_frame_parameters.form.at_objects
-            content_others = w.scrollable_frame_parameters.form.get_parameters(at_objects)
-
-            if not self.accept_parameters_from_text(content_others, req_params):
-                messagebox.showerror("Parameter file is not valid!",
-                                     "Please choose a valid parameters file!")
-
-            self.model.is_thread_running.set(True)
+            self.model.is_background_thread_running.set(True)
+            selection_values = self.model.selected_strategies_list.get()
             logger.info("Screening started...")
             self.model.result_stock_data_container_list.clear()
             analysis_params = self.model.analysis_parameters.get()
@@ -148,7 +225,7 @@ class MvcController:
         except Exception as e:
             logger.error("Exception while screening: " + str(e) + "\n" + str(traceback.format_exc()))
 
-        self.model.is_thread_running.set(False)
+        self.model.is_background_thread_running.set(False)
 
     def backtesting(self):
         """
@@ -195,8 +272,9 @@ class MvcController:
             if not self.accept_parameters_from_text(content_others, req_params):
                 messagebox.showerror("Parameter file is not valid!",
                                      "Please choose a valid parameters file!")
+                return
 
-            self.model.is_thread_running.set(True)
+            self.model.is_background_thread_running.set(True)
             logger.info("")
             logger.info("*********************************************************************************************")
             logger.info("******************** Backtesting started... *************************************************")
@@ -246,7 +324,7 @@ class MvcController:
         except Exception as e:
             logger.error("Exception while backtesting: " + str(e) + "\n" + str(traceback.format_exc()))
 
-        self.model.is_thread_running.set(False)
+        self.model.is_background_thread_running.set(False)
 
     def accept_parameters_from_text(self, params_dict, required_parameters):
         """
@@ -360,13 +438,40 @@ class MvcController:
         for available_strategy in available_strategies_list:
             insert_text_into_gui(w.Scrolledlistbox_selectStrategy, available_strategy)
 
-    def is_thread_running_changed(self):
-        buttons = [w.ButtonRunStrategyRepetitive, w.ButtonRunStrategy, w.b_run_backtest, w.b_open_results_new_wd,
-                   w.b_open_results_new_wd]
-        if self.model.is_thread_running.get():
-            GuiUtils.set_buttons_state(buttons, 'disabled')
+    def is_screening_thread_running_changed(self):
+        """
+        Called when thread_state variable changed
+        :param self: controller instance
+        :return: -
+        """
+        screening_state = self.model.thread_state.get()
+        is_background_thread_running = self.model.is_background_thread_running.get()
+
+        if is_background_thread_running:
+            GuiUtils.set_buttons_state(self.all_buttons, 'disabled')
         else:
-            GuiUtils.set_buttons_state(buttons, 'normal')
+            if screening_state is GlobalVariables.get_screening_states()['single_screening']:
+                GuiUtils.set_buttons_state(self.all_buttons, 'disabled')
+            elif screening_state is GlobalVariables.get_screening_states()['repetititve_screening']:
+                GuiUtils.set_buttons_state(self.deactivate_buttons_while_repetitive_screening, 'disabled')
+                GuiUtils.set_buttons_state(self.view.ButtonRunStrategyRepetitive, 'normal')
+                self.view.ButtonRunStrategyRepetitive['text'] = "STOP Run Strategy Repetitive"
+                self.view.ButtonRunStrategyRepetitive.configure(background="orangered")
+
+            elif screening_state is GlobalVariables.get_screening_states()['auto_trading']:
+                GuiUtils.set_buttons_state(self.deactivate_buttons_while_auto_trading_screening, 'disabled')
+                GuiUtils.set_buttons_state(self.view.ButtonStartAutoTrading, 'normal')
+                self.view.ButtonStartAutoTrading['text'] = "STOP Automatic Trading"
+                self.view.ButtonStartAutoTrading.configure(background="orangered")
+
+            elif screening_state is GlobalVariables.get_screening_states()['backtesting']:
+                GuiUtils.set_buttons_state(self.all_buttons, 'disabled')
+            else:
+                GuiUtils.set_buttons_state(self.all_buttons, 'normal')
+                self.view.ButtonStartAutoTrading['text'] = "Start Automatic Trading"
+                self.view.ButtonStartAutoTrading.configure(background="greenyellow")
+                self.view.ButtonRunStrategyRepetitive['text'] = "Start Run Strategy Repetitive"
+                self.view.ButtonRunStrategyRepetitive.configure(background="greenyellow")
 
     def result_stock_data_container_list_changed(self):
         """
@@ -526,12 +631,12 @@ def save_last_used_parameter_file():
     config = configparser.ConfigParser()
     curr_file = app.current_parameterfile
 
-    #TODO dictr with name and file instad of backtrader object
+    # TODO dictr with name and file instad of backtrader object
     backtest_stocks = app.model.available_backtesting_stocks_list.get()
 
     str_stocks = ','.join(str(stock) for stock in backtest_stocks)
-    #if str_stocks is "":
-        #str_stocks = []
+    # if str_stocks is "":
+    # str_stocks = []
 
     config["Parameters"] = {'parameterfile': curr_file,
                             'backteststockselection': str_stocks}

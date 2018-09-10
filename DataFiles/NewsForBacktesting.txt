@@ -650,3 +650,11 @@ Date,News
 07.09.2018 um 14:59, ANALYSE-FLASH: DZ Bank senkt Facebook auf 'Halten' - Fairer Wert 165 US-Dollar
 07.09.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 07.09.2018
 08.09.2018 um 20:09, ANALYSE-FLASH: Goldman hebt Aurubis auf 'Neutral' und senkt Kursziel auf 61 Euro
+09.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+10.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+10.09.2018 um 06:59, ANALYSE-FLASH: Barclays hebt Credit Suisse auf 'Equal Weight' - Ziel 16 Franken
+10.09.2018 um 07:08, ANALYSE-FLASH: JPMorgan hebt Rio Tinto auf 'Overweight' - Ziel 4850 Pence
+10.09.2018 um 08:00, ANALYSE-FLASH: Barclays senkt Ziel für Volkswagen-Vorzüge - 'Overweight'
+10.09.2018 um 08:05, MICROSOFT IM FOKUS: Software-Riese nimmt Kurs auf die Billionen-Marke
+10.09.2018 um 08:59, ANALYSE: Goldman hält Probleme von Aurubis für eingepreist - 'Neutral'
+10.09.2018 um 10:15, ANALYSE-FLASH: Merrill Lynch hebt Novartis auf 'Buy' - Ziel 100 Franken

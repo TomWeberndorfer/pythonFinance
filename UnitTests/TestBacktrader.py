@@ -192,11 +192,11 @@ class TestBacktrader(unittest.TestCase):
 
     def test_GenericBacktraderCsvNewsData(self):
         tbt = BacktraderWrapper()
-        data_list = ['C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\BacktraderNewsCsv.csv']
+        data_file_path = GlobalVariables.get_data_files_path()
+        data_list = [data_file_path + '\\TestData\\TestBacktraderRun_test2.csv']
         analyzers = [btanalyzer.AnnualReturn, btanalyzer.Calmar, btanalyzer.DrawDown, btanalyzer.TimeDrawDown,
                      btanalyzer.GrossLeverage, btanalyzer.PositionsValue, btanalyzer.Returns,
                      btanalyzer.SharpeRatio, btanalyzer.TradeAnalyzer]
-        data_file_path = GlobalVariables.get_data_files_path()
 
         analysis_parameters = {'news_threshold': 0.7,
                                'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle'}

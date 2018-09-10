@@ -17,11 +17,11 @@ class TestStrategyFactory(unittest.TestCase):
     def test_data_in_dict(self):
         stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
         all_strategy_parameters_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
-                                                                      'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                      'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle',
                                                                       'data_readers': {'TraderfoxNewsDataReader':
                                                                           {
-                                                                              'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
-                                                                              'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                              'last_date_time_file': GlobalVariables.get_data_files_path() + 'TestData\\last_date_time.csv',
+                                                                              'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle',
                                                                               'reload_data': True,
                                                                               'ticker_needed': False},
                                                                           'HistoricalDataReader':
@@ -66,11 +66,11 @@ class TestStrategyFactory(unittest.TestCase):
 
         # key "news" instead of "news_threshold"
         corrupted_strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news': 0.7,
-                                                                           'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                           'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle',
                                                                            'data_readers': {'TraderfoxNewsDataReader':
                                                                                {
-                                                                                   'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
-                                                                                   'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                                   'last_date_time_file': GlobalVariables.get_data_files_path() + 'TestData\\last_date_time.csv',
+                                                                                   'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle',
                                                                                    'reload_data': True,
                                                                                    'ticker_needed': False},
                                                                                'HistoricalDataReader':

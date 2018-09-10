@@ -13,6 +13,7 @@ import requests
 import Utils.Logger_Instance
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Trial.try_candlesticks import plot_stock_as_candlechart_with_volume
+from threading import Event, Thread
 
 
 class CommonUtils:
@@ -331,6 +332,24 @@ class CommonUtils:
             except ImportError as ie:
                 pass
         return items_dict
+
+    @staticmethod
+    def call_repeatedly(interval, func, *args):
+        """
+        Call repeatedly the given function in interval time.
+        :param interval:
+        :param func:
+        :param args:
+        :return:
+        """
+        stopped = Event()
+
+        def loop():
+            while not stopped.wait(interval):  # the first call is in `interval` secs
+                func(*args)
+
+        Thread(target=loop).start()
+        return stopped.set
 
 
 def wrapper(func, *args, **kwargs):

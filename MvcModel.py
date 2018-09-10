@@ -1,6 +1,8 @@
 from Utils.ObjectWithChangedListeners import ListWithChangedListeners, DictWithChangedListeners, \
     ObjectWithChangedListeners
 
+from Utils.GlobalVariables import GlobalVariables
+
 
 class MvcModel:
     def __init__(self):
@@ -19,8 +21,12 @@ class MvcModel:
         self.available_backtesting_stocks_list = ListWithChangedListeners()
         self.selected_backtesting_stocks_list = ListWithChangedListeners()
 
-        self.is_thread_running = ObjectWithChangedListeners(False)
         self.analysis_parameters = DictWithChangedListeners()
+
+        init_state = GlobalVariables.get_screening_states()['not_running']
+        self.thread_state = ObjectWithChangedListeners(init_state)
+
+        self.is_background_thread_running = ObjectWithChangedListeners(False)
 
         self.selected_strategies_list = ListWithChangedListeners()
         self.available_strategies_list = ListWithChangedListeners()

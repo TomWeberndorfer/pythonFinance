@@ -42,3 +42,8 @@ class GlobalVariables:
         :return: date time format
         """
         return '%Y-%m-%d'
+
+    @staticmethod
+    def get_screening_states():
+        return {'not_running': 0, 'single_screening': 1, 'repetititve_screening': 2, 'auto_trading': 3,
+                'backtesting': 4}

@@ -32,15 +32,17 @@ class TestControllerAndGui(unittest.TestCase):
         top = ASTA_Framework(root)
         controller = MvcController.init(root, top)
 
-        strat_param_file = GlobalVariables.get_data_files_path() + '\\TestData\\ParameterFile_test_dump_and_load_strat_params.pickle'
+        data_file_path = GlobalVariables.get_data_files_path()
+
+        strat_param_file = data_file_path + '\\TestData\\ParameterFile_test_dump_and_load_strat_params.pickle'
         FileUtils.check_file_exists_and_delete(strat_param_file)
 
         strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
-                                                                 'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                 'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                  'data_readers': {'TraderfoxNewsDataReader':
                                                                      {
-                                                                         'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
-                                                                         'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                         'last_date_time_file': data_file_path + 'TestData\\last_date_time.csv',
+                                                                         'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                          'reload_data': True,
                                                                          'ticker_needed': False},
                                                                      'HistoricalDataReader':
@@ -59,7 +61,7 @@ class TestControllerAndGui(unittest.TestCase):
                                             'reload_data': False,
                                             'ticker_needed': True}}}
                                    }
-        stock_data_file = 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\stock_data_container_file.pickle'
+        stock_data_file = data_file_path + 'TestData\\stock_data_container_file.pickle'
         other_params = {'stock_data_container_file': stock_data_file, 'dict_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
@@ -79,16 +81,17 @@ class TestControllerAndGui(unittest.TestCase):
         root = Tk()
         top = ASTA_Framework(root)
         controller = MvcController.init(root, top)
+        data_file_path = GlobalVariables.get_data_files_path()
 
         strat_param_file = GlobalVariables.get_data_files_path() + '\\TestData\\ParameterFile_test_dump_and_load_strat_params.pickle'
         FileUtils.check_file_exists_and_delete(strat_param_file)
 
         strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
-                                                                 'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                 'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                  'data_readers': {'TraderfoxNewsDataReader':
                                                                      {
-                                                                         'last_date_time_file': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\last_date_time.csv',
-                                                                         'german_tagger': 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\nltk_german_classifier_data.pickle',
+                                                                         'last_date_time_file': data_file_path + 'TestData\\last_date_time.csv',
+                                                                         'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                          'reload_data': True,
                                                                          'ticker_needed': False},
                                                                      'HistoricalDataReader':
@@ -97,7 +100,7 @@ class TestControllerAndGui(unittest.TestCase):
                                                                           'reload_data': True,
                                                                           'ticker_needed': False}}}
                                    }
-        stock_data_file = 'C:\\temp\\pythonFinance\\pythonFinance\\DataFiles\\TestData\\stock_data_container_file.pickle'
+        stock_data_file = data_file_path + 'TestData\\stock_data_container_file.pickle'
         other_params = {'stock_data_container_file': stock_data_file, 'dict_with_stock_pages_to_read': {
             'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
