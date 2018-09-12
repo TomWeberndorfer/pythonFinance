@@ -9,6 +9,7 @@ import requests
 from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
 from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
+from NewsFeedReader.traderfox_hp_news import is_date_actual
 from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
 from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
@@ -21,14 +22,14 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
     def read_data(self):
         from Utils.FileUtils import FileUtils
         if self.reload_stockdata:
-            FileUtils.check_file_exists_and_delete(self._parameter_dict['last_date_time_file'])
+            FileUtils.check_file_exists_and_delete(self._parameter_dict['last_check_date_file'])
 
-        self.__read_news_from_traderfox(self._parameter_dict['last_date_time_file'])
+        self._read_news_from_traderfox(self._parameter_dict['last_check_date_file'])
 
         # TODO returnen
         # return all_news_text_list
 
-    def __read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):
+    def _read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):
         """
         read news from traderfox home page with dpa-afx-compact news
         :param date_time_format: news datetime format
@@ -55,7 +56,7 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
             date_time = (str(elm.footer.span.get_text()))  # date and Time
             date_time = date_time.rsplit(' Uhr')[0]  # TODO: split because of datetime format
             datetime_object = datetime.strptime(date_time, date_time_format)
-            is_a_new_news, last_date = self.__is_date_actual(datetime_object, date_file, last_date)
+            is_a_new_news, last_date = is_date_actual(datetime_object, date_file, last_date)
 
             if is_a_new_news:
                 article_text = (str(elm.h2.get_text(strip=True)))  # h2 --> article head line
@@ -91,40 +92,3 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         # TODO mal was returnen
         # return all_news
 
-    def __is_date_actual(self, date_to_check, last_date_file="", last_date="", date_time_format="%d.%m.%Y um %H:%M"):
-        """
-
-        :param date_time_format:
-        :type last_date: object
-        :param last_date_file:
-        :param date_to_check:
-        :return:
-        """
-        from Utils.FileUtils import FileUtils
-        try:
-            if date_to_check is None:
-                raise NotImplementedError
-
-            if last_date == "":
-                if FileUtils.check_file_exists_or_create(last_date_file,
-                                               "last_check_date" + "\n01.01.2000 um 00:00"):  # no need to check, creates anyway
-                    data = pd.read_csv(last_date_file)
-                    last_date_str = str(data.last_check_date[0])
-                    last_date = datetime.strptime(last_date_str, date_time_format)
-                else:
-                    return False, ""
-
-            is_news_current = last_date < date_to_check
-
-            if is_news_current:
-                with open(last_date_file, "w") as myfile:
-                    myfile.write("last_check_date" + "\n")
-                    datetime_object_str = datetime.strftime(date_to_check, date_time_format)
-                    myfile.write(str(datetime_object_str) + "\n")
-                    return is_news_current, date_to_check
-
-            return is_news_current, last_date
-
-        except Exception as e:
-            logger.error("Exception Can not check if date is actual.: " + str(e) + "\n" + str(traceback.format_exc()))
-            return True, ""

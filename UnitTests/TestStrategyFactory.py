@@ -20,7 +20,7 @@ class TestStrategyFactory(unittest.TestCase):
                                                                       'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle',
                                                                       'data_readers': {'TraderfoxNewsDataReader':
                                                                           {
-                                                                              'last_date_time_file': GlobalVariables.get_data_files_path() + 'TestData\\last_date_time.csv',
+                                                                              'last_check_date_file': GlobalVariables.get_data_files_path() + 'TestData\\last_date_time.csv',
                                                                               'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle',
                                                                               'reload_data': True,
                                                                               'ticker_needed': False},
@@ -52,7 +52,8 @@ class TestStrategyFactory(unittest.TestCase):
                                 'find_name': 'tbody', 'class_name': 'class', 'table_class': 'row-hover',
                                 'ticker_column_to_read': 2, 'name_column_to_read': 1, 'stock_exchange': 'de'}},
                         'RiskModels': {
-                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}},
+                        'RepetitiveScreeningInterval': 120}
 
         backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}
@@ -69,7 +70,7 @@ class TestStrategyFactory(unittest.TestCase):
                                                                            'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle',
                                                                            'data_readers': {'TraderfoxNewsDataReader':
                                                                                {
-                                                                                   'last_date_time_file': GlobalVariables.get_data_files_path() + 'TestData\\last_date_time.csv',
+                                                                                   'last_check_date_file': GlobalVariables.get_data_files_path() + 'TestData\\last_date_time.csv',
                                                                                    'german_tagger': GlobalVariables.get_data_files_path() + 'nltk_german_classifier_data.pickle',
                                                                                    'reload_data': True,
                                                                                    'ticker_needed': False},

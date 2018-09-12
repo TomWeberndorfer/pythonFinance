@@ -61,7 +61,8 @@ class StrategyFactory(Abstract_Factory):
                                 'find_name': 'tbody', 'class_name': 'class', 'table_class': 'row-hover',
                                 'ticker_column_to_read': 2, 'name_column_to_read': 1, 'stock_exchange': 'de'}},
                         'RiskModels': {
-                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
+                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}},
+                        'RepetitiveScreeningInterval': 120}
 
         other_parameters_dict = {"OtherParameters": other_params}
 

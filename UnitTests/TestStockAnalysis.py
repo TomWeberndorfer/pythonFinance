@@ -59,7 +59,7 @@ class TestStockAnalysis(unittest.TestCase):
                                                                  'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                  'data_readers': {'TraderfoxNewsDataReader':
                                                                      {
-                                                                         'last_date_time_file': data_file_path + 'TestData\\last_date_time.csv',
+                                                                         'last_check_date_file': data_file_path + 'TestData\\last_date_time.csv',
                                                                          'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                          'reload_data': True,
                                                                          'ticker_needed': False},
@@ -110,7 +110,7 @@ class TestStockAnalysis(unittest.TestCase):
                                                                  'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                  'data_readers': {'TraderfoxNewsDataReader':
                                                                      {
-                                                                         'last_date_time_file': data_file_path + 'TestData\\last_date_time.csv',
+                                                                         'last_check_date_file': data_file_path + 'TestData\\last_date_time.csv',
                                                                          'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                                                                          'reload_data': True,
                                                                          'ticker_needed': False},

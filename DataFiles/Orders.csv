@@ -1,0 +1,4 @@
+datetime                  ,stock_ticker,order_id,order_type,action,quantity,limit_price,security_type,exchange,currency
+2018-09-12 13:52:01.731700,GOOG        ,347881  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-09-12 13:59:34.324782,GOOG        ,347882  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-09-12 14:19:01.387624,GOOG        ,347883  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD

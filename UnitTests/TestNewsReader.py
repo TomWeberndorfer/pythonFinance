@@ -2,15 +2,11 @@ import unittest
 from datetime import datetime
 
 from DataReading.DataReaderFactory import DataReaderFactory
-from Strategies.StrategyFactory import StrategyFactory
-
-from Utils.FileUtils import FileUtils
 from NewsFeedReader.traderfox_hp_news import is_date_actual
+from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
-
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
 from Utils.FileUtils import FileUtils
+
 
 class TestNewsReader(unittest.TestCase):
 
@@ -26,17 +22,17 @@ class TestNewsReader(unittest.TestCase):
 
     def test_read_from_traderfox(self):
         # TODO ois mit file is kein unit test
-        test_file = filepath + "\\last_date_time.csv"
+        test_file = GlobalVariables.get_test_data_files_path() + "last_date_time.csv"
 
         with open(test_file, "w") as myfile:
-            myfile.write("last_check_date" + "\n")
+            myfile.write("last_news_check_date" + "\n")
             myfile.write("01.01.2018 um 02:17" + "\n")
 
         stock_data_container_list = []
         data_storage = DataReaderFactory()
         data_file_path = GlobalVariables.get_data_files_path()
         reader_type = 'TraderfoxNewsDataReader'
-        data_reader_params = {'Name': 'TraderfoxNewsDataReader', 'last_date_time_file': test_file,
+        data_reader_params = {'Name': 'TraderfoxNewsDataReader', 'last_check_date_file': test_file,
                               'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
                               'reload_data': True, 'ticker_needed': False}
 
@@ -54,9 +50,9 @@ class TestNewsReader(unittest.TestCase):
         last_date_time_str = "07.03.2018 um 03:11"
         date_time = "07.03.2018 um 23:11"
 
-        test_file = filepath + "\\last_date_time.csv"
+        test_file = GlobalVariables.get_test_data_files_path() + "last_date_time.csv"
         with open(test_file, "w") as myfile:
-            myfile.write("last_check_date" + "\n")
+            myfile.write(GlobalVariables.get_date_time_file_header() + "\n")
             myfile.write(last_date_time_str + "\n")
 
         datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
@@ -69,7 +65,7 @@ class TestNewsReader(unittest.TestCase):
 
     def test_read_tickers_from_file_or_web(self):
         stock_data_container_file_name = "stock_data_container_file.pickle"
-        stock_data_container_file = filepath + stock_data_container_file_name
+        stock_data_container_file = GlobalVariables.get_test_data_files_path() + stock_data_container_file_name
 
         dict_with_stock_pages_to_read = \
         StrategyFactory.get_other_parameters_with_default_parameters()["OtherParameters"][

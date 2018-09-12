@@ -8,8 +8,7 @@ from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.GlobalVariables import *
 from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
+test_data_filepath = GlobalVariables.get_test_data_files_path()
 
 
 class TestGermanTaggerAnalyseNews(unittest.TestCase):
@@ -283,7 +282,7 @@ class TestGermanTaggerAnalyseNews(unittest.TestCase):
                                      StockDataContainer("LOrealfuture", "LORFK8.EX", "")]
 
         analysis = GermanTaggerAnalyseNews(stock_data_container_list, 0.7,
-                                           filepath + 'nltk_german_classifier_data.pickle')
+                                           test_data_filepath + 'nltk_german_classifier_data.pickle')
 
         result = analysis.lookup_stock_abr_in_all_names("Rheinmetall")
         self.assertEqual(result, "RHEINMETALL AG")

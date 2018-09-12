@@ -14,6 +14,11 @@ class GlobalVariables:
         return data_file_path
 
     @staticmethod
+    def get_test_data_files_path():
+        data_file_path = GlobalVariables.get_data_files_path() + '\\TestData\\'
+        return data_file_path
+
+    @staticmethod
     def get_last_used_parameter_file():
         """
         Get the last used parameter file configuration file
@@ -47,3 +52,35 @@ class GlobalVariables:
     def get_screening_states():
         return {'not_running': 0, 'single_screening': 1, 'repetititve_screening': 2, 'auto_trading': 3,
                 'backtesting': 4}
+
+    @staticmethod
+    def get_broker_demo_port():
+        """
+        Get the demo / paper trading port for broker
+        :return: port as number
+        """
+        return 7497
+
+    @staticmethod
+    def get_broker_real_port():
+        """
+        Get the REAL trading port for broker
+        :return: port as number
+        """
+        return 7496
+
+    @staticmethod
+    def get_date_time_file_header():
+        return "last_check_date"
+
+    @staticmethod
+    def get_trading_orders_file():
+        return GlobalVariables.get_data_files_path() + "Orders.csv"
+
+    @staticmethod
+    def get_order_file_header():
+        """
+        Return the header for the orders file
+        :return: headers as string
+        """
+        return 'datetime,stock_ticker,order_id,order_type,action,quantity,limit_price,security_type,exchange,currency'

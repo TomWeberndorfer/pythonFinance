@@ -1,0 +1,4 @@
+datetime                  ,stock_ticker,order_id,order_type,action,quantity,limit_price,security_type,exchange,currency
+2018-09-12 14:13:55.704538,TestTicker  ,12288   ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-12 14:16:10.746036,TestTicker  ,12289   ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-12 14:19:01.362641,TestTicker  ,12290   ,          ,      ,0       ,0          ,STK          ,SMART   ,USD

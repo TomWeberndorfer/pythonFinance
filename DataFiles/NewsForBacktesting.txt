@@ -658,3 +658,37 @@ Date,News
 10.09.2018 um 08:05, MICROSOFT IM FOKUS: Software-Riese nimmt Kurs auf die Billionen-Marke
 10.09.2018 um 08:59, ANALYSE: Goldman hält Probleme von Aurubis für eingepreist - 'Neutral'
 10.09.2018 um 10:15, ANALYSE-FLASH: Merrill Lynch hebt Novartis auf 'Buy' - Ziel 100 Franken
+05.09.2018 um 17:26, ANALYSE-FLASH: Morgan Stanley hebt Ziel für Apple auf 245 Dollar - 'Overweight'
+10.09.2018 um 10:19, ANALYSE-FLASH: Merrill Lynch hebt Sanofi auf 'Buy'
+10.09.2018 um 11:27, ANALYSE-FLASH: Merrill Lynch senkt Roche auf 'Neutral'
+10.09.2018 um 11:40, ANALYSE-FLASH: Kepler Cheuvreux hebt Ziel für ASML auf 210 Euro - 'Buy'
+10.09.2018 um 13:28, ANALYSE-FLASH: Oddo BHF senkt Deutsche Beteiligungs AG auf 'Neutral'
+10.09.2018 um 21:40, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 10.09.2018
+11.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+11.09.2018 um 07:30, ANALYSE-FLASH: HSBC hebt Kion auf 'Buy' - Ziel runter von 70 auf 69 Euro
+11.09.2018 um 09:01, ANALYSE-FLASH: Exane BNP senkt Bayer auf 'Neutral' und Ziel auf 90 Euro
+11.09.2018 um 10:19, ANALYSE-FLASH: Morgan Stanley findet Europas Versorger 'attraktiv'
+11.09.2018 um 11:57, ANALYSE: Exane BNP sieht jede Menge Risiken bei Bayer - nun 'Neutral' eingestuft
+11.09.2018 um 12:40, ANALYSE-FLASH: Commerzbank hebt Aareal Bank auf 'Buy' - Ziel 42 Euro
+11.09.2018 um 12:43, ANALYSE-FLASH: Barclays senkt Eni auf 'Underweight' - Ziel 19 Euro
+11.09.2018 um 14:14, APPLE IM FOKUS: Strafzölle bremsen Höhenflug des iPhone-Herstellers
+11.09.2018 um 14:16, ANALYSE: HSBC sieht mittelfristig großes Ergebnispotenzial für Koenig & Bauer
+11.09.2018 um 14:22, ANALYSE-FLASH: NordLB senkt Ziel für Tesla auf 230 US-Dollar - 'Verkaufen'
+11.09.2018 um 15:17, ANALYSE-FLASH: Nomura senkt Tesla auf 'Neutral' - Ziel runter auf 300 US-Dollar
+11.09.2018 um 17:32, ANALYSE-FLASH: DZ Bank senkt Hannover Rück auf 'Halten' - Fairer Wert 129 Euro
+11.09.2018 um 20:07, ANALYSE-FLASH: JPMorgan senkt Ziel für Telefonica Deutschland - 'Neutral'
+11.09.2018 um 20:11, ANALYSE-FLASH: JPMorgan senkt Telefonica SA auf 'Underweight'
+11.09.2018 um 20:14, ANALYSE-FLASH: UBS hebt Ziel für Apple auf 250 US-Dollar - 'Buy'
+11.09.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 11.09.2018
+11.09.2018 um 22:43, ANALYSE: Nomura hält Tesla nicht mehr für empfehlenswert - Kritik an Elon Musk
+12.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+12.09.2018 um 08:10, ANALYSE-FLASH: Morgan Stanley senkt Ziel für Eon auf 9.50 Euro - 'Equal-weight'
+12.09.2018 um 08:58, ANALYSE-FLASH: Credit Suisse belässt Schaeffler auf 'Outperform' - Ziel 17 Euro
+12.09.2018 um 09:23, ANALYSE-FLASH: Equinet hebt Allianz SE auf 'Buy' - Ziel 220 Euro
+12.09.2018 um 10:21, ANALYSE-FLASH: Commerzbank belässt Nordex auf 'Hold' - Ziel 10 Euro
+12.09.2018 um 10:40, ANALYSE-FLASH: Goldman senkt Ziel für Commerzbank auf 11 Euro - 'Neutral'
+12.09.2018 um 11:33, ANALYSE-FLASH: Kepler Cheuvreux belässt Vapiano auf 'Hold' - Ziel 16 Euro
+12.09.2018 um 11:36, ANALYSE-FLASH: Kepler Cheuvreux belässt Merck KGaA auf 'Buy' - Ziel 106 Euro
+12.09.2018 um 11:55, ANALYSE-FLASH: DZ Bank senkt fairen Wert für Inditex auf 30.50 Euro - 'Kaufen'
+12.09.2018 um 13:45, COMMERZBANK IM FOKUS: Um den Banken-Dino ranken sich wieder Fusionsgerüchte
+12.09.2018 um 13:52, ANALYSE: Morgan Stanley traut Continental 2019 hohes Kurspotenzial zu

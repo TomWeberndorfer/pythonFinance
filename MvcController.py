@@ -18,9 +18,10 @@ from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from time import sleep
 import backtrader.analyzers as btanalyzer
 
+from AutomaticTrading.IBPyInteractiveBrokers import *
 from Backtesting.BacktestingFactory import BacktestingFactory
 from GUI.ScrollableFrame import ScrollableFrame
 from MvcModel import MvcModel
@@ -44,7 +45,7 @@ class MvcController:
         self.view = view  # initializes the view
         self.view.ButtonRunStrategy.config(command=self.start_screening)
         self.view.ButtonRunStrategyRepetitive.config(command=self.start_screening_repetitive)
-        self.view.ButtonStartAutoTrading.config(command=self.start_automatic_trading)
+        # TODO temp disabled self.view.ButtonStartAutoTrading.config(command=self.start_automatic_trading)
         self.view.ButtonRunStrategyRepetitive['text'] = "Start Run Strategy Repetitive"
         self.view.ButtonStartAutoTrading['text'] = "Start Automatic Trading"
 
@@ -80,6 +81,7 @@ class MvcController:
         # self.model.selected_strategies_list.add_event_listeners(self.strategy_selection_changed)
         self.model.available_strategies_list.add_event_listeners(self.available_strategies_changed)
         self.model.result_stock_data_container_list.add_event_listeners(self.result_stock_data_container_list_changed)
+        self.model.result_stock_data_container_list.add_event_listeners(self.automatic_trading)
 
         self.model.thread_state.add_event_listeners(self.is_screening_thread_running_changed)
         self.model.is_background_thread_running.add_event_listeners(self.is_screening_thread_running_changed)
@@ -106,6 +108,9 @@ class MvcController:
                             self.view.b_run_backtest,
                             self.view.b_open_results_new_wd,
                             self.view.b_open_results_new_wd, self.view.ButtonStartAutoTrading]
+
+        # INIT Autotrading
+        self.broker = IBPyInteractiveBrokers()
 
     def on_double_click_Scrolledtreeview1(self, event):
         """
@@ -137,12 +142,13 @@ class MvcController:
             thread = Thread(target=self.screening)
             thread.start()
 
-    def start_screening_repetitive(self, interval_sec=120):  # TODO screening 15
+    def start_screening_repetitive(self):
         """
         Start the screening repetitive, due to interval, if screening is not already running.
-        :param interval_sec: interval time, defines the cycle time to restart the screening
         :return: nothing
         """
+        #  interval time, defines the cycle time to restart the screening
+        interval_sec = StrategyFactory.get_other_parameters_with_default_parameters()['RepetitiveScreeningInterval']
         if self.model.thread_state.get() is GlobalVariables.get_screening_states()[
             'repetititve_screening']:
             try:
@@ -154,7 +160,6 @@ class MvcController:
         else:
             try:
                 if not self._check_if_strategy_can_run():
-                    # self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
                     return
 
                 self.start_screening()  # start first time manually IMMEDIATELY
@@ -168,16 +173,83 @@ class MvcController:
                 self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
 
     def start_automatic_trading(self):
+
         if self.model.thread_state.get() is \
-                GlobalVariables.get_screening_states()['auto_trading']:  # TODO screening 15
+                GlobalVariables.get_screening_states()['not_running']:
+
+            continue_automatic_trading = messagebox.askyesno("AUTO Trading Selection",
+                                                             "Do you really want to start the AUTO TRADING? \n ATTENTION: " +
+                                                             "The system will automatically place orders")
+            if not continue_automatic_trading:
+                return
+
+        if self.model.thread_state.get() is \
+                GlobalVariables.get_screening_states()['auto_trading']:
             # TODO
             # self.background_scheduler.shutdown()
+            self.broker.disconnect()
             self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
         else:
+
+            if not self._check_if_strategy_can_run():
+                return
+
             if self.model.thread_state.get() is GlobalVariables.get_screening_states()['not_running']:
                 # self.background_scheduler.add_job(self.start_screening, 'interval', seconds=interval_sec)
+                self.broker.connect()
+                self.start_screening()  # start first time manually IMMEDIATELY
                 # self.background_scheduler.start()
                 self.model.thread_state.set(GlobalVariables.get_screening_states()['auto_trading'])
+
+    def automatic_trading(self):
+        if self.model.thread_state.get() is \
+                GlobalVariables.get_screening_states()['auto_trading']:
+
+            is_background_thread_running = self.model.is_background_thread_running.get()
+            # TODO
+            # wird erst nach ausführung aller listener beendet
+            # if not is_background_thread_running:
+
+            stocks = self.model.result_stock_data_container_list.get()
+
+            if len(stocks) > 0:
+                try:
+                    newlist = sorted(stocks, key=lambda x: x.get_rank(), reverse=True)
+
+                    # - TODO config wie viele zu kaufen
+                    # - managen, dass er ned ba jedem durchlauf desselbe griagt --> stock 52 w nur einmal pro tag
+                    num_of_different_stocks_to_buy = 2
+                    for i in range(len(newlist)):
+
+                        if num_of_different_stocks_to_buy <= 0:  # do not buy more stocks
+                            return
+
+                        if newlist[i].get_stop_buy() is not None and newlist[i].get_stop_buy() is not 0 and \
+                                newlist[i].get_stop_loss() is not None and newlist[i].get_stop_loss() is not 0:
+
+                            qty = int(newlist[i].get_position_size())  # only even number
+                            if qty > 0:
+                                if newlist[i].get_rank() > 0:  # rank > 0 means sell recommandation
+                                    self.broker.execute_order(newlist[i].stock_ticker(), 'LMT', 'BUY', qty,
+                                                              newlist[i].get_stop_buy())
+
+                                    self.broker.execute_order(newlist[i].stock_ticker(), 'LMT', 'SELL', qty,
+                                                              newlist[i].get_stop_loss())
+
+                                error_message_list = self.broker.get_and_clear_error_message_list()
+
+                                # get the response
+                                # TODO without sleep
+                                sleep(0.5)
+                                if len(error_message_list) > 0:
+                                    for error_msg in error_message_list:
+                                        logger.error(
+                                            "Unexpected response from broker while autotrading: " + str(error_msg))
+                                        # TODO what to do in case of an error?
+
+                except Exception as e:
+                    logger.error(
+                        "Unexpected Exception while autotrading: " + str(e) + "\n" + str(traceback.format_exc()))
 
     def start_backtesting(self):
         """
@@ -463,6 +535,9 @@ class MvcController:
                 GuiUtils.set_buttons_state(self.view.ButtonStartAutoTrading, 'normal')
                 self.view.ButtonStartAutoTrading['text'] = "STOP Automatic Trading"
                 self.view.ButtonStartAutoTrading.configure(background="orangered")
+
+                # TODO
+
 
             elif screening_state is GlobalVariables.get_screening_states()['backtesting']:
                 GuiUtils.set_buttons_state(self.all_buttons, 'disabled')

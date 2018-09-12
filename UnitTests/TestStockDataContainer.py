@@ -173,3 +173,29 @@ class TestStockDataContainer(unittest.TestCase):
         container2.set_stock_current_prize(20)
         self.assertEqual(container2.stock_current_prize(), 20)
 
+    def test_sort_data_container_due_to_rank(self):
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [('2016-09-13', 90, 90, 100.15, 100.26, 4000)]
+
+        df = DataFrame.from_records(data, columns=labels)
+        apple_stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        apple_stock_data_container.set_historical_stock_data(df)
+        rwe_stock_data_container = StockDataContainer("RWE AG ST O.N.", "RWE", "")
+        testag_stock_data_container = StockDataContainer("Test AG", "TestAG", "")
+        rwe_stock_data_container.set_historical_stock_data(df)
+        rwe_stock_data_container.update_used_strategy_and_recommendation("TestStrat", "BUY")
+        apple_stock_data_container.update_used_strategy_and_recommendation("TestStrat", "SELL")
+        stock_data_container_list = [apple_stock_data_container, rwe_stock_data_container, testag_stock_data_container]
+
+        try:
+            newlist = sorted(stock_data_container_list, key=lambda x: x.get_rank(), reverse=True)
+        except Exception as e:
+            print(e)
+
+        # if apple_stock_data_container in stock_data_container_list:
+        self.assertEqual(rwe_stock_data_container, newlist[0])
+        self.assertEqual(testag_stock_data_container, newlist[1])
+        self.assertEqual(apple_stock_data_container, newlist[2])
+        self.assertEqual(3, len(newlist))
