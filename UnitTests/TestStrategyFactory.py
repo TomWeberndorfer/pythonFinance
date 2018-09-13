@@ -53,7 +53,10 @@ class TestStrategyFactory(unittest.TestCase):
                                 'ticker_column_to_read': 2, 'name_column_to_read': 1, 'stock_exchange': 'de'}},
                         'RiskModels': {
                             'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}},
-                        'RepetitiveScreeningInterval': 120}
+                        'AutoTrading': {
+                            'RepetitiveScreeningInterval': 120,
+                            'MaxNumberOfDifferentStocksToBuyPerAutoTrade': 5}
+                        }
 
         backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
                                   'trade_commission_percent': 0.005}

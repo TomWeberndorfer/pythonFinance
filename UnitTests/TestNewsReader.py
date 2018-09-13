@@ -68,8 +68,7 @@ class TestNewsReader(unittest.TestCase):
         stock_data_container_file = GlobalVariables.get_test_data_files_path() + stock_data_container_file_name
 
         dict_with_stock_pages_to_read = \
-        StrategyFactory.get_other_parameters_with_default_parameters()["OtherParameters"][
-            'dict_with_stock_pages_to_read']
+            GlobalVariables.get_other_parameters_with_default_parameters()['dict_with_stock_pages_to_read']
 
         stock_data_container_list = FileUtils.read_tickers_from_file_or_web(stock_data_container_file, True,
                                                                             dict_with_stock_pages_to_read)

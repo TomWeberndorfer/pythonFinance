@@ -61,7 +61,7 @@ class ASTA_Framework:
         self.style.map('.', background=
         [('selected', _compcolor), ('active', _ana2color)])
 
-        top.geometry("1300x849+326+30")
+        top.geometry("1500x849+326+30")
         top.title("ASTA_Framework")
         top.configure(background="#eaeaea")
         top.configure(highlightbackground="#d5eaff")

@@ -26,9 +26,11 @@ class GuiUtils:
 
         tree.insert('', 'end', text=tree_text, values=values_to_insert)
 
+    @staticmethod
+    def advanced_sorting(treeview, column_list, reverse):
         # enables all columns to sort by click on col header
-        for i in range(len(values_to_insert)):
-            GuiUtils.treeview_add_header_sort_column(tree, i, True)
+        for i in range(len(column_list)):
+            GuiUtils.treeview_add_header_sort_column(treeview, i, reverse)
 
     @staticmethod
     def _treeview_sort_column(tv, col, reverse):

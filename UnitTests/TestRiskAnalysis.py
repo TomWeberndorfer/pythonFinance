@@ -15,7 +15,7 @@ class TestRiskAnalysis(unittest.TestCase):
     def test_RiskModelFactory_and_risk_determinitation(self):
         fixes_pos_size = 2500
         # attention these are test data files
-        other_params = StrategyFactory.get_other_parameters_with_default_parameters()["OtherParameters"]
+        other_params = GlobalVariables.get_other_parameters_with_default_parameters()
 
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():

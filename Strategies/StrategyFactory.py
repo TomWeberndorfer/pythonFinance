@@ -31,53 +31,10 @@ class StrategyFactory(Abstract_Factory):
                     traceback.format_exc()))
 
         all_strategy_parameters_dict = {'Strategies': all_strategy_parameters_dict}
-        other_params = StrategyFactory.get_other_parameters_with_default_parameters()
-        all_strategy_parameters_dict.update(other_params)
+        other_params = GlobalVariables.get_other_parameters_with_default_parameters()
+        all_strategy_parameters_dict.update({"OtherParameters": other_params})
 
-        backtesting_params = StrategyFactory.get_backtesting_parameters_with_default_parameters()
+        backtesting_params = GlobalVariables.get_backtesting_parameters_with_default_parameters()
         all_strategy_parameters_dict.update(backtesting_params)
 
         return all_strategy_parameters_dict
-
-    @staticmethod
-    def get_other_parameters_with_default_parameters():
-        """
-        Return a dict with required other parameters and default parameter values.
-        :return: dict with required values and default parameters
-        """
-
-        # TODO insert:
-        # ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
-        # 'tbody', 'class', 'row-hover', 2, 1, 'de']]
-
-        stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
-        other_params = {'stock_data_container_file': stock_data_file,
-                        'dict_with_stock_pages_to_read': {
-                            'SP500': {'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
-                                      'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
-                                      'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'},
-                            'DAX': {
-                                'websource_address': "http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/",
-                                'find_name': 'tbody', 'class_name': 'class', 'table_class': 'row-hover',
-                                'ticker_column_to_read': 2, 'name_column_to_read': 1, 'stock_exchange': 'de'}},
-                        'RiskModels': {
-                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}},
-                        'RepetitiveScreeningInterval': 120}
-
-        other_parameters_dict = {"OtherParameters": other_params}
-
-        return other_parameters_dict
-
-    @staticmethod
-    def get_backtesting_parameters_with_default_parameters():
-        """
-        Return a dict with required backtesting parameters and default parameter values.
-        :return: dict with required values and default parameters
-        :key trade_commission_percent: Trading commission for both orders in percent of order in percent, both, not for every trade!
-        :key initial_cash: Initial cash to trade with.
-        """
-        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
-                                  'trade_commission_percent': 0.01}
-        parameters_dict = {"BacktestingParameters": backtesting_parameters}
-
-        return parameters_dict

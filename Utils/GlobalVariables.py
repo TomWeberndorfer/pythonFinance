@@ -50,7 +50,7 @@ class GlobalVariables:
 
     @staticmethod
     def get_screening_states():
-        return {'not_running': 0, 'single_screening': 1, 'repetititve_screening': 2, 'auto_trading': 3,
+        return {'not_running': 0, 'single_screening': 1, 'repetitive_screening': 2, 'auto_trading': 3,
                 'backtesting': 4}
 
     @staticmethod
@@ -84,3 +84,48 @@ class GlobalVariables:
         :return: headers as string
         """
         return 'datetime,stock_ticker,order_id,order_type,action,quantity,limit_price,security_type,exchange,currency'
+
+    @staticmethod
+    def get_other_parameters_with_default_parameters():
+        """
+        Return a dict with required other parameters and default parameter values.
+        :return: dict with required values and default parameters
+        """
+
+        # TODO insert:
+        # ['http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/',
+        # 'tbody', 'class', 'row-hover', 2, 1, 'de']]
+
+        stock_data_file = GlobalVariables.get_data_files_path() + "stock_data_container_file.pickle"
+        other_parameters_dict = {'stock_data_container_file': stock_data_file,
+                                 'dict_with_stock_pages_to_read': {
+                                     'SP500': {
+                                         'websource_address': "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
+                                         'find_name': 'table', 'class_name': 'class',
+                                         'table_class': 'wikitable sortable',
+                                         'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'},
+                                     'DAX': {
+                                         'websource_address': "http://topforeignstocks.com/stock-lists/the-list-of-listed-companies-in-germany/",
+                                         'find_name': 'tbody', 'class_name': 'class', 'table_class': 'row-hover',
+                                         'ticker_column_to_read': 2, 'name_column_to_read': 1, 'stock_exchange': 'de'}},
+                                 'RiskModels': {
+                                     'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}},
+                                 'AutoTrading': {
+                                     'RepetitiveScreeningInterval': 120,
+                                     'MaxNumberOfDifferentStocksToBuyPerAutoTrade': 5}
+                                 }
+        return other_parameters_dict
+
+    @staticmethod
+    def get_backtesting_parameters_with_default_parameters():
+        """
+        Return a dict with required backtesting parameters and default parameter values.
+        :return: dict with required values and default parameters
+        :key trade_commission_percent: Trading commission for both orders in percent of order in percent, both, not for every trade!
+        :key initial_cash: Initial cash to trade with.
+        """
+        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
+                                  'trade_commission_percent': 0.01}
+        parameters_dict = {"BacktestingParameters": backtesting_parameters}
+
+        return parameters_dict

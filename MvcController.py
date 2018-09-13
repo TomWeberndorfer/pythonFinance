@@ -81,7 +81,7 @@ class MvcController:
         # self.model.selected_strategies_list.add_event_listeners(self.strategy_selection_changed)
         self.model.available_strategies_list.add_event_listeners(self.available_strategies_changed)
         self.model.result_stock_data_container_list.add_event_listeners(self.result_stock_data_container_list_changed)
-        self.model.result_stock_data_container_list.add_event_listeners(self.automatic_trading)
+        self.model.result_stock_data_container_list.add_event_listeners(self.automatic_trading_recommendations)
 
         self.model.thread_state.add_event_listeners(self.is_screening_thread_running_changed)
         self.model.is_background_thread_running.add_event_listeners(self.is_screening_thread_running_changed)
@@ -148,9 +148,9 @@ class MvcController:
         :return: nothing
         """
         #  interval time, defines the cycle time to restart the screening
-        interval_sec = StrategyFactory.get_other_parameters_with_default_parameters()['RepetitiveScreeningInterval']
-        if self.model.thread_state.get() is GlobalVariables.get_screening_states()[
-            'repetititve_screening']:
+        interval_sec = GlobalVariables.get_other_parameters_with_default_parameters()['AutoTrading'][
+            'RepetitiveScreeningInterval']
+        if self.model.thread_state.get() is GlobalVariables.get_screening_states()['repetitive_screening']:
             try:
                 self.background_scheduler.shutdown()
             except Exception as e:
@@ -166,13 +166,17 @@ class MvcController:
                 self.background_scheduler.add_job(self.start_screening, 'interval', seconds=interval_sec)
                 self.background_scheduler.start()
                 self.model.thread_state.set(
-                    GlobalVariables.get_screening_states()['repetititve_screening'])
+                    GlobalVariables.get_screening_states()['repetitive_screening'])
 
             except Exception as e:
                 logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
                 self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
 
     def start_automatic_trading(self):
+        """
+        Start automatic trading with a new thread, select stocks and buy them
+        :return: -
+        """
 
         if self.model.thread_state.get() is \
                 GlobalVariables.get_screening_states()['not_running']:
@@ -195,13 +199,20 @@ class MvcController:
                 return
 
             if self.model.thread_state.get() is GlobalVariables.get_screening_states()['not_running']:
+                interval_sec = \
+                    GlobalVariables.get_other_parameters_with_default_parameters()['AutoTrading'][
+                        'RepetitiveScreeningInterval']
                 # self.background_scheduler.add_job(self.start_screening, 'interval', seconds=interval_sec)
                 self.broker.connect()
                 self.start_screening()  # start first time manually IMMEDIATELY
                 # self.background_scheduler.start()
                 self.model.thread_state.set(GlobalVariables.get_screening_states()['auto_trading'])
 
-    def automatic_trading(self):
+    def automatic_trading_recommendations(self):
+        """
+        Automatically buy the recommendations from result list
+        :return: -
+        """
         if self.model.thread_state.get() is \
                 GlobalVariables.get_screening_states()['auto_trading']:
 
@@ -216,12 +227,13 @@ class MvcController:
                 try:
                     newlist = sorted(stocks, key=lambda x: x.get_rank(), reverse=True)
 
-                    # - TODO config wie viele zu kaufen
                     # - managen, dass er ned ba jedem durchlauf desselbe griagt --> stock 52 w nur einmal pro tag
-                    num_of_different_stocks_to_buy = 2
+                    max_num_of_different_stocks_to_buy = \
+                    GlobalVariables.get_other_parameters_with_default_parameters()['AutoTrading'][
+                        'MaxNumberOfDifferentStocksToBuyPerAutoTrade']
                     for i in range(len(newlist)):
 
-                        if num_of_different_stocks_to_buy <= 0:  # do not buy more stocks
+                        if max_num_of_different_stocks_to_buy <= 0:  # do not buy more stocks
                             return
 
                         if newlist[i].get_stop_buy() is not None and newlist[i].get_stop_buy() is not 0 and \
@@ -230,17 +242,21 @@ class MvcController:
                             qty = int(newlist[i].get_position_size())  # only even number
                             if qty > 0:
                                 if newlist[i].get_rank() > 0:  # rank > 0 means sell recommandation
+
+                                    # stop buy limit order
                                     self.broker.execute_order(newlist[i].stock_ticker(), 'LMT', 'BUY', qty,
                                                               newlist[i].get_stop_buy())
-
+                                    # stop loss limit order
                                     self.broker.execute_order(newlist[i].stock_ticker(), 'LMT', 'SELL', qty,
                                                               newlist[i].get_stop_loss())
 
-                                error_message_list = self.broker.get_and_clear_error_message_list()
+                                    max_num_of_different_stocks_to_buy = max_num_of_different_stocks_to_buy - 1
 
                                 # get the response
                                 # TODO without sleep
                                 sleep(0.5)
+                                error_message_list = self.broker.get_and_clear_error_message_list()
+
                                 if len(error_message_list) > 0:
                                     for error_msg in error_message_list:
                                         logger.error(
@@ -524,7 +540,7 @@ class MvcController:
         else:
             if screening_state is GlobalVariables.get_screening_states()['single_screening']:
                 GuiUtils.set_buttons_state(self.all_buttons, 'disabled')
-            elif screening_state is GlobalVariables.get_screening_states()['repetititve_screening']:
+            elif screening_state is GlobalVariables.get_screening_states()['repetitive_screening']:
                 GuiUtils.set_buttons_state(self.deactivate_buttons_while_repetitive_screening, 'disabled')
                 GuiUtils.set_buttons_state(self.view.ButtonRunStrategyRepetitive, 'normal')
                 self.view.ButtonRunStrategyRepetitive['text'] = "STOP Run Strategy Repetitive"
@@ -558,7 +574,10 @@ class MvcController:
         tree.delete(*tree.get_children())
         stock_data_container_list = self.model.result_stock_data_container_list.get()
 
-        for result_container in stock_data_container_list:
+        # sort the list by rank
+        newlist = sorted(stock_data_container_list, key=lambda x: x.get_rank(), reverse=True)
+
+        for result_container in newlist:
             try:
                 is_updated = self.model.update_column_list(result_container.get_names_and_values().keys())
 
@@ -583,6 +602,9 @@ class MvcController:
             except Exception as e:
                 logger.error("Exception: " + str(e) + "\n" + str(traceback.format_exc()))
                 continue
+
+        # add a sort functionality for each column, when click on header
+        GuiUtils.advanced_sorting(self.view.Scrolledtreeview1, self.model.get_column_list(), True)
 
     def backtesting_stocks_list_changed(self):
         """
@@ -757,6 +779,7 @@ def init_result_table(tree_view, columns):
             heading_num = "#" + str(i)
             tree_view.heading(heading_num, text=col_2[i], anchor="center")
 
+            # TODO https://stackoverflow.com/questions/31410036/python3-tk-treeview-dynamic-column-width
             if len(col_2[i]) > 8:  # TODO begründen / kommentieren
                 tree_view.column(heading_num, width="200")
             else:

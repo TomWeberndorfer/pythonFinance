@@ -1,7 +1,7 @@
 import inspect
 from talib import abstract
 import os
-
+from Utils.GlobalVariables import *
 from DataReading.HistoricalDataReaders.HistoricalDataReader import HistoricalDataReader
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 
@@ -9,12 +9,10 @@ from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 import talib
 help(talib.SMA)
 
-
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-filepath = ROOT_DIR + '\\DataFiles\\TestData\\'
+test_data_filepath = GlobalVariables.get_test_data_files_path()
 stock_data_container_file_name = "stock_data_container_file.pickle"
-stock_data_container_file = filepath + stock_data_container_file_name
-date_file = filepath + 'last_date_time.csv'
+stock_data_container_file = test_data_filepath + stock_data_container_file_name
+date_file = test_data_filepath + 'last_date_time.csv'
 
 stock_data_container = StockDataContainer("AAPL", "AAPL", "en")
 stock_data_container_list = [stock_data_container]
