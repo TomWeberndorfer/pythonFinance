@@ -2,10 +2,8 @@ import unittest
 from datetime import datetime
 
 from DataReading.DataReaderFactory import DataReaderFactory
-from NewsFeedReader.traderfox_hp_news import is_date_actual
-from Strategies.StrategyFactory import StrategyFactory
+from Utils.FileUtils import FileUtils, is_date_actual
 from Utils.GlobalVariables import *
-from Utils.FileUtils import FileUtils
 
 
 class TestNewsReader(unittest.TestCase):
@@ -77,3 +75,4 @@ class TestNewsReader(unittest.TestCase):
         stock_data_container_list = FileUtils.read_tickers_from_file_or_web(stock_data_container_file, False,
                                                                             dict_with_stock_pages_to_read)
         self.assertGreater(len(stock_data_container_list), 800)
+

@@ -27,11 +27,12 @@ from GUI.ScrollableFrame import ScrollableFrame
 from MvcModel import MvcModel
 from Utils.StockAnalysis import run_analysis
 from Strategies.StrategyFactory import StrategyFactory
-from Utils.CommonUtils import CommonUtils
+from Utils.CommonUtils import CommonUtils, is_next_day_or_later
 from Utils.FileUtils import FileUtils
 from Utils.GlobalVariables import *
 from Utils.GuiUtils import GuiUtils
 from Utils.Logger_Instance import logger
+from Utils.StockDataUtils import are_order_information_available
 
 
 class MvcController:
@@ -45,7 +46,7 @@ class MvcController:
         self.view = view  # initializes the view
         self.view.ButtonRunStrategy.config(command=self.start_screening)
         self.view.ButtonRunStrategyRepetitive.config(command=self.start_screening_repetitive)
-        # TODO temp disabled self.view.ButtonStartAutoTrading.config(command=self.start_automatic_trading)
+        self.view.ButtonStartAutoTrading.config(command=self.start_automatic_trading)
         self.view.ButtonRunStrategyRepetitive['text'] = "Start Run Strategy Repetitive"
         self.view.ButtonStartAutoTrading['text'] = "Start Automatic Trading"
 
@@ -61,7 +62,7 @@ class MvcController:
         init_result_table(self.view.Scrolledtreeview1, self.model.get_column_list())
         self.console = ConsoleUi(self.view.Labelframe2)
 
-        self.background_scheduler = BackgroundScheduler()
+        self.background_scheduler = BackgroundScheduler(daemon=True)
 
         # add the listeners to mvc model
         # self.model.selected_backtesting_analyzers_list.add_event_listeners()
@@ -147,9 +148,7 @@ class MvcController:
         Start the screening repetitive, due to interval, if screening is not already running.
         :return: nothing
         """
-        #  interval time, defines the cycle time to restart the screening
-        interval_sec = GlobalVariables.get_other_parameters_with_default_parameters()['AutoTrading'][
-            'RepetitiveScreeningInterval']
+
         if self.model.thread_state.get() is GlobalVariables.get_screening_states()['repetitive_screening']:
             try:
                 self.background_scheduler.shutdown()
@@ -161,9 +160,13 @@ class MvcController:
             try:
                 if not self._check_if_strategy_can_run():
                     return
+                #  interval time, defines the cycle time to restart the screening
+                interval_sec = self.model.analysis_parameters.get()['OtherParameters']['AutoTrading'][
+                    'RepetitiveScreeningInterval']
 
-                self.start_screening()  # start first time manually IMMEDIATELY
-                self.background_scheduler.add_job(self.start_screening, 'interval', seconds=interval_sec)
+                self.background_scheduler.add_job(self.start_screening_repetitive_mode, 'interval',
+                                                  seconds=interval_sec,
+                                                  next_run_time=datetime.now())
                 self.background_scheduler.start()
                 self.model.thread_state.set(
                     GlobalVariables.get_screening_states()['repetitive_screening'])
@@ -171,6 +174,19 @@ class MvcController:
             except Exception as e:
                 logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
                 self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
+
+    def start_screening_repetitive_mode(self):
+        """
+        Start the screening thread for NON blocking GUI.
+        :return: nothing
+        """
+
+        is_background_thread_running = self.model.is_background_thread_running.get()
+
+        if not is_background_thread_running:
+            if self.model.thread_state.get() is GlobalVariables.get_screening_states()['repetitive_screening']:
+                thread = Thread(target=self.screening)
+                thread.start()
 
     def start_automatic_trading(self):
         """
@@ -189,9 +205,7 @@ class MvcController:
 
         if self.model.thread_state.get() is \
                 GlobalVariables.get_screening_states()['auto_trading']:
-            # TODO
-            # self.background_scheduler.shutdown()
-            self.broker.disconnect()
+            self.background_scheduler.shutdown()
             self.model.thread_state.set(GlobalVariables.get_screening_states()['not_running'])
         else:
 
@@ -199,14 +213,25 @@ class MvcController:
                 return
 
             if self.model.thread_state.get() is GlobalVariables.get_screening_states()['not_running']:
-                interval_sec = \
-                    GlobalVariables.get_other_parameters_with_default_parameters()['AutoTrading'][
-                        'RepetitiveScreeningInterval']
-                # self.background_scheduler.add_job(self.start_screening, 'interval', seconds=interval_sec)
-                self.broker.connect()
-                self.start_screening()  # start first time manually IMMEDIATELY
-                # self.background_scheduler.start()
+                interval_sec = self.model.analysis_parameters.get()['OtherParameters']['AutoTrading'][
+                    'RepetitiveScreeningInterval']
+                self.background_scheduler.add_job(self.start_screening_auto_trading, 'interval', seconds=interval_sec,
+                                                  next_run_time=datetime.now())
+                self.background_scheduler.start()
                 self.model.thread_state.set(GlobalVariables.get_screening_states()['auto_trading'])
+
+    def start_screening_auto_trading(self):
+        """
+        Start the screening thread for NON blocking GUI.
+        :return: nothing
+        """
+
+        is_background_thread_running = self.model.is_background_thread_running.get()
+
+        if not is_background_thread_running:
+            if self.model.thread_state.get() is GlobalVariables.get_screening_states()['auto_trading']:
+                thread = Thread(target=self.screening)
+                thread.start()
 
     def automatic_trading_recommendations(self):
         """
@@ -221,51 +246,82 @@ class MvcController:
             # wird erst nach ausführung aller listener beendet
             # if not is_background_thread_running:
 
+            self.broker.connect()
             stocks = self.model.result_stock_data_container_list.get()
 
-            if len(stocks) > 0:
-                try:
-                    newlist = sorted(stocks, key=lambda x: x.get_rank(), reverse=True)
+            if len(stocks) <= 0:
+                return
 
-                    # - managen, dass er ned ba jedem durchlauf desselbe griagt --> stock 52 w nur einmal pro tag
-                    max_num_of_different_stocks_to_buy = \
-                    GlobalVariables.get_other_parameters_with_default_parameters()['AutoTrading'][
+            try:
+                # sort stocks by rank
+                sorted_stock_container_list = sorted(stocks, key=lambda x: x.get_rank(), reverse=True)
+                max_num_of_different_stocks_to_buy = \
+                    self.model.analysis_parameters.get()['OtherParameters']['AutoTrading'][
                         'MaxNumberOfDifferentStocksToBuyPerAutoTrade']
-                    for i in range(len(newlist)):
 
-                        if max_num_of_different_stocks_to_buy <= 0:  # do not buy more stocks
-                            return
+                for i in range(len(sorted_stock_container_list)):
+                    if max_num_of_different_stocks_to_buy <= 0:  # do not buy more stocks
+                        logger.info("Max number of stocks to buy reached.")
+                        return
 
-                        if newlist[i].get_stop_buy() is not None and newlist[i].get_stop_buy() is not 0 and \
-                                newlist[i].get_stop_loss() is not None and newlist[i].get_stop_loss() is not 0:
+                    # check if there are enough data to create stop buy and stop loss limit orders
+                    if not are_order_information_available("BUY", sorted_stock_container_list[i]) or \
+                            not are_order_information_available("SELL", sorted_stock_container_list[i]):
+                        logger.info(
+                            "Not enough information for order available: " + str(sorted_stock_container_list[i]))
+                        break
 
-                            qty = int(newlist[i].get_position_size())  # only even number
-                            if qty > 0:
-                                if newlist[i].get_rank() > 0:  # rank > 0 means sell recommandation
+                    # trade only, if not already traded today
+                    orders = self.broker.read_orders()
+                    date_time_str = None
+                    # find the last entry
+                    for curr_order_num in range(len(orders)):
+                        if orders['stock_ticker'][curr_order_num].startswith(
+                                sorted_stock_container_list[i].stock_ticker()):
+                            date_time_str = (orders['datetime'][curr_order_num])
 
-                                    # stop buy limit order
-                                    self.broker.execute_order(newlist[i].stock_ticker(), 'LMT', 'BUY', qty,
-                                                              newlist[i].get_stop_buy())
-                                    # stop loss limit order
-                                    self.broker.execute_order(newlist[i].stock_ticker(), 'LMT', 'SELL', qty,
-                                                              newlist[i].get_stop_loss())
+                    if date_time_str is not None:
+                        next_day_or_later = is_next_day_or_later(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f",
+                                                                 date_time_str,
+                                                                 "%Y-%m-%d %H:%M:%S.%f")
+                        # do not trade same recommendation again on one day
+                        if not next_day_or_later:
+                            logger.info("No current recommendations to buy available for " +
+                                        str(sorted_stock_container_list[i]))
+                            break
 
-                                    max_num_of_different_stocks_to_buy = max_num_of_different_stocks_to_buy - 1
+                    # get stock quantity, only even number
+                    qty = int(sorted_stock_container_list[i].get_position_size())
+                    # rank < 0 means sell recommendation, > 0 a buy
+                    if sorted_stock_container_list[i].get_rank() > 0:
+                        # stop buy limit order
+                        self.broker.execute_order(sorted_stock_container_list[i].stock_ticker(),
+                                                  'LMT', 'BUY', qty,
+                                                  sorted_stock_container_list[i].get_stop_buy())
+                        # stop loss limit order
+                        self.broker.execute_order(sorted_stock_container_list[i].stock_ticker(),
+                                                  'LMT', 'SELL', qty,
+                                                  sorted_stock_container_list[i].get_stop_loss())
 
-                                # get the response
-                                # TODO without sleep
-                                sleep(0.5)
-                                error_message_list = self.broker.get_and_clear_error_message_list()
+                        max_num_of_different_stocks_to_buy = max_num_of_different_stocks_to_buy - 1
 
-                                if len(error_message_list) > 0:
-                                    for error_msg in error_message_list:
-                                        logger.error(
-                                            "Unexpected response from broker while autotrading: " + str(error_msg))
-                                        # TODO what to do in case of an error?
+                    # get the response
+                    # TODO without sleep
+                    sleep(0.5)
+                    error_message_list = self.broker.get_and_clear_error_message_list()
 
-                except Exception as e:
-                    logger.error(
-                        "Unexpected Exception while autotrading: " + str(e) + "\n" + str(traceback.format_exc()))
+                    if len(error_message_list) > 0:
+                        for error_msg in error_message_list:
+                            logger.error(
+                                "Unexpected response from broker while autotrading: " + str(
+                                    error_msg))
+                            # TODO what to do in case of an error?
+
+            except Exception as e:
+                logger.error(
+                    "Unexpected Exception while autotrading: " + str(e) + "\n" + str(traceback.format_exc()))
+
+            self.broker.disconnect()
 
     def start_backtesting(self):
         """

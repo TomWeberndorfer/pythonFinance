@@ -9,7 +9,7 @@ import requests
 from DataReading.Abstract_StockDataReader import Abstract_StockDataReader
 from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
-from NewsFeedReader.traderfox_hp_news import is_date_actual
+from Utils.FileUtils import is_date_actual
 from Utils.GlobalVariables import *
 from Utils.Logger_Instance import logger
 from NewsTrading.GermanTaggerAnalyseNews import GermanTaggerAnalyseNews
@@ -29,18 +29,20 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         # TODO returnen
         # return all_news_text_list
 
-    def _read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M"):
+    def _read_news_from_traderfox(self, date_file, date_time_format="%d.%m.%Y um %H:%M",
+                                  url="https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-5/"):
         """
         read news from traderfox home page with dpa-afx-compact news
         :param date_time_format: news datetime format
         :param date_file: file for last check date
+        :param url: traderfox news page url
         :return: news as list
         """
         from Utils.FileUtils import FileUtils
 
         # TODO enable for enhanced info
         # url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-2-5-8-12/"  # analysen, ad hoc, unternehmen, pflichtmitteilungen
-        url = "https://traderfox.de/nachrichten/dpa-afx-compact/kategorie-5/"
+
         resp = requests.get(url)
         soup = bs.BeautifulSoup(resp.text, 'lxml')
         # article --> h2 --> a href for news text, article --> footer for date
@@ -61,7 +63,8 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
             if is_a_new_news:
                 article_text = (str(elm.h2.get_text(strip=True)))  # h2 --> article head line
                 news_text = date_time.replace(',', '.') + ", " + article_text.replace(',', '.')
-                # TODO irgendwann wegdoa
+                # TODO REMOVE THAT
+                # THIS IS JUST FOR BACKTESTING NEWS DATA COLLECTION
                 FileUtils.append_textline_to_file(news_text,
                                                   GlobalVariables.get_data_files_path() + "NewsForBacktesting.txt",
                                                   True)
@@ -91,4 +94,3 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
 
         # TODO mal was returnen
         # return all_news
-

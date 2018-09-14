@@ -168,3 +168,33 @@ def var_cov_var(P, c, mu, sigma):
     """
     alpha = norm.ppf(1 - c, mu, sigma)
     return P - P * (alpha + 1)
+
+
+def are_order_information_available(action, stock_data_container):
+    """
+    Check required order data due to action
+    :param action: BUY / SELL
+    :param stock_data_container: stock data container
+    :return: False, if data not available
+    """
+    if action is "BUY":
+        if stock_data_container.get_stop_buy() is None:
+            return False
+
+        if stock_data_container.get_stop_buy() is 0:
+            return False
+
+    elif action is "SELL":
+        if stock_data_container.get_stop_loss() is None:
+            return False
+
+        if stock_data_container.get_stop_loss() is 0:
+            return False
+
+    if stock_data_container.get_position_size() is None:
+        return False
+
+    if stock_data_container.get_position_size() <= 0:
+        return False
+
+    return True

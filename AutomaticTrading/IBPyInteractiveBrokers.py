@@ -2,7 +2,7 @@ import traceback
 
 from ib.ext.Contract import Contract
 from ib.ext.Order import Order
-from ib.opt import Connection, message
+from ib.opt import Connection
 import pandas as pd
 from Utils.FileUtils import FileUtils
 from Utils.GlobalVariables import GlobalVariables
@@ -70,6 +70,12 @@ class IBPyInteractiveBrokers:
         order_id = self._read_current_order_id()
         try:
             self.tws_conn.placeOrder(int(order_id), current_contract, current_order)
+            text_line = str(datetime.now()) + "," + str(stock_ticker) + "," + str(order_id) + "," + str(
+                order_type) + "," + str(action) + "," + str(quantity) + "," + str(limit_price) + "," + str(
+                security_type) + "," + str(exchange) + "," + str(currency)
+            logger.info("***************************************")
+            logger.info("Order was placed: " + text_line)
+            logger.info("***************************************")
         except Exception as e:
             logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
 
@@ -120,6 +126,24 @@ class IBPyInteractiveBrokers:
 
         order_id = last_order_id + 1
         return order_id
+
+    def read_orders(self, file_path=GlobalVariables.get_trading_orders_file()):
+        """
+        Read the current order id from file
+        :param file_path: filename and path
+        :return: order id
+        """
+        orders = []
+        # Create an order ID which is 'global' for this session. This
+        # will need incrementing once new orders are submitted.
+        if FileUtils.check_file_exists_or_create(file_path, GlobalVariables.get_order_file_header()):
+            data = pd.read_csv(file_path)
+
+            if len(data) > 0:
+                # datetime, stock_ticker
+                orders = data
+
+        return orders
 
     def error_handler(self, msg):
         """Handles the capturing of error messages"""

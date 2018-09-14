@@ -1,3 +1,4 @@
+import datetime
 import importlib
 import inspect
 import smtplib
@@ -5,9 +6,8 @@ import sys
 import traceback
 from datetime import datetime
 from multiprocessing.dummy import Pool as ThreadPool
-from pathlib import Path
 import bs4 as bs
-import os
+
 import requests
 
 import Utils.Logger_Instance
@@ -362,3 +362,24 @@ def wrapper(func, *args, **kwargs):
     """
     # do something before
     return func(*args, **kwargs)
+
+
+def is_next_day_or_later(date_to_check_str, date_time_format_1, last_date,
+                         date_time_format_2):
+    """
+    Check, if the current date string is newer than another date string
+    :param date_to_check_str: date as string
+    :param date_time_format_1: format of first string, ex:  "%Y-%m-%d %H:%M:%S.%f"
+    :param last_date: other date time string
+    :param date_time_format_2: format of second string, ex: "%d.%m.%Y um %H:%M"
+    :return:
+    """
+    date_to_check = datetime.strptime(date_to_check_str, date_time_format_1)
+
+    if isinstance(last_date, str):
+        last_date = datetime.strptime(last_date, date_time_format_2)
+
+    # compare the dates days ex. 2018-09-13 < 2018-09-14
+    is_date_more_up_to_date = last_date.date() < date_to_check.date()
+
+    return is_date_more_up_to_date

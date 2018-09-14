@@ -9,13 +9,15 @@ from backtrader.feeds import GenericCSVData
 
 from Backtesting.Backtrader.BacktraderWrapper import BacktraderWrapper
 # from directory UnitTests to --> root folder with: ..\\..\\
+from Utils.CommonUtils import is_next_day_or_later
+from Utils.FileUtils import is_date_actual
 from Utils.GlobalVariables import *
 import unittest
 
 import backtrader as bt
 import backtrader.analyzers as btanalyzer
 import pandas as pd
-import datetime
+from datetime import datetime
 from time import sleep
 from backtrader.feeds import GenericCSVData
 
@@ -54,3 +56,22 @@ class TestIbPyInteractiveBrokers(unittest.TestCase):
         broker._save_current_order(curr_order_id, "TestTicker", orders_test_file)
         next_order_id = broker._read_current_order_id(orders_test_file)
         self.assertEqual(curr_order_id + 1, next_order_id)
+
+    def test__save_current_order__read_orders__compare_date_not_later(self):
+        orders_test_file = GlobalVariables.get_test_data_files_path() + "orders_test.csv"
+        broker = IBPyInteractiveBrokers()
+
+        curr_order_id = broker._read_current_order_id(orders_test_file)
+        broker._save_current_order(curr_order_id, "TestTicker_2", orders_test_file)
+
+        orders = broker.read_orders(orders_test_file)
+
+        for curr_order_num in range(len(orders)):
+            if orders['stock_ticker'][curr_order_num].startswith("TestTicker_2"):
+                date_time_str = (orders['datetime'][curr_order_num])  # the last one
+
+        is_later = is_next_day_or_later(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f", date_time_str,
+                                        "%Y-%m-%d %H:%M:%S.%f")
+        # written and read one are equal
+        self.assertEqual(is_later, False)
+        self.assertGreater(len(orders), 0)

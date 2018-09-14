@@ -697,3 +697,12 @@ Date,News
 13.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
 13.09.2018 um 06:55, ANALYSE-FLASH: UBS hebt Commerzbank auf 'Buy' - Ziel 10.20 Euro
 13.09.2018 um 07:58, ANALYSE-FLASH: HSBC senkt Ziel für Continental AG auf 170 Euro - 'Hold'
+13.09.2018 um 10:05, ANALYSE-FLASH: Goldman belässt Delivery Hero auf 'Buy' - Ziel 55 Euro
+13.09.2018 um 10:21, ANALYSE-FLASH: Morgan Stanley lässt Deutsche Bank auf 'Underweight'
+13.09.2018 um 12:42, ANALYSE-FLASH: JPMorgan senkt Ziel für Delivery Hero auf 56 Euro - 'Overweight'
+13.09.2018 um 12:43, ANALYSE: UBS sieht Commerzbank mittelfristig wieder im Aufwind - neu: 'Buy'
+13.09.2018 um 14:38, ANALYSE-FLASH: Needham hebt Ziel für Apple auf 260 US-Dollar - 'Buy'
+13.09.2018 um 16:37, Ökonomen-Stimmen zur EZB-Zinssitzung
+13.09.2018 um 22:27, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 13.09.2018
+14.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+14.09.2018 um 06:00, ANALYSE-FLASH: JPMorgan senkt Rocket Internet auf 'Neutral'

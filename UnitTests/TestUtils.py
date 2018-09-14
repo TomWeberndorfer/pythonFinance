@@ -1,11 +1,11 @@
-import re
-from unittest import TestCase
-import pandas as pd
 from datetime import datetime
 from pathlib import Path
-from Utils.CommonUtils import CommonUtils
+from unittest import TestCase
+from apscheduler.schedulers.background import BackgroundScheduler
+from Utils.CommonUtils import CommonUtils, is_next_day_or_later
 from Utils.FileUtils import FileUtils
 from Utils.GlobalVariables import *
+from time import sleep
 
 
 class TestUtils(TestCase):
@@ -27,9 +27,9 @@ class TestUtils(TestCase):
         self.assertEqual(CommonUtils.is_date_today(datetime_object), False)
 
         test = datetime.now()
-        #TODO testen der konvertierung mittels strptime "um"
-        #date_time = "14.03.2018 um 23:11"
-        #datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
+        # TODO testen der konvertierung mittels strptime "um"
+        # date_time = "14.03.2018 um 23:11"
+        # datetime_object = datetime.strptime(date_time, "%d.%m.%Y um %H:%M")
         self.assertEqual(CommonUtils.is_date_today(test), True)
 
     def test_append_to_file__only_new_entries__all_entries(self):
@@ -67,3 +67,40 @@ class TestUtils(TestCase):
         test_dict = CommonUtils.get_implemented_items_dict(path, './*/**/**/*.py', "TestClassForUtils")
         self.assertEqual(1, len(test_dict))
         self.assertEqual("TestClassForUtils", list(test_dict.keys())[0])
+
+    def test_is_date_current(self):
+        last_date_time_str = "07.03.2018 um 03:11"
+        date_time_str = "2018-09-13 18:16:21.563728"
+
+        is_actual = is_next_day_or_later(date_time_str, "%Y-%m-%d %H:%M:%S.%f", last_date_time_str, "%d.%m.%Y um %H:%M")
+        self.assertEqual(is_actual, True)
+
+        date_time_str = "07.03.2018 um 03:11"
+        last_date_time_str = "2018-06-13 18:16:21.563728"
+
+        is_actual = is_next_day_or_later(date_time_str, "%d.%m.%Y um %H:%M", last_date_time_str, "%Y-%m-%d %H:%M:%S.%f")
+        self.assertEqual(is_actual, False)
+
+    def test_background_scheduler_intervall__increase_every_0s1(self):
+        background_scheduler = BackgroundScheduler()
+        bt = background_test_dummy()
+        background_scheduler.add_job(bt.set, 'interval', seconds=0.1)
+        background_scheduler.start()
+        sleep(0.15)
+        self.assertEqual(1, bt.get())
+        sleep(0.06)
+        self.assertEqual(2, bt.get())
+        background_scheduler.shutdown()
+        sleep(0.1)
+        self.assertEqual(2, bt.get())
+
+
+class background_test_dummy:
+    def __init__(self):
+        self.var = 0
+
+    def set(self):
+        self.var = self.var + 1
+
+    def get(self):
+        return self.var
