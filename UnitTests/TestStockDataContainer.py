@@ -109,7 +109,7 @@ class TestStockDataContainer(unittest.TestCase):
 
         dt = parser.parse(stock_data_container_list[0].get_recommendation_strategies()["W52HighTechnicalStrategy"][1])
         elapsed = datetime.now() - dt
-        self.assertGreater(timedelta(seconds=0.01), elapsed)
+        self.assertGreater(timedelta(seconds=0.011), elapsed)
         # stock_data_container_list = results
 
         ##############################

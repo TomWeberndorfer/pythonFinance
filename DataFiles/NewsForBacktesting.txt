@@ -706,3 +706,7 @@ Date,News
 13.09.2018 um 22:27, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 13.09.2018
 14.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
 14.09.2018 um 06:00, ANALYSE-FLASH: JPMorgan senkt Rocket Internet auf 'Neutral'
+14.09.2018 um 07:24, ANALYSE-FLASH: Goldman hebt Ziel für Wirecard auf 250 Euro - 'Conviction Buy'
+14.09.2018 um 07:28, ANALYSE-FLASH: Berenberg startet Lanxess mit 'Sell' - Ziel 57.50 Euro
+14.09.2018 um 08:17, ANALYSE: Goldman traut Wirecard Sprung über Marke von 30 Milliarden Euro zu
+14.09.2018 um 08:35, ANALYSE-FLASH: DZ Bank senkt fairen Wert für Gerry Weber - 'Verkaufen'

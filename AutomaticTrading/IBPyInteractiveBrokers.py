@@ -14,7 +14,7 @@ info_codes = [2104, 2106]
 
 
 class IBPyInteractiveBrokers:
-    def __init__(self):
+    def __init__(self, file_path=""):
         # Connect to the Trader Workstation (TWS) running on the
         # usual port of 7496, with a clientId of 100
         # (The clientId is chosen by us and we will need
@@ -22,6 +22,10 @@ class IBPyInteractiveBrokers:
         # market data connection)
         self.tws_conn = Connection.create(port=GlobalVariables.get_broker_demo_port(), clientId=999)
         self.error_message_list = []
+        if file_path is "":
+            self.file_path = GlobalVariables.get_trading_orders_file()
+        else:
+            self.file_path = file_path
 
     def connect(self):
         self.tws_conn.connect()
@@ -76,21 +80,19 @@ class IBPyInteractiveBrokers:
             logger.info("***************************************")
             logger.info("Order was placed: " + text_line)
             logger.info("***************************************")
+            print(text_line)
         except Exception as e:
             logger.error("Unexpected Exception : " + str(e) + "\n" + str(traceback.format_exc()))
 
-        self._save_current_order(order_id, stock_ticker, GlobalVariables.get_trading_orders_file(), order_type, action,
-                                 quantity,
-                                 limit_price, security_type, exchange, currency)
+        self._save_current_order(order_id, stock_ticker, order_type, action,
+                                 quantity, limit_price, security_type, exchange, currency)
 
-    def _save_current_order(self, order_id, stock_ticker,
-                            file_path=GlobalVariables.get_trading_orders_file(), order_type='', action='', quantity=0,
+    def _save_current_order(self, order_id, stock_ticker, order_type='', action='', quantity=0,
                             limit_price=0, security_type='STK', exchange='SMART', currency='USD'):
         """
         Save the current order into file.
         :param order_id: order id by interactive broker, must be unique
         :param stock_ticker: stock ticker
-        :param file_path: filename + path
         :param order_type: oder type , ex: LMT for limit orders
         :param action: BUY / SELL
         :param quantity: number of stocks to order
@@ -100,17 +102,17 @@ class IBPyInteractiveBrokers:
         :param currency: USD / EUR
         :return: nothing
         """
-        FileUtils.check_file_exists_or_create(file_path, GlobalVariables.get_order_file_header())
+        FileUtils.check_file_exists_or_create(self.file_path, GlobalVariables.get_order_file_header())
 
         text_line = str(datetime.now()) + "," + str(stock_ticker) + "," + str(order_id) + "," + str(
             order_type) + "," + str(action) + "," + str(quantity) + "," + str(limit_price) + "," + str(
             security_type) + "," + str(exchange) + "," + str(currency)
-        FileUtils.append_textline_to_file(text_line, file_path, False)
+        print(text_line)
+        FileUtils.append_textline_to_file(text_line, self.file_path, False)
 
-    def _read_current_order_id(self, file_path=GlobalVariables.get_trading_orders_file()):
+    def _read_current_order_id(self):
         """
         Read the current order id from file
-        :param file_path: filename and path
         :return: order id
         """
 
@@ -118,8 +120,8 @@ class IBPyInteractiveBrokers:
         # will need incrementing once new orders are submitted.
         last_order_id = pd.np.random.randint(1000, 90000)
 
-        if FileUtils.check_file_exists_or_create(file_path, GlobalVariables.get_order_file_header()):
-            data = pd.read_csv(file_path)
+        if FileUtils.check_file_exists_or_create(self.file_path, GlobalVariables.get_order_file_header()):
+            data = pd.read_csv(self.file_path)
 
             if len(data) > 0:
                 last_order_id = data['order_id'][len(data) - 1]
@@ -127,7 +129,7 @@ class IBPyInteractiveBrokers:
         order_id = last_order_id + 1
         return order_id
 
-    def read_orders(self, file_path=GlobalVariables.get_trading_orders_file()):
+    def read_orders(self):
         """
         Read the current order id from file
         :param file_path: filename and path
@@ -136,8 +138,8 @@ class IBPyInteractiveBrokers:
         orders = []
         # Create an order ID which is 'global' for this session. This
         # will need incrementing once new orders are submitted.
-        if FileUtils.check_file_exists_or_create(file_path, GlobalVariables.get_order_file_header()):
-            data = pd.read_csv(file_path)
+        if FileUtils.check_file_exists_or_create(self.file_path, GlobalVariables.get_order_file_header()):
+            data = pd.read_csv(self.file_path)
 
             if len(data) > 0:
                 # datetime, stock_ticker

@@ -2,10 +2,16 @@ from datetime import datetime
 from pathlib import Path
 from unittest import TestCase
 from apscheduler.schedulers.background import BackgroundScheduler
+
+from AutomaticTrading.IBPyInteractiveBrokers import IBPyInteractiveBrokers
+from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.CommonUtils import CommonUtils, is_next_day_or_later
 from Utils.FileUtils import FileUtils
 from Utils.GlobalVariables import *
 from time import sleep
+
+from Utils.StockDataUtils import buy_recommendations
 
 
 class TestUtils(TestCase):
@@ -94,8 +100,38 @@ class TestUtils(TestCase):
         sleep(0.1)
         self.assertEqual(2, bt.get())
 
+    def test_buy_recommendations__apple_today__not_buy(self):
+        orders_test_file = GlobalVariables.get_test_data_files_path() + "orders_test.csv"
+        broker = IBPyInteractiveBrokers(orders_test_file)
+
+        # insert apple as last entry today
+        curr_order_id = broker._read_current_order_id()
+        broker._save_current_order(curr_order_id, "AAPL")
+
+        container = StockDataContainer("Apple Inc.", "AAPL", "en")
+        container.set_stop_buy(12)
+        container.set_stop_loss(10)
+        container.set_position_size(200)
+        container.update_used_strategy_and_recommendation("TestStrategy", "BUY")
+
+        stocks = [container]
+        max_num_of_different_stocks_to_buy = 2
+
+        buy_recommendations(broker, stocks, max_num_of_different_stocks_to_buy)
+        sleep(0.5)
+        error_message_list = broker.get_and_clear_error_message_list()
+
+        # the order id should be the next to the last manual entry,
+        # because nothing should be bought
+        next_order_id = broker._read_current_order_id()
+        self.assertEqual(curr_order_id + 1, next_order_id)
+        self.assertEqual(0, len(error_message_list))
+
 
 class background_test_dummy:
+    """
+    Test dummy for background running test
+    """
     def __init__(self):
         self.var = 0
 

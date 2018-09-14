@@ -1,3 +1,5 @@
+import traceback
+
 import numpy
 import numpy as np
 import pandas as pd
@@ -5,8 +7,10 @@ from scipy.stats import norm
 
 from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
+from Utils.CommonUtils import is_next_day_or_later
 from Utils.GlobalVariables import GlobalVariables
-
+from time import sleep
+from datetime import datetime
 
 def calc_avg_vol(stock_data):
     """
@@ -140,7 +144,6 @@ def convert_backtrader_to_asta_data(hist_data, news_data_dict, date_time, stock_
                         pass
                     break
 
-    # TODO den container anders --> ned so benennen
     # convert backtrader format to asta-format
     df1 = convert_backtrader_to_dataframe(hist_data)
     # ticker not implemented, but not needed
@@ -198,3 +201,85 @@ def are_order_information_available(action, stock_data_container):
         return False
 
     return True
+
+
+def buy_recommendations(broker, stocks, max_num_of_different_stocks_to_buy):
+    """
+    Automatically buy the recommendations from result list
+    :return: -
+    """
+    from Utils.Logger_Instance import logger
+
+    broker.connect()
+
+    if len(stocks) <= 0:
+        return
+
+    try:
+        # sort stocks by rank
+        sorted_stock_container_list = sorted(stocks, key=lambda x: x.get_rank(), reverse=True)
+
+        for i in range(len(sorted_stock_container_list)):
+            if max_num_of_different_stocks_to_buy <= 0:  # do not buy more stocks
+                logger.info("Max number of stocks to buy reached.")
+                return
+
+            # check if there are enough data to create stop buy and stop loss limit orders
+            if not are_order_information_available("BUY", sorted_stock_container_list[i]) or \
+                    not are_order_information_available("SELL", sorted_stock_container_list[i]):
+                logger.info(
+                    "Not enough information for order available: " + str(sorted_stock_container_list[i]))
+                break
+
+            # trade only, if not already traded today
+            orders = broker.read_orders()
+            date_time_str = None
+            # find the last entry
+            for curr_order_num in range(len(orders)):
+                if orders['stock_ticker'][curr_order_num].startswith(
+                        sorted_stock_container_list[i].stock_ticker()):
+                    date_time_str = (orders['datetime'][curr_order_num])
+
+            if date_time_str is not None:
+                next_day_or_later = is_next_day_or_later(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f",
+                                                         date_time_str,
+                                                         "%Y-%m-%d %H:%M:%S.%f")
+                # do not trade same recommendation again on one day
+                if not next_day_or_later:
+                    logger.info("No current recommendations to buy available for " +
+                                str(sorted_stock_container_list[i]))
+                    break
+
+            # get stock quantity, only even number
+            qty = int(sorted_stock_container_list[i].get_position_size())
+            # rank < 0 means sell recommendation, > 0 a buy
+            if sorted_stock_container_list[i].get_rank() > 0:
+                # stop buy limit order
+                broker.execute_order(sorted_stock_container_list[i].stock_ticker(),
+                                     'LMT', 'BUY', qty,
+                                     sorted_stock_container_list[i].get_stop_buy())
+                # stop loss limit order
+                broker.execute_order(sorted_stock_container_list[i].stock_ticker(),
+                                     'LMT', 'SELL', qty,
+                                     sorted_stock_container_list[i].get_stop_loss())
+
+                max_num_of_different_stocks_to_buy = max_num_of_different_stocks_to_buy - 1
+
+            # get the response
+            # TODO without sleep
+            sleep(0.5)
+            error_message_list = broker.get_and_clear_error_message_list()
+
+            if len(error_message_list) > 0:
+                for error_msg in error_message_list:
+                    logger.error(
+                        "Unexpected response from broker while autotrading: " + str(
+                            error_msg))
+                    # TODO what to do in case of an error?
+
+    except Exception as e:
+        err_msg = "Unexpected Exception while autotrading: " + str(e) + "\n" + str(traceback.format_exc())
+        logger.error(err_msg)
+        print(err_msg)
+
+    broker.disconnect()

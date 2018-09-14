@@ -1,15 +1,15 @@
-datetime                  ,stock_ticker,order_id,order_type,action,quantity,limit_price,security_type,exchange,currency
-2018-09-12 20:31:58.308603,CBK         ,347921  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
-2018-09-12 20:31:58.335589,CBK         ,347922  ,LMT       ,SELL  ,1615    ,1.5        ,STK          ,SMART   ,USD
-2018-09-12 21:04:13.168680,AAPL        ,347923  ,LMT       ,BUY   ,10      ,230.82     ,STK          ,SMART   ,USD
-2018-09-12 21:04:13.182672,AAPL        ,347924  ,LMT       ,SELL  ,10      ,223.89     ,STK          ,SMART   ,USD
-2018-09-12 21:04:15.076748,CBK         ,347925  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
-2018-09-12 21:04:15.090738,CBK         ,347926  ,LMT       ,SELL  ,1615    ,1.5        ,STK          ,SMART   ,USD
-2018-09-13 21:06:47.017702,AAPL        ,347927  ,LMT       ,BUY   ,10      ,230.82     ,STK          ,SMART   ,USD
-2018-09-13 21:06:47.028695,AAPL        ,347928  ,LMT       ,SELL  ,10      ,223.89     ,STK          ,SMART   ,USD
-2018-09-13 21:06:47.541742,CBK         ,347929  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
-2018-09-13 21:06:47.550736,CBK         ,347930  ,LMT       ,SELL  ,1615    ,1.5        ,STK          ,SMART   ,USD
-2018-09-14 06:50:34.065533,AAPL        ,347931  ,LMT       ,BUY   ,10      ,230.82     ,STK          ,SMART   ,USD
-2018-09-14 06:50:34.065533,AAPL        ,347932  ,LMT       ,SELL  ,10      ,223.89     ,STK          ,SMART   ,USD
-2018-09-14 06:50:34.596761,CBK         ,347933  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
-2018-09-14 06:50:34.596761,CBK         ,347934  ,LMT       ,SELL  ,1615    ,1.5        ,STK          ,SMART   ,USD
+datetime                 ,stock_ticker,order_id,order_type,action,quantity,limit_price,security_type,exchange,currency
+2018-09-1220:31:58.308603,CBK         ,347921  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
+2018-09-1220:31:58.335589,CBK         ,347922  ,LMT       ,SELL  ,1615    ,1.5        ,STK          ,SMART   ,USD
+2018-09-1221:04:13.168680,AAPL        ,347923  ,LMT       ,BUY   ,10      ,230.82     ,STK          ,SMART   ,USD
+2018-09-1221:04:13.182672,AAPL        ,347924  ,LMT       ,SELL  ,10      ,223.89     ,STK          ,SMART   ,USD
+2018-09-1221:04:15.076748,CBK         ,347925  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
+2018-09-1221:04:15.090738,CBK         ,347926  ,LMT       ,SELL  ,1615    ,1.5        ,STK          ,SMART   ,USD
+2018-09-1321:06:47.017702,AAPL        ,347927  ,LMT       ,BUY   ,10      ,230.82     ,STK          ,SMART   ,USD
+2018-09-1321:06:47.028695,AAPL        ,347928  ,LMT       ,SELL  ,10      ,223.89     ,STK          ,SMART   ,USD
+2018-09-1321:06:47.541742,CBK         ,347929  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
+2018-09-1321:06:47.550736,CBK         ,347930  ,LMT       ,SELL  ,1615    ,1.5        ,STK          ,SMART   ,USD
+2018-09-1406:50:34.065533,AAPL        ,347931  ,LMT       ,BUY   ,10      ,230.82     ,STK          ,SMART   ,USD
+2018-09-1406:50:34.065533,AAPL        ,347932  ,LMT       ,SELL  ,10      ,223.89     ,STK          ,SMART   ,USD
+2018-09-1406:50:34.596761,CBK         ,347933  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
+2018-09-1406:50:34.596761,CBK         ,347934  ,LMT       ,SELL  ,1615    ,1.5        ,STK          ,SMART   ,USD

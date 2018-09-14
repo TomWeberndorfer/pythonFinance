@@ -1,45 +1,7 @@
 datetime                  ,stock_ticker,order_id,order_type,action,quantity,limit_price,security_type,exchange,currency
-2018-09-1214:41:35.571001 ,ALV         ,347884  ,LMT       ,BUY   ,15      ,159.96     ,STK          ,SMART   ,USD
-2018-09-1214:41:36.807012 ,ALV         ,347890  ,LMT       ,SELL  ,15      ,155.16     ,STK          ,SMART   ,USD
-2018-09-1214:44:31.884374 ,GOOG        ,347891  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
-2018-09-1214:49:07.189934 ,SNY         ,347892  ,LMT       ,BUY   ,51      ,48.55      ,STK          ,SMART   ,USD
-2018-09-1214:49:07.937248 ,SNY         ,347893  ,LMT       ,SELL  ,51      ,47.09      ,STK          ,SMART   ,USD
-2018-09-1214:49:11.030537 ,ASML        ,347894  ,LMT       ,BUY   ,11      ,222.77     ,STK          ,SMART   ,USD
-2018-09-1214:49:11.786160 ,ASML        ,347895  ,LMT       ,SELL  ,11      ,216.09     ,STK          ,SMART   ,USD
-2018-09-1214:49:13.614048 ,RIO         ,347896  ,LMT       ,BUY   ,40      ,61.02      ,STK          ,SMART   ,USD
-2018-09-1214:49:14.164769 ,RIO         ,347897  ,LMT       ,SELL  ,40      ,59.19      ,STK          ,SMART   ,USD
-2018-09-1214:49:15.912581 ,ALV         ,347898  ,LMT       ,BUY   ,15      ,159.96     ,STK          ,SMART   ,USD
-2018-09-1214:49:23.457363 ,ALV         ,347899  ,LMT       ,SELL  ,15      ,155.16     ,STK          ,SMART   ,USD
-2018-09-1214:49:25.673773 ,ARL         ,347900  ,LMT       ,BUY   ,115     ,21.68      ,STK          ,SMART   ,USD
-2018-09-1214:49:27.220529 ,ARL         ,347901  ,LMT       ,SELL  ,115     ,21.03      ,STK          ,SMART   ,USD
-2018-09-1214:49:29.553129 ,AAPL        ,347902  ,LMT       ,BUY   ,10      ,230.82     ,STK          ,SMART   ,USD
-2018-09-1214:49:30.223051 ,AAPL        ,347903  ,LMT       ,SELL  ,10      ,223.89     ,STK          ,SMART   ,USD
-2018-09-1214:49:42.587253 ,PNC         ,347904  ,LMT       ,BUY   ,15      ,162.47     ,STK          ,SMART   ,USD
-2018-09-1214:49:42.693195 ,PNC         ,347905  ,LMT       ,SELL  ,15      ,157.6      ,STK          ,SMART   ,USD
-2018-09-1214:53:52.060901 ,ASML        ,347906  ,LMT       ,BUY   ,11      ,222.77     ,STK          ,SMART   ,USD
-2018-09-1214:53:52.118867 ,ASML        ,347907  ,LMT       ,SELL  ,11      ,216.09     ,STK          ,SMART   ,USD
-2018-09-1214:53:56.533378 ,RIO         ,347908  ,LMT       ,BUY   ,40      ,61.02      ,STK          ,SMART   ,USD
-2018-09-1214:53:56.602334 ,RIO         ,347909  ,LMT       ,SELL  ,40      ,59.19      ,STK          ,SMART   ,USD
-2018-09-1308:58:53.692930 ,GOOG        ,347910  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
-2018-09-1309:15:04.918859 ,GOOG        ,347911  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
-2018-09-1310:38:12.801262 ,TestTicker  ,347912  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 10:43:23.765933,TestTicker_2,347913  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 10:56:32.575685,TestTicker_2,347914  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 10:59:47.387864,TestTicker_2,347915  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 11:01:11.893926,TestTicker_2,347916  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 11:03:51.191626,TestTicker_2,347917  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 11:04:41.188734,TestTicker_2,347918  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 11:05:11.717521,TestTicker_2,347919  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 11:07:07.156365,TestTicker_2,347920  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:12:31.000519,TestTicker_2,347921  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:14:08.099493,TestTicker_2,347922  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:16:21.563728,TestTicker_2,347923  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:31:37.667945,TestTicker  ,347924  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:31:38.212912,TestTicker_2,347925  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:33:52.814654,TestTicker_2,347926  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:36:34.177984,TestTicker_2,347927  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:41:06.860284,TestTicker_2,347928  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:44:03.320413,TestTicker  ,347929  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 18:44:03.336402,TestTicker_2,347930  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 19:35:02.218179,TestTicker  ,347931  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
-2018-09-13 19:35:02.225174,TestTicker_2,347932  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-13 06:50:34.065533,AAPL        ,947932  ,LMT       ,SELL  ,10      ,223.89     ,STK          ,SMART   ,USD
+2018-09-14 06:50:34.596761,CBK         ,947933  ,LMT       ,BUY   ,1615    ,1.55       ,STK          ,SMART   ,USD
+2018-09-14 09:42:04.631892,AAPL        ,947934  ,LMT       ,BUY   ,200     ,12         ,STK          ,SMART   ,USD
+2018-09-14 09:42:04.646883,AAPL        ,947935  ,LMT       ,SELL  ,200     ,10         ,STK          ,SMART   ,USD
+2018-09-14 09:51:06.948848,AAPL        ,947936  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 09:53:13.064374,AAPL        ,947937  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
