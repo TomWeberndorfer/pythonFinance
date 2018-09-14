@@ -112,7 +112,9 @@ class GlobalVariables:
                                      'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}},
                                  'AutoTrading': {
                                      'RepetitiveScreeningInterval': 120,
-                                     'MaxNumberOfDifferentStocksToBuyPerAutoTrade': 5}
+                                     'MaxNumberOfDifferentStocksToBuyPerAutoTrade': 5},
+                                 'Broker': {
+                                     'Name': 'IBPyInteractiveBrokers'}
                                  }
         return other_parameters_dict
 

@@ -3,8 +3,7 @@ from pathlib import Path
 from unittest import TestCase
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from AutomaticTrading.IBPyInteractiveBrokers import IBPyInteractiveBrokers
-from DataContainerAndDecorator.NewsDataContainerDecorator import NewsDataContainerDecorator
+from AutomaticTrading.InteractiveBrokers.IBPyInteractiveBrokers import IBPyInteractiveBrokers
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Utils.CommonUtils import CommonUtils, is_next_day_or_later
 from Utils.FileUtils import FileUtils

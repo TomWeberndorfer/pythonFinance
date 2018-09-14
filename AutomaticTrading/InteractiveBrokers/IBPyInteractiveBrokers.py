@@ -4,6 +4,8 @@ from ib.ext.Contract import Contract
 from ib.ext.Order import Order
 from ib.opt import Connection
 import pandas as pd
+
+from AutomaticTrading.Abstract_TradingBroker import AutomaticTradingBroker
 from Utils.FileUtils import FileUtils
 from Utils.GlobalVariables import GlobalVariables
 from datetime import datetime
@@ -13,7 +15,7 @@ from Utils.Logger_Instance import logger
 info_codes = [2104, 2106]
 
 
-class IBPyInteractiveBrokers:
+class IBPyInteractiveBrokers(AutomaticTradingBroker):
     def __init__(self, file_path=""):
         # Connect to the Trader Workstation (TWS) running on the
         # usual port of 7496, with a clientId of 100
@@ -28,6 +30,10 @@ class IBPyInteractiveBrokers:
             self.file_path = file_path
 
     def connect(self):
+        """
+        Connect to broker instance
+        :return: -
+        """
         self.tws_conn.connect()
 
         # Assign the error handling function defined above
@@ -67,8 +73,8 @@ class IBPyInteractiveBrokers:
         """
 
         # Create a contract  via SMART order routing
-        current_contract = self.create_contract(stock_ticker, security_type, exchange, exchange, currency)
-        current_order = self.create_order(order_type, quantity, action, limit_price)
+        current_contract = self._create_contract(stock_ticker, security_type, exchange, exchange, currency)
+        current_order = self._create_order(order_type, quantity, action, limit_price)
 
         # Use the connection to the send the order to IB
         order_id = self._read_current_order_id()
@@ -132,8 +138,7 @@ class IBPyInteractiveBrokers:
     def read_orders(self):
         """
         Read the current order id from file
-        :param file_path: filename and path
-        :return: order id
+        :return: orders list
         """
         orders = []
         # Create an order ID which is 'global' for this session. This
@@ -159,7 +164,7 @@ class IBPyInteractiveBrokers:
         print("Server Response: %s, %s" % (msg.typeName, msg))
         logger.info("Server Response: %s, %s" % (msg.typeName, msg))
 
-    def create_contract(self, symbol, sec_type, exch, prim_exch, curr):
+    def _create_contract(self, symbol, sec_type, exch, prim_exch, curr):
         """Create a Contract object defining what will
         be purchased, at which exchange and in which currency.
         symbol - The ticker symbol for the contract
@@ -175,7 +180,7 @@ class IBPyInteractiveBrokers:
         contract.m_currency = curr
         return contract
 
-    def create_order(self, order_type, quantity, action, lmtPrice):
+    def _create_order(self, order_type, quantity, action, lmtPrice):
         """Create an Order object (Market/Limit) to go long/short.
         order_type - 'MKT', 'LMT' for Market or Limit orders
         quantity - Integral number of assets to order

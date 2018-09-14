@@ -8,7 +8,6 @@ import configparser
 import logging
 import queue
 import tkinter as tk
-import traceback
 import webbrowser as wb
 from os.path import basename
 from threading import Thread
@@ -18,21 +17,21 @@ from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 from tkinter.ttk import Labelframe
 from apscheduler.schedulers.background import BackgroundScheduler
-from time import sleep
 import backtrader.analyzers as btanalyzer
 
-from AutomaticTrading.IBPyInteractiveBrokers import *
+from AutomaticTrading.InteractiveBrokers.IBPyInteractiveBrokers import *
+from AutomaticTrading.TradingBrokerFactory import TradingBrokerFactory
 from Backtesting.BacktestingFactory import BacktestingFactory
 from GUI.ScrollableFrame import ScrollableFrame
 from MvcModel import MvcModel
 from Utils.StockAnalysis import run_analysis
 from Strategies.StrategyFactory import StrategyFactory
-from Utils.CommonUtils import CommonUtils, is_next_day_or_later
+from Utils.CommonUtils import CommonUtils
 from Utils.FileUtils import FileUtils
 from Utils.GlobalVariables import *
 from Utils.GuiUtils import GuiUtils
 from Utils.Logger_Instance import logger
-from Utils.StockDataUtils import are_order_information_available, buy_recommendations
+from Utils.StockDataUtils import buy_recommendations
 
 
 class MvcController:
@@ -111,7 +110,8 @@ class MvcController:
                             self.view.b_open_results_new_wd, self.view.ButtonStartAutoTrading]
 
         # INIT Autotrading
-        self.broker = IBPyInteractiveBrokers()
+        self.trading_factory = TradingBrokerFactory()
+        self.broker = None  # init later dynamically becaue of GUI config
 
     def on_double_click_Scrolledtreeview1(self, event):
         """
@@ -215,6 +215,11 @@ class MvcController:
             if self.model.thread_state.get() is GlobalVariables.get_screening_states()['not_running']:
                 interval_sec = self.model.analysis_parameters.get()['OtherParameters']['AutoTrading'][
                     'RepetitiveScreeningInterval']
+
+                # create broker every time starting
+                broker_name = self.model.analysis_parameters.get()['OtherParameters']['Broker']['Name']
+                self.broker = self.trading_factory.prepare(broker_name)
+
                 self.background_scheduler.add_job(self.start_screening_auto_trading, 'interval', seconds=interval_sec,
                                                   next_run_time=datetime.now())
                 self.background_scheduler.start()
@@ -354,8 +359,8 @@ class MvcController:
 
             bf = BacktestingFactory()
             backtesting_parameters = self.model.analysis_parameters.get()["BacktestingParameters"]
-            bt_framework = backtesting_parameters['BacktestingFramework']
-            tbt = bf.prepare(bt_framework)
+            bt_framework_name = backtesting_parameters['BacktestingFramework']
+            tbt = bf.prepare(bt_framework_name)
             # get the selection of the first strategy
             analysis_params = self.model.analysis_parameters.get()['Strategies'][strategy_selections[0]]
 

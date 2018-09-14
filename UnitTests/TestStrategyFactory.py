@@ -55,7 +55,9 @@ class TestStrategyFactory(unittest.TestCase):
                             'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}},
                         'AutoTrading': {
                             'RepetitiveScreeningInterval': 120,
-                            'MaxNumberOfDifferentStocksToBuyPerAutoTrade': 5}
+                            'MaxNumberOfDifferentStocksToBuyPerAutoTrade': 5},
+                        'Broker': {
+                            'Name': 'IBPyInteractiveBrokers'}
                         }
 
         backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,

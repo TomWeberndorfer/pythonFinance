@@ -1,28 +1,13 @@
-import unittest
-
-import backtrader as bt
-import backtrader.analyzers as btanalyzer
-import pandas as pd
 import datetime
 
-from backtrader.feeds import GenericCSVData
-
-from Backtesting.Backtrader.BacktraderWrapper import BacktraderWrapper
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Utils.CommonUtils import is_next_day_or_later
-from Utils.FileUtils import is_date_actual
-from Utils.GlobalVariables import *
 import unittest
 
-import backtrader as bt
-import backtrader.analyzers as btanalyzer
-import pandas as pd
 from datetime import datetime
 from time import sleep
-from backtrader.feeds import GenericCSVData
 
-from AutomaticTrading.IBPyInteractiveBrokers import IBPyInteractiveBrokers
-from Backtesting.Backtrader.BacktraderWrapper import BacktraderWrapper
+from AutomaticTrading.InteractiveBrokers.IBPyInteractiveBrokers import IBPyInteractiveBrokers
 # from directory UnitTests to --> root folder with: ..\\..\\
 from Utils.GlobalVariables import *
 
