@@ -134,15 +134,16 @@ def convert_backtrader_to_asta_data(hist_data, news_data_dict, date_time, stock_
     # add the news text because backtrader does not support news
     # data from pandas do not have a name --> not add news
     if isinstance(dataname, str):
-        news_data = news_data_dict[dataname]
-        if hasattr(news_data, "NewsText") and hasattr(news_data, "Date"):
-            for currEntry in range(0, len(news_data.Date)):
-                if str(date_time) in news_data.Date[currEntry]:
-                    try:
-                        curr_news = str(news_data.NewsText[currEntry])
-                    except Exception as e:
-                        pass
-                    break
+        if dataname in news_data_dict:
+            news_data = news_data_dict[dataname]
+            if hasattr(news_data, "NewsText") and hasattr(news_data, "Date"):
+                for currEntry in range(0, len(news_data.Date)):
+                    if str(date_time) in news_data.Date[currEntry]:
+                        try:
+                            curr_news = str(news_data.NewsText[currEntry])
+                        except Exception as e:
+                            pass
+                        break
 
     # convert backtrader format to asta-format
     df1 = convert_backtrader_to_dataframe(hist_data)

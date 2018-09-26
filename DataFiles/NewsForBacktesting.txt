@@ -761,3 +761,4 @@ Date,News
 26.09.2018 um 09:26, ANALYSE-FLASH: Deutsche Bank hebt STMicroelectronics auf 'Buy' - Ziel 20 Euro
 26.09.2018 um 12:57, ANALYSE-FLASH: Kepler Cheuvreux senkt Ziel für BMW auf 75 Euro - 'Reduce'
 26.09.2018 um 13:16, ANALYSE-FLASH: SocGen senkt BMW auf 'Hold' - Ziel 85 Euro
+26.09.2018 um 16:05, State Street: Vor allem nordamerikanische Anleger scheuen das Risiko
