@@ -1,4 +1,6 @@
 import inspect
+
+from pandas import DataFrame
 from talib import abstract
 import os
 from Utils.GlobalVariables import *
@@ -7,7 +9,8 @@ from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 
 # https://github.com/mrjbq7/ta-lib/issues/13
 import talib
-help(talib.SMA)
+
+# help(talib.SMA)
 
 test_data_filepath = GlobalVariables.get_test_data_files_path()
 stock_data_container_file_name = "stock_data_container_file.pickle"
@@ -19,13 +22,26 @@ stock_data_container_list = [stock_data_container]
 data_source = 'iex'
 weeks_delta = 52  # one year in the past
 # TODO testen der genauen ergebnisse mit einer test datei stocks_dfs --> TestData...
-data_reader = HistoricalDataReader(stock_data_container_list, weeks_delta, stock_data_container_file,
-                                   data_source, False)
-df = data_reader._get_ticker_data_with_webreader(stock_data_container.stock_ticker,
-                                                 stock_data_container._stock_exchange,
-                                                 data_source, weeks_delta=52)
+labels = []
+for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+    labels.append(value)
+data = [('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
+        ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
+        ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
+        ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
+        ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
+        ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+        ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
+        ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
+        ('2016-10-12', 23.16, 26, 23.11, 23.18, 46000)]
 
-result_sma = talib.SMA(df.close, timeperiod=30)
+df = DataFrame.from_records(data, columns=labels)
+stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+stock_data_container.set_historical_stock_data(df)
+stock_data_container_list = [stock_data_container]
+
+# result_sma = talib.ROC(df.close, timeperiod=5)
+result_sma = talib.SMA(df.close, timeperiod=5)
 #print (result_sma)
 
 #print (talib.get_functions())

@@ -307,7 +307,7 @@ def signal_is_volume_high_enough(historical_stock_data, min_req_vol=15000):
         return None
 
 
-def evaluate_signals(signal_list):
+def evaluate_signals(signal_list, return_res=False):
     """
     Evaluates the signals from the signal list. Automatically wraps the list with function and all parameters.
     :return:
@@ -336,4 +336,7 @@ def evaluate_signals(signal_list):
         if res is None or res is False:
             return None
 
-    return True
+    if return_res:
+        return res
+    else:
+        return True

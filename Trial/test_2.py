@@ -27,26 +27,25 @@ SOFTWARE.
 import backtrader as bt
 from datetime import datetime
 from datetime import timedelta
+
+from Utils.CommonUtils import CommonUtils
 from Utils.StockDataUtils import convert_backtrader_to_dataframe
 
 
 class firstStrategy(bt.Strategy):
 
     def __init__(self):
-        pass  # self.rsi = bt.indicators.RSI_SMA(self.data.close, period=21)
+        self.rsi = bt.indicators.RSI_SMA(self.data.close, period=21)
 
     def next(self):
         for i, hist_data in enumerate(self.datas):
             stock_data_container_list = []
             date_time = self.datetime.date()
             stock_name = hist_data._name
+
+            df1 = convert_backtrader_to_dataframe(hist_data)
+            print()
         pass
-        # if not self.position:
-        # if self.rsi < 30:
-        # self.buy(size=100)
-        # else:
-        # if self.rsi > 70:
-        #  self.sell(size=100)
 
 
 # Variable for our starting cash
@@ -58,16 +57,10 @@ cerebro = bt.Cerebro()
 # Add our strategy
 cerebro.addstrategy(firstStrategy)
 
-# Get Apple data from Yahoo Finance.
-# data = bt.feeds.Quandl(
-#     dataname='AAPL',
-#     fromdate = datetime(2016,1,1),
-#     todate = datetime(2017,1,1),
-#     buffered= True
-#     )
+symbols = CommonUtils.read_table_columns_from_webpage_as_list(
+    "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies", "table", "class", "wikitable sortable", 0, 1, "en")
 
-
-symbols = ["AAPL", "FB", "GIS", "GE", "XOM"]
+# symbols = ["AAPL" ,"FB","GIS","GE", "XOM"]
 start_time = datetime.now()
 
 end = datetime.now()
@@ -77,26 +70,13 @@ start_time = datetime.now()
 # plot_symbols = []
 data_list = []
 for s in symbols:
-    # data = bt.feeds.Quandl(dataname=s, fromdate=start, todate=end)
-    # data = bt.feeds.PandasData(
-    #     dataname=s,
-    #     fromdate=datetime(2018, 1, 1),
-    #     todate=datetime(2018, 9, 19)
-    # )
-    import pandas_datareader.data as web
-
-    spx = web.DataReader(s, 'iex', start, end)
-    data = bt.feeds.PandasData(dataname=spx)
+    data = bt.feeds.Quandl(dataname=s, fromdate=start, todate=end)
     cerebro.adddata(data)
 
-print("Time to get the stocks:" + (str(datetime.now() - start_time)))
+end_time = datetime.now()
+time_diff = end_time - start_time
+print("Time to get the stocks:" + (str(time_diff)))
 
-# df = convert_backtrader_to_dataframe(data)
-# Set our desired cash start
-cerebro.broker.setcash(startcash)
-
-# Run over everything
-cerebro.run()
-
-# Finally plot the end results
-cerebro.plot(style='candlestick')
+# cerebro.broker.setcash(startcash)
+# cerebro.run()
+# cerebro.plot(style='candlestick')

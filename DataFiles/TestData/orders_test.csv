@@ -24,3 +24,23 @@ datetime                  ,stock_ticker,order_id,order_type,action,quantity,limi
 2018-09-14 20:47:52.873864,TestTicker_2,947954  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
 2018-09-14 20:47:52.903847,GOOG        ,947955  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
 2018-09-14 20:48:23.372566,AAPL        ,947956  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:51:37.889602,TestTicker  ,947957  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:51:37.896597,TestTicker_2,947958  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:51:37.906592,TestTicker_2,947959  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:51:37.940570,GOOG        ,947960  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-09-14 20:52:17.405799,AAPL        ,947961  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:52:55.291542,TestTicker  ,947962  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:52:55.298537,TestTicker_2,947963  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:52:55.308531,TestTicker_2,947964  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:52:55.343510,GOOG        ,947965  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-09-14 20:53:39.005242,AAPL        ,947966  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:59:28.288544,TestTicker  ,947967  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:59:28.296540,TestTicker_2,947968  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:59:28.306533,TestTicker_2,947969  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-14 20:59:28.339513,GOOG        ,947970  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-09-14 20:59:57.948159,AAPL        ,947971  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-26 15:51:27.547952,TestTicker  ,947972  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-26 15:51:27.555948,TestTicker_2,947973  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-26 15:51:27.566941,TestTicker_2,947974  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-09-26 15:51:28.581589,GOOG        ,947975  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-09-26 15:52:13.977702,AAPL        ,947976  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD

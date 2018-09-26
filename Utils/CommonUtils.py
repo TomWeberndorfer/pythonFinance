@@ -44,7 +44,7 @@ class CommonUtils:
                                       password='8n6Qw8YoJe8m')
 
     @staticmethod
-    def get_threading_pool(max_number_threads=200):
+    def get_threading_pool(max_number_threads=300):
         """
         Returns a thread pool with maximum number of threads or the number of list len
         :param list_len: elements in the list --> number of threads (max limited)
@@ -203,6 +203,35 @@ class CommonUtils:
 
         Utils.Logger_Instance.logger.info("Tickers from " + websource_address + " read.")
         return stock_data_container_list
+
+    @staticmethod
+    def read_table_columns_from_webpage_as_list(websource_address, find_name, class_name, table_class,
+                                                ticker_column_to_read,
+                                                name_column_to_read, stock_exchange):
+        """
+        read the sp500 tickers and saves it to given file
+        :param stock_exchange:
+        :param name_column_to_read:
+        :param find_name:
+        :param ticker_column_to_read: 0 for sp500, 2 for cdax
+        :param table_class: like 'wikitable sortable' or 'wikitable sortable zebra'
+        :param websource_address: like wikepedia: 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+        :return: stock data container list
+        """
+        resp = requests.get(websource_address)
+        soup = bs.BeautifulSoup(resp.text, 'lxml')
+        table = soup.find(find_name, {class_name: table_class})
+        ticker_list = []
+
+        if table is None or len(table) <= 0:
+            raise ConnectionError("Error establishing a database connection")
+
+        for row in table.findAll('tr')[1:]:
+            ticker = row.findAll('td')[ticker_column_to_read].text
+            ticker = ticker.replace("\n", "")
+            ticker_list.append(ticker)
+
+        return ticker_list
 
     @staticmethod
     def read_table_column_from_webpage(websource_address, find_name, class_name, table_class, ticker_name_col):

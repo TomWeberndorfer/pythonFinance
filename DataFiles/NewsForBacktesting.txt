@@ -716,3 +716,48 @@ Date,News
 14.09.2018 um 12:09, ANALYSE-FLASH: DZ Bank hebt DWS auf 'Kaufen' - Fairer Wert 29 Euro
 14.09.2018 um 13:17, ANALYSE/JPMorgan: Rocket-Internet-Aktie ausgereizt - Abstufung auf 'Neutral'
 14.09.2018 um 15:05, ANALYSE-FLASH: Baader Bank belässt Deutsche Post auf 'Buy' - Ziel 46 Euro
+21.09.2018 um 12:00, ANALYSE: Tiefe Zuckerpreise stimmen Bankhaus Lampe pessimistisch für Südzucker
+21.09.2018 um 14:10, ANALYSE-FLASH: Deutsche Bank belässt Gerresheimer auf 'Buy'
+21.09.2018 um 20:56, ANALYSE-FLASH: Goldman senkt Ziel für Zalando auf 40 Euro - 'Neutral'
+21.09.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 21.09.2018
+23.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+24.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+24.09.2018 um 07:41, ANALYSE-FLASH: SocGen senkt Ziel für Zalando auf 36 Euro - 'Hold'
+24.09.2018 um 07:52, ANALYSE-FLASH: JPMorgan nimmt Axa mit 'Overweight' wieder auf - Ziel 28.20 Euro
+24.09.2018 um 07:55, ANALYSE-FLASH: HSBC hebt Ziel für Rational auf 620 Euro - 'Hold'
+24.09.2018 um 08:54, ANALYSE-FLASH: Berenberg belässt Schaeffler auf 'Hold' - Ziel 12 Euro
+24.09.2018 um 08:57, ANALYSE-FLASH: Bernstein nimmt BASF mit 'Market-Perform' wieder auf
+24.09.2018 um 09:48, ANALYSE-FLASH: Kepler Cheuvreux hebt Bayer auf 'Buy' und Ziel auf 84 Euro
+24.09.2018 um 10:03, ANALYSE-FLASH: Kepler Cheuvreux lässt Gerry Weber auf 'Reduce' - Ziel 4.10 Euro
+24.09.2018 um 10:13, ANALYSE: Perspektiven für Banken hellen sich auf - Barclays stuft Sektor hoch
+24.09.2018 um 12:15, ANALYSE-FLASH: DZ Bank senkt fairen Wert für Gerry Weber - 'Verkaufen'
+24.09.2018 um 12:29, ÜBERBLICK: Ökonomenstimmen zum Rückgang des Ifo-Geschäftsklimas
+24.09.2018 um 13:01, US-TECH-WERTE IM FOKUS: Alphabet und Facebook müssen die Branche wechseln
+24.09.2018 um 14:23, ANALYSE-FLASH: Fox könnte Comcast bei Sky-Übernahme blockieren - CFRA
+24.09.2018 um 14:25, ANALYSE-FLASH: Comcast dürfte die Zustimmung der Sky-Aktionäre erhalten - UBS
+24.09.2018 um 15:12, ANALYSE-FLASH: RBC belässt Apple auf 'Outperform' - Ziel 240 Dollar
+24.09.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 24.09.2018
+25.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+25.09.2018 um 08:00, ANALYSE-FLASH: JPMorgan hebt Euronext auf 'Overweight' - Ziel hoch auf 65 Euro
+25.09.2018 um 08:47, THYSSENKRUPP IM FOKUS: Personalien-Hickhack schlägt auf die Stimmung
+25.09.2018 um 09:23, ANALYSE-FLASH: HSBC hebt Ziel für Michelin auf 130 Euro - 'Buy'
+25.09.2018 um 09:49, ANALYSE-FLASH: SocGen senkt Ziel für Danone auf 76 Euro - 'Buy'
+25.09.2018 um 09:57, ANALYSE-FLASH: Barclays hebt Ziel für Linde z.U.e. auf 190 Euro - 'Overweight'
+25.09.2018 um 10:08, ANALYSE-FLASH: Commerzbank belässt Evonik auf 'Buy' - Ziel 39 Euro
+25.09.2018 um 10:44, ANALYSE-FLASH: Berenberg senkt Ziel für Gerresheimer auf 81 Euro - 'Buy'
+25.09.2018 um 12:00, ANALYSE: Die Milch macht's - Lampe stuft Gea ab
+25.09.2018 um 12:08, ANALYSE-FLASH: Goldman belässt Siemens Healthineers auf 'Neutral'
+25.09.2018 um 13:16, ANALYSE-FLASH: Hauck & Aufhäuser senkt Ziel für Gerry Weber auf 1.80 Euro
+25.09.2018 um 14:47, ANALYSE-FLASH: JPMorgan senkt BMW-Ziel nach Gewinnwarnung auf 80 Euro
+25.09.2018 um 15:12, ANALYSE-FLASH: Credit Suisse nimmt Vinci mit 'Outperform' wieder auf
+25.09.2018 um 15:15, ANALYSE-FLASH: Warnung von BMW stellt Automobilzyklus in Frage - UBS
+25.09.2018 um 16:07, ANALYSE-FLASH: Commerzbank hebt Ziel für Wirecard auf 230 Euro - 'Buy'
+25.09.2018 um 21:34, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 25.09.2018
+26.09.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+26.09.2018 um 07:12, ANALYSE-FLASH: Barclays senkt Ziel für BMW auf 106 Euro - 'Overweight'
+26.09.2018 um 08:05, MODEBRANCHE IM FOKUS: Der Kampf mit Hitze. Onlinekonkurrenz und Umbaukosten
+26.09.2018 um 08:55, ANALYSE-FLASH: Kepler Cheuvreux hebt Linde z.U.e. auf 'Buy' - Ziel 238 Euro
+26.09.2018 um 09:07, ANALYSE-FLASH: Lampe senkt Deutsche Börse auf 'Verkaufen' trotz Zielanhebung
+26.09.2018 um 09:26, ANALYSE-FLASH: Deutsche Bank hebt STMicroelectronics auf 'Buy' - Ziel 20 Euro
+26.09.2018 um 12:57, ANALYSE-FLASH: Kepler Cheuvreux senkt Ziel für BMW auf 75 Euro - 'Reduce'
+26.09.2018 um 13:16, ANALYSE-FLASH: SocGen senkt BMW auf 'Hold' - Ziel 85 Euro

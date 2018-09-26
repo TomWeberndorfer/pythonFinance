@@ -76,6 +76,7 @@ class HistoricalDataReader(Abstract_StockDataReader):
             start = (end - dt.timedelta(weeks=weeks_delta))
 
             df = data.DataReader(ticker_exchange, data_source, start, end, 3, 0.05)
+
         #        if len(df) > 0:
         #            break
 

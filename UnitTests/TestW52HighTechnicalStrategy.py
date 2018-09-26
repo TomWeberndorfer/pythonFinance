@@ -408,3 +408,4 @@ class TestW52HighTechnicalStrategy(unittest.TestCase):
                                               analysis_parameters=w52hi_parameter_dict)
         results = w52_hi_strat.run_strategy()
         self.assertEqual(0, len(results))
+

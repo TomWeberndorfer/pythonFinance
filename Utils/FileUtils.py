@@ -30,13 +30,10 @@ class FileUtils:
             with open(file_with_path, 'r') as myfile:
                 file_content = myfile.read()
                 if str(text) in file_content:
-                    myfile.close()
                     return False
 
         with open(file_with_path, "a") as myfile:
             myfile.write(str(text) + "\n")
-
-        myfile.close()
 
         return True
 
@@ -243,12 +240,10 @@ class FileUtils:
         else:
             logger.info("\nFile " + file + " did not exist! Was created for you!")
 
-            with open(file, "a") as myfile:
-                if txt != "":
+            if txt != "":
+                with open(file, "a") as myfile:
                     myfile.write(str(txt) + "\n")
                     myfile.write("")
-
-            myfile.close()
             return False
 
     @staticmethod

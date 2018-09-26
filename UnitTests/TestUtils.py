@@ -86,7 +86,7 @@ class TestUtils(TestCase):
         is_actual = is_next_day_or_later(date_time_str, "%d.%m.%Y um %H:%M", last_date_time_str, "%Y-%m-%d %H:%M:%S.%f")
         self.assertEqual(is_actual, False)
 
-    def test_background_scheduler_intervall__increase_every_0s1(self):
+    def test_background_scheduler_interval__increase_every_0s1(self):
         background_scheduler = BackgroundScheduler()
         bt = background_test_dummy()
         background_scheduler.add_job(bt.set, 'interval', seconds=0.1)

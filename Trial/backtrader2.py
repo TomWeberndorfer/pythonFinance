@@ -395,6 +395,8 @@ def runstrat(args=None):
 
     cerebro.broker.addcommissioninfo(comminfo)
 
+    bt.feeds.YahooFinance()
+
     # Pass it to the backtrader datafeed and add it to the cerebro
     data = bt.feeds.PandasData(
         dataname=df,
