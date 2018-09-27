@@ -8,7 +8,6 @@ import backtrader as bt
 import optunity.metrics
 
 from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
-from Trial.StrategyImplementation.StrategyBacktrader_SMA_and__EMA_or_RoC import StrategyBacktrader_SMA_and__EMA_or_RoC
 
 data0 = bt.feeds.YahooFinanceData(dataname='AAPL',
                                   fromdate=datetime(2017, 1, 1),
@@ -23,20 +22,13 @@ def runstrat(sma_timeperiod, ema_timeperiod, roc_timeperiod):
     print('roc_timeperiod = %.2f' % roc_timeperiod)
     print()
 
-    analysis_parameters = {
-        'sma_timeperiod': sma_timeperiod,
-        'ema_timeperiod': ema_timeperiod,
-        'roc_timeperiod': roc_timeperiod
-    }
-
-    backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
-                              'trade_commission_percent': 0.005}
-
-    risk_model = {'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}
-
     cerebro.addstrategy(BacktraderStrategyWrapper, strategy_to_test="StrategyAsta_SMA_and__EMA_or_RoC",
-                        backtesting_parameters=backtesting_parameters,
-                        analysis_parameters=analysis_parameters, risk_model=risk_model, status_update=False)
+                        backtesting_parameters={'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
+                                                'trade_commission_percent': 0.005},
+                        analysis_parameters={'sma_timeperiod': sma_timeperiod, 'ema_timeperiod': ema_timeperiod,
+                                             'roc_timeperiod': roc_timeperiod},
+                        risk_model={'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}},
+                        status_update=False)
     cerebro.adddata(data0)
     cerebro.run()
     return cerebro.broker.getvalue()
