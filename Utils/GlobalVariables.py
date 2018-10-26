@@ -29,7 +29,7 @@ class GlobalVariables:
 
     @staticmethod
     def get_stock_data_labels_dict(uppercase=False):
-        #real sorting: ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        # real sorting: ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
         # TODO vom dataprovider lesen und dann zuweisen (irgendeine aktie abfragen)
         # TODO dataprovider als übergabeparameter
         if uppercase is False:
@@ -131,3 +131,13 @@ class GlobalVariables:
         parameters_dict = {"BacktestingParameters": backtesting_parameters}
 
         return parameters_dict
+
+    @staticmethod
+    def get_row_colors():
+        """
+        Returns a dict with positive and negative colors for the tree view rows
+        'PositiveColor': color for positive entries in tree view
+        'NegativeColor': color for negative entries in tree view
+        :return: dict with colors
+        """
+        return {'PositiveColor': 'lightgreen', 'NegativeColor': 'salmon'}

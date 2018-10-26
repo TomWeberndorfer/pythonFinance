@@ -20,11 +20,13 @@ class TestRiskAnalysis(unittest.TestCase):
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
             labels.append(value)
+
+        calc_val = 23.5  # last high value
         data = [
             ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
             ('2016-10-10', 23.62, 23.88, 23.55, 24.0, 44000),
             ('2016-10-11', 23.62, 30.0, 23.01, 23.16, 45000),
-            ('2016-10-12', 23.16, 23.0, 23.11, 23.5, 46000)]
+            ('2016-10-12', 23.16, calc_val, 23.11, 23.5, 46000)]
 
         df = DataFrame.from_records(data, columns=labels)
         stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
@@ -42,11 +44,10 @@ class TestRiskAnalysis(unittest.TestCase):
         self.assertEqual("FixedSizeRiskModel", stock_data_container_list[0].get_risk_model())
 
         # real calculation with real 52 w high value
-        sb = 30.15
-        self.assertEqual(np.math.isclose(stock_data_container_list[0].get_stop_buy(), sb, abs_tol=0.001),
-                         True)  # =30*1.005
-        self.assertEqual(np.math.isclose(stock_data_container_list[0].get_stop_loss(), 29.25, abs_tol=0.001),
-                         True)  # =30*1.005*0.97
+        sb = round(calc_val * 1.005, 2)
+        self.assertEqual(sb, stock_data_container_list[0].get_stop_buy())  # =23.5*1.005
+        sl = round(sb * 0.97, 2)
+        self.assertEqual(sl, stock_data_container_list[0].get_stop_loss())  # =23.5*1.005*0.97
         self.assertEqual(
             np.math.isclose(stock_data_container_list[0].get_position_size(), int(fixes_pos_size / sb), abs_tol=0.001),
             True)

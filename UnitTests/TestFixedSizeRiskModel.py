@@ -32,7 +32,8 @@ class TestFixedSizeRiskModel(unittest.TestCase):
         df = DataFrame.from_records(data, columns=labels)
         stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
         stock_data_container.set_historical_stock_data(df)
-        stock_data_container_list = [stock_data_container]
+        news_dec = NewsDataContainerDecorator(stock_data_container, 111, 0.9, "test news")
+        stock_data_container_list = [news_dec]
 
         fsr = FixedSizeRiskModel(stock_data_container_list=stock_data_container_list, parameter_dict=parameter_dict)
         fsr.determine_risk()

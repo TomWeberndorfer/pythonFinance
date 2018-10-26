@@ -1,5 +1,5 @@
 import unittest
-
+from datetime import datetime
 from pandas import DataFrame
 
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
@@ -34,6 +34,8 @@ class TestW52HighTechnicalStrategy(unittest.TestCase):
                 ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
                 ('2016-10-12', 23.16, 26, 23.11, 23.18, 46000)]
 
+        start_time = datetime.now()
+
         df = DataFrame.from_records(data, columns=labels)
         stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
         stock_data_container.set_historical_stock_data(df)
@@ -45,8 +47,12 @@ class TestW52HighTechnicalStrategy(unittest.TestCase):
         w52_hi_strat = stock_screener.prepare("W52HighTechnicalStrategy",
                                               stock_data_container_list=stock_data_container_list,
                                               analysis_parameters=w52hi_parameter_dict)
+
         results = w52_hi_strat.run_strategy()
-        self.assertGreater(len(results), 0)
+
+        print("Time to run strat:" + (str(datetime.now() - start_time)))
+
+        self.assertEqual(1, len(results))
         self.assertEqual(results[0].get_stock_name(), stock_data_container.get_stock_name())
 
     def test_run_strategy__no52high__empty_result(self):

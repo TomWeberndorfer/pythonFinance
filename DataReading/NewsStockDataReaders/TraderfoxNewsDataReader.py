@@ -54,7 +54,7 @@ class TraderfoxNewsDataReader(Abstract_StockDataReader):
         # ex: #news = "27.02. 10:41 dpa-AFX: ANALYSE-FLASH: Bryan Garnier hebt Morphosys auf 'Buy' - Ziel 91 Euro"
         all_news = []
         last_date = ""
-        for elm in all_articles:
+        for elm in reversed(all_articles):
             date_time = (str(elm.footer.span.get_text()))  # date and Time
             date_time = date_time.rsplit(' Uhr')[0]  # TODO: split because of datetime format
             datetime_object = datetime.strptime(date_time, date_time_format)

@@ -1,5 +1,6 @@
 import traceback
 
+from Utils.GlobalVariables import GlobalVariables
 from Utils.Logger_Instance import logger
 
 
@@ -8,6 +9,13 @@ class GuiUtils:
     @staticmethod
     def insert_into_treeview(tree, column_list, names_and_values, tree_text="-"):
         values_to_insert = []
+
+        # add a color for positive and negative ranks
+        if names_and_values['Rank'] > 0:
+            color = GlobalVariables.get_row_colors()['PositiveColor']
+        else:
+            color = GlobalVariables.get_row_colors()['NegativeColor']
+
         for col in column_list:
             try:
                 if col in names_and_values.keys():
@@ -24,7 +32,7 @@ class GuiUtils:
             except Exception as e:
                 pass
 
-        tree.insert('', 'end', text=tree_text, values=values_to_insert)
+        tree.insert('', 'end', text=tree_text, values=values_to_insert, tags=(color,))
 
     @staticmethod
     def advanced_sorting(treeview, column_list, reverse):

@@ -245,7 +245,6 @@ class MvcController:
         """
         if self.model.thread_state.get() is \
                 GlobalVariables.get_screening_states()['auto_trading']:
-
             is_background_thread_running = self.model.is_background_thread_running.get()
             # TODO
             # wird erst nach ausführung aller listener beendet
@@ -595,6 +594,11 @@ class MvcController:
 
         # add a sort functionality for each column, when click on header
         GuiUtils.advanced_sorting(self.view.Scrolledtreeview1, self.model.get_column_list(), True)
+
+        # add a color for the entries in tree view
+        for color in GlobalVariables.get_row_colors().keys():
+            tree.tag_configure(GlobalVariables.get_row_colors()[color],
+                               background=GlobalVariables.get_row_colors()[color])
 
     def backtesting_stocks_list_changed(self):
         """

@@ -39,14 +39,15 @@ def calculate_stopbuy_and_stoploss(stock_data, stop_buy_limit_percent=1.005, sto
         raise NotImplementedError
 
     if len(stock_data) <= 0:
-        return {'stop_buy': 0, 'stop_loss': 0}
+        return 0, 0
 
-    # values should be calc with max (real 52wHigh)
-    highest_high = stock_data[GlobalVariables.get_stock_data_labels_dict()['High']].max()
-    sb = highest_high * stop_buy_limit_percent  # stop buy 0,5% higher than last val
+    # sl sb from last high value
+    data_len = len(stock_data[GlobalVariables.get_stock_data_labels_dict()['High']])
+    calc_val = stock_data[GlobalVariables.get_stock_data_labels_dict()['High']][data_len - 1]
+    sb = calc_val * stop_buy_limit_percent  # stop buy 0,5% higher than last val
     sl = sb * stop_loss_limit_percent  # stop loss 3% lower than stop buy
 
-    return {'stop_buy': sb, 'stop_loss': sl}
+    return sl, sb
 
 
 def calc_true_range(tday_high_value, tday_low_value, yesterday_close_value):

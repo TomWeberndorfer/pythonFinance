@@ -11,9 +11,7 @@ class FixedSizeRiskModel(Abstract_RiskModel):
         :return: should return the result or add it to the list and return nothing
         """
 
-        res = calculate_stopbuy_and_stoploss(stock_data_container.historical_stock_data())
-        sl = res['stop_loss']
-        sb = res['stop_buy']
+        sl, sb = calculate_stopbuy_and_stoploss(stock_data_container.historical_stock_data())
         # cut the comma value to avoid position size above the fixes size maximum
         if sb is not 0:
             num_of_pos_to_buy = int(self.parameter_dict["TargetValue"] / sb)

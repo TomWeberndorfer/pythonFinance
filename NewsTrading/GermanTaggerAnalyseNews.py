@@ -54,7 +54,7 @@ class GermanTaggerAnalyseNews:
            :return: result_news_stock_data_container
            """
 
-        assert len(stock_data_container.original_news()) > 0
+        # TODO assert len(stock_data_container.original_news()) > 0
         assert stock_data_container is not None
 
         try:
@@ -63,9 +63,12 @@ class GermanTaggerAnalyseNews:
                     and len(stock_data_container.original_news()) > 10:
                 prob_dist = self.classifier.prob_classify(stock_data_container.original_news())
                 stock_data_container.set_prop_dist(prob_dist.prob("pos"))
-        except AttributeError:
+        except AttributeError as ae:
+            logger.info("No news found for STOCK: " + str(stock_data_container._stock_name))
             # handle missing key
             return None
+        except Exception as e:
+            raise Exception
 
         return stock_data_container
 
@@ -90,7 +93,9 @@ class GermanTaggerAnalyseNews:
             ('outperform', 'pos'),
             ('overweight', 'pos'),
             ('Outperform', 'pos'),
-            ('outperform', 'pos'),
+            ('kaufempfehlung', 'pos'),
+            ('Kaufempfehlung', 'pos'),
+            ('unterbewertet', 'pos'),
 
             # ('', 'pos'),
             # ('', 'neg')

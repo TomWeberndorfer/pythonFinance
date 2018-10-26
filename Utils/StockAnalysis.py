@@ -6,7 +6,7 @@ from Strategies.StrategyFactory import StrategyFactory
 from Utils.Logger_Instance import logger
 
 
-def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params):
+def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params, stock_data_container_list=[]):
     """
     Run the analysis due to given parameters and returns the result as container list.
     :param selected_strategies_list: lit with selected strategies to execute
@@ -14,11 +14,12 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
     :param other_params: dict with needed parameters
     :return: analysed_stocks list
     """
-    stock_data_container_list = []
     thr_start = datetime.now()
 
-    stock_data_container_list = _read_data(selected_strategies_list, strategy_parameter_dict, other_params,
-                                           stock_data_container_list)
+    if len(stock_data_container_list) <= 0:
+        stock_data_container_list = []
+        stock_data_container_list = _read_data(selected_strategies_list, strategy_parameter_dict, other_params,
+                                               stock_data_container_list)
 
     # selected strategies
 
@@ -49,7 +50,6 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
 
 def _read_data(selected_strategies_list, strategy_parameter_dict, other_params, stock_data_container_list):
     reader_results = {}
-    readers = {}
     for selected_strat in selected_strategies_list:
         for data_reader in strategy_parameter_dict[selected_strat]['data_readers']:
             data_reader_params = strategy_parameter_dict[selected_strat]['data_readers'][data_reader]
@@ -60,17 +60,20 @@ def _read_data(selected_strategies_list, strategy_parameter_dict, other_params, 
             from Utils.FileUtils import FileUtils
             if data_reader_params['ticker_needed']:
                 if data_reader_params['reload_data'] is True:
-                    stock_data_container_list = FileUtils.read_tickers_from_web(
+                    stock_data_container_list.extend(FileUtils.read_tickers_from_web(
                         other_params['stock_data_container_file'],
-                        other_params['dict_with_stock_pages_to_read'])
+                        other_params['dict_with_stock_pages_to_read']))
                 else:
-                    stock_data_container_list = FileUtils.read_tickers_and_data_from_file(
-                        other_params['stock_data_container_file'])
+                    try:
+                        stock_data_container_list.extend(FileUtils.read_tickers_and_data_from_file(
+                            other_params['stock_data_container_file']))
+                    except RecursionError as e:
+                        raise RecursionError("Reload the data, old data is maybe faulty")
 
-            readers[reader_type] = data_storage.prepare(reader_type,
-                                                        stock_data_container_list=stock_data_container_list,
-                                                        reload_stockdata=data_reader_params['reload_data'],
-                                                        parameter_dict=data_reader_params)
+            curr_reader = data_storage.prepare(reader_type,
+                                               stock_data_container_list=stock_data_container_list,
+                                               reload_stockdata=data_reader_params['reload_data'],
+                                               parameter_dict=data_reader_params)
             logger.info("data_reader " + reader_type + " initialised.")
             # only add, if not added by another strategy reader --> avoid duplications
             try:
@@ -79,7 +82,7 @@ def _read_data(selected_strategies_list, strategy_parameter_dict, other_params, 
             except Exception:
                 reader_results[reader_type] = 'Read'
                 # TODO stock_data_container_list.extend(readers[reader_type].read_data())
-                readers[reader_type].read_data()
+                curr_reader.read_data()
 
     # dump for next run, instead of reloading every time
     with open(other_params['stock_data_container_file'], "wb") as f:

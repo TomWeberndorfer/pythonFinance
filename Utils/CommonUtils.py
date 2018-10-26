@@ -6,6 +6,8 @@ import sys
 import traceback
 from datetime import datetime
 from multiprocessing.dummy import Pool as ThreadPool
+# TODO from multiprocessing import Pool as ThreadPool
+# https://stackoverflow.com/questions/5442910/python-multiprocessing-pool-map-for-multiple-arguments
 import bs4 as bs
 
 import requests

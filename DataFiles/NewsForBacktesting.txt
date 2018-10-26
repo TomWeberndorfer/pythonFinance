@@ -762,3 +762,282 @@ Date,News
 26.09.2018 um 12:57, ANALYSE-FLASH: Kepler Cheuvreux senkt Ziel für BMW auf 75 Euro - 'Reduce'
 26.09.2018 um 13:16, ANALYSE-FLASH: SocGen senkt BMW auf 'Hold' - Ziel 85 Euro
 26.09.2018 um 16:05, State Street: Vor allem nordamerikanische Anleger scheuen das Risiko
+12.10.2018 um 21:50, dpa-AFX Überblick: ANALYSTEN-EINSTUFUNGEN der Woche vom 08. bis 12.10.2018
+10.10.2018 um 09:30, ANALYSE-FLASH: Equinet senkt Ziel für Ceconomy auf 5  Euro - 'Neutral'
+10.10.2018 um 09:32, ANALYSE-FLASH: Deutsche Bank senkt Ziel für Scout24 auf 51 Euro - 'Buy'
+10.10.2018 um 10:04, ZALANDO IM FOKUS: Europas Modekönig gerät nach Gewinnwarnung unter Beschuss
+10.10.2018 um 10:09, ANALYSE: Aussichten für Hella werden dunkler - Berenberg stuft auf 'Hold' ab
+10.10.2018 um 11:33, ANALYSE/Barclays: Wirbel am Anleihemarkt und Ölpreisanstieg kaum Grund zur Sorge
+10.10.2018 um 11:53, ANALYSE-FLASH: DZ Bank hebt ElringKlinger auf 'Halten' - Senkt fairen Wert
+10.10.2018 um 12:36, ANALYSE-FLASH: UBS senkt Ziel für Henkel auf 92 Euro - 'Sell'
+10.10.2018 um 12:37, ANALYSE: Analystenlob für Wirecard reißt nicht ab
+10.10.2018 um 13:30, ANALYSE-FLASH: Independent senkt Ziel für Drägerwerk auf 54 Euro - 'Halten'
+10.10.2018 um 14:01, ANALYSE: Aktienstrategen von Morgan Stanley sehen Stern der Luxusbranche sinken
+10.10.2018 um 18:45, ANALYSE-FLASH: Oddo BHF hebt Wirecard auf 'Buy' und Ziel auf 230 Euro
+10.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 10.10.2018
+11.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+11.10.2018 um 07:31, ANALYSE-FLASH: Baader Bank belässt Gea Group auf 'Hold' - Ziel 34 Euro
+11.10.2018 um 08:34, ANALYSE-FLASH: Jefferies belässt Bayer auf 'Hold' - Ziel 77 Euro
+11.10.2018 um 08:41, ANALYSE-FLASH: Bernstein belässt Bayer auf 'Outperform' - Ziel 89 Euro
+11.10.2018 um 08:51, ANALYSE-FLASH: Baader Bank belässt Bayer auf 'Buy' - Ziel 123 Euro
+11.10.2018 um 08:55, ANALYSE-FLASH: JPMorgan belässt Gerresheimer auf 'Neutral' - Ziel 72 Euro
+11.10.2018 um 09:17, ANALYSE-FLASH: Commerzbank belässt Bayer auf 'Buy' - Ziel 111 Euro
+11.10.2018 um 09:37, ANALYSE-FLASH: Goldman belässt Südzucker auf 'Sell' - Ziel 9 Euro
+11.10.2018 um 09:40, ANALYSE-FLASH: Oddo BHF hebt Morphosys auf 'Buy' - Ziel 110 Euro
+11.10.2018 um 11:00, ANALYSE-FLASH: JPMorgan begrüßt vertiefte Kooperation von Dialog Semi mit Apple
+11.10.2018 um 11:47, ANALYSE-FLASH: UBS belässt Bayer auf 'Buy' - Ziel 122 Euro
+11.10.2018 um 13:23, ANALYSE: Trotz Rücksetzer ist der Bullenmarkt noch nicht vorbei - UBS
+11.10.2018 um 13:37, ANALYSE-FLASH: Independent Research hebt Infineon auf 'Kaufen' - Senkt Ziel
+11.10.2018 um 13:58, ANALYSE: Oddo BHF sieht nach Kursrutsch gute Kaufgelegenheit bei Morphosys
+11.10.2018 um 14:05, ANALYSE/Barclays: Kursrutsch folgt Februar-Muster - Fundamental aber kein Alarm
+11.10.2018 um 14:40, ANALYSE-FLASH: Morgan Stanley belässt Airbus auf 'Overweight' - Ziel 125 Euro
+11.10.2018 um 15:32, ANLAGESTILE IM FOKUS: Renaissance des Value-Investings?
+11.10.2018 um 17:23, ANALYSE: RBC hält Dialogs Vereinbarungen mit Apple für 'ausgesprochen positiv'
+11.10.2018 um 20:49, ANALYSE-FLASH: JPMorgan senkt Ziel für Airbus auf 130 Euro - 'Overweight'
+11.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 11.10.2018
+12.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+12.10.2018 um 07:25, ANALYSE-FLASH: Berenberg hebt Siltronic auf 'Hold' - Ziel 118 Euro
+12.10.2018 um 07:53, ANALYSE-FLASH: Jefferies senkt Ziel für Continental auf 165 Euro - 'Buy'
+12.10.2018 um 08:05, ANALYSE-FLASH: National-Bank hebt Vonovia auf 'Kaufen' und Ziel auf 48 Euro
+12.10.2018 um 08:19, ANALYSE-FLASH: Credit Suisse hebt Zalando auf 'Outperform' trotz Zielsenkung
+12.10.2018 um 08:52, ANALYSE-FLASH: CFRA hebt Gea Group auf 'Sell' - Ziel 25 Euro
+12.10.2018 um 09:23, ANALYSE-FLASH: HSBC hebt Ziel für Deutsche Börse auf 135  Euro - 'Buy'
+12.10.2018 um 09:49, ANALYSE-FLASH: JPMorgan belässt Vinci auf 'Overweight' - Ziel 103 Euro
+12.10.2018 um 11:35, ANALYSE-FLASH: Kepler Cheuvreux senkt Ziel für Gerresheimer auf 62 Euro
+12.10.2018 um 11:43, ANALYSE: Siltronic auch nach hohen Kursverlusten noch kein Kauf - Berenberg
+12.10.2018 um 11:58, ANALYSE/Credit Suisse: Zalando nach Kurseinbruch wieder günstig zu haben
+12.10.2018 um 13:28, ANALYSE-FLASH: Credit Suisse senkt Ziel für IAG auf 780 Pence - 'Outperform'
+12.10.2018 um 17:39, ANALYSE-FLASH: Goldman belässt JPMorgan auf 'Neutral' - Ziel 130 Dollar
+12.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 12.10.2018
+14.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+15.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+15.10.2018 um 07:17, ANALYSE-FLASH: JPMorgan hebt Ziel für Hugo Boss auf 70 Euro - 'Neutral'
+15.10.2018 um 07:20, ANALYSE-FLASH: HSBC hebt Siemens Healthineers auf 'Buy' - Ziel 39.50 Euro
+15.10.2018 um 07:27, ANALYSE-FLASH: JPMorgan hebt Ziel für Hugo Boss auf 70 Euro - 'Neutral'
+15.10.2018 um 07:48, ANALYSE-FLASH: Deutsche Bank senkt Gea Group auf 'Hold' und Ziel auf 30 Euro
+15.10.2018 um 08:24, ANALYSE-FLASH: Deutsche Bank hebt Alstom auf 'Buy' und Ziel auf 44 Euro
+15.10.2018 um 09:15, ANALYSE-FLASH: Hauck & Aufhäuser hebt Gerresheimer auf 'Hold' - Ziel gesenkt
+15.10.2018 um 09:30, ANALYSE-FLASH: Equinet senkt Ziel für Daimler auf 64 Euro - 'Buy'
+15.10.2018 um 10:05, ANALYSE-FLASH: Macquarie belässt Adidas auf 'Outperform' - Ziel 260 Euro
+15.10.2018 um 10:10, ANALYSE-FLASH: UBS senkt Daimler auf 'Neutral' und Ziel auf 54 Euro
+15.10.2018 um 10:41, ANALYSE-FLASH: UBS senkt Renault auf 'Neutral' und Ziel auf 74 Euro
+15.10.2018 um 10:45, ANALYSE-FLASH: HSBC belässt Ceconomy auf 'Reduce' - Ziel 4.20 Euro
+15.10.2018 um 11:00, ANALYSE-FLASH: DZ Bank senkt fairen Wert für Hella auf 50 Euro - 'Kaufen'
+15.10.2018 um 11:11, ANALYSE-FLASH: Merrill Lynch hebt Dialog Semiconductor auf 'Buy' - Ziel 28 Euro
+15.10.2018 um 11:34, Analyse: HSBC von Marktpotenzial von Siemens Healthineers überzeugt
+15.10.2018 um 12:14, ANALYSE-FLASH: Independent Research belässt Ceconomy auf 'Verkaufen'
+15.10.2018 um 12:45, ANALYSE/Merrill Lynch: Apple-Transaktion verbessert Aussichten für Dialog
+15.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 15.10.2018
+16.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+16.10.2018 um 06:30, ANALYSE-FLASH: JPMorgan senkt Wacker Chemie auf 'Underweight'
+16.10.2018 um 07:26, ANALYSE-FLASH: HSBC senkt Ziel für Drägerwerk auf 41 Euro - 'Reduce'
+16.10.2018 um 08:27, ANALYSE-FLASH: UBS hebt Kion auf 'Buy' - Senkt Ziel auf 55 Euro
+16.10.2018 um 08:35, DIALOG SEMICONDUCTOR IM FOKUS: Ende der Unsicherheit?
+16.10.2018 um 09:15, ANALYSE-FLASH: Equinet belässt Talanx auf 'Buy' - Ziel 39 Euro
+16.10.2018 um 09:32, Analyse: JPMorgan prognostiziert starken Gegenwind für Wacker Chemie
+16.10.2018 um 09:45, ANALYSE/DZ Bank: Trübere Perspektiven für Welthandel könnten Lufthansa belasten
+16.10.2018 um 09:54, ANALYSE-FLASH: Equinet belässt Linde auf 'Neutral' - Ziel 176 Euro
+16.10.2018 um 10:08, ANALYSE-FLASH: JPMorgan senkt Ziel für Talanx auf 39.50 Euro - 'Overweight'
+16.10.2018 um 10:12, ANALYSE-FLASH: Hauck & Aufhäuser hebt Sixt auf 'Buy' - Ziel 118 Euro
+16.10.2018 um 12:22, ANALYSE/Deutsche Bank: Zollstreit belastet vor allem Auto- und Halbleiterwerte
+16.10.2018 um 13:43, ANALYSE-FLASH: Morgan Stanley senkt Netflix-Ziel auf 450 Dollar - 'Overweight'
+16.10.2018 um 14:17, ANALYSE: UBS hält Kion nach Kursrutsch für unterbewertet - Kaufempfehlung
+16.10.2018 um 16:53, ANALYSE-FLASH: Commerzbank hebt Kion auf 'Buy' - Ziel gesenkt von 68 auf 63 Euro
+16.10.2018 um 18:13, ANALYSE-FLASH: Baader Bank hebt Sixt auf 'Buy' - Ziel 112 Euro
+16.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 16.10.2018
+17.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+17.10.2018 um 06:17, ANALYSE-FLASH: RBC belässt FMC auf 'Sector Perform'
+17.10.2018 um 07:55, ANALYSE-FLASH: Jefferies senkt Safran auf 'Underperform' - Ziel hoch auf 95 Euro
+17.10.2018 um 07:57, ANALYSE-FLASH: Goldman senkt Michelin auf 'Neutral' und Ziel auf 126 Euro
+17.10.2018 um 07:58, ANALYSE-FLASH: JPMorgan senkt Ziel für Ströer auf 55 Euro - 'Overweight'
+17.10.2018 um 08:19, THYSSENKRUPP IM FOKUS: Aufteilung hinterlässt noch viele offene Fragen
+17.10.2018 um 08:23, ANALYSE-FLASH: Baader Bank belässt Zooplus auf 'Buy' - Ziel 170 Euro
+17.10.2018 um 08:29, ANALYSE-FLASH: Berenberg belässt FMC auf 'Buy' - Ziel 100.80 Euro
+17.10.2018 um 08:37, ANALYSE-FLASH: Jefferies belässt Roche auf 'Buy' - Ziel 280 Franken
+17.10.2018 um 08:40, ANALYSE-FLASH: RBC senkt Ziel für Air France-KLM auf 10.50 Euro - 'Outperform'
+17.10.2018 um 08:48, ANALYSE-FLASH: Goldman belässt Danone auf 'Neutral' - Ziel 68 Euro
+17.10.2018 um 08:53, ANALYSE-FLASH: SocGen senkt Ziel für Kion auf 65 Euro - 'Buy'
+17.10.2018 um 09:04, ANALYSE-FLASH: Exane BNP hebt Infineon auf 'Neutral' - Ziel 21.50 Euro
+17.10.2018 um 09:19, ANALYSE-FLASH: Commerzbank belässt Fresenius auf 'Buy' - Ziel 83 Euro
+17.10.2018 um 09:45, ANALYSE-FLASH: JPMorgan belässt FMC auf 'Overweight' - Ziel 97.90 Euro
+17.10.2018 um 09:54, ANALYSE-FLASH: Berenberg belässt Fresenius auf 'Buy' - Ziel 81.85 Euro
+17.10.2018 um 09:58, ANALYSE-FLASH: Goldman belässt FMC auf 'Buy' - Ziel 98 Euro
+17.10.2018 um 10:29, ANALYSE-FLASH: Baader Bank belässt Akzo Nobel auf 'Buy' - Ziel 90 Euro
+17.10.2018 um 10:32, ANALYSE-FLASH: Baader Bank belässt ASML auf 'Hold' - Ziel 193 Euro
+17.10.2018 um 11:40, VÖB: Aufschwung in Europa und USA setzt sich 2019 fort - Risiken steigen
+17.10.2018 um 12:04, ANALYSE-FLASH: Warburg Research hebt Jenoptik auf 'Buy' - Ziel etwas gesenkt
+17.10.2018 um 14:14, ANALYSE: Warburg glaubt an Rückkehr von Jenoptik-Aktien
+17.10.2018 um 14:57, ANALYSE: Hauck & Aufhäuser optimistischer für Drägerwerk - Einstieg aber zu früh
+17.10.2018 um 15:11, ANALYSE-FLASH: SocGen senkt Ziel für IBM auf 130 Dollar - 'Sell'
+17.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 17.10.2018
+17.10.2018 um 22:31, ANALYSE-FLASH: Morgan Stanley hebt Ziel für Netflix auf 475 Dollar
+18.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+18.10.2018 um 07:44, ANALYSE-FLASH: SocGen hebt Hugo Boss auf 'Hold' - Ziel runter auf 62 Euro
+18.10.2018 um 08:20, ANALYSE-FLASH: Baader Bank belässt SAP auf 'Buy' - Ziel 112 Euro
+18.10.2018 um 08:21, DRÄGERWERK IM FOKUS: Höhere Margen lassen auf sich warten
+18.10.2018 um 08:32, ANALYSE-FLASH: Citigroup belässt SAP auf 'Buy' - Ziel 116 Euro
+18.10.2018 um 08:37, ANALYSE-FLASH: HSBC hebt Ziel für Sartorius auf 99 Euro - 'Reduce'
+18.10.2018 um 08:44, ANALYSE-FLASH: Equinet senkt Dürr auf 'Neutral' und Ziel auf 30 Euro
+18.10.2018 um 08:48, ANALYSE-FLASH: HSBC belässt Deutsche Telekom auf 'Buy' - Ziel 17 Euro
+18.10.2018 um 08:50, ANALYSE-FLASH: HSBC belässt Fraport auf 'Hold' - Ziel 78 Euro
+18.10.2018 um 09:07, ANALYSE-FLASH: Merrill Lynch senkt Dürr auf 'Neutral'  - Ziel runter auf 32 Euro
+18.10.2018 um 09:16, ANALYSE-FLASH: SocGen senkt Dürr auf 'Hold' - Ziel 33 Euro
+18.10.2018 um 09:31, ANALYSE-FLASH: Barclays belässt SAP auf 'Overweight' - Ziel 122 Euro
+18.10.2018 um 09:42, ANALYSE-FLASH: Bernstein belässt SAP auf 'Outperform' - Ziel 114 Euro
+18.10.2018 um 10:02, ANALYSE-FLASH: JPMorgan belässt HeidelbergCement auf 'Neutral' - Ziel 81 Euro
+18.10.2018 um 10:16, ANALYSE-FLASH: Goldman belässt HeidelbergCement auf 'Buy' - Ziel 93 Euro
+18.10.2018 um 10:46, ANALYSE-FLASH: Bernstein belässt HeidelbergCement auf 'Outperform'
+18.10.2018 um 11:37, ANALYSE-FLASH: Bernstein belässt Linde z.U.e. auf 'Underperform' - Ziel 169 Euro
+18.10.2018 um 11:43, ANALYSE-FLASH: Kepler Cheuvreux senkt Symrise auf 'Reduce' und Ziel auf 67 Euro
+18.10.2018 um 16:18, ANALYSE: Deal von Deutscher Bank und Commerzbank vernünftig - Goldman
+18.10.2018 um 16:27, ANALYSE-FLASH: DZ Bank senkt fairen Wert für HeidelbergCement - 'Kaufen'
+18.10.2018 um 21:01, ANALYSE-FLASH: Goldman senkt Ziel für Dürr auf 33 Euro - 'Neutral'
+18.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 18.10.2018
+19.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+19.10.2018 um 06:19, ANALYSE-FLASH: JPMorgan senkt Ziel für HeidelbergCement auf 74 Euro - 'Neutral'
+19.10.2018 um 07:33, ANALYSE-FLASH: Goldman belässt SAP auf 'Conviction Buy List' - Ziel 122 Euro
+19.10.2018 um 08:16, ANALYSE-FLASH: Goldman belässt Michelin auf 'Neutral' - Ziel 126 Euro
+19.10.2018 um 08:20, BORUSSIA DORTMUND IM FOKUS: Spielerverkäufe und Meisterträume treiben die Aktie
+19.10.2018 um 08:58, ANALYSE-FLASH: Goldman belässt Software AG auf 'Sell' - Ziel 37 Euro
+19.10.2018 um 08:59, ANALYSE-FLASH: Baader Bank belässt Software AG auf 'Buy' - Ziel 54 Euro
+19.10.2018 um 09:15, ANALYSE-FLASH: Deutsche Bank hebt Yara auf 'Buy' und Ziel auf 440 Kronen
+19.10.2018 um 09:16, ANALYSE-FLASH: Morgan Stanley belässt Software AG nach Zahlen auf 'Underweight'
+19.10.2018 um 09:17, ANALYSE-FLASH: Deutsche Bank senkt Ziel für Dürr auf 35 Euro - 'Hold'
+19.10.2018 um 09:19, ANALYSE-FLASH: Commerzbank senkt Ziel für Dürr auf 36 Euro - 'Hold'
+19.10.2018 um 09:34, ANALYSE-FLASH: Goldman senkt Salzgitter auf 'Neutral' und Ziel auf 47 Euro
+19.10.2018 um 10:27, ANALYSE-FLASH: Kepler Cheuvreux hebt Daimler auf 'Buy' - Ziel 64 Euro
+19.10.2018 um 10:28, ANALYSE-FLASH: Kepler Cheuvreux senkt Ziel für BMW auf 71 Euro - 'Reduce'
+19.10.2018 um 10:30, ANALYSE-FLASH: Kepler Cheuvreux senkt Ziel für Volkswagen auf 210 Euro - 'Buy'
+19.10.2018 um 10:36, ANALYSE-FLASH: Kepler Cheuvreux senkt Ziel für SHW auf 20 Euro - 'Reduce'
+19.10.2018 um 10:41, ANALYSE-FLASH: Kepler Cheuvreux senkt Ziel für Continental auf 180 Euro - 'Buy'
+19.10.2018 um 11:11, ANALYSE-FLASH: Morgan Stanley senkt Ziel für Ceconomy - 'Equal-weight'
+19.10.2018 um 11:23, ANALYSE-FLASH: Hauck & Aufhäuser hebt Dürr auf 'Buy' - Ziel runter auf 40 Euro
+19.10.2018 um 11:28, ANALYSE-FLASH: SocGen hebt Ziel für Nestle auf 84 Franken - 'Hold'
+19.10.2018 um 14:04, ANALYSE-FLASH: Barclays hebt Walt Disney auf 'Overweight' - Ziel auf 130 Dollar
+19.10.2018 um 14:52, ANALYSE: Mainfirst sieht Fluggesellschaften skeptisch - Lufthansa abgestuft
+19.10.2018 um 15:37, ANALYSE-FLASH: JPMorgan belässt Daimler auf 'Overweight' - Ziel 76 Euro
+19.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 19.10.2018
+19.10.2018 um 21:50, dpa-AFX Überblick: ANALYSTEN-EINSTUFUNGEN der Woche vom 15. bis 19.10.2018
+21.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+22.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+22.10.2018 um 07:24, ANALYSE-FLASH: Goldman senkt Ziel für Covestro auf 53 Euro - 'Sell'
+22.10.2018 um 07:31, WDH/ANALYSE-FLASH: Goldman senkt Ziel für Covestro auf 53 Euro - 'Sell'
+22.10.2018 um 07:53, ANALYSE-FLASH: UBS hebt SAP auf 'Buy' und Ziel auf 110 Euro
+22.10.2018 um 08:19, LUFTHANSA IM FOKUS: Teurer Treibstoff schickt Kranich-Aktie auf die Durststrecke
+22.10.2018 um 08:24, ANALYSE-FLASH: SocGen senkt Ziel für Daimler auf 60 Euro - 'Buy'
+22.10.2018 um 08:44, ANALYSE-FLASH: Deutsche Bank senkt HeidelbergCement-Ziel auf 75 Euro - 'Buy'
+22.10.2018 um 09:02, ANALYSE-FLASH: Goldman belässt Philips auf 'Conviction Buy List' - Ziel 44 Euro
+22.10.2018 um 09:03, ANALYSE-FLASH: JPMorgan belässt Philips auf 'Neutral' - Ziel 40 Euro
+22.10.2018 um 09:30, ANALYSE-FLASH: Bernstein belässt Ryanair auf 'Market-Perform' - Ziel 12.50 Euro
+22.10.2018 um 09:33, ANALYSE-FLASH: Equinet hebt SAF-Holland auf 'Accumulate' - Ziel 13.80 Euro
+22.10.2018 um 10:14, ANALYSE-FLASH: Berenberg belässt Philips auf 'Buy' - Ziel 40 Euro
+22.10.2018 um 10:32, ANALYSE-FLASH: Morgan Stanley senkt Ziel für ProSiebenSat.1 - 'Underweight'
+22.10.2018 um 11:44, ANALYSE-FLASH: JPMorgan belässt Leoni auf 'Neutral' - Ziel 41 Euro
+22.10.2018 um 13:05, ANALYSE-FLASH: Commerzbank senkt Ziel für Daimler auf 50 Euro - 'Reduce'
+22.10.2018 um 13:20, ANALYSE-FLASH: Baader Bank setzt Software AG auf Liste der 'Top Picks' - Buy'
+22.10.2018 um 13:33, ANALYSE-FLASH: Berenberg belässt Tesla auf 'Buy' - Ziel 500 Dollar
+22.10.2018 um 18:24, ANALYSE-FLASH: DZ Bank senkt Linde z.U.e. auf 'Halten' - Fairer Wert hoch
+22.10.2018 um 19:22, ANALYSE-FLASH: Baader Bank senkt BASF auf 'Sell' und Ziel auf 65 Euro
+22.10.2018 um 19:34, ANALYSE-FLASH: SocGen hebt Ziel für Linde z.U.e. auf 234 Euro - 'Buy'
+22.10.2018 um 19:35, ANALYSE-FLASH: Baader Bank senkt Ziel für Dürr auf 43 Euro - 'Buy'
+22.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 22.10.2018
+23.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+23.10.2018 um 06:50, ANALYSE-FLASH: JPMorgan senkt Leoni auf 'Underweight' und Kursziel auf 28 Euro
+23.10.2018 um 08:19, STRÖER IM FOKUS: Keine Angst vor Google
+23.10.2018 um 08:38, ANALYSE-FLASH: Bernstein belässt Bayer auf 'Outperform' - Ziel 89 Euro
+23.10.2018 um 08:42, ANALYSE-FLASH: Credit Suisse hebt Grand City auf 'Outperform' - Ziel 25.50 Euro
+23.10.2018 um 08:53, ANALYSE-FLASH: Credit Suisse hebt Airbus auf 'Outperform' und Ziel auf 120 Euro
+23.10.2018 um 09:06, ANALYSE-FLASH: Jefferies belässt Bayer auf 'Hold' - Ziel 77 Euro
+23.10.2018 um 10:02, ANALYSE-FLASH: HSBC senkt Enel auf 'Reduce' und Ziel auf 4 Euro
+23.10.2018 um 11:59, ANALYSE-FLASH: Credit Suisse senkt Siltronic auf 'Neutral' - Ziel 106 Euro
+23.10.2018 um 12:27, ANALYSE-FLASH: Warburg Research belässt Sartorius auf 'Hold' - Ziel 141 Euro
+23.10.2018 um 13:16, ANALYSE: Wafer-Zyklus drückt auf Margen von Siltronic - Credit Suisse
+23.10.2018 um 14:05, ANALYSE-FLASH: UBS belässt Bayer auf 'Buy' - Ziel 122 Euro
+23.10.2018 um 15:21, ANALYSE-FLASH: Goldman belässt Caterpillar auf 'Buy' - Ziel 182 Dollar
+23.10.2018 um 15:23, ANALYSE-FLASH: Goldman belässt Verizon auf 'Buy' - Ziel 60 Dollar
+23.10.2018 um 15:29, ANALYSE-FLASH: Goldman belässt 3M auf 'Neutral' - Ziel 211 Dollar
+23.10.2018 um 15:31, ANALYSE-FLASH: Goldman belässt Biogen auf 'Buy' - Ziel 408 Dollar
+23.10.2018 um 17:52, ANALYSE-FLASH: RBC senkt HSBC auf 'Underperform' und Ziel auf 560 Pence
+23.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 23.10.2018
+24.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+24.10.2018 um 07:12, ANALYSE-FLASH: Goldman nimmt Eon mit 'Buy' wieder auf - Ziel 10.40 Euro
+24.10.2018 um 07:13, ANALYSE-FLASH: Goldman Sachs bewertet RWE wieder - 'Conviction Buy List'
+24.10.2018 um 07:43, ANALYSE-FLASH: JPMorgan senkt AMS auf 'Neutral' - Ziel gesenkt auf 45 Franken
+24.10.2018 um 07:57, ANALYSE-FLASH: RBC senkt Ziel für RWE auf 23 Euro - 'Top Pick'
+24.10.2018 um 08:01, ANALYSE-FLASH: Goldman belässt Klöckner & Co auf 'Neutral' - Ziel 11 Euro
+24.10.2018 um 08:20, AUTOKONZERNE IM FOKUS: VW. Daimler und BMW zwischen Dieselkrise und Zollstreit
+24.10.2018 um 08:24, ANALYSE-FLASH: Barclays belässt Deutsche Bank auf 'Underweight' - Ziel 8 Euro
+24.10.2018 um 08:27, ANALYSE-FLASH: Deutsche Bank senkt Ziel für Lufthansa auf 24.70 Euro - 'Buy'
+24.10.2018 um 08:34, ANALYSE-FLASH: JPMorgan belässt Deutsche Bank auf 'Neutral' - Ziel 10.50 Euro
+24.10.2018 um 08:52, ANALYSE-FLASH: Goldman belässt STMicro auf 'Neutral' - Ziel 21.50 Euro
+24.10.2018 um 08:58, ANALYSE-FLASH: Commerzbank belässt Deutsche Bank auf 'Hold' - Ziel 11 Euro
+24.10.2018 um 09:18, ANALYSE-FLASH: Baader Bank belässt Bayer auf 'Buy' - Ziel 123 Euro
+24.10.2018 um 09:41, ANALYSE-FLASH: Merrill Lynch hebt Daimler auf 'Buy' - Ziel 68 Euro
+24.10.2018 um 10:08, ANALYSE-FLASH: Goldman belässt Barclays auf 'Neutral' - Ziel 215 Pence
+24.10.2018 um 11:03, ANALYSE-FLASH: Equinet senkt Koenig & Bauer auf 'Neutral' - Ziel 48 Euro
+24.10.2018 um 12:11, ANALYSE: Goldman Sachs sieht für deutsche Versorger große Chancen durch Umbau
+24.10.2018 um 12:14, ANALYSE-FLASH: Warburg Research hebt Sartorius auf 'Buy' - Ziel 145 Euro
+24.10.2018 um 12:17, ANALYSE: Deutsche Bank wird wieder optimistisch für europäische Airline-Aktien
+24.10.2018 um 14:16, ANALYSE-FLASH: UBS belässt Deutsche Bank auf 'Neutral' - Ziel 10.20 Euro
+24.10.2018 um 14:29, ANALYSE-FLASH: UBS belässt DWS auf 'Neutral' - Ziel 28 Euro
+24.10.2018 um 17:00, ANALYSE-FLASH: DZ Bank hebt KWS Saat auf 'Kaufen' und fairen Wert auf 330 Euro
+24.10.2018 um 17:34, ANALYSE-FLASH: CFRA hebt Deutsche Bank auf 'Hold' und Ziel auf 9.50 Euro
+25.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+25.10.2018 um 06:40, ANALYSE-FLASH: JPMorgan senkt Ziel für Axel Springer auf 60 Euro - 'Neutral'
+25.10.2018 um 07:31, ANALYSE-FLASH: HSBC hebt Krones auf 'Buy' - Ziel gesenkt auf 95 Euro
+25.10.2018 um 07:34, ANALYSE-FLASH: Credit Suisse senkt AMS auf 'Neutral' und Ziel auf 40 Franken
+25.10.2018 um 08:10, ANALYSE-FLASH: Baader Bank belässt Ceconomy auf 'Hold' - Ziel 6 Euro
+25.10.2018 um 08:32, ANALYSE-FLASH: Baader Bank belässt Covestro auf 'Hold' - Ziel 66 Euro
+25.10.2018 um 08:45, ANALYSE-FLASH: JPMorgan belässt ABB auf 'Neutral' - Ziel 24 Franken
+25.10.2018 um 09:02, ANALYSE-FLASH: Goldman belässt AB Inbev auf 'Conviction Buy List'
+25.10.2018 um 09:08, ANALYSE-FLASH: JPMorgan belässt Puma SE auf 'Overweight' - Ziel 550 Euro
+25.10.2018 um 09:45, ANALYSE-FLASH: JPMorgan belässt MTU auf 'Overweight'
+25.10.2018 um 10:12, ANALYSE-FLASH: JPMorgan belässt Kion auf 'Neutral' - Ziel 66 Euro
+25.10.2018 um 10:17, ANALYSE-FLASH: JPMorgan belässt Microsoft auf 'Overweight' - Ziel 115 Dollar
+25.10.2018 um 10:59, ANALYSE-FLASH: JPMorgan belässt WPP auf 'Overweight'
+25.10.2018 um 11:00, ANALYSE-FLASH: JPMorgan belässt WPP auf 'Overweight'
+25.10.2018 um 11:17, ANALYSE-FLASH: Deutsche Bank senkt RTL auf 'Sell' und Ziel auf 55 Euro
+25.10.2018 um 11:18, ANALYSE-FLASH: Deutsche Bank senkt Ziel für ProSiebenSat.1 auf 30 Euro - 'Buy'
+25.10.2018 um 11:31, ANALYSE-FLASH: JPMorgan belässt Lloyds auf 'Overweight' - Ziel 85 Pence
+25.10.2018 um 11:34, ANALYSE-FLASH: JPMorgan belässt Wacker Chemie auf 'Underweight' - Ziel 86 Euro
+25.10.2018 um 12:02, Ökonomenstimmen zum erneuten Rückgang des Ifo-Geschäftsklimas
+25.10.2018 um 12:07, ANALYSE-FLASH: Goldman belässt Schneider Electric auf 'Neutral' - Ziel 80 Euro
+25.10.2018 um 12:16, ANALYSE-FLASH: Goldman belässt Orange auf 'Conviction Buy List'
+25.10.2018 um 12:17, ANALYSE-FLASH: Goldman belässt UBS auf 'Neutral' - Ziel 20.60 Franken
+25.10.2018 um 12:24, ANALYSE-FLASH: RBC hebt Ziel für Tesla auf 325 Dollar - 'Sector Perform'
+25.10.2018 um 12:33, ANALYSE: Rückenwind von US-Stahlpreisen für Klöckner & Co lässt nach - Metzler
+25.10.2018 um 12:43, ANALYSE-FLASH: Goldman hebt Ziel für Tesla auf 225 Dollar - 'Sell'
+25.10.2018 um 13:20, ANALYSE-FLASH: RBC senkt Ziel für AMD auf 34 Dollar - 'Outperform'
+25.10.2018 um 14:23, ANALYSE-FLASH: Baader Bank belässt Metro AG auf 'Sell' - Ziel 10 Euro
+25.10.2018 um 14:42, ANALYSE-FLASH: Baader Bank belässt Siltronic auf 'Buy' - Ziel 125 Euro
+25.10.2018 um 15:28, ANALYSE-FLASH: JPMorgan belässt Continental AG auf 'Neutral' - Ziel 184 Euro
+25.10.2018 um 15:30, ANALYSE-FLASH: Credit Suisse belässt Nokia auf 'Outperform' - Ziel 5.60 Euro
+25.10.2018 um 17:09, Ökonomen-Stimmen zur EZB-Zinssitzung
+25.10.2018 um 21:11, ANALYSE-FLASH: JPMorgan hebt Ziel für MTU auf 215 Euro - 'Overweight'
+25.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 25.10.2018
+26.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+26.10.2018 um 06:40, ANALYSE-FLASH: JPMorgan hebt Kion auf 'Overweight' - Kursziel gesenkt
+26.10.2018 um 06:57, ANALYSE-FLASH: CFRA hebt Nokia auf 'Buy' - Kursziel auf 5.90 Euro erhöht
+26.10.2018 um 07:21, ANALYSE-FLASH: Berenberg senkt Covestro auf 'Hold' und Ziel auf 63 Euro
+26.10.2018 um 07:29, ANALYSE-FLASH: Barclays hebt Akzo Nobel auf 'Overweight' - Ziel 88 Euro
+26.10.2018 um 07:33, ANALYSE-FLASH: Oddo BHF hebt Fielmann auf 'Buy' - Ziel auf 62 Euro gesenkt
+26.10.2018 um 07:34, ANALYSE-FLASH: Goldman senkt 1&1 Drillisch auf 'Neutral' - Ziel 45 Euro
+26.10.2018 um 07:56, ANALYSE-FLASH: Barclays hebt Saint-Gobain auf 'Equal Weight' - Ziel 36 Euro
+26.10.2018 um 07:57, ANALYSE-FLASH: UBS hebt FMC auf 'Buy' - Ziel runter auf 82 Euro
+26.10.2018 um 08:01, ANALYSE-FLASH: HSBC senkt Fiat Chrysler auf 'Hold' und Ziel auf 15 Euro
+26.10.2018 um 08:02, ANALYSE-FLASH: HSBC hebt LVMH auf 'Buy' - Ziel runter auf 325 Euro
+26.10.2018 um 08:31, ANALYSE-FLASH: DZ Bank senkt fairen Wert für Kion auf 60 Euro - 'Kaufen'
+26.10.2018 um 08:51, ANALYSE-FLASH: Barclays belässt BASF auf 'Overweight' - Ziel 92 Euro
+26.10.2018 um 08:54, ANALYSE-FLASH: JPMorgan belässt BASF auf 'Neutral' - Ziel 94 Euro
+26.10.2018 um 08:58, ANALYSE-FLASH: Bernstein belässt BASF auf 'Market-Perform' - Ziel 90 Euro
+26.10.2018 um 09:03, ANALYSE-FLASH: Deutsche Bank belässt Aixtron auf 'Buy' - Ziel 17 Euro
+26.10.2018 um 09:44, ANALYSE-FLASH: SocGen senkt Valeo auf 'Hold' und Ziel auf 31 Euro
+26.10.2018 um 10:41, ANALYSE-FLASH: Barclays senkt Ziel für Amazon auf 1950 Dollar - 'Overweight'
+26.10.2018 um 10:44, ANALYSE-FLASH: HSBC senkt Ziel für Hugo Boss auf 78 Euro - 'Buy'
+26.10.2018 um 10:51, ANALYSE-FLASH: Equinet hebt Takkt auf 'Buy' - Ziel 20 Euro
+26.10.2018 um 11:52, ANALYSE-FLASH: NordLB hebt MTU auf 'Kaufen' und Ziel auf 205 Euro
+26.10.2018 um 13:24, ANALYSE-FLASH: Kepler Cheuvreux belässt BASF auf 'Buy' - Ziel 120 Euro
+26.10.2018 um 13:49, ANALYSE-FLASH: HSBC belässt Orange auf 'Buy' - Ziel 17 Euro
+26.10.2018 um 14:01, ANALYSE-FLASH: DZ Bank senkt Südzucker auf 'Verkaufen' - Fairer Wert 11.40 Euro
+26.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 26.10.2018
+26.10.2018 um 21:50, dpa-AFX Überblick: ANALYSTEN-EINSTUFUNGEN der Woche vom 22. bis 26.10.2018

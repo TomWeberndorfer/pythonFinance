@@ -1,9 +1,10 @@
 import os
 import unittest
-
+from pandas import DataFrame
 import numpy as np
 import pandas as pd
 
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Signals.Signals import signal_is_volume_high_enough, signal_is52_w_high, \
     signal_is_volume_raising_within_check_days, signal_is_last_volume_higher_than_avg, signal_is_a_few_higher_than_avg, \
     signal_is_volume_raising, evaluate_signals
@@ -391,17 +392,20 @@ class TestSignals(unittest.TestCase):
             ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
             ('2016-10-10', 23.62, 23.88, 23.55, 24.0, 44000),
             ('2016-10-11', 23.62, 30.0, 23.01, 23.16, 45000),
-            ('2016-10-12', 23.16, 23.0, 23.11, 23.5, 46000)]
+            ('2016-10-12', 23.16, 23.5, 23.11, 23.3, 46000)]
 
-        data = pd.DataFrame.from_records(data, columns=labels)
-        res = calculate_stopbuy_and_stoploss(data)
-        # previous calculation with latest value should now be false
-        self.assertEqual(np.math.isclose(res['stop_buy'], 23.6175, abs_tol=0.001), False)  # =23,5*1.005
-        self.assertEqual(np.math.isclose(res['stop_loss'], 22.9089, abs_tol=0.001), False)  # =23,5*1.005*0.97
+        df = DataFrame.from_records(data, columns=labels)
+        stock_data_container = StockDataContainer("Apple Inc.", "AAPL", "")
+        stock_data_container.set_historical_stock_data(df)
 
-        # real calculation with real 52 w high value
-        self.assertEqual(np.math.isclose(res['stop_buy'], 30.15, abs_tol=0.001), True)  # =30*1.005
-        self.assertEqual(np.math.isclose(res['stop_loss'], 29.2455, abs_tol=0.001), True)  # =30*1.005*0.97
+        sl, sb = calculate_stopbuy_and_stoploss(stock_data_container.historical_stock_data())
+        # previous calculation with latest value should now be True
+        self.assertEqual(np.math.isclose(sb, 23.6175, abs_tol=0.001), True)  # =23,5*1.005
+        self.assertEqual(np.math.isclose(sl, 22.9089, abs_tol=0.001), True)  # =23,5*1.005*0.97
+
+        # real calculation with real 52 w high value --> False
+        self.assertEqual(np.math.isclose(sb, 30.15, abs_tol=0.001), False)  # =30*1.005
+        self.assertEqual(np.math.isclose(sl, 29.2455, abs_tol=0.001), False)  # =30*1.005*0.97
 
         # TODO using coverage: http://pymbook.readthedocs.io/en/latest/testing.html
         # https://blog.jetbrains.com/pycharm/2015/06/feature-spotlight-python-code-coverage-with-pycharm/

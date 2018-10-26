@@ -43,7 +43,7 @@ class W52HighTechnicalStrategy(Abstract_Strategy):
                   'data_readers': {'HistoricalDataReader': {
                       'weeks_delta': 52,
                       'data_source': 'iex',
-                      'reload_data': False,
+                      'reload_data': True,
                       'ticker_needed': True}}}
 
              }
