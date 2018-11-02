@@ -22,7 +22,7 @@ def run_analysis(selected_strategies_list, strategy_parameter_dict, other_params
                                                stock_data_container_list)
 
     # selected strategies
-
+    # todo News + 52 w geht schon wieda ned gleichzeitig
     analysed_stocks = []
     for strategy_name in selected_strategies_list:
         strat_factory = StrategyFactory()
@@ -76,13 +76,13 @@ def _read_data(selected_strategies_list, strategy_parameter_dict, other_params, 
                                                parameter_dict=data_reader_params)
             logger.info("data_reader " + reader_type + " initialised.")
             # only add, if not added by another strategy reader --> avoid duplications
-            try:
-                if reader_results[reader_type] is None:
-                    raise Exception
-            except Exception:
-                reader_results[reader_type] = 'Read'
+            # try:
+            #     if reader_results[reader_type] is None:
+            #         raise Exception
+            # except Exception:
+            # reader_results[reader_type] = 'Read'
                 # TODO stock_data_container_list.extend(readers[reader_type].read_data())
-                curr_reader.read_data()
+            curr_reader.read_data()
 
     # dump for next run, instead of reloading every time
     with open(other_params['stock_data_container_file'], "wb") as f:

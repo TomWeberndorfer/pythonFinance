@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from DataContainerAndDecorator.Abstract_DataContainer import Abstract_DataContainer
+from DataContainerAndDecorator.Abstract_StockDataContainer import Abstract_DataContainer
 
 
 class Abstract_DataContainerDecorator:

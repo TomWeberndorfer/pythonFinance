@@ -18,6 +18,36 @@ class TestNewsReader(unittest.TestCase):
         # all_news.append("ANALYSE-FLASH: NordLB senkt Apple auf 'Kaufen' - Ziel 125,5 Euro")
         # all_news.append("Bryan Garnier hebt Apple auf 'Buy' - Ziel 91 Euro")
 
+    def test_read_from_traderfox_(self):
+        start_time = datetime.now()
+        # TODO ois mit file is kein unit test
+        test_file = GlobalVariables.get_test_data_files_path() + "last_date_time.csv"
+
+        with open(test_file, "w") as myfile:
+            myfile.write("last_news_check_date" + "\n")
+            myfile.write("30.10.2018 um 05:17" + "\n")
+
+        stock_data_container_list = []
+        data_storage = DataReaderFactory()
+        data_file_path = GlobalVariables.get_data_files_path()
+        reader_type = 'TraderfoxNewsDataReader'
+        data_reader_params = {'Name': 'TraderfoxNewsDataReader', 'last_check_date_file': test_file,
+                              'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
+                              'reload_data': True, 'ticker_needed': False}
+
+        reader = data_storage.prepare(reader_type, stock_data_container_list=stock_data_container_list,
+                                      reload_stockdata=True, parameter_dict=data_reader_params)
+        reader.read_data()
+        self.assertGreater(len(stock_data_container_list), 0)
+        print("LEN: " + str(len(stock_data_container_list)))
+        print("Time all:" + (str(datetime.now() - start_time)))
+
+        # should not read again
+        # TODO
+        # stock_data_container_list = []
+        # reader.read_data()
+        # self.assertEqual(len(stock_data_container_list), 0)
+
     def test_read_from_traderfox(self):
         # TODO ois mit file is kein unit test
         test_file = GlobalVariables.get_test_data_files_path() + "last_date_time.csv"

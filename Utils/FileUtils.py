@@ -278,7 +278,12 @@ def is_date_actual(date_to_check, last_date_file="", last_date="", date_time_for
         # no need to check, creates anyway
         if FileUtils.check_file_exists_or_create(last_date_file,
                                                  default_text):
-            data = pd.read_csv(last_date_file)
+
+            try:
+                data = pd.read_csv(last_date_file)
+            except Exception as e:
+                print("ERROR: pd.read_csv(last_date_file)")
+                return False, ""
             last_date_str = str(data[GlobalVariables.get_date_time_file_header()][0])  # TODO warum [0]?
             last_date = datetime.strptime(last_date_str, date_time_format)
         else:

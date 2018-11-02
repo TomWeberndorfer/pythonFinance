@@ -30,6 +30,7 @@ data0 = bt.feeds.YahooFinanceData(dataname='AAPL',
 def runstrat(sma1, sma2):
     cerebro = bt.Cerebro()
     cerebro.addstrategy(SmaCross, sma1=sma1, sma2=sma2)
+    print('Evaluate sma1:' + str(sma1) + ', sma2:' + str(sma2))
 
     cerebro.adddata(data0)
     cerebro.run()
@@ -39,6 +40,7 @@ def runstrat(sma1, sma2):
 opt = optunity.maximize(runstrat, num_evals=5, sma1=[2, 55], sma2=[2, 55])
 
 optimal_pars, details, _ = opt
+print('----------------------')
 print('Optimal Parameters:')
 print('sma1 = %.2f' % optimal_pars['sma1'])
 print('sma2 = %.2f' % optimal_pars['sma2'])

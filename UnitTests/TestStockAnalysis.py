@@ -251,6 +251,7 @@ class TestStockAnalysis(unittest.TestCase):
 
     def test__run_analysis__HistoricalDataReader_and_TraderfoxNewsDataReader(self):
         ticker_needed = False
+        risk_model = "FixedSizeRiskModel"
         data_file_path = GlobalVariables.get_data_files_path()
         strategy_parameter_dict = {'SimplePatternNewsStrategy': {'news_threshold': 0.7,
                                                                  'german_tagger': data_file_path + 'nltk_german_classifier_data.pickle',
@@ -272,7 +273,7 @@ class TestStockAnalysis(unittest.TestCase):
                                                                 'data_readers': {
                                                                     'HistoricalDataReader': {'weeks_delta': 52,
                                                                                              'data_source': 'iex',
-                                                                                             'reload_data': True,
+                                                                                             'reload_data': False,
                                                                                              'ticker_needed': False}}}
                                    }
         stock_data_file = data_file_path + 'TestData\\stock_data_container_file.pickle'
@@ -281,7 +282,7 @@ class TestStockAnalysis(unittest.TestCase):
                       'find_name': 'table', 'class_name': 'class', 'table_class': 'wikitable sortable',
                       'ticker_column_to_read': 0, 'name_column_to_read': 1, 'stock_exchange': 'en'}},
                         'RiskModels': {
-                            'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
+                            risk_model: {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}}
 
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict().items():
@@ -303,8 +304,6 @@ class TestStockAnalysis(unittest.TestCase):
         intel_container.set_historical_stock_data(df)
         stock_data_container_list = [apple_stock_data_container, intel_container]
 
-        # TODO de container müssen technische daten enthalten die 52 w haben, drüfen aber ned überschrieden werden durch lesen
-        # --> bast, aber des wird trotzdem ned gemacht, nur wenn 'reload_data': False
         stock_data_container_list = _read_data(['SimplePatternNewsStrategy', 'W52HighTechnicalStrategy'],
                                                strategy_parameter_dict, other_params,
                                                stock_data_container_list)
@@ -312,6 +311,7 @@ class TestStockAnalysis(unittest.TestCase):
         result_analysis = run_analysis(['SimplePatternNewsStrategy', 'W52HighTechnicalStrategy'],
                                        strategy_parameter_dict, other_params, stock_data_container_list)
 
+        # the prepaired container must be in there too, and there must be more than 2 container
         apple_idx = result_analysis.index(apple_stock_data_container)
         intel_idx = result_analysis.index(intel_container)
         self.assertGreater(len(result_analysis), 2)
@@ -319,3 +319,7 @@ class TestStockAnalysis(unittest.TestCase):
         self.assertEqual(result_analysis[intel_idx].get_stock_name(), "Intel Corporation")
         self.assertEqual(len(result_analysis[apple_idx].historical_stock_data()), 9)
         self.assertEqual(len(result_analysis[intel_idx].historical_stock_data()), 9)
+
+        # the risk model must be filled in every case
+        for single_result in result_analysis:
+            self.assertEqual(risk_model, single_result.get_risk_model())

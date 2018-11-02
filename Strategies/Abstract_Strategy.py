@@ -39,8 +39,6 @@ class Abstract_Strategy(StatusUpdate, Abstract_SimpleMultithreading):
         if not my_stock_data_container_list is None:
             self.stock_data_container_list = my_stock_data_container_list
 
-        stack = inspect.stack()
-        # the_class = stack[0][0].f_locals["self"].__class__ #get the inherited class name
         if len(self.stock_data_container_list) > 0:
             self.map_list(self.stock_data_container_list)
         return self.result_list
