@@ -4,7 +4,7 @@ import talib
 from Utils.GlobalVariables import *
 
 from Strategies.Abstract_Strategy import Abstract_Strategy
-from Trial.StrategyImplementation.OptimizeStrategyAsta_SMA_and__EMA_or_RoC_BacktraderWrapper import runstrat
+from Trial.StrategyImplementation.OptimizeStrategyAsta_SMA_and__EMA_or_RoC_BacktraderWrapper import init_and_run_asta_strategy
 
 
 class StrategyAsta_SMA_and__EMA_or_RoC(Abstract_Strategy):
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     for i in range(0, 5):
         time_measurement.restart_time_measurement()
 
-        portfolio_value = runstrat(5, 5, 5, data0)
+        portfolio_value = init_and_run_asta_strategy(5, 5, 5, data0)
         print('Final Portfolio Value: %.2f' % portfolio_value)
         time_measurement.print_time_diff("TimeDiff ASTA backtesting:")
 

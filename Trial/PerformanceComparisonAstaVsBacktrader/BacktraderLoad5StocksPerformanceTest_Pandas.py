@@ -15,16 +15,12 @@ from Utils.CommonUtils import TimeDiffMeasurement
 
 test_filepath = GlobalVariables.get_root_dir() + '\\DataFiles\\TestData\\'
 time_measurement = TimeDiffMeasurement()
-# plot_symbols = []
-data_list = []
 
 for i in range(0, 5):
     time_measurement.restart_time_measurement()
 
     symbols = ["AAPL", "FB", "GIS", "GE", "XOM"]
 
-    # plot_symbols = []
-    data_list = []
     for s in symbols:
         df = data.DataReader(s, 'iex', start, end, 3, 0.05)
 
