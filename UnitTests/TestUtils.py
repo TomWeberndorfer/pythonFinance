@@ -5,11 +5,11 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from AutomaticTrading.InteractiveBrokers.IBPyInteractiveBrokers import IBPyInteractiveBrokers
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
-from Utils.CommonUtils import CommonUtils, is_next_day_or_later
+from Utils.CommonUtils import CommonUtils, is_next_day_or_later, TimeDiffMeasurement
 from Utils.FileUtils import FileUtils
 from Utils.GlobalVariables import *
 from time import sleep
-
+from pandas import np
 from Utils.StockDataUtils import buy_recommendations
 
 
@@ -125,6 +125,19 @@ class TestUtils(TestCase):
         next_order_id = broker._read_current_order_id()
         self.assertEqual(curr_order_id + 1, next_order_id)
         self.assertEqual(0, len(error_message_list))
+
+    def test_TimeDiffMeasurement_100ms__restart_200ms(self):
+        time_measurement = TimeDiffMeasurement()
+        sleep(0.1)
+        diff = time_measurement.print_time_diff()
+        self.assertEqual(np.math.isclose(0.1, diff, abs_tol=0.002), True)
+
+        time_measurement.restart_time_measurement()
+        sleep(0.2)
+        diff = time_measurement.print_time_diff()
+        self.assertEqual(np.math.isclose(0.2, diff, abs_tol=0.002), True)
+        mean = time_measurement.print_and_save_mean()
+        self.assertEqual(np.math.isclose(0.15, mean, abs_tol=0.002), True)
 
 
 class background_test_dummy:

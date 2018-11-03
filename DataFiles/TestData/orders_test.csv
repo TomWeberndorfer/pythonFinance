@@ -71,3 +71,18 @@ datetime                  ,stock_ticker,order_id,order_type,action,quantity,limi
 2018-10-26 22:40:07.197753,TestTicker_2,948001  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
 2018-10-26 22:40:08.215551,GOOG        ,948002  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
 2018-10-26 22:40:52.471392,AAPL        ,948003  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-02 15:01:24.262324,TestTicker  ,948004  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-02 15:01:24.277313,TestTicker_2,948005  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-02 15:01:24.329281,TestTicker_2,948006  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-02 15:01:25.357647,GOOG        ,948007  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-11-02 15:02:09.799708,AAPL        ,948008  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-02 16:17:02.844040,TestTicker  ,948009  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-02 16:17:02.854034,TestTicker_2,948010  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-02 16:17:02.893012,TestTicker_2,948011  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-02 16:17:03.915409,GOOG        ,948012  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-11-02 16:18:21.196250,AAPL        ,948013  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-03 11:16:35.788883,TestTicker  ,948014  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-03 11:16:35.794879,TestTicker_2,948015  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-03 11:16:35.827859,TestTicker_2,948016  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD
+2018-11-03 11:16:36.844190,GOOG        ,948017  ,LMT       ,BUY   ,5       ,1000.0     ,STK          ,SMART   ,USD
+2018-11-03 11:17:13.137833,AAPL        ,948018  ,          ,      ,0       ,0          ,STK          ,SMART   ,USD

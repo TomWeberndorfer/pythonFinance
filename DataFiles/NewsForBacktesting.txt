@@ -1041,3 +1041,90 @@ Date,News
 26.10.2018 um 14:01, ANALYSE-FLASH: DZ Bank senkt Südzucker auf 'Verkaufen' - Fairer Wert 11.40 Euro
 26.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 26.10.2018
 26.10.2018 um 21:50, dpa-AFX Überblick: ANALYSTEN-EINSTUFUNGEN der Woche vom 22. bis 26.10.2018
+28.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+29.10.2018 um 10:36, ANALYSE-FLASH: JPMorgan belässt HSBC auf 'Neutral' - Ziel 750 Pence
+29.10.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 29.10.2018
+29.10.2018 um 10:32, ANALYSE-FLASH: Credit Suisse hebt Merck KGaA auf 'Outperform' - Ziel hoch
+29.10.2018 um 06:33, ANALYSE-FLASH: CFRA senkt Ziel für BASF auf 73 Euro - 'Hold'
+30.10.2018 um 05:35, ANALYSE-FLASH: JPMorgan hebt Wacker Chemie auf 'Neutral' - Kursziel gesenkt
+30.10.2018 um 16:29, ANALYSE-FLASH: NordLB belässt Deutsche Börse auf 'Halten' - Ziel 108.56 Euro
+30.10.2018 um 13:07, ANALYSE-FLASH: NordLB belässt Volkswagen-Vorzüge auf 'Kaufen' - Ziel 170 Euro
+30.10.2018 um 15:56, ANALYSE-FLASH: Baader Bank senkt Ziel für Beiersdorf auf 97 Euro - 'Hold'
+30.10.2018 um 13:10, ANALYSE-FLASH: JPMorgan belässt Schaeffler auf 'Neutral' - Ziel 13.50 Euro
+30.10.2018 um 08:51, ANALYSE-FLASH: Hauck & Aufhäuser belässt Nemetschek auf 'Buy' - Ziel 142 Euro
+30.10.2018 um 16:27, ANALYSE-FLASH: DZ senkt fairen Wert für Telefonica Deutschland - 'Verkaufen'
+30.10.2018 um 13:11, ANALYSE-FLASH: UBS belässt Volkswagen auf 'Buy' - Ziel 200 Euro
+29.10.2018 um 06:41, ANALYSE-FLASH: RBC hebt AB Inbev auf 'Outperform' und senkt Ziel auf 75 Euro
+29.10.2018 um 09:17, ANALYSE-FLASH: Baader Bank hebt Nemetschek auf 'Buy' - Ziel bleibt 128 Euro
+30.10.2018 um 13:03, ANALYSE-FLASH: Barclays belässt Volkswagen Vz auf 'Overweight' - Ziel 203 Euro
+30.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+29.10.2018 um 11:20, ANALYSE-FLASH: UBS hebt STMicro auf 'Neutral' - Ziel runter auf 13 Euro
+30.10.2018 um 12:33, ANALYSE-FLASH: Warburg Research hebt Norma Group auf 'Buy' - Ziel 61 Euro
+30.10.2018 um 13:03, ANALYSE-FLASH: Bernstein belässt Volkswagen Vz auf 'Outperform' - Ziel 220 Euro
+29.10.2018 um 07:00, ANALYSE-FLASH: RBC hebt EssilorLuxottica auf 'Sector Perform'
+30.10.2018 um 08:57, WDH/ANALYSE-FLASH: Hauck & Aufhäuser belässt Nemetschek auf 'Buy'
+30.10.2018 um 13:35, ANALYSE-FLASH: Kepler Cheuvreux senkt Fielmann auf 'Reduce' - Ziel 50.50 Euro
+29.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+29.10.2018 um 07:53, ANALYSE-FLASH: HSBC hebt TLG Immobilien auf 'Buy' und Ziel auf 27 Euro
+29.10.2018 um 07:54, ANALYSE-FLASH: HSBC senkt Dic Asset auf 'Hold' - Ziel reduziert auf 10.50 Euro
+29.10.2018 um 08:41, ANALYSE-FLASH: Commerzbank senkt HeidelbergCement auf 'Hold' - Ziel 59 Euro
+29.10.2018 um 12:33, Expertin: Merkels Rückzug könnte Italien-Problem verschärfen
+30.10.2018 um 08:51, ANALYSE-FLASH: JPMorgan belässt Volkswagen auf 'Overweight' - Ziel 200 Euro
+30.10.2018 um 08:52, ANALYSE-FLASH: Bernstein belässt Lufthansa auf 'Outperform' - Ziel 29 Euro
+30.10.2018 um 08:53, ANALYSE-FLASH: Jefferies senkt Ziel für BASF auf 76 Euro - 'Hold'
+30.10.2018 um 11:30, ANALYSE-FLASH: Davy stuft Lufthansa nach Zahlen ab - Gegenwind wird stärker
+30.10.2018 um 12:34, ANALYSE-FLASH: Warburg Research hebt Aixtron auf 'Buy' und Ziel auf 12 Euro
+30.10.2018 um 19:57, ANALYSE-FLASH: Goldman hebt Ziel für Beiersdorf auf 99 Euro - 'Neutral'
+01.11.2018 um 12:13, ANALYSE-FLASH: Bernstein belässt Bayer auf 'Outperform' - Ziel 90 Euro
+01.11.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+31.10.2018 um 17:20, ANALYSE-FLASH: Baader Bank belässt Deutsche Post auf 'Buy' - Ziel 46 Euro
+02.11.2018 um 08:51, ANALYSE-FLASH: HSBC senkt Deutsche Post auf 'Hold' und Ziel runter auf 29 Euro
+01.11.2018 um 07:34, ANALYSE-FLASH: Barclays hebt Sanofi auf 'Equal Weight' - Ziel hoch auf 80 Euro
+01.11.2018 um 22:04, ANALYSE-FLASH: RBC senkt Ziel für Telefonica Deutschland - 'Underperform'
+01.11.2018 um 12:17, ANALYSE-FLASH: SocGen belässt Lufthansa auf 'Buy' - Ziel 21 Euro
+01.11.2018 um 12:08, ANALYSE-FLASH: Warburg Research senkt Ziel für Schaeffler auf 16 Euro - 'Buy'
+
+01.11.2018 um 11:44, ANALYSE-FLASH: Warburg Research hebt RIB Software auf 'Buy'
+31.10.2018 um 09:28, ANALYSE-FLASH: Deutsche Bank belässt Deutsche Börse auf 'Buy' - Ziel 126 Euro
+01.11.2018 um 16:37, ANALYSE-FLASH: DZ Bank senkt fairen Wert für Aurubis auf 65 Euro - 'Kaufen'
+01.11.2018 um 14:39, State Street: Auch Europas Anleger schrecken nun vor Aktien zurück
+01.11.2018 um 16:29, ANALYSE-FLASH: JPMorgan belässt Morphosys auf 'Overweight'
+02.11.2018 um 08:30, ANALYSE-FLASH: Oddo BHF hebt Ziel für Morphosys auf 116 Euro - 'Buy'
+02.11.2018 um 07:38, ANALYSE-FLASH: Morgan Stanley hebt ING auf 'Equal-weight' - Ziel auf 13.20 Euro
+
+31.10.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+02.11.2018 um 07:19, ANALYSE-FLASH: Credit Suisse hebt Dialog auf 'Outperform' - Ziel 32.50 Euro
+01.11.2018 um 08:55, ANALYSE-FLASH: Berenberg hebt Ziel für Aixtron auf 14.20 Euro - 'Buy'
+02.11.2018 um 13:30, ANALYSE: Merrill Lynch stuft Wirecard ab - Konkurrent Ingenico die bessere Wahl
+01.11.2018 um 15:50, ANALYSE-FLASH: Baader Bank senkt Ziel für Credit Suisse auf 18 Franken - 'Buy'
+31.10.2018 um 11:03, ANALYSE-FLASH: DZ Bank senkt fairen Wert für Schaeffler auf 11 Euro - 'Kaufen'
+31.10.2018 um 21:34, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 31.10.2018
+31.10.2018 um 11:15, ANALYSE-FLASH: UBS belässt RIB Software auf 'Sell' - Ziel 17.80 Euro
+02.11.2018 um 12:59, ANALYSE-FLASH: JPMorgan senkt Ziel für Apple auf 270 Dollar - 'Overweight'
+01.11.2018 um 18:36, ANALYSE-FLASH: Credit Suisse belässt Shell auf 'Outperform' - Ziel 3175 Pence
+31.10.2018 um 08:27, ANALYSE-FLASH: Goldman hebt Nordex auf 'Neutral' - Ziel hoch auf 10 Euro
+31.10.2018 um 10:50, ANALYSE-FLASH: Commerzbank senkt Ziel für Rational auf 555 Euro - 'Reduce'
+02.11.2018 um 07:29, ANALYSE-FLASH: Goldman nimmt Safran mit 'Buy' wieder auf - Ziel 136 Euro
+02.11.2018 um 09:41, ANALYSE-FLASH: Merrill Lynch senkt Wirecard auf 'Underperform' - Ziel 150 Euro
+30.10.2018 um 22:05, ANALYSE-FLASH: Credit Suisse senkt Ziel für Volkswagen Vorzüge - 'Outperform'
+02.11.2018 um 04:50, dpa-AFX KUNDEN-INFO: Finanzanalysen in den dpa-AFX Diensten
+31.10.2018 um 06:37, ANALYSE-FLASH: JPMorgan senkt Schaeffler auf 'Underweight'
+31.10.2018 um 07:16, ANALYSE-FLASH: Barclays senkt Ziel für Lufthansa auf 17.20 Euro - 'Underweight'
+31.10.2018 um 16:20, ANALYSE-FLASH: RBC hebt Ziel für Dialog auf 23 Euro - 'Sector Perform'
+02.11.2018 um 07:45, ANALYSE-FLASH: RBC erhöht Ziel für Dialog Semiconductor - 'Sector Perform'
+02.11.2018 um 08:53, ANALYSE-FLASH: HSBC hebt Axel Springer auf 'Buy' - Ziel gesenkt auf 67 Euro
+31.10.2018 um 06:57, ANALYSE-FLASH: CFRA senkt BBVA auf 'Sell' und Kursziel auf 4.50 Euro
+01.11.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 01.11.2018
+02.11.2018 um 08:56, ANALYSE-FLASH: Hauck & Aufhäuser belässt SLM Solutions auf 'Buy' - Ziel 33 Euro
+31.10.2018 um 16:52, ANALYSE-FLASH: Credit Suisse belässt Airbus auf 'Outperform' - Ziel 120 Euro
+02.11.2018 um 08:05, ANALYSE-FLASH: Goldman senkt Ziel für Apple auf 222 Dollar - 'Neutral'
+02.11.2018 um 08:42, ANALYSE-FLASH: Jefferies senkt Ziel für Kion auf 64 Euro - 'Buy'
+30.10.2018 um 22:02, ANALYSE-FLASH: Goldman hebt Ziel für Merck KGaA auf 95 Euro - 'Neutral'
+31.10.2018 um 11:00, ANALYSE-FLASH: Credit Suisse belässt Schaeffler auf 'Outperform' - Ziel 17 Euro
+01.11.2018 um 09:42, ANALYSE-FLASH: Equinet hebt Fuchs Petrolub auf 'Buy' - Ziel 50 Euro
+02.11.2018 um 10:02, ANALYSE-FLASH: Equinet senkt Ziel für SLM Solutions von 15 auf 4.08 Euro; 'Sell'
+30.10.2018 um 22:02, ANALYSE-FLASH: Goldman senkt Ziel für Bayer auf 109 Euro - 'Buy'
+02.11.2018 um 21:50, dpa-AFX Überblick: ANALYSTEN-EINSTUFUNGEN der Woche vom 29.10. bis 02.11.2018
+02.11.2018 um 21:35, dpa-AFX Überblick: Ausgewählte ANALYSTEN-EINSTUFUNGEN vom 02.11.2018
+02.11.2018 um 17:14, ANALYSE-FLASH: JPMorgan startet Linde nach Praxair-Fusion mit 'Overweight'
+02.11.2018 um 21:32, ANALYSE-FLASH: Goldman senkt Ziel für Gea Group auf 31 Euro - 'Neutral'

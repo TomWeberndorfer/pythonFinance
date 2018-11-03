@@ -2,12 +2,10 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import datetime  # For datetime objects
-import os.path  # To manage paths
-import sys  # To find out the script name (in argv[0])
 
 # Import the backtrader platform
 import backtrader as bt
-
+from Utils.GlobalVariables import *
 
 class StrategyBacktrader_SMA_and__EMA_or_RoC(bt.Strategy):
     params = (
@@ -85,17 +83,7 @@ class StrategyBacktrader_SMA_and__EMA_or_RoC(bt.Strategy):
 
 
 if __name__ == '__main__':
-    # Create a cerebro entity
-    cerebro = bt.Cerebro()
-
-    # Add a strategy
-    cerebro.addstrategy(StrategyBacktrader_SMA_and__EMA_or_RoC)
-
-    # Datas are in a subfolder of the samples. Need to find where the script is
-    # because it could have been called from anywhere
-    # modpath = os.path.dirname(os.path.abspath(sys.argv[0]))
-    # datapath = os.path.join(modpath, '../../datas/orcl-1995-2014.txt')
-    # datapath = os.path.join(modpath, '../../datas/KMX.csv')
+    test_filepath = GlobalVariables.get_root_dir() + '\\DataFiles\\TestData\\'
 
     # Create a Data Feed
     data = bt.feeds.YahooFinanceData(
@@ -107,26 +95,42 @@ if __name__ == '__main__':
         # Do not pass values after this date
         reverse=False)
 
-    # Add the Data Feed to Cerebro
-    cerebro.adddata(data)
+    ##################################################
+    from Utils.CommonUtils import TimeDiffMeasurement
 
-    # Set our desired cash start
-    cerebro.broker.setcash(50000.0)
+    time_measurement = TimeDiffMeasurement()
+    for i in range(0, 5):
+        time_measurement.restart_time_measurement()
 
-    # Add a FixedSize sizer according to the stake
-    cerebro.addsizer(bt.sizers.FixedSize, stake=10)
+        # Create a cerebro entity
+        cerebro = bt.Cerebro()
 
-    # Set the commission
-    cerebro.broker.setcommission(commission=0.001)
+        # Add a strategy
+        cerebro.addstrategy(StrategyBacktrader_SMA_and__EMA_or_RoC)
 
-    # Print out the starting conditions
-    print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+        # Add the Data Feed to Cerebro
+        cerebro.adddata(data)
 
-    # Run over everything
-    cerebro.run()
+        # Set our desired cash start
+        cerebro.broker.setcash(50000.0)
 
-    # Print out the final result
-    print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+        # Add a FixedSize sizer according to the stake
+        cerebro.addsizer(bt.sizers.FixedSize, stake=10)
 
+        # Set the commission
+        cerebro.broker.setcommission(commission=0.001)
+
+        # Print out the starting conditions
+        print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+
+        # Run over everything
+        cerebro.run()
+
+        # Print out the final result
+        print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+
+        time_measurement.print_time_diff("TimeDiff backtrader backtesting:")
+
+    time_measurement.print_and_save_mean(test_filepath + "strat_test_backtrader.txt")
     # Plot the result
-    cerebro.plot()
+    # cerebro.plot()

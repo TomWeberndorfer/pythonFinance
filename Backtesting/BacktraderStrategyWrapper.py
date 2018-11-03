@@ -108,6 +108,8 @@ class BacktraderStrategyWrapper(bt.Strategy):
         # TODO https://backtest-rookies.com/2017/08/22/backtrader-multiple-data-feeds-indicators/
 
         for i, hist_data in enumerate(self.datas):
+            from datetime import datetime
+            start_time = datetime.now()
             stock_data_container_list = []
             date_time = self.datetime.date()
             stock_name = hist_data._name
@@ -122,6 +124,7 @@ class BacktraderStrategyWrapper(bt.Strategy):
             convert_backtrader_to_asta_data(hist_data, self.news_data_dict, date_time, stock_data_container_list)
             # test only one strategy, first one --> [0]
             self.strategy_instance.run_strategy(stock_data_container_list)
+            # TODO print("Time 1:" + (str(datetime.now() - start_time)))
 
             pos = self.getposition(hist_data).size
             # Check if we are in the market

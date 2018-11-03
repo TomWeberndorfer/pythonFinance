@@ -12,18 +12,18 @@ from Backtesting.BacktraderStrategyWrapper import BacktraderStrategyWrapper
 from Trial.StrategyImplementation.StrategyBacktrader_SMA_and__EMA_or_RoC import StrategyBacktrader_SMA_and__EMA_or_RoC
 from Utils.FileUtils import FileUtils
 
-data0 = bt.feeds.YahooFinanceData(dataname='AAPL',
-                                  fromdate=datetime(2017, 1, 1),
-                                  todate=datetime(2017, 12, 31))
-
 
 ########################################################################
 # source code to evaluate the performance of ASTA-Framework
 # with backtrader wrapper to shorten code
 # Section 4.3. 	Use Case 2: Kombination und Optimierung einer Strategie
 ########################################################################
+data0 = bt.feeds.YahooFinanceData(dataname='AAPL',
+                                  fromdate=datetime(2017, 1, 1),
+                                  todate=datetime(2017, 12, 31))
 
-def runstrat(sma_timeperiod, ema_timeperiod, roc_timeperiod):
+
+def runstrat(sma_timeperiod, ema_timeperiod, roc_timeperiod, stock_data=data0):
     print('sma_timeperiod = %.2f' % sma_timeperiod)
     print('ema_timeperiod = %.2f' % ema_timeperiod)
     print('roc_timeperiod = %.2f' % roc_timeperiod)
@@ -35,14 +35,15 @@ def runstrat(sma_timeperiod, ema_timeperiod, roc_timeperiod):
         'roc_timeperiod': roc_timeperiod
     }
 
-    backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 30000,
-                              'trade_commission_percent': 0.005}
+    backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 50000,
+                              'trade_commission_percent': 0.001}
 
-    risk_model = {'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 2500}}
+    risk_model = {'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 5000}}
 
     tbt = BacktraderWrapper()
 
-    backtesting_result_instance, res = tbt.run_test([data0], "StrategyAsta_SMA_and__EMA_or_RoC", backtesting_parameters,
+    backtesting_result_instance, res = tbt.run_test([stock_data], "StrategyAsta_SMA_and__EMA_or_RoC",
+                                                    backtesting_parameters,
                                                     analysis_parameters,
                                                     risk_model, [])
 
@@ -50,6 +51,7 @@ def runstrat(sma_timeperiod, ema_timeperiod, roc_timeperiod):
 
 
 if __name__ == '__main__':
+
     for i in range(0, 5):
         start_time = datetime.now()
         opt = optunity.maximize(runstrat, num_evals=2, sma_timeperiod=[4, 7], ema_timeperiod=[4, 7],

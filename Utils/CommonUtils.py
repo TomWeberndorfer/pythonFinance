@@ -16,7 +16,7 @@ import Utils.Logger_Instance
 from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Trial.try_candlesticks import plot_stock_as_candlechart_with_volume
 from threading import Event, Thread
-
+import numpy as np
 
 class CommonUtils:
     threadpool = None
@@ -414,3 +414,62 @@ def is_next_day_or_later(date_to_check_str, date_time_format_1, last_date,
     is_date_more_up_to_date = last_date.date() < date_to_check.date()
 
     return is_date_more_up_to_date
+
+
+class TimeDiffMeasurement:
+    """
+    Class for time diff measurement.
+    """
+
+    def __init__(self):
+        self._start_time = 0
+        self._diff_list = []
+
+        self.restart_time_measurement()
+
+    def restart_time_measurement(self):
+        """
+        Restart the start time.
+        :return: -
+        """
+        print("Time measurement started.")
+        self._start_time = datetime.now()
+
+    def print_time_diff(self, text=""):
+        """
+        Print the time diff and return it.
+        :param text: additional text to print
+        :return: time difference as time delta
+        """
+        if len(text) <= 0:
+            text = "Time diff: "
+
+        diff = datetime.now() - self._start_time
+        print(text + (str(diff)))
+        self._diff_list.append(diff.total_seconds())
+        return diff.total_seconds()
+
+    def get_diff_list_seconds(self):
+        """
+        Return the difference list (seconds in float)
+        :return: list with diff values in seconds
+        """
+        return self._diff_list
+
+    def print_and_save_mean(self, file_name=""):
+        """
+        Print the mean text, and save all diff values and mean value to the given file, if file name not empty.
+        :param file_name: file_name to save the values, can be empty --> do not save to file
+        :return: mean value as float
+        """
+        from Utils.FileUtils import FileUtils
+        mean_value = np.mean(self.get_diff_list_seconds())
+        mean_text = "Mean: " + str(mean_value).replace('.', ',')
+        print(mean_text)
+
+        if len(file_name) > 0:
+            for diff in self.get_diff_list_seconds():
+                FileUtils.append_text_list_to_file([str(diff).replace('.', ',')], file_name, False)
+            FileUtils.append_text_list_to_file([mean_text], file_name, False)
+
+        return mean_value

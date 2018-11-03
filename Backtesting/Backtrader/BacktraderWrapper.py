@@ -35,6 +35,7 @@ class BacktraderWrapper(Abstract_Backtesting):
         # load the data from given file list and add it to backtrader instance
         if isinstance(data_file_list, list):
             for file_path in data_file_list:
+                # TODO warum string?
                 if isinstance(file_path, str):
                     stock_name = basename(file_path)
                     data = btfeeds.GenericCSVData(
