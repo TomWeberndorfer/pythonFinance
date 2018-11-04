@@ -3,12 +3,14 @@ import unittest
 import backtrader as bt
 import backtrader.analyzers as btanalyzer
 import pandas as pd
-import datetime
-
+from datetime import datetime
+from pandas import DataFrame
 from backtrader.feeds import GenericCSVData
 
 from Backtesting.Backtrader.BacktraderWrapper import BacktraderWrapper
 # from directory UnitTests to --> root folder with: ..\\..\\
+from DataContainerAndDecorator.StockDataContainer import StockDataContainer
+from Strategies.StrategyFactory import StrategyFactory
 from Utils.GlobalVariables import *
 
 test_filepath = GlobalVariables.get_data_files_path() + 'TestData\\'
@@ -92,7 +94,7 @@ class TestBacktrader(unittest.TestCase):
         self.assertNotEqual(None, backtesting_result_instance)
         self.assertNotEqual(backtesting_parameters['initial_cash'], pnl)
 
-    def test_run_test(self):
+    def test_BacktraderWrapper_run_test(self):
         tbt = BacktraderWrapper()
         labels = []
         for key, value in GlobalVariables.get_stock_data_labels_dict(True).items():
@@ -189,7 +191,6 @@ class TestBacktrader(unittest.TestCase):
         self.assertEqual(29969.0, portvalue)
         self.assertEqual(-31, pnl)
 
-
     def test_GenericBacktraderCsvNewsData(self):
         tbt = BacktraderWrapper()
         data_file_path = GlobalVariables.get_data_files_path()
@@ -215,3 +216,42 @@ class TestBacktrader(unittest.TestCase):
 
         self.assertNotEqual(None, backtesting_result_instance)
         self.assertNotEqual(backtesting_parameters['initial_cash'], pnl)
+
+    def test_BacktraderStrategyWrapper(self):
+        labels = []
+        for key, value in GlobalVariables.get_stock_data_labels_dict().items():
+            labels.append(value)
+        data = [('2016-09-30', 23.35, 23.91, 23.24, 23.8, 31000),
+                ('2016-10-03', 23.68, 23.69, 23.39, 23.5, 31000),
+                ('2016-10-04', 23.52, 23.64, 23.18, 23.28, 31000),
+                ('2016-10-05', 23.28, 23.51, 23.27, 23.43, 31000),
+                ('2016-10-06', 23.38, 23.56, 23.29, 23.48, 42000),
+                ('2016-10-07', 23.58, 23.65, 23.37, 23.48, 43000),
+                ('2016-10-10', 23.62, 23.88, 23.55, 23.77, 44000),
+                ('2016-10-11', 23.62, 23.74, 23.01, 23.16, 45000),
+                ('2016-10-12', 23.16, 26, 23.11, 23.18, 46000)]
+
+        analysis_parameters = {
+            'sma_timeperiod': int(5),
+            'ema_timeperiod': int(5),
+            'roc_timeperiod': int(5)
+        }
+
+        data0 = bt.feeds.YahooFinanceData(dataname='AAPL',
+                                          fromdate=datetime(2017, 1, 1),
+                                          todate=datetime(2017, 12, 31))
+
+        backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 50000,
+                                  'trade_commission_percent': 0.001}
+        risk_model = {'FixedSizeRiskModel': {'OrderTarget': 'order_target_value', 'TargetValue': 5000}}
+        tbt = BacktraderWrapper()
+
+        backtesting_result_instance, res = tbt.run_test([data0], "StrategyAsta_SMA_and__EMA_or_RoC",
+                                                        backtesting_parameters,
+                                                        analysis_parameters,
+                                                        risk_model, [])
+
+        self.assertNotEqual(None, backtesting_result_instance)
+        # TODO wert anpassen
+        self.assertEqual(29969.0, backtesting_result_instance.broker.getvalue())
+

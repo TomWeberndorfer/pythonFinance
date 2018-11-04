@@ -4,7 +4,8 @@ import talib
 from Utils.GlobalVariables import *
 
 from Strategies.Abstract_Strategy import Abstract_Strategy
-from Trial.StrategyImplementation.OptimizeStrategyAsta_SMA_and__EMA_or_RoC_BacktraderWrapper import init_and_run_asta_strategy
+from Trial.StrategyImplementation.OptimizeStrategyAsta_SMA_and__EMA_or_RoC_BacktraderWrapper import \
+    init_and_run_asta_strategy
 
 
 class StrategyAsta_SMA_and__EMA_or_RoC(Abstract_Strategy):
@@ -32,6 +33,11 @@ class StrategyAsta_SMA_and__EMA_or_RoC(Abstract_Strategy):
         if sma_buy and (ema_buy or roc_buy):
             stock_data_container.update_used_strategy_and_recommendation(self.__class__.__name__, "BUY")
             self.result_list.append(stock_data_container)
+
+        else:
+            if not sma_buy or not ema_buy or not roc_buy:
+                stock_data_container.update_used_strategy_and_recommendation(self.__class__.__name__, "SELL")
+                self.result_list.append(stock_data_container)
 
 
 if __name__ == '__main__':

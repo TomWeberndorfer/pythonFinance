@@ -7,6 +7,7 @@ import datetime  # For datetime objects
 import backtrader as bt
 from Utils.GlobalVariables import *
 
+
 class StrategyBacktrader_SMA_and__EMA_or_RoC(bt.Strategy):
     params = (
         ('sma_timeperiod', 5),
@@ -29,17 +30,16 @@ class StrategyBacktrader_SMA_and__EMA_or_RoC(bt.Strategy):
         if self.order:
             return
 
-        if not self.position:
-            sma_buy = self.dataclose[0] > self.sma[0]
-            ema_buy = self.dataclose[0] > self.ema[0]
-            roc_buy = self.dataclose[0] > self.roc[0]
+        sma_buy = self.dataclose[0] > self.sma[0]
+        ema_buy = self.dataclose[0] > self.ema[0]
+        roc_buy = self.dataclose[0] > self.roc[0]
 
+        if not self.position:
             if sma_buy and (ema_buy or roc_buy):
                 self.order = self.buy()
 
-        else:
-            if self.dataclose[0] < self.sma[0]:
-                self.order = self.sell()
+        elif sma_buy is False or ema_buy is False or roc_buy is False:
+            self.order = self.sell()
 
     def log(self, txt, dt=None):
         ''' Logging function fot this strategy'''

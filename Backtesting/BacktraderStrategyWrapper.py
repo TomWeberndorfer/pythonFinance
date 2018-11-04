@@ -12,6 +12,7 @@ from DataContainerAndDecorator.StockDataContainer import StockDataContainer
 from Strategies.StrategyFactory import StrategyFactory
 from Utils.StockDataUtils import convert_backtrader_to_dataframe, convert_backtrader_to_asta_data
 
+
 ####################################
 # https://www.backtrader.com/docu/indautoref.html
 #
@@ -105,60 +106,71 @@ class BacktraderStrategyWrapper(bt.Strategy):
         Must implement the real strategy.
         :return:
         """
+
+        try:
         # TODO https://backtest-rookies.com/2017/08/22/backtrader-multiple-data-feeds-indicators/
 
-        for i, hist_data in enumerate(self.datas):
-            from datetime import datetime
-            start_time = datetime.now()
-            stock_data_container_list = []
-            date_time = self.datetime.date()
-            stock_name = hist_data._name
+            for i, hist_data in enumerate(self.datas):
+                from datetime import datetime
+                stock_data_container_list = []
+                date_time = self.datetime.date()
+                stock_name = hist_data._name
 
-            self.log('Close: ' + str(
-                hist_data.close[0]) + ", volume: " + str(hist_data.volume[0]) + ', Datasource: ' + str(stock_name))
+                self.log('Close: ' + str(
+                    hist_data.close[0]) + ", volume: " + str(hist_data.volume[0]) + ', Datasource: ' + str(stock_name))
 
-            # TODO print anything to indicate a news in gui
-            # TODO https://www.backtrader.com/docu/extending-a-datafeed.html
-            # TODO ex: btind.SMA(self.data.pe, period=1, subplot=False) for data of classification
+                # TODO print anything to indicate a news in gui
+                # TODO https://www.backtrader.com/docu/extending-a-datafeed.html
+                # TODO ex: btind.SMA(self.data.pe, period=1, subplot=False) for data of classification
 
-            convert_backtrader_to_asta_data(hist_data, self.news_data_dict, date_time, stock_data_container_list)
-            # test only one strategy, first one --> [0]
-            self.strategy_instance.run_strategy(stock_data_container_list)
-            # TODO print("Time 1:" + (str(datetime.now() - start_time)))
+                convert_backtrader_to_asta_data(hist_data, self.news_data_dict, date_time, stock_data_container_list)
+                # test only one strategy, first one --> [0]
+                # TODO 11: result list wird nie zurückgesetzt --> immer mehr, [0] ist dann falsch
+                result_list = self.strategy_instance.run_strategy(stock_data_container_list)
 
-            pos = self.getposition(hist_data).size
-            # Check if we are in the market
-            if not pos:
-                # TODO insert sell for short strategies too
-                # check if buy
-                try:
-                    if len(stock_data_container_list) > 0 and 'buy' in \
-                            stock_data_container_list[0].get_recommendation_strategies()[self.strategy_to_test][
-                                0].lower():
-                        # test only first risk model --> [0]
-                        rm_factory = RiskModelFactory()
-                        first_rm_key = list(self.risk_model.keys())[0]
-                        risk_model = self.risk_model[first_rm_key]
-                        fsr = rm_factory.prepare(first_rm_key, stock_data_container_list=stock_data_container_list,
-                                                 parameter_dict=risk_model)
-                        fsr.determine_risk()
+                pos = self.getposition(hist_data).size
+                # Check if we are in the market
+                if not pos:
+                    # TODO insert sell for short strategies too
+                    # check if buy
+                    try:
+                        if len(result_list) > 0 and 'buy' in \
+                                result_list[0].get_recommendation_strategies()[self.strategy_to_test][
+                                    0].lower():
+                            # test only first risk model --> [0]
+                            rm_factory = RiskModelFactory()
+                            first_rm_key = list(self.risk_model.keys())[0]
+                            risk_model = self.risk_model[first_rm_key]
+                            fsr = rm_factory.prepare(first_rm_key, stock_data_container_list=result_list,
+                                                     parameter_dict=risk_model)
+                            fsr.determine_risk()
 
-                        # TODO checken ob da ned zwei stop order draus gemacht werden
-                        # --> TODO order long - stop bearbeiten
-                        # einstiegskurs nicht nach strategie sondern gleich
+                            # TODO checken ob da ned zwei stop order draus gemacht werden
+                            # --> TODO order long - stop bearbeiten
+                            # einstiegskurs nicht nach strategie sondern gleich
 
-                        # buy the stock
-                        self.buy_price = hist_data.close[0]
-                        buy_ord = self.order_target_method(data=hist_data, target=self.curr_risk_model['TargetValue'])
-                        buy_ord.addinfo(name="Long Market Entry")
+                            # buy the stock
+                            self.buy_price = hist_data.close[0]
+                            buy_ord = self.order_target_method(data=hist_data, target=self.curr_risk_model['TargetValue'])
+                            buy_ord.addinfo(name="Long Market Entry")
 
-                        # get the stop loss value for risk avoiding
-                        long_stop = stock_data_container_list[0].get_stop_loss()
-                        stop_size = buy_ord.size - abs(self.position.size)
-                        self.sl_ord = self.sell(data=hist_data, size=stop_size, exectype=bt.Order.Stop, price=long_stop)
-                        self.sl_ord.addinfo(name='Long Stop Loss')
-                except Exception as e:
-                    print(e)
+                            # get the stop loss value to minimize risk
+                            long_stop = result_list[0].get_stop_loss()
+                            stop_size = buy_ord.size - abs(self.position.size)
+                            self.sl_ord = self.sell(data=hist_data, size=stop_size, exectype=bt.Order.Stop, price=long_stop)
+                            self.sl_ord.addinfo(name='Long Stop Loss')
+                    except Exception as e:
+                        print(e)
+
+                # sell order, if already have stocks
+                elif len(result_list) > 0 and 'sell' in \
+                        result_list[0].get_recommendation_strategies()[self.strategy_to_test][
+                            0].lower():
+                    self.sell_ord = self.sell(data=hist_data, exectype=bt.Order.Sell)
+                    self.sell_ord.addinfo(name='Sell Order')
+
+        except Exception as e:
+            print(e)
 
     def _get_order_target(self, order_type_str):
         """

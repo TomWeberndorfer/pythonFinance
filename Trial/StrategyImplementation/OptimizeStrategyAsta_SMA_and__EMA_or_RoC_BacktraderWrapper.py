@@ -29,15 +29,15 @@ data0 = bt.feeds.YahooFinanceData(dataname='AAPL',
 
 
 def init_and_run_asta_strategy(sma_timeperiod, ema_timeperiod, roc_timeperiod, stock_data=data0):
-    print('sma_timeperiod = %.2f' % sma_timeperiod)
-    print('ema_timeperiod = %.2f' % ema_timeperiod)
-    print('roc_timeperiod = %.2f' % roc_timeperiod)
+    print('sma_timeperiod = %.2f' % int(sma_timeperiod))
+    print('ema_timeperiod = %.2f' % int(ema_timeperiod))
+    print('roc_timeperiod = %.2f' % int(roc_timeperiod))
     print()
 
     analysis_parameters = {
-        'sma_timeperiod': sma_timeperiod,
-        'ema_timeperiod': ema_timeperiod,
-        'roc_timeperiod': roc_timeperiod
+        'sma_timeperiod': int(sma_timeperiod),
+        'ema_timeperiod': int(ema_timeperiod),
+        'roc_timeperiod': int(roc_timeperiod)
     }
 
     backtesting_parameters = {'BacktestingFramework': 'BacktraderWrapper', 'initial_cash': 50000,
@@ -57,15 +57,16 @@ if __name__ == '__main__':
 
     for i in range(0, 5):
         time_measurement.restart_time_measurement()
-        opt = optunity.maximize(init_and_run_asta_strategy, num_evals=2, sma_timeperiod=[4, 7], ema_timeperiod=[4, 7],
-                                roc_timeperiod=[4, 7])
+        opt = optunity.maximize(init_and_run_asta_strategy, num_evals=5, sma_timeperiod=[3, 50], ema_timeperiod=[3, 50],
+                                roc_timeperiod=[3, 50])
 
         optimal_pars, details, _ = opt
         print('----------------------')
         print('Optimal Parameters:')
-        print('sma_timeperiod = %.2f' % optimal_pars['sma_timeperiod'])
-        print('ema_timeperiod = %.2f' % optimal_pars['ema_timeperiod'])
-        print('roc_timeperiod = %.2f' % optimal_pars['roc_timeperiod'])
+        print('sma_timeperiod = %.2f' % int(optimal_pars['sma_timeperiod']))
+        print('ema_timeperiod = %.2f' % int(optimal_pars['ema_timeperiod']))
+        print('roc_timeperiod = %.2f' % int(optimal_pars['roc_timeperiod']))
+        print ('Portfolio value:' + str(opt[1][0]))
 
         time_measurement.print_time_diff("Time to get the optimum:")
 
