@@ -57,7 +57,9 @@ if __name__ == '__main__':
 
     for i in range(0, 5):
         time_measurement.restart_time_measurement()
-        opt = optunity.maximize(init_and_run_asta_strategy, num_evals=5, sma_timeperiod=[3, 50], ema_timeperiod=[3, 50],
+        opt = optunity.maximize(init_and_run_asta_strategy, num_evals=5,
+                                sma_timeperiod=[3, 50],
+                                ema_timeperiod=[3, 50],
                                 roc_timeperiod=[3, 50])
 
         optimal_pars, details, _ = opt

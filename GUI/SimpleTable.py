@@ -7,17 +7,22 @@ from tkinter import *
 class ExampleApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
-        t = SimpleTable(self, 10, 2, ["Stock name", "ticker"])
+        t = SimpleTable(self, 10, -1, ["Stock name", "ticker", "Signal", "Reason"])
         t.pack(side="top", fill="x")
-        # t.set(0,0,"Hello, world")
-
+        t.set(1,0,"Hello, world")
+        #t.set_row(3, ["t", "t", "B", "test"])
+        #t.pack(side="top", fill="x")
 
 class SimpleTable(tk.Frame):
-    def __init__(self, parent, rows=10, columns=2, header=[], cell_object=tk.Entry):
+    def __init__(self, parent, rows=10, columns=-1, header=[], cell_object=tk.Entry):
         # use black background so it "peeks through" to
         # form grid lines
-        if cell_object != tk.Entry and cell_object != tk.Label:
+        if cell_object != tk.Entry: # TODO and cell_object != tk.Label:
             raise NotImplementedError("Cell object only entry or label")
+
+        # 0 or -1 --> auto set due to header length
+        if columns <= 0:
+            columns = len(header)
 
         tk.Frame.__init__(self, parent, background="black")
         self._widgets = []
@@ -48,8 +53,17 @@ class SimpleTable(tk.Frame):
             self.grid_columnconfigure(column, weight=1)
 
     def set(self, row, column, value):
-        widget = self._widgets[row][column]
-        widget.configure(text=value)
+        row = row + 1
+        widget = self._widgets[row][column] # TODO +1 because of header [0]
+        #widget.configure(text=value)
+        widget.delete(0, END)
+        widget.insert(0, value)
+
+    def set_row(self, row, column_content):
+        for x in range(0, len(column_content)):
+            self.set(row, x, column_content[x])
+
+
 
 
 if __name__ == "__main__":

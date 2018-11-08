@@ -49,8 +49,8 @@ if __name__ == '__main__':
     for i in range(0, 5):
         time_measurement.restart_time_measurement()
 
-        # TODO num_evals=5
-        opt = optunity.maximize(init_and_run_backtrader_strategy, num_evals=5, sma_timeperiod=[3, 50],
+        opt = optunity.maximize(init_and_run_backtrader_strategy, num_evals=5,
+                                sma_timeperiod=[3, 50],
                                 ema_timeperiod=[3, 50],
                                 roc_timeperiod=[3, 50])
 
@@ -67,8 +67,10 @@ if __name__ == '__main__':
     time_measurement.print_and_save_mean(test_filepath + "opttest_backtrader.txt")
 
     cerebro = bt.Cerebro()
-    cerebro.addstrategy(StrategyBacktrader_SMA_and__EMA_or_RoC, sma_timeperiod=int(optimal_pars['sma_timeperiod']),
-                        ema_timeperiod=int(optimal_pars['ema_timeperiod']), roc_timeperiod=int(optimal_pars['roc_timeperiod']))
+    cerebro.addstrategy(StrategyBacktrader_SMA_and__EMA_or_RoC,
+                        sma_timeperiod=int(optimal_pars['sma_timeperiod']),
+                        ema_timeperiod=int(optimal_pars['ema_timeperiod']),
+                        roc_timeperiod=int(optimal_pars['roc_timeperiod']))
     cerebro.adddata(stock_data)
     cerebro.run()
     cerebro.plot()
